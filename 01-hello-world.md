@@ -48,3 +48,35 @@ not in that world anymore.
 
 Thank goodness.
 
+OKAY!
+
+So, in this rendition of "Hello, world!" we'll use the arguments to the program
+as the names of the people (or, ... well: vampires or space aliens, I'm not
+speciesist) (that, actually, is a word now) that we greet.
+
+So, our program
+
+`$ ./greet john jane jamal`
+
+responds with:
+
+```TXT
+Hello, john!
+Hello, jane!
+Hello, jamal!
+```
+
+So, you already know how to write the "Hello, world!" program.
+
+Write the `greet`-program.
+
+When you complete this program and get the above result, check your approach
+against mine.
+
+[greet source](src/ch01/greet.rs)
+
+### Discussion
+
+Is this program safe? How is it made safe? Or, instead of 'safe,' is the program
+consistent? That is to say: given any (or no) input, does this program react
+consistently? How so?
