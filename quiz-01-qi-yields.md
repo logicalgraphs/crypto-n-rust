@@ -2,7 +2,7 @@
 
 Pop quiz:
 
-![](imgs/ch01/pop-01.png)
+![](imgs/quiz/01/pop-01.png)
 
 $QI SUPPLY on @BenqiFinance is currently paying 16.73% $AVAX yield (you read 
 that correctly).
@@ -14,7 +14,7 @@ answer
 
 BONUS questions
 
-![](imgs/ch01/bonus-01.png)
+![](imgs/quiz/01/bonus-01.png)
 
 1. How much do you make in 1 year? answer.
 1. ... if you resupply the $QI yield at 3%. answer.
@@ -23,7 +23,7 @@ BONUS questions
 
 BONUS-BONUS questions:
 
-![](imgs/ch01/bonus-02.png)
+![](imgs/quiz/01/bonus-02.png)
 
 1. Is it better or worse if you convert the $AVAX yields to $sAVAX and supply that?
 1. Measure by how much better or worse, show annual returns of all yielded tokens. 
