@@ -1,25 +1,3 @@
-## Chapter 1: Hello, world!
-
-So, when I said we aren't going to do "Hello, world!" Why are we here doing
-"Hello, world!"?
-
-Well, it's because I'm an onery son o' a gun. Get used to it.
-
-Okay, (relenting), it's because the "Hello, world!"-app is, well: useless. We
-need to say "Hello, Johny!" or "Hello, " ... whomever we're "hello"-ing to.
-
-Why?
-
-"Hello, world!" is output only, non-configurable. A useless program.
-
-But "Hello, "... whomever is both input and output and configurable.
-
-From "Hello, geophf!" you can go in just about any direction we want to go.
-
-Neat-o.
-
-But before we do that, let's do our first pop-quiz.
-
 ### Pop quiz: Benqi $QI yields
 
 Pop quiz:
