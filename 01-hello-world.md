@@ -80,3 +80,9 @@ against mine.
 Is this program safe? How is it made safe? Or, instead of 'safe,' is the program
 consistent? That is to say: given any (or no) input, does this program react
 consistently? How so?
+
+## Part II
+
+Okay, let's do file input/output, and take it up a notch, ... or two.
+
+
