@@ -75,14 +75,160 @@ against mine.
 
 [greet source](src/ch01/greet.rs)
 
-### Discussion
+## Part II: Discussion
 
-Is this program safe? How is it made safe? Or, instead of 'safe,' is the program
-consistent? That is to say: given any (or no) input, does this program react
-consistently? How so?
+Q: May you kindly review this answer and show how it does what it does, el geophf?
+A: yes. 😎
 
-## Part II
+### Line 1:
 
-Okay, let's do file input/output, and take it up a notch, ... or two.
+```Rust
+// be nice to somebody, or ... somebodies, you know?
+```
 
+Q: What is Line 1?
+A: A comment
 
+Q: What does Line 1 do?
+A: nothing
+
+Q: Why put comments in code when they do nothing?
+A1: no reason, comments are oftentimes wildly out-of-date and inaccurate.
+A2: because I'm NICE! 😎
+
+### Line 3:
+
+```Rust
+use std::env;
+```
+
+Q: What does Line 3 do?
+A: imports the `std::env`-library
+
+Q: What for?
+A: so we can use the env functions in our code (see Line 6)
+
+### Line 5:
+
+```Rust
+fn main() {
+```
+
+Q: What does Line 5 do?
+A: Creates a function, `main()`.
+
+Q: What is `main()` for?
+A: This is the function run when the program is compiled.
+
+Q: Why?
+A: I don't answer 'why'-questions.
+
+### Line 6:
+
+```Rust
+let args: Vec<_> = env::args().collect();
+```
+
+Q: Whoa!
+A: Don't panic. Let's break this down.
+
+Q: What does `let` do?
+A: Creates a variable.
+
+Q: What does `Vec<_>` mean?
+A: That is the type for the variable, `args`: a vector.
+
+Q: What is the rest?
+A: it collects the command-line arguments and assigns them to the variable, 
+`args`.
+
+### Line 7:
+
+```Rust
+let (_, names) = args.split_at(1);
+```
+
+Q: What the ...?
+A: Be cool. This is a tuple-assignment.
+
+Q: What does a tuple-assignment do?
+A: Assigns two variables to two values at the same time.
+
+Q: Neat!
+A: Innit?
+
+Q: What is the first variable: '`_`'?
+A: That's called the "don't care"-variable.
+
+Q: Why?
+A: Remember: I don't answer 'why'-questions.
+
+Q: Oh. Okay. What does the "don't care"-variable mean?
+A: It means that I don't care what this particular value is: I'm not going to 
+use it.
+
+Q: What is that first value that you're discarding?
+A: The program name (in this case: "greet").
+
+Q: Oh. What is the second value?
+A: The arguments to the program on the command line. So, if we typed:
+
+`$ ./greet Mary Sue`
+
+then
+`_` would be `["greet"]` and
+`names` would be `["Mary", "Sue"]`
+
+### Line 9:
+
+```Rust
+match names.len() {
+```
+
+Q: I think I get it. Line 9 matches the number of names to what happens below, 
+right?
+A: Correctamundo! 🎉 There are lots of ways to match in Rust. They have a 
+[whole section on matching](https://doc.rust-lang.org/book/ch06-02-match.html).
+
+### Lines 10-11:
+
+```Rust
+0 => { println!("Whom?"); }
+_ => {
+```
+
+Q: I get that line 10 matches a 0-length to printing "`Whom?`", but what does 
+line 11 mean?
+A: The `_`-match pattern is the "don't care" match. It matches anything.
+
+Q: Ah. Okay, back to line 10: why does `println` have a "`!`" following it?
+A: That means that `println` isn't a function but a macro.
+
+Q: What's the difference between a function and a macro in Rust?
+A: Fair question! For now we can treat them as the same thing, but there's 
+[a whole section in the Rust 
+manual](https://doc.rust-lang.org/book/ch19-06-macros.html) that discusses 
+macros and their purposes. 
+
+### Lines 12-14:
+
+```Rust
+for name in names {
+  println!("Hello, {}!", name);
+}
+```
+
+Q: So, ... this loops over all the names, right?
+A: Yeup.
+
+Q: What is the "`{}`" in 13 for?
+A: It tells `println!` where the name is to be placed in the output.
+
+Q: Ah, okay. That's pretty much it, right?
+A: Yeup!
+
+Congratulations: your first program! This calls for celebration.
+
+HAPFEN KĀKĒ! 🎂
+
+![](imgs/ch01/cake-finished.jpg)
