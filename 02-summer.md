@@ -134,6 +134,9 @@ HAPFEN KĀKĒ! 🎂
 
 1. We learned how to parse numbers from strings
 2. We learned how to handle when a string isn't a number with `expect()`
+3. We learned about iteration, mapping, collecting, ... and when not to collect.
+4. We learned about printing arbitrary types with "`{:?}`"
+5. We learned what the `f` is in `f32`. ... ahem. 😅
 
 ## Next chapter
 
