@@ -85,7 +85,7 @@ you've declared (in this case, a `vec`(tor) of `f32` numbers).
 
 Q: What's the '`f`' in `f32`?  
 A: Eheh. No, it's a 'float'ing point number. Really: that's what the '`f`' 
-stands for. ... honest.
+stands for. ... honest. 😅
 
 ### Line 16:
 
