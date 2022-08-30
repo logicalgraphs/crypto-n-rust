@@ -9,3 +9,5 @@ We do crypto. We do Rust. We do crypto 'n Rust.
   * program: [greet.rs](src/ch01/greet.rs)
 * Chapter 02: [Summer in the City](02-summer.md)
   * program: [summer.rs](src/ch02/summer.rs)
+* Chapter 03: [Modules](03-modules.md) WIP
+  * programs: [utils.rs](src/ch03/utils.rs) [winter.rs](src/ch03/winter.rs)
