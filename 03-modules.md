@@ -8,7 +8,7 @@ functionality for each program).
 So, let's get started and just write the thing, and see how far we make it.
 After, we'll review the code of the module we've created.
 
-From what you've learned in (chapter 2)[02-summer.md], ...
+From what you've learned in [chapter 2](02-summer.md), ...
 
 Create a module `utils.rs` that exports 2 functions:
 
@@ -17,12 +17,12 @@ Create a module `utils.rs` that exports 2 functions:
 
 Then:
 
-Rewrite (`summer.rs`)[src/ch02/summer.rs], using `get_nums()` from the
+Rewrite [`summer.rs`](src/ch02/summer.rs), using `get_nums()` from the
 `utils.rs`-module you've created.
 
 Answers *(remember, don't peek until you've tried to solve this yourself)*:
 
-* (`utils.rs`)[src/ch03/utils.rs]
-* (`winter.rs`)[src/ch03/winter.rs]
+* [`utils.rs`](src/ch03/utils.rs)
+* [`winter.rs`](src/ch03/winter.rs)
 
 ## Discussion
