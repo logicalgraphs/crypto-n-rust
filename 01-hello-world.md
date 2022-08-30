@@ -77,7 +77,8 @@ against mine.
 
 ## Part II: Discussion
 
-Q: May you kindly review this answer and show how it does what it does, el geophf?
+Q: May you kindly review this answer and show how it does what it does, el 
+geophf?  
 A: yes. 😎
 
 ### Line 1:
@@ -86,14 +87,14 @@ A: yes. 😎
 // be nice to somebody, or ... somebodies, you know?
 ```
 
-Q: What is Line 1?
+Q: What is Line 1?  
 A: A comment
 
-Q: What does Line 1 do?
+Q: What does Line 1 do?  
 A: nothing
 
-Q: Why put comments in code when they do nothing?
-A1: no reason, comments are oftentimes wildly out-of-date and inaccurate.
+Q: Why put comments in code when they do nothing?  
+A1: no reason, comments are oftentimes wildly out-of-date and inaccurate.  
 A2: because I'm NICE! 😎
 
 ### Line 3:
@@ -102,10 +103,10 @@ A2: because I'm NICE! 😎
 use std::env;
 ```
 
-Q: What does Line 3 do?
+Q: What does Line 3 do?  
 A: imports the `std::env`-library
 
-Q: What for?
+Q: What for?  
 A: so we can use the env functions in our code (see Line 6)
 
 ### Line 5:
@@ -114,13 +115,13 @@ A: so we can use the env functions in our code (see Line 6)
 fn main() {
 ```
 
-Q: What does Line 5 do?
+Q: What does Line 5 do?  
 A: Creates a function, `main()`.
 
-Q: What is `main()` for?
+Q: What is `main()` for?  
 A: This is the function run when the program is compiled.
 
-Q: Why?
+Q: Why?  
 A: I don't answer 'why'-questions.
 
 ### Line 6:
@@ -129,16 +130,16 @@ A: I don't answer 'why'-questions.
 let args: Vec<_> = env::args().collect();
 ```
 
-Q: Whoa!
+Q: Whoa!  
 A: Don't panic. Let's break this down.
 
-Q: What does `let` do?
+Q: What does `let` do?  
 A: Creates a variable.
 
-Q: What does `Vec<_>` mean?
+Q: What does `Vec<_>` mean?  
 A: That is the type for the variable, `args`: a vector.
 
-Q: What is the rest?
+Q: What is the rest?  
 A: it collects the command-line arguments and assigns them to the variable, 
 `args`.
 
@@ -148,35 +149,35 @@ A: it collects the command-line arguments and assigns them to the variable,
 let (_, names) = args.split_at(1);
 ```
 
-Q: What the ...?
+Q: What the ...?  
 A: Be cool. This is a tuple-assignment.
 
-Q: What does a tuple-assignment do?
+Q: What does a tuple-assignment do?  
 A: Assigns two variables to two values at the same time.
 
-Q: Neat!
+Q: Neat!  
 A: Innit?
 
-Q: What is the first variable: '`_`'?
+Q: What is the first variable: '`_`'?  
 A: That's called the "don't care"-variable.
 
-Q: Why?
+Q: Why?  
 A: Remember: I don't answer 'why'-questions.
 
-Q: Oh. Okay. What does the "don't care"-variable mean?
+Q: Oh. Okay. What does the "don't care"-variable mean?  
 A: It means that I don't care what this particular value is: I'm not going to 
 use it.
 
-Q: What is that first value that you're discarding?
+Q: What is that first value that you're discarding?  
 A: The program name (in this case: "greet").
 
-Q: Oh. What is the second value?
+Q: Oh. What is the second value?  
 A: The arguments to the program on the command line. So, if we typed:
 
 `$ ./greet Mary Sue`
 
-then
-`_` would be `["greet"]` and
+then  
+`_` would be `["greet"]` and  
 `names` would be `["Mary", "Sue"]`
 
 ### Line 9:
@@ -186,7 +187,7 @@ match names.len() {
 ```
 
 Q: I think I get it. Line 9 matches the number of names to what happens below, 
-right?
+right?  
 A: Correctamundo! 🎉 There are lots of ways to match in Rust. They have a 
 [whole section on matching](https://doc.rust-lang.org/book/ch06-02-match.html).
 
@@ -198,13 +199,13 @@ _ => {
 ```
 
 Q: I get that line 10 matches a 0-length to printing "`Whom?`", but what does 
-line 11 mean?
+line 11 mean?  
 A: The `_`-match pattern is the "don't care" match. It matches anything.
 
-Q: Ah. Okay, back to line 10: why does `println` have a "`!`" following it?
+Q: Ah. Okay, back to line 10: why does `println` have a "`!`" following it?    
 A: That means that `println` isn't a function but a macro.
 
-Q: What's the difference between a function and a macro in Rust?
+Q: What's the difference between a function and a macro in Rust?  
 A: Fair question! For now we can treat them as the same thing, but there's 
 [a whole section in the Rust 
 manual](https://doc.rust-lang.org/book/ch19-06-macros.html) that discusses 
@@ -218,13 +219,13 @@ for name in names {
 }
 ```
 
-Q: So, ... this loops over all the names, right?
+Q: So, ... this loops over all the names, right?  
 A: Yeup.
 
-Q: What is the "`{}`" in 13 for?
+Q: What is the "`{}`" in 13 for?  
 A: It tells `println!` where the name is to be placed in the output.
 
-Q: Ah, okay. That's pretty much it, right?
+Q: Ah, okay. That's pretty much it, right?  
 A: Yeup!
 
 Congratulations: your first program! This calls for celebration.
@@ -232,3 +233,15 @@ Congratulations: your first program! This calls for celebration.
 HAPFEN KĀKĒ! 🎂
 
 ![](imgs/ch01/cake-finished.jpg)
+
+## What we learned
+
+1. We learned how to read arguments from the command line.
+2. We learned how to print out those arguments, enhanced with formatting.
+3. We learned that Rust programs run from the `main()`-function.
+
+## Next chapter
+
+In the next chapter, we'll learn how to convert input arguments to numbers and
+how to handle conversions that fail (like, trying to convert "apple" to a
+number).
