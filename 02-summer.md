@@ -48,11 +48,11 @@ fn main() {
 
 ```
 
-Q: Aren't these lines the same as in the first chapter?
+Q: Aren't these lines the same as in the first chapter?  
 A: Yes.
 
 Q: So, can we put this code into a library, or something, instead of having to 
-write for each new program?
+write for each new program?  
 A: Exactly! Not for this program, but the next program will be about writing 
 your own modules.
 
@@ -65,11 +65,11 @@ let nums: Vec<f32> =
   .collect();
 ```
 
-Q: Line 12 we saw in ch 1, what does line 13 do?
+Q: Line 12 we saw in ch 1, what does line 13 do?  
 A: converts args into an iterable object, a stream; you see this also in 
 line 16.
 
-Q: `map` who-the-what?
+Q: `map` who-the-what?  
 A: Let's work through this:
 
 * `map` maps a function over a stream.
@@ -79,11 +79,11 @@ A: Let's work through this:
 
 EASY!
 
-Q: line 15 collects ... what?
+Q: line 15 collects ... what?  
 A: `collect` collects the result from a stream into the, well, collection-type 
 you've declared (in this case, a `vec`(tor) of `f32` numbers).
 
-Q: What's the '`f`' in `f32`?
+Q: What's the '`f`' in `f32`?  
 A: Eheh. No, it's a 'float'ing point number. Really: that's what the '`f`' 
 stands for. ... honest.
 
@@ -93,7 +93,7 @@ stands for. ... honest.
 let sum: f32 = nums.iter().sum();
 ```
 
-Q: `iter` puts the collection to a stream, `sum` sums the stream. No `collect`?
+Q: `iter` puts the collection to a stream, `sum` sums the stream. No `collect`?  
 A: You don't need to collect when you're getting a single value (or 'scalar,' 
 not a vector) as a result.
 
@@ -103,24 +103,24 @@ not a vector) as a result.
 println!("The sum of {:?} is {:?}", nums, sum);
 ```
 
-Q: What does the "`{:?}`" mean?
+Q: What does the "`{:?}`" mean?  
 A: It means "print the value of this type, even though I don't know *[or, in my 
 case 'I don't care']* what that type is."
 
-Q: Oh. Then why don't you use it all the time?
+Q: Oh. Then why don't you use it all the time?  
 A: Sometimes you don't have to.
 
-Q: Like, when?
+Q: Like, when?  
 A: Like, when you know it's a string, you can just use "`{}`" and for other 
 simple types (like numbers), you can use their "{:type}" representation.
 
-Q: So, when do you use "`{:?}`"?
+Q: So, when do you use "`{:?}`"?  
 A: When the type is complex so that an accurate type-representation is more 
 work than printing the thing, or, when I don't know the type at runtime (or I 
 don't care what the type is).
 
 Q: How does it know which value to put into the first and second "`{:?}`"? And 
-that there are two values to add to the string printed out?
+that there are two values to add to the string printed out?  
 A: I'll punt to: "that's why `println!` is a macro." The macro allows the 
 system to determine the arguments to the format-string, automagically.
 
