@@ -6,7 +6,7 @@ fn usage() {
    println!("\n$ ./real_apy <supply> <borrow> <net_apy>");
    println!("\n\tcomputes real APY from leveraged assets.");
    println!("\nFor example:");
-   println!("\n\t$ ./real_apy 17206.37 9742.39 1.18");
+   println!("\n\t$ ./real_apy 17206.37 9742.39 1.81");
    println!("\n\tYour real APY is 6.39%\n");
 }
 
