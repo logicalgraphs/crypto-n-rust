@@ -4,15 +4,15 @@ use std::{
     fs::File,
     io::{prelude::*, BufReader},
     path::Path,
-    env
 };
 
+mod utils;
+
 fn main() {
-   let args: Vec<_> = env::args().collect();
-   let (_, files) = args.split_at(1);
+   let files = utils::get_args();
 
    for file in files {
-      let lines = lines_from_file(file); 
+      let lines = lines_from_file(&file); 
       // Consumes the iterator, returns an (Optional) String
       println!("File {}:\n", file);
       for line in &lines {
