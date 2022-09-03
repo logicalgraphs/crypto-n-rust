@@ -1,5 +1,7 @@
 use std::env;
 
+// command line arguments fetch functions
+
 pub fn get_args() -> Vec<String> {
    let cmd_lin: Vec<String> = env::args().collect();
    let (_, args) = ht::<String>(cmd_lin);
@@ -20,6 +22,8 @@ pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
        .map(|n| n.parse().expect(&(n.to_owned() + " isn't a number")))
        .collect()
 }
+
+// list functions
 
 pub fn ht<T: std::clone::Clone>(list: Vec<T>) -> (Option<T>, Vec<T>) {
    let (f, t) = list.split_at(1);
