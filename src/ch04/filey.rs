@@ -18,7 +18,7 @@ fn main() {
       for line in &lines {
          println!("{}", line);
       }
-      println!("\nThe fifh line is:\n{}\n", lines[4]);
+      println!("\nThe fifth line is:\n{}\n", lines[4]);
    }
 }
 
