@@ -1,11 +1,12 @@
-use std::env;
+use std::{
+   env::args,
+   clone::Clone
+};
 
 // command line arguments fetch functions
 
 pub fn get_args() -> Vec<String> {
-   let cmd_lin: Vec<String> = env::args().collect();
-   let (_, args) = ht::<String>(cmd_lin);
-   args
+   tail::<String>(args().collect())
 }
 
 pub fn get_nums() -> Vec<f32> {
@@ -25,7 +26,16 @@ pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
 
 // list functions
 
-pub fn ht<T: std::clone::Clone>(list: Vec<T>) -> (Option<T>, Vec<T>) {
+pub fn ht<T: Clone>(list: Vec<T>) -> (Option<T>, Vec<T>) {
    let (f, t) = list.split_at(1);
    (f.to_vec().pop(), t.to_vec())
 }
+
+pub fn tail<T: Clone>(list: Vec<T>) -> Vec<T> {
+   let (_, r) = ht(list);
+   r
+}
+
+// Category theory
+
+pub fn id<T>(t: T) -> T { t }
