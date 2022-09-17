@@ -36,6 +36,11 @@ pub fn tail<T: Clone>(list: Vec<T>) -> Vec<T> {
    r
 }
 
+pub fn head<T: Clone>(list: Vec<T>) -> Option<T> {
+   let (h, _) = ht(list);
+   h
+}
+
 // Category theory
 
 pub fn id<T>(t: T) -> T { t }

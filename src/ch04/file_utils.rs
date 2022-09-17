@@ -11,7 +11,11 @@ use std::{
 use utils;
 
 pub fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
-    let file = File::open(filename).expect("no such file");
+    let file = File::open(filename)
+          // .expect("no such file '" + filename + "'");
+          // Question: how hard can the above line possibly be to compile?
+          // Answer: oh, it's not hard; it's impossible.
+          .expect("no such file");
     let buf = BufReader::new(file);
     buf.lines()
         .map(|l| l.expect("Could not parse line"))
