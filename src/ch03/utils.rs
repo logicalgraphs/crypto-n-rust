@@ -27,8 +27,12 @@ pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
 // list functions
 
 pub fn ht<T: Clone>(list: Vec<T>) -> (Option<T>, Vec<T>) {
-   let (f, t) = list.split_at(1);
-   (f.to_vec().pop(), t.to_vec())
+   if list.is_empty() {
+      (None, list)
+   } else {
+      let (f, t) = list.split_at(1);
+      (f.to_vec().pop(), t.to_vec())
+   }
 }
 
 pub fn tail<T: Clone>(list: Vec<T>) -> Vec<T> {
