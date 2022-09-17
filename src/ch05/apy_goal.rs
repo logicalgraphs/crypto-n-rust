@@ -33,7 +33,7 @@ fn goal_computer(supply: f32, borrow: f32, net_apy: f32, real_apy: f32,
 
    println!("Net APY on @BenqiFinance:       {}%", net_apy);
    println!("Computed Real APY on principal: {}%", real_apy * 100.0);
-   println!("[this URL]");
+   println!("\nhttps://github.com/logicalgraphs/crypto-n-rust/blob/main/src/ch05/apy_goal.rs");
    println!("\nTo make ${}/day in yields, I need:", yield_per_day);
    println!("\n${} in principal or {} $sAVAX", goal_principal, goal_s_avax_p);
    println!("${} in leverage or {} $sAVAX", goal_leverage, goal_s_avax_l);
