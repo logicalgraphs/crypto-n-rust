@@ -26,3 +26,10 @@ Answers *(remember, don't peek until you've tried to solve this yourself)*:
 * [`winter.rs`](src/ch03/winter.rs)
 
 ## Discussion
+
+Q. There's no `mod` at the top of utils.rs. How does Rust know what module it 
+is?  
+A. The filename, and the directive `mod utils;` in `winter.rs` tells Rust which 
+module to import.
+
+
