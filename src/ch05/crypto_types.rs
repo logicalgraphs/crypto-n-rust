@@ -10,6 +10,7 @@ use serde_json::Value;
 use std::fmt;
 
 use crate::json_utils::{val_str, val_num, val_date, dequote};
+use crate::utils::last;
 
 pub struct Coin {
    date: String,
@@ -19,6 +20,15 @@ pub struct Coin {
    symbol: String,
    price: USD
 }
+
+trait CsvReader {
+   fn read(line: String) -> Result<Self, String> where Self: Sized;
+}
+
+trait CsvWriter {
+   fn as_csv(&self) -> String;
+}
+
 
 impl<'de> Deserialize<'de> for Coin {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -37,11 +47,12 @@ impl<'de> Deserialize<'de> for Coin {
    }
 }  
 
-impl fmt::Display for Coin {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "{},{},{},{},{},{}",
+impl CsvWriter for Coin {
+   fn as_csv(&self) -> String {
+      format_args!("{},{},{},{},{},{}", 
               self.date,self.cmc_id,self.rank,self.symbol,self.name,self.price)
-    }
+              .to_string()
+   }
 }
 
 pub struct USD {
@@ -49,9 +60,24 @@ pub struct USD {
 }
 
 impl fmt::Display for USD {
-    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        write!(formatter, "${:.2}", self.amount)
-    }
+   fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+      write!(formatter, "${:.2}", self.amount)
+   }
+}
+
+impl CsvReader for USD {
+   fn read(elt: String) -> Result<USD, String> {
+      if let Some(num) = last(elt.split('$').collect()) {
+         let amount_res = num.parse();
+         if let Ok(amount) = amount_res {
+            Ok(USD { amount })
+         } else {
+            Err(elt.to_owned() + " isn't USD")
+         }
+      } else {
+         Err("No monay on the empty string".to_string())
+      }
+   }
 }
 
 pub fn print_all_coins(coins: Vec<Coin>) {
@@ -65,5 +91,5 @@ pub fn print_header() {
 }
 
 pub fn print_coin(coin: &Coin) {
-   println!("{}", coin);
+   println!("{}", coin.as_csv());
 }
