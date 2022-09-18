@@ -45,6 +45,11 @@ pub fn head<T: Clone>(list: Vec<T>) -> Option<T> {
    h
 }
 
+pub fn last<T: Clone>(mut list: Vec<T>) -> Option<T> {
+   list.reverse();
+   head(list)
+}
+
 // Category theory
 
 pub fn id<T>(t: T) -> T { t }
