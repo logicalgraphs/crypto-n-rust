@@ -17,9 +17,10 @@ $ cp ../cmc_prices-Cargo-manifest.toml ./Cargo.toml
 $ cd src
 $ ln -s ../../lib.rs ./lib.rs
 $ ln -s ../../json_utils.rs ./json_utils.rs
+$ ln -s ../../csv_utils.rs ./csv_utils.rs
 $ ln -s ../../crypto_types.rs ./crypto_types.rs
 $ ln -s ../../../ch03/utils.rs ./utils.rs
-$ rm main.rs; ln -s ../../cmc_prices.rs ./main.rs
+$ ln -s ../../cmc_prices.rs ./cmc_prices.rs
 $ cd ../
 ```
 
