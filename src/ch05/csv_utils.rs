@@ -1,21 +1,14 @@
 // we make our types CSVy
 
-use std::fmt::Error;
-
 use crate::crypto_types::{Coin,csv,parse_coin};
 
-trait CsvReader {
-   fn read(line: String) -> Result<Self, Error> where Self: Sized;
-}
-
-impl CsvReader for Coin {
-   fn read(line: String) -> Result<Coin, Error> {
-      if let [date,cmc_id,rank,symbol,name,price] =
-            line.split(',').collect::<Vec<&str>>().as_slice() {
-         parse_coin(date, cmc_id, rank, symbol, name, price)
-      } else {
-         panic!("Can't parse line: {}", line)
-      }
+pub fn read_csv_coin(line: &String) -> Result<Coin, String> {
+   if let [date,cmc_id,rank,symbol,name,price] =
+         line.split(',').collect::<Vec<&str>>().as_slice() {
+      parse_coin(date, cmc_id, rank, symbol, name, price)
+   } else {
+      // panic!("Can't parse line: {}", line)
+      Err("Can't parse line: ".to_owned() + line)
    }
 }
 

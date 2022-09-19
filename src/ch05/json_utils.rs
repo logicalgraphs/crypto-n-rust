@@ -4,6 +4,7 @@
 
 // serde_json was recommended via https://stackoverflow.com/questions/30292752/how-do-i-parse-a-json-file
 
+use crate::string_utils::dequote;
 use crate::crypto_types::{Coin, mk_coin};
 
 extern crate serde;
@@ -52,10 +53,4 @@ pub fn val_date(val: &Value, idx: &String) -> String {
    let mut date = dequote(val_str(val, idx));
    date.truncate(10);
    date
-}
-
-pub fn dequote(mut str: String) -> String {
-   str.pop();
-   str.remove(0);
-   str
 }

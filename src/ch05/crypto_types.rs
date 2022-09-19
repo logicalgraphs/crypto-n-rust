@@ -1,16 +1,16 @@
 // types, regardless underlying data sources
 
 use std::{fmt,num::ParseFloatError,str::FromStr};
-use core::fmt::Error;
 
 use crate::utils::last;
 
+#[derive(Debug, Clone)]
 pub struct Coin {
    date: String,
    cmc_id: u32,
    rank: u32,
    name: String,
-   symbol: String,
+   pub symbol: String,
    price: USD
 }
 
@@ -19,8 +19,8 @@ pub fn mk_coin(date: String, cmc_id: u32, rank: u32, name: String,
    Coin { date, cmc_id, rank, name, symbol, price: mk_usd(amount) }
 }
 
-pub fn parse_coin(dat: &str, id: &str, rnk: &str, nam: &str,
-                  sym: &str, pric: &str) -> Result<Coin, Error> {
+pub fn parse_coin(dat: &str, id: &str, rnk: &str, sym: &str,
+                  nam: &str, pric: &str) -> Result<Coin, String> {
    let price: USD = pric.parse().expect("dollahz");
    let cmc_id: u32 = id.parse().expect("id");
    let rank: u32 = rnk.parse().expect("rank");
@@ -36,6 +36,7 @@ pub fn csv(coin: &Coin) -> String {
       .to_string()
 }
 
+#[derive(Debug, Clone)]
 pub struct USD {
    amount: f32
 }
