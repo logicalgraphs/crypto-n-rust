@@ -10,19 +10,22 @@ use std::{
 
 use crate::utils::{ht,tail};
 
-pub fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
+pub fn lines_from_file(filename: impl AsRef<Path>)
+       -> Vec<String> {
     let file = File::open(filename)
           // .expect("no such file '" + filename + "'");
           // Question: how hard can the above line possibly be to compile?
           // Answer: oh, it's not hard; it's impossible.
           .expect("no such file");
-    let buf = BufReader::new(file);
-    buf.lines()
-        .map(|l| l.expect("Could not parse line"))
-        .collect()
+
+       let buf = BufReader::new(file);
+       buf.lines()
+           .map(|l| l.expect("Could not parse line"))
+           .collect()
 }
 
-pub fn extract_date_and_body(file: impl AsRef<Path>) -> (String, Vec<String>) {
+pub fn extract_date_and_body(file: impl AsRef<Path>)
+      -> (String, Vec<String>) {
    if let (Some(first_line), rest) =
       ht(lines_from_file(file)) {
       if let Some(date) = first_line.strip_prefix("date scraped: ") {

@@ -26,7 +26,7 @@ date,cmc_id,rank,symbol,name,price
 
 ### see
 
-e.g.: `portfolio_coins.lsv` for a list of held assets.
+e.g.: `/data-files/csv/portfolio_coins.lsv` for a list of held assets.
 
 ## Compilation
 
