@@ -8,7 +8,7 @@ use std::{
     path::Path,
 };
 
-use utils;
+use crate::utils::{ht,tail};
 
 pub fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
     let file = File::open(filename)
@@ -24,10 +24,9 @@ pub fn lines_from_file(filename: impl AsRef<Path>) -> Vec<String> {
 
 pub fn extract_date_and_body(file: impl AsRef<Path>) -> (String, Vec<String>) {
    if let (Some(first_line), rest) =
-      utils::ht(lines_from_file(file)) {
+      ht(lines_from_file(file)) {
       if let Some(date) = first_line.strip_prefix("date scraped: ") {
-         (date.to_string(),
-          utils::tail(rest))   // skipping the blank line
+         (date.to_string(),tail(rest))   // skipping the blank line
       } else {
         panic!("Could not extract the date from the file.");
       }

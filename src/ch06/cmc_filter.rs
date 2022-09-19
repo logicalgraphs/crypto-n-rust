@@ -6,7 +6,7 @@ use std::collections::HashMap;
 use cmc_filter::utils::get_args;
 use cmc_filter::file_utils::lines_from_file;
 use cmc_filter::crypto_types::Coin;
-use cmc_filter::csv_utils::read_csv_coin;
+use cmc_filter::csv_utils::{print_header, print_coin, read_csv_coin};
 
 fn usage() {
    println!("\n./cmc_filter <prices CSV file> <held assets LSV file>");
@@ -27,13 +27,11 @@ fn parse_then_filter(prices: impl AsRef<Path>, assets: impl AsRef<Path>) {
    file_report("prices", &price_lines);
    file_report("assets", &assetss);
    let mappo = process_csv_prices(price_lines);
-   if let Some(btc) = mappo.get("BTC") {
-      println!("BTC is {:?}", btc);
-   } else {
-      for (k, v) in &mappo {
-         println!("{}: {:?}", k, v);
+   print_header();
+   for sym in assetss {
+      if let Some(coin) = mappo.get(&sym) {
+         print_coin(coin);
       }
-      panic!("Can't find BTC!");
    }
 }
 
@@ -53,7 +51,9 @@ fn process_csv_prices(mut lines: Vec<String>)
 
 fn process_price_line(m: &mut HashMap<String, Coin>, line: &String) {
    if let Ok(coin) = read_csv_coin(line) {
-      m.insert(coin.symbol.to_string(), coin);
+      if !m.contains_key(&coin.symbol) {
+         m.insert(coin.symbol.to_string(), coin);
+      }
    } else {
       println!("Could not process line {}", line);
    }
