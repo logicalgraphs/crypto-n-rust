@@ -5,7 +5,7 @@ SRC_DIR=$(RUST_BOOK)/src
 
 SCRIPTS_DIR=$(SRC_DIR)/scripts
 
-alles: fetch process
+alles: fetch process filter
 	@true
 
 fetch: fetchers
@@ -33,14 +33,25 @@ CURL_CMD=$(SCRIPTS_DIR)/curl-cmc.sh
 
 RUN_RUST=cargo run
 
+clean: FORCE
+	rm $(JSON_LISTING); \
+	rm $(CSV_LISTING); \
+	@echo "cleant"
+
+nuke: FORCE
+	rm $(DATA_DIR)/listings/listings-*.json; \
+	rm $(DATA_DIR)/csv/alles/listings-*.csv; \
+	rm $(DATA_DIR)/csv/portfolio/portfolio-*.csv; \
+	@echo "My heart goes boum, boum, boum."
+
 fetchers: $(JSON_LISTING)
 	@echo "Loading e-coin listing file for $(LE_DATE) ..."; \
 	$(CURL_CMD) cryptocurrency/$(LIST_CMD) $(JSON_LISTING)
 
-$(JSON_LISTING): $(JSON_LISTING)
+$(JSON_LISTING): FORCE
 	@true
 
-$(CSV_LISTING): $(CSV_LISTING) $(JSON_LISTING)
+$(CSV_LISTING): $(JSON_LISTING)
 	@echo "enCVSing JSON quotes ..."; \
 	cd $(SRC_DIR)/ch05/cmc_prices/; \
 	$(RUN_RUST) $(JSON_LISTING) > $(CSV_LISTING)
@@ -48,13 +59,13 @@ $(CSV_LISTING): $(CSV_LISTING) $(JSON_LISTING)
 encvsify: $(CSV_LISTING)
 	@true
 
-portfolio_listings: $(PORT_LISTING) $(CSV_LISTING) 
+# filterify: $(PORT_LISTING) $(CSV_LISTING)
+
+filterify: $(CSV_LISTING)
 	@echo "filtering price-quotes to held assets..."; \
 	cd $(SRC_DIR)/ch06/cmc_filter/; \
-	$(RUN_RUST) $(CSV_LISTING) $(HOLDINGS) > $(PORT_LISTING)
-
-filterify: portfolio_listings
-	@true
+	$(RUN_RUST) $(CSV_LISTING) $(HOLDINGS) > $(PORT_LISTING); \
+	cat $(PORT_LISTING)
 
 # ----- ... and then we:
 
