@@ -2,9 +2,11 @@
 
 // Easy-peasy!
 
-use cmc_prices::csv_utils::print_all_coins;
-use cmc_prices::utils::{head, get_args};
-use cmc_prices::json_utils::parse_coins;
+use book::{
+   csv_utils::print_all_coins,
+   utils::{head, get_args},
+   json_utils::parse_coins
+};
 
 use std::fs;
 

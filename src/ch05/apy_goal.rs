@@ -1,7 +1,8 @@
 // Here we state our real APY, but also compute what we need to achieve our goal
 
-mod utils;
-mod apy_utils;
+use book::{
+   apy_utils::{fetch_spew_n_nums,compute_real_r}
+};
 
 fn usage() {
    println!("\n$ ./apy_goal [--spew] <supply> <borrow> <net_apy>");
@@ -9,10 +10,9 @@ fn usage() {
 }
 
 fn main() {
-   let (spew, nums) = apy_utils:: fetch_spew_n_nums();
+   let (spew, nums) = fetch_spew_n_nums();
    if let [supply, borrow, net, s_avax, yield_goal] = nums.as_slice() {
-      let real_r = 
-         apy_utils::compute_real_r(*supply, *borrow, *net / 100.0, spew);
+      let real_r = compute_real_r(*supply, *borrow, *net / 100.0, spew);
       goal_computer(*supply, *borrow, *net / 100.0, real_r, *yield_goal, *s_avax);
    } else {
      usage();
@@ -31,7 +31,7 @@ fn goal_computer(supply: f32, borrow: f32, net_apy: f32, real_apy: f32,
    let current_lever  = supply + borrow;
    let percent_lever  = current_lever / goal_leverage * 100.0;
 
-   println!("Net APY on @BenqiFinance:       {}%", net_apy);
+   println!("Net APY on @BenqiFinance:       {}%", net_apy * 100.0);
    println!("Computed Real APY on principal: {}%", real_apy * 100.0);
    println!("\nhttps://github.com/logicalgraphs/crypto-n-rust/blob/main/src/ch05/apy_goal.rs");
    println!("\nTo make ${}/day in yields, I need:", yield_per_day);

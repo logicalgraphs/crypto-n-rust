@@ -2,32 +2,16 @@
 
 ... cmc_prices
 
-1. `crate new cmc_prices`
+1. I've already created the project with `crate new cmc_prices`
 
 What I do is copy the Cargo template into the `cmc_prices`-project:
 
-```SHELL
-$ cd cmc_prices
-$ cp ../cmc_prices-Cargo-manifest.toml ./Cargo.toml
-```
-
-... then I soft-link the following files into `cmc_prices/src/`:
-
-```SHELL
-$ cd src
-$ ln -s ../../lib.rs ./lib.rs
-$ ln -s ../../json_utils.rs ./json_utils.rs
-$ ln -s ../../csv_utils.rs ./csv_utils.rs
-$ ln -s ../../crypto_types.rs ./crypto_types.rs
-$ ln -s ../../../ch03/utils.rs ./utils.rs
-$ ln -s ../../cmc_prices.rs ./cmc_prices.rs
-$ cd ../
-```
+... then I use the book crate. The `Cargo.toml` is included in the repository.
 
 Then you should be able to build and run your application:
 
 ```SHELL
-$ cargo run ../cmc_listings_sample.json
+$ cd cmc_prices; cargo run ../cmc_listings_sample.json
 ```
 
 ... and see the following output:
