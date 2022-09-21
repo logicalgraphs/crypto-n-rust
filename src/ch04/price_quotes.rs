@@ -5,8 +5,10 @@ use std::{
    fmt
 };
 
-mod utils;
-mod file_utils;
+use book::{
+   utils::{get_args,ht},
+   file_utils::extract_date_and_body
+};
 
 struct Quote {
    symbol: String,
@@ -24,8 +26,8 @@ fn usage() {
 }
 
 fn main() {
-   if let [file] = utils::get_args().as_slice() {
-      let (date, all_lines) = file_utils::extract_date_and_body(file);
+   if let [file] = get_args().as_slice() {
+      let (date, all_lines) = extract_date_and_body(file);
       print_quotes(date, all_lines);
    } else { usage() }
 }
@@ -41,8 +43,8 @@ fn extract_one_price_quote(lines: Vec<String>) -> (Option<Quote>, Vec<String>) {
 
 fn first_two<T: Clone>(list: Vec<T>) -> Option<(T, T)> {
    let mut ans = None;
-   if let (Some(x), rest) = utils::ht(list) {
-      if let (Some(y), _) = utils::ht(rest) {
+   if let (Some(x), rest) = ht(list) {
+      if let (Some(y), _) = ht(rest) {
          ans = Some((x, y));
       }
    }

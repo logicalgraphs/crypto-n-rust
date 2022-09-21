@@ -6,10 +6,10 @@ use std::{
     path::Path,
 };
 
-mod utils;
+use book::utils::get_args;
 
 fn main() {
-   let files = utils::get_args();
+   let files = get_args();
 
    for file in files {
       let lines = lines_from_file(&file); 
