@@ -1,6 +1,6 @@
 // some standard APY-calculation functoins
 
-use utils;
+use crate::utils::{get_args,id,parse_nums,tail};
 
 pub fn compute_real_r(supply: f32, borrow: f32, net_r: f32, spew: bool) -> f32 {
    let principal = supply - borrow;
@@ -16,7 +16,7 @@ pub fn compute_real_r(supply: f32, borrow: f32, net_r: f32, spew: bool) -> f32 {
 
 fn spewage(supp: f32, borr: f32, rate: f32, princ: f32,
            lev: f32, eoyl: f32, dist: f32, eoyp: f32) {
-   println!("Given:");
+   println!("\nGiven:");
    println!("\tSupply (S):                               {}", supp);
    println!("\tBorrow (B):                               {}", borr);
    println!("\tRate (R):                                 {}%\n", rate * 100.0);
@@ -30,9 +30,9 @@ fn spewage(supp: f32, borr: f32, rate: f32, princ: f32,
 }
 
 pub fn fetch_spew_n_nums() -> (bool, Vec<f32>) {
-   let args = utils::get_args();
+   let args = get_args();
    let spew: bool = args.len() > 0 && args[0] == "--spew";
-   let f = if spew { utils::tail } else { utils::id };
-   let nums = utils::parse_nums(f(args));
+   let f = if spew { tail } else { id };
+   let nums = parse_nums(f(args));
    (spew, nums)
 }
