@@ -1,7 +1,6 @@
 // Computes real APY from net APY on leveraged assets
 
-mod utils;
-mod apy_utils;
+use book::apy_utils::{fetch_spew_n_nums,compute_real_r};
 
 fn usage() {
    println!("\n$ ./real_apy [--spew] <supply> <borrow> <net_apy>");
@@ -13,10 +12,9 @@ fn usage() {
 }
 
 fn main() {
-   let (spew, nums) = apy_utils::fetch_spew_n_nums();
+   let (spew, nums) = fetch_spew_n_nums();
    if let [supply, borrow, net] = nums.as_slice() {
-      let real_r =
-         apy_utils::compute_real_r(*supply, *borrow, *net / 100.0, spew);
+      let real_r = compute_real_r(*supply, *borrow, *net / 100.0, spew);
       println!("Your real APY is {}%", real_r * 100.0);
    } else {
       usage();

@@ -1,9 +1,9 @@
 // The 'using modules' example
 
-mod utils;
+use book::utils::get_nums;
 
 fn main() {
-   let nums = utils::get_nums();
+   let nums = get_nums();
    let sum: f32 = nums.iter().sum();
    println!("The sum of {:?} is {:?}", nums, sum);
 }
