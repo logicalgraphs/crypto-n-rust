@@ -7,8 +7,7 @@ edition = "2021"
 
 [[bin]]
 name = "cmc_filter"
-path = "src/cmc_filter.rs"
+path = "../cmc_filter.rs"
 
-[lib]
-name = "cmc_filter"
-path = "src/lib.rs"
+[dependencies]
+book = { path = "../../libs/book" }

@@ -1,12 +1,16 @@
 // filters and prints only the held assets' prices
 
-use std::path::Path;
-use std::collections::HashMap;
+use std::{
+   path::Path,
+   collections::HashMap
+};
 
-use cmc_filter::utils::get_args;
-use cmc_filter::file_utils::lines_from_file;
-use cmc_filter::crypto_types::Coin;
-use cmc_filter::csv_utils::{print_header, print_coin, read_csv_coin};
+use book::{
+   utils::get_args,
+   file_utils::lines_from_file,
+   crypto_types::Coin,
+   csv_utils::{print_header, print_coin, read_csv_coin}
+};
 
 fn usage() {
    println!("\n./cmc_filter <prices CSV file> <held assets LSV file>");

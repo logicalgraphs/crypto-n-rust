@@ -11,7 +11,7 @@ alles: fetch process filter
 fetch: fetchers
 	@echo "Didst fetcheth."
 
-process: encvsify
+process: encsvify
 	@echo "Didst processeth."
 
 filter: filterify
@@ -56,10 +56,8 @@ $(CSV_LISTING): $(JSON_LISTING)
 	cd $(SRC_DIR)/ch05/cmc_prices/; \
 	$(RUN_RUST) $(JSON_LISTING) > $(CSV_LISTING)
 
-encvsify: $(CSV_LISTING)
+encsvify: $(CSV_LISTING)
 	@true
-
-# filterify: $(PORT_LISTING) $(CSV_LISTING)
 
 filterify: $(CSV_LISTING)
 	@echo "filtering price-quotes to held assets..."; \
