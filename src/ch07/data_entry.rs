@@ -23,23 +23,13 @@ fn main() {
 
 fn preprocess_with_title(title: &str, mut lines: Vec<String>) {
    println!("\n{}\n", title);
-   lines.retain(|line| two(line));
+   lines.retain(two);
    for line in lines {
       if let Some(position) = head(line.split(' ').collect()) {
          println!("{}", position);
       }
    }
 }
-
-/*
-fn preprocess(mut lines: Vec<String>) -> Vec<String> {
-   lines.retain(|line| two(line));
-   // for line in &lines {
-      // println!("{}", line);
-   // }
-   // lines
-}
-*/
 
 fn two(line: &String) -> bool {
    let words: Vec<&str> = line.split(' ').collect();
