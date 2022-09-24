@@ -72,3 +72,6 @@ So, the bonus output would be simply:
 -1.0017  
 
 Rock and roll. Rokk. und. Rollen!
+
+* [(basic) solution](data_entry.rs)
+* [(bonus) solution](bonus_data_entry.rs) with folds and higher-order functions
