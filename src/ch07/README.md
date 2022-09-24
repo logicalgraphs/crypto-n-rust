@@ -16,7 +16,7 @@ Write a Rust program that:
 
 So, for example, it would list:
 
-SUPPLY
+SUPPLIED
 
 1.5774  
 23,618.2155  
@@ -29,7 +29,7 @@ SUPPLY
 0.0038  
 826.6162  
 
-BORROW
+BORROWED
 
 0.6051  
 0.0226  
@@ -42,6 +42,8 @@ BORROW
 1.0017  
 
 Just that. Only that.
+
+* [(basic) solution](data_entry.rs)
 
 ## BONUS
 
@@ -73,5 +75,4 @@ So, the bonus output would be simply:
 
 Rock and roll. Rokk. und. Rollen!
 
-* [(basic) solution](data_entry.rs)
 * [(bonus) solution](bonus_data_entry.rs) with folds and higher-order functions
