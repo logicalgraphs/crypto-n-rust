@@ -1,6 +1,9 @@
 // some standard APY-calculation functoins
 
-use crate::utils::{get_args,id,parse_nums,tail};
+use crate::{
+   list_utils::{parse_nums,tail},
+   utils::{get_args,id}
+};
 
 pub fn compute_real_r(supply: f32, borrow: f32, net_r: f32, spew: bool) -> f32 {
    let principal = supply - borrow;

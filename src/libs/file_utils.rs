@@ -8,7 +8,7 @@ use std::{
     path::Path,
 };
 
-use crate::utils::{ht,tail};
+use crate::list_utils::{ht,tail};
 
 pub fn lines_from_file(filename: impl AsRef<Path>)
        -> Vec<String> {

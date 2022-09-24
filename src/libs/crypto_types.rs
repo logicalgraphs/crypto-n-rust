@@ -2,7 +2,7 @@
 
 use std::{fmt,num::ParseFloatError,str::FromStr};
 
-use crate::utils::last;
+use crate::list_utils::last;
 
 #[derive(Debug, Clone)]
 pub struct Coin {
