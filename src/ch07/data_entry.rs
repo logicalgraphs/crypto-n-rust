@@ -1,6 +1,7 @@
 use book::{
    file_utils::lines_from_file,
-   utils::{get_args,head}
+   list_utils::{head,split},
+   utils::get_args
 };
 
 fn usage() {
@@ -10,20 +11,35 @@ fn usage() {
 
 fn main() {
    if let Some(file) = head(get_args()) {
-      let (supplied, _borrowed) = lines_from_file(file).split_at("BORROWED");
-      preprocess(supplied);
+      if let [supplied, borrowed] =
+           split(lines_from_file(file),"BORROWED".to_string()).as_slice() {
+         preprocess_with_title("SUPPLIED", supplied.to_vec());
+         preprocess_with_title("BORROWED", borrowed.to_vec());
+      }
    } else {
       usage();
    }
 }
 
+fn preprocess_with_title(title: &str, mut lines: Vec<String>) {
+   println!("\n{}\n", title);
+   lines.retain(|line| two(line));
+   for line in lines {
+      if let Some(position) = head(line.split(' ').collect()) {
+         println!("{}", position);
+      }
+   }
+}
+
+/*
 fn preprocess(mut lines: Vec<String>) -> Vec<String> {
    lines.retain(|line| two(line));
-   for line in &lines {
-      println!("{}", line);
-   }
-   lines
+   // for line in &lines {
+      // println!("{}", line);
+   // }
+   // lines
 }
+*/
 
 fn two(line: &String) -> bool {
    let words: Vec<&str> = line.split(' ').collect();
