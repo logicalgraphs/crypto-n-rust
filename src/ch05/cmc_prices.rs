@@ -4,7 +4,8 @@
 
 use book::{
    csv_utils::print_all_coins,
-   utils::{head, get_args},
+   utils::get_args,
+   list_utils::head,
    json_utils::parse_coins
 };
 
