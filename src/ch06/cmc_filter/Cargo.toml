@@ -11,3 +11,4 @@ path = "../cmc_filter.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }
+crypto = { path = "../../libs/crypto" }

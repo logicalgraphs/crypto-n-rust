@@ -3,9 +3,12 @@
 // Easy-peasy!
 
 use book::{
-   csv_utils::print_all_coins,
    utils::get_args,
    list_utils::head,
+};
+
+use crypto::{
+   coins::print_all_coins,
    json_utils::parse_coins
 };
 

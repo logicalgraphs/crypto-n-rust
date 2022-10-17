@@ -2,15 +2,15 @@
 
 use std::{
    path::Path,
-   collections::HashMap
+   collections::{HashMap,HashSet}
 };
 
 use book::{
    utils::get_args,
-   file_utils::lines_from_file,
-   crypto_types::Coin,
-   csv_utils::{print_header, print_coin, read_csv_coin}
+   file_utils::lines_from_file
 };
+
+use crypto::coins::{Coin,print_all_coins,read_csv_coin};
 
 fn usage() {
    println!("\n./cmc_filter <prices CSV file> <held assets LSV file>");
@@ -28,15 +28,15 @@ fn main() {
 fn parse_then_filter(prices: impl AsRef<Path>, assets: impl AsRef<Path>) {
    let price_lines = lines_from_file(prices);
    let assetss = lines_from_file(assets);
+   let mut assets_set = HashSet::new();
+   assetss.iter().for_each(|coin| { assets_set.insert(coin); });
    file_report("prices", &price_lines);
    file_report("assets", &assetss);
-   let mappo = process_csv_prices(price_lines);
-   print_header();
-   for sym in assetss {
-      if let Some(coin) = mappo.get(&sym) {
-         print_coin(coin);
-      }
-   }
+   let mut mappo = process_csv_prices(price_lines);
+   mappo.retain(|key, _| assets_set.contains(&key));
+   let mut coins: Vec<Coin> = mappo.into_values().collect();
+   coins.sort();
+   print_all_coins(coins);
 }
 
 fn file_report<T>(file: &str, lines: &[T]) {
