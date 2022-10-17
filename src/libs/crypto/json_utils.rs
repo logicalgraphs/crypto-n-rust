@@ -5,7 +5,7 @@
 // serde_json was recommended via https://stackoverflow.com/questions/30292752/how-do-i-parse-a-json-file
 
 use book::string_utils::dequote;
-use crate::coins::{Coin, mk_coin};
+use crate::types::coins::{Coin, mk_coin};
 
 extern crate serde;
 

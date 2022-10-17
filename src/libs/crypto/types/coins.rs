@@ -2,7 +2,7 @@
 
 use std::cmp::Ordering;
 
-use crate::types::{USD,mk_usd};
+use crate::types::usd::{USD,mk_usd};
 use book::csv_utils::{CsvWriter,print_csv};
 
 // ----- COIN -------------------------------------------------------
