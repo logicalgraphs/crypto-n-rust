@@ -7,7 +7,7 @@ edition = "2021"
 
 [[bin]]
 name = "assets"
-path = "../assets.rs"
+path = "assets.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }
