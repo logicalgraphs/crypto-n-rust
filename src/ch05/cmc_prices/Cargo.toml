@@ -13,4 +13,4 @@ serde_json = "1.0.48"
 
 [[bin]]
 name = "cmc_prices"
-path = "../cmc_prices.rs"
+path = "cmc_prices.rs"

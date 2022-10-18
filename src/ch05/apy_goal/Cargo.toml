@@ -1,14 +1,13 @@
 [package]
-name = "cmc_filter"
+name = "apy_goal"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[[bin]]
-name = "cmc_filter"
-path = "cmc_filter.rs"
-
 [dependencies]
 book = { path = "../../libs/book" }
-crypto = { path = "../../libs/crypto" }
+
+[[bin]]
+name = "apy_goal"
+path = "apy_goal.rs"

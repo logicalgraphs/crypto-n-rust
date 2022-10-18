@@ -10,7 +10,7 @@ use book::{
    file_utils::lines_from_file
 };
 
-use crypto::coins::{Coin,print_all_coins,read_csv_coin};
+use crypto::types::coins::{Coin,print_all_coins,read_csv_coin};
 
 fn usage() {
    println!("\n./cmc_filter <prices CSV file> <held assets LSV file>");
@@ -43,13 +43,11 @@ fn file_report<T>(file: &str, lines: &[T]) {
    println!("{} has {} lines", file, lines.len());
 }
 
-fn process_csv_prices(mut lines: Vec<String>)
+fn process_csv_prices(lines: Vec<String>)
       -> HashMap<String, Coin> {
-   lines.remove(0);
-   lines.remove(0);
-   lines.remove(0);
+   let (_, rows) = lines.split_at(3);
    let mut mappus = HashMap::new();
-   lines.iter().for_each(|line| process_price_line(&mut mappus, line));
+   rows.iter().for_each(|line| process_price_line(&mut mappus, line));
    mappus
 }
 

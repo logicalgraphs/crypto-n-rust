@@ -8,7 +8,7 @@ use book::{
 };
 
 use crypto::{
-   coins::print_all_coins,
+   types::coins::print_all_coins,
    json_utils::parse_coins
 };
 
