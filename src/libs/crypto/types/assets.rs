@@ -54,8 +54,7 @@ pub fn parse_asset(tok: &str, amt: &str, quot: &str)
    -> Result<Asset, String> {
    let amount: f32 = amt.parse().expect("amount");
    let quote: f32 = quot.parse().expect("quote");
-   let token = tok.to_string();
-   Ok(Asset { token, amount, quote })
+   Ok(mk_asset(tok.to_string(), amount, quote))
 }
 
 pub fn merge_assets(a1: &Asset, a2: Asset) -> Asset {
