@@ -10,7 +10,10 @@
 
 // we have this:
 
-use std::hash::{Hash,Hasher};
+use std::{
+   collections::HashSet,
+   hash::{Hash,Hasher}
+};
 
 use book::list_utils::head;
 
@@ -61,6 +64,8 @@ pub fn mk_orderbook(buy_side: String, sell_side: String, ratio: f32, price: USD)
    OrderBook { buy_side, sell_side, ratio, price }
 }
 
+// ----- scanners/parsers ---------------------------------------------------
+
 pub fn parse_orderbook(buy: &str, sell: &str, rat: &str, pric: &str)
    -> Result<OrderBook, String> {
    let ratio: f32 = rat.parse().expect("ratio");
@@ -82,4 +87,37 @@ pub fn scan_orderbook(lines: Vec<String>)
          None      => Err("Panik at ze Disco!".to_string())
       }
    }, rest.to_vec())
+}
+
+pub fn parse_lines(n: u32, books: &mut HashSet<OrderBook>, lines: Vec<String>) {
+   parse_lines_debug(n, books, lines, false);
+}
+
+pub fn parse_lines_debug(n: u32, books: &mut HashSet<OrderBook>,
+                         lines: Vec<String>, debug: bool) {
+   if debug { println!("Processing order book {}", n); }
+   let (mb_order, rest) = scan_orderbook(lines);
+   match mb_order {
+      Ok(book) => {
+         if debug { println!("Processed {:?}", book); }
+         books.insert(book);
+      },
+      Err(msg) => println!("{}", msg)
+   };
+   if rest.len() > 0 {
+      parse_lines(n + 1, books, rest);
+   }
+}
+
+// ----- Access -------------------------------------------------------
+
+pub fn fetch_orderbooks(markets: HashSet<OrderBook>, token: String)
+   -> HashSet<OrderBook> {
+   let mut ans = HashSet::new();
+   for o in markets.iter() {
+      if o.buy_side == token || o.sell_side == token {
+         ans.insert(o.clone());
+      }
+   }
+   ans
 }

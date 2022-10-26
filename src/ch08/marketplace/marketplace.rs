@@ -9,7 +9,7 @@ use book::{
    list_utils::head
 };
 
-use crypto::types::marketplace::{OrderBook,scan_orderbook};
+use crypto::types::marketplace::{OrderBook,parse_lines,fetch_orderbooks};
 
 fn usage() {
    println!("\n./marketplace <marketplace LSV file>");
@@ -19,31 +19,19 @@ fn usage() {
 fn main() {
    if let Some(filename) = head(get_args()) {
       println!("Processing {}", filename);
-      parse_n_print(filename);
+      let markets = parse_n_print(filename);
+      let kuji_books = fetch_orderbooks(markets, "KUJI".to_string());
+      println!("The KUJI order books are {:?}", kuji_books);
    } else {
       usage();
    }
 }
 
-fn parse_n_print(file: impl AsRef<Path>) {
+fn parse_n_print(file: impl AsRef<Path>) -> HashSet<OrderBook> {
    let lines = lines_from_file(file);
    let (_header, rows) = lines.split_at(3);
    let mut pairs = HashSet::new();
    parse_lines(1, &mut pairs, rows.to_vec());
-   println!("From {} lines, I have {} order books", pairs.len(), lines.len());
-}
-
-fn parse_lines(n: u32, books: &mut HashSet<OrderBook>, lines: Vec<String>) {
-   println!("Processing order book {}", n);
-   let (mb_order, rest) = scan_orderbook(lines);
-   match mb_order {
-      Ok(book) => {
-         println!("Processed {:?}", book);
-         books.insert(book);
-      },
-      Err(msg) => println!("{}", msg)
-   };
-   if rest.len() > 0 {
-      parse_lines(n + 1, books, rest);
-   }
+   println!("From {} lines, I have {} order books", lines.len(), pairs.len());
+   pairs
 }

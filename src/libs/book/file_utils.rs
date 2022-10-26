@@ -37,4 +37,3 @@ pub fn extract_date_and_body(file: impl AsRef<Path>)
       panic!("File empty");
    }
 }
-

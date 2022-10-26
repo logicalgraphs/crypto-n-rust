@@ -13,7 +13,7 @@ use book::{
    num_utils::integer_decode
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct USD {
    amount: f32,
    decode: (u64, i16, i8)
