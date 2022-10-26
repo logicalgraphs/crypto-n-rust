@@ -64,6 +64,17 @@ pub fn merge_assets(a1: &Asset, a2: Asset) -> Asset {
    mk_asset(token.to_string(), amount, quote)
 }
 
+pub fn split_asset(a1: &Asset, a2: Asset) -> Option<Asset> {
+   let token = &a1.token;
+   let amount = a1.amount - a2.amount;
+   if amount <= 0.0 {
+      None
+   } else {
+      let quote = (a1.quote * a1.amount - a2.quote * a2.amount) / amount;
+      Some(mk_asset(token.to_string(), amount, quote))
+   }
+}
+
 pub fn read_csv_asset(line: &String) -> Result<Asset, String> {
    if let [token, amount, quote] =
          line.split(',').collect::<Vec<&str>>().as_slice() {
