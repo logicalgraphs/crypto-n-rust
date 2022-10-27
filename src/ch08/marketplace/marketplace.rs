@@ -20,8 +20,11 @@ fn main() {
    if let Some(filename) = head(get_args()) {
       println!("Processing {}", filename);
       let markets = parse_n_print(filename);
-      let kuji_books = fetch_orderbooks(markets, "KUJI".to_string());
-      println!("The KUJI order books are {:?}", kuji_books);
+      let atom_books = fetch_orderbooks(markets, "ATOM".to_string());
+      println!("The ATOM order books are:");
+      for o in atom_books.iter() {
+         println!("\t{}", o);
+      }
    } else {
       usage();
    }
