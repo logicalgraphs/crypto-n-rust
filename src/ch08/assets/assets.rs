@@ -24,10 +24,16 @@ fn main() {
       println!("Processing {}", filename);
       let mut assets = parse_n_print(filename);
 
-      println!("\nOkay, now I'm going to sell 10 $ATOM for $13 ea");
+      println!("\nOkay, now I'm going to sell 10 $ATOM for $13 ea\n");
       let sold = mk_asset("ATOM".to_string(), 10.0, 13.0);
-      downdate(&mut assets, sold);
-      print_assets(&assets);
+      let mut updated_assets = downdate(&mut assets, sold);
+      print_assets(&updated_assets);
+
+
+      println!("\nNow I'm going to sell all my $KUJI\n");
+      let kuji = mk_asset("KUJI".to_string(), 200.0, 1.5);
+      let neuve = downdate(&mut updated_assets, kuji);
+      print_assets(&neuve);
    } else {
       usage();
    }
@@ -60,14 +66,30 @@ fn update(assets: &mut HashSet<Asset>, a: Asset) {
    });
 }
 
-fn downdate(assets: &mut HashSet<Asset>, a: Asset) {
+fn downdate(assets: &HashSet<Asset>, a: Asset) -> HashSet<Asset> {
    match assets.get(&a) {
       Some(c) => {
-         match split_asset(c, a) {
-            Some(d) => { assets.replace(d); },
-            None    => { assets.remove(&c); }
+         match split_asset(&c, a) {
+            Some(d) => { replace_with(assets, &d) },
+            None    => { remove_asset(assets, &c) }
          }
       }
-      None    => { }
+      None    => { assets.clone() }
    }
+}
+
+fn replace_with(assets: &HashSet<Asset>, d: &Asset) -> HashSet<Asset> {
+   let mut ans = HashSet::new();
+   for ass in assets.iter() {
+      ans.insert(if d == ass { d.clone() } else { ass.clone() });
+   }
+   ans
+}
+
+fn remove_asset(assets: &HashSet<Asset>, c: &Asset) -> HashSet<Asset> {
+   let mut ans = HashSet::new();
+   for ass in assets.iter() {
+      if c != ass { ans.insert(ass.clone()); }
+   }
+   ans
 }
