@@ -12,6 +12,8 @@ pub struct Asset {
    quote: f32
 }
 
+// ----- implementations ---------------------------------------------
+
 impl CsvWriter for Asset {
    fn as_csv(&self) -> String { csv(self) }
 }
@@ -42,6 +44,8 @@ impl PartialOrd for Asset {
    }
 }
 
+// ----- io -------------------------------------------------------
+
 fn csv(asset: &Asset) -> String {
    format_args!("{},{},{}",asset.token, asset.amount, asset.quote).to_string()
 }
@@ -56,6 +60,17 @@ pub fn parse_asset(tok: &str, amt: &str, quot: &str)
    let quote: f32 = quot.parse().expect("quote");
    Ok(mk_asset(tok.to_string(), amount, quote))
 }
+
+pub fn read_csv_asset(line: &String) -> Result<Asset, String> {
+   if let [token, amount, quote] =
+         line.split(',').collect::<Vec<&str>>().as_slice() {
+      parse_asset(token, amount, quote)
+   } else {
+      Err("Can't parse line: ".to_owned() + line)
+   }
+}
+
+// ----- monoid -------------------------------------------------------
 
 pub fn merge_assets(a1: &Asset, a2: Asset) -> Asset {
    let token = &a1.token;
@@ -72,14 +87,5 @@ pub fn split_asset(a1: &Asset, a2: Asset) -> Option<Asset> {
    } else {
       let quote = (a1.quote * a1.amount - a2.quote * a2.amount) / amount;
       Some(mk_asset(token.to_string(), amount, quote))
-   }
-}
-
-pub fn read_csv_asset(line: &String) -> Result<Asset, String> {
-   if let [token, amount, quote] =
-         line.split(',').collect::<Vec<&str>>().as_slice() {
-      parse_asset(token, amount, quote)
-   } else {
-      Err("Can't parse line: ".to_owned() + line)
    }
 }
