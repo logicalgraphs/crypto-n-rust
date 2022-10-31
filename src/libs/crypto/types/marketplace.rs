@@ -11,6 +11,7 @@
 // we have this:
 
 use std::{
+   fmt,
    collections::HashSet,
    hash::{Hash,Hasher}
 };
@@ -41,6 +42,13 @@ pub struct OrderBook {
 }
 
 // ----- impl -------------------------------------------------------
+
+impl fmt::Display for OrderBook {
+   fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+      write!(formatter, "{} / {} {:.3} {}", self.buy_side, self.sell_side,
+             self.ratio, self.price)
+   }
+}
 
 impl Hash for OrderBook {
    fn hash<H: Hasher>(&self, state: &mut H) {
