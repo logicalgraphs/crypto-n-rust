@@ -15,7 +15,7 @@ use book::{
 
 #[derive(Debug, Clone, Copy)]
 pub struct USD {
-   amount: f32,
+   pub amount: f32,
    decode: (u64, i16, i8)
 }
 
@@ -31,7 +31,7 @@ impl Eq for USD { }
 
 impl fmt::Display for USD {
    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-      write!(formatter, "${:.2}", self.amount)
+      write!(formatter, "${:.3}", self.amount)
    }
 }
 

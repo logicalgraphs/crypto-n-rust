@@ -4,6 +4,7 @@ use std::{
 };
 
 use book::csv_utils::CsvWriter;
+use crate::types::usd::{USD,mk_usd};
 
 #[derive(Debug, Clone)]
 pub struct Asset {
@@ -47,7 +48,8 @@ impl PartialOrd for Asset {
 // ----- io -------------------------------------------------------
 
 fn csv(asset: &Asset) -> String {
-   format_args!("{},{},{}",asset.token, asset.amount, asset.quote).to_string()
+   let quot = mk_usd(asset.quote);
+   format_args!("{},{},{}",asset.token, asset.amount, quot).to_string()
 }
 
 pub fn mk_asset(token: String, amount: f32, quote: f32) -> Asset {
@@ -57,8 +59,8 @@ pub fn mk_asset(token: String, amount: f32, quote: f32) -> Asset {
 pub fn parse_asset(tok: &str, amt: &str, quot: &str)
    -> Result<Asset, String> {
    let amount: f32 = amt.parse().expect("amount");
-   let quote: f32 = quot.parse().expect("quote");
-   Ok(mk_asset(tok.to_string(), amount, quote))
+   let quot1: USD = quot.parse().expect("quote");
+   Ok(mk_asset(tok.to_string(), amount, quot1.amount))
 }
 
 pub fn read_csv_asset(line: &String) -> Result<Asset, String> {
