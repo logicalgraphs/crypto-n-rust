@@ -34,8 +34,9 @@ pub fn parse_swap(date: &str, sym1: &str, amt1: &str, sym2: &str, amt2: &str,
 }
 
 pub fn read_csv_swap(line: &String) -> Result<Swap, String> {
-   if let [dat, sym1, amt1, sym2, amt2, quot1, quot2] =
-         line.split(',').collect::<Vec<&str>>().as_slice() {
+   let mut swap_dater: Vec<&str> = line.split(',').collect();
+   swap_dater.truncate(7);
+   if let [dat, sym1, amt1, sym2, amt2, quot1, quot2] = swap_dater.as_slice() {
       parse_swap(dat, sym1, amt1, sym2, amt2, quot1, quot2)
    } else {
       Err("Can't parse line: ".to_owned() + line)
