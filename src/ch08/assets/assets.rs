@@ -11,7 +11,7 @@ use book::{
 };
 
 use crypto::types::{
-   assets::{Asset,read_csv_asset,mk_asset,add_asset,remove_asset}
+   assets::{Asset,read_csv_asset,mk_asset,add_asset,remove_asset,print_assets}
 };
 
 fn usage() {
@@ -52,9 +52,4 @@ fn parse_n_add(line: &String, assets: &mut HashSet<Asset>) {
       Ok(asset) => add_asset(assets, asset),
       Err(msg) => println!("{}", msg)
    }
-}
-
-fn print_assets(assets: &HashSet<Asset>) {
-   println!("asset,amount,quote");
-   assets.iter().for_each(print_csv);
 }

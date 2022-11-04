@@ -4,7 +4,7 @@ use std::{
    hash::{Hash,Hasher}
 };
 
-use book::csv_utils::CsvWriter;
+use book::csv_utils::{CsvWriter,print_csv};
 use crate::types::usd::{USD,mk_usd};
 
 #[derive(Debug, Clone)]
@@ -71,6 +71,11 @@ pub fn read_csv_asset(line: &String) -> Result<Asset, String> {
    } else {
       Err("Can't parse line: ".to_owned() + line)
    }
+}
+
+pub fn print_assets(assets: &HashSet<Asset>) {
+   println!("asset,amount,quote");
+   assets.iter().for_each(print_csv);
 }
 
 // ----- monoid -------------------------------------------------------
