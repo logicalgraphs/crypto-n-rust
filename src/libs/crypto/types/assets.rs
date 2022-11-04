@@ -1,5 +1,6 @@
 use std::{
    cmp::Ordering,
+   collections::HashSet,
    hash::{Hash,Hasher}
 };
 
@@ -90,4 +91,43 @@ pub fn split_asset(a1: &Asset, a2: Asset) -> Option<Asset> {
       let quote = (a1.quote * a1.amount - a2.quote * a2.amount) / amount;
       Some(mk_asset(token.to_string(), amount, quote))
    }
+}
+
+// ----- hash-set operations ---------------------------------------------
+
+pub fn add_asset(assets: &mut HashSet<Asset>, a: Asset) {
+   assets.replace(match assets.get(&a) {
+      Some(d) => merge_assets(d, a),
+      None    => a
+   });
+}
+
+pub fn remove_asset(assets: &HashSet<Asset>, a: Asset) -> HashSet<Asset> {
+   match assets.get(&a) {
+      Some(c) => {
+         match split_asset(&c, a) {
+            Some(d) => { replace_asset_with(assets, &d) },
+            None    => { delete_asset(assets, &c) }
+         }
+      }
+      None    => { assets.clone() }
+   }
+}
+
+// -- helper functions for hash-set operation
+
+fn replace_asset_with(assets: &HashSet<Asset>, d: &Asset) -> HashSet<Asset> {
+   let mut ans = HashSet::new();
+   for ass in assets.iter() {
+      ans.insert(if d == ass { d.clone() } else { ass.clone() });
+   }
+   ans
+}
+
+fn delete_asset(assets: &HashSet<Asset>, c: &Asset) -> HashSet<Asset> {
+   let mut ans = HashSet::new();
+   for ass in assets.iter() {
+      if c != ass { ans.insert(ass.clone()); }
+   }
+   ans
 }
