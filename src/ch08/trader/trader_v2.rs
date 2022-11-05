@@ -12,7 +12,7 @@ use book::{
 };
 
 use crypto::types::{
-   assets::{Asset},
+   assets::{Asset, print_assets},
    trades::{read_csv_swap,swap_d}
 };
 
@@ -44,6 +44,9 @@ fn cont(bag: &mut HashSet<Asset>, lines: Vec<String>) {
    if !lines.is_empty() {
       let (line, rest) = ht(lines);
       print_trades(bag, &line, rest);
+   } else {
+      println!("\nAssets:\n");
+      print_assets(bag);
    }
 }
    
