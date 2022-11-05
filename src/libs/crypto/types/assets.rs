@@ -73,6 +73,19 @@ pub fn read_csv_asset(line: &String) -> Result<Asset, String> {
    }
 }
 
+pub fn read_assets(lines: Vec<String>) -> HashSet<Asset> {
+   let mut bag = HashSet::new();
+   let mut counter: i32 = 0;
+   for line in lines {
+      match read_csv_asset(&line) {
+         Ok(asset) => { bag.insert(asset); counter += 1; },
+         Err(msg) => { println!("Error: {}", msg); }
+      }
+   }
+   println!("Parsed {} assets.", counter);
+   bag
+}
+
 pub fn print_assets(assets: &HashSet<Asset>) {
    println!("asset,amount,quote");
    assets.iter().for_each(print_csv);
