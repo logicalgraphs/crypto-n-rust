@@ -78,6 +78,14 @@ pub fn print_assets(assets: &HashSet<Asset>) {
    assets.iter().for_each(print_csv);
 }
 
+pub fn print_asset_d(bag: &HashSet<Asset>, a: &Asset, debug: bool) {
+   if debug {
+      if let Some(a1) = bag.get(a) {
+         print_csv(a1);
+      }
+   }
+}        
+
 // ----- monoid -------------------------------------------------------
 
 pub fn merge_assets(a1: &Asset, a2: Asset) -> Asset {

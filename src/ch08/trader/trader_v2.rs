@@ -1,16 +1,19 @@
+// trail run with ./trader_v2 data/mini_me.csv
+
 use std::{
+   collections::HashSet,
    path::Path
 };
 
 use book::{
    utils::get_args,
    file_utils::lines_from_file,
-   csv_utils::print_csv,
-   list_utils::{head,tail}
+   list_utils::{head,tail,ht}
 };
 
 use crypto::types::{
-   trades::read_csv_swap
+   assets::{Asset},
+   trades::{read_csv_swap,swap_d}
 };
 
 fn usage() {
@@ -22,22 +25,36 @@ fn main() {
    if let Some(filename) = head(get_args()) {
       println!("Processing {}", filename);
       parse_n_print(filename);
+      println!("Finito!");  // a little Italian flourish at the finito!
    } else {
       usage();
    }
 }
 
-// first thing we do is to ignore trailing data
-
 fn parse_n_print(file: impl AsRef<Path>) {
    let lines = tail(lines_from_file(file));
    println!("date,from,to");
-   lines.iter().for_each(print_trade);
+   let mut bag = HashSet::new();
+   cont(&mut bag, lines);
 }
 
-fn print_trade(line: &String) {
-   match read_csv_swap(line) {
-      Ok(trade) => { print_csv(&trade); },
-      Err(msg) =>  { println!("ERROR: {}", msg) }
+// mutually recursive functions, because what even are for-loops, anyway? :<
+
+fn cont(bag: &mut HashSet<Asset>, lines: Vec<String>) {
+   if !lines.is_empty() {
+      let (line, rest) = ht(lines);
+      print_trades(bag, &line, rest);
+   }
+}
+   
+
+fn print_trades(bag: &mut HashSet<Asset>, line_opt: &Option<String>,
+                lines: Vec<String>) {
+   if let Some(line) = line_opt { 
+      let mut new_bag = match read_csv_swap(line) {
+         Ok(trade) => { swap_d(bag, trade, true) },
+         Err(msg) =>  { println!("ERROR: {}", msg); bag.clone() }
+      };
+      cont(&mut new_bag, lines);
    }
 }

@@ -1,8 +1,12 @@
 // a trade is a swap from one asset to another
 
-use book::csv_utils::CsvWriter;
+use std::collections::HashSet;
 
-use crate::types::assets::{Asset, parse_asset};
+use book::csv_utils::{CsvWriter,print_csv};
+
+use crate::types::assets::{
+    Asset, parse_asset, add_asset, remove_asset, print_asset_d
+};
 
 #[derive(Debug, Clone)]
 pub struct Swap {
@@ -27,9 +31,9 @@ pub fn mk_swap(date: String, from: Asset, to: Asset) -> Swap {
 }
 
 pub fn parse_swap(date: &str, sym1: &str, amt1: &str, sym2: &str, amt2: &str,
-                   quot1: &str, quot2: &str) -> Result<Swap, String> {
-   let from = parse_asset(sym1, amt1, quot1)?;
-   let to   = parse_asset(sym2, amt2, quot2)?;
+                   quot2: &str, quot1: &str) -> Result<Swap, String> {
+   let to     = parse_asset(sym1, amt1, quot1)?;
+   let from   = parse_asset(sym2, amt2, quot2)?;
    Ok(mk_swap(date.to_string(), from, to))
 }
 
@@ -41,4 +45,24 @@ pub fn read_csv_swap(line: &String) -> Result<Swap, String> {
    } else {
       Err("Can't parse line: ".to_owned() + line)
    }
+}
+
+// now let's execute the swap against a (hash)set of assets.
+
+pub fn swap(p: &mut HashSet<Asset>, s: Swap) -> HashSet<Asset> {
+   swap_d(p, s, false)
+}
+
+pub fn swap_d(p: &mut HashSet<Asset>, s: Swap, debug: bool) -> HashSet<Asset> {
+   if debug {
+      println!("For trade");
+      print_csv(&s);
+   }
+   let tom = s.to.clone();
+   add_asset(p, s.to.clone());
+   print_asset_d(&p, &tom, debug);
+   let fromm = s.from.clone();
+   let bag = remove_asset(p, s.from.clone());
+   print_asset_d(&bag, &fromm, debug);
+   bag
 }
