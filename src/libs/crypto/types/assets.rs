@@ -119,6 +119,10 @@ pub fn split_asset(a1: &Asset, a2: Asset) -> Option<Asset> {
    }
 }
 
+pub fn diff_usd(a1: &Asset, a2: &Asset) -> USD {
+   mk_usd(a2.amount * a2.quote - a2.amount * a1.quote)
+}
+
 // ----- hash-set operations ---------------------------------------------
 
 pub fn add_asset(assets: &mut HashSet<Asset>, a: Asset) {

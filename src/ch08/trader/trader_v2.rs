@@ -49,7 +49,6 @@ fn cont(bag: &mut HashSet<Asset>, lines: Vec<String>) {
       print_assets(bag);
    }
 }
-   
 
 fn print_trades(bag: &mut HashSet<Asset>, line_opt: &Option<String>,
                 lines: Vec<String>) {

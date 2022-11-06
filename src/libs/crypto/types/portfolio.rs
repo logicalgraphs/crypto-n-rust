@@ -10,7 +10,8 @@ use std::{
 
 use crate::types::{
    assets::{Asset,print_assets,read_assets},
-   trades::{Swap,swap}
+   trades::{Swap,swap_d},
+   usd::USD
 };
 
 use book::file_utils::lines_from_file;
@@ -40,10 +41,14 @@ pub fn assets_from_file(file: impl AsRef<Path>) -> Portfolio {
 
 // -- and then
 
-pub fn execute(p: &Portfolio, trade: Swap) -> Portfolio {
+pub fn execute(p: &Portfolio, trade: Swap) -> (Portfolio, USD) {
+   execute_d(p, trade, false)
+}
+
+pub fn execute_d(p: &Portfolio, trade: Swap, debug: bool) -> (Portfolio, USD) {
    let mut b = p.bag.clone();
-   let b1 = swap(&mut b, trade);
-   Portfolio { bag: b1 }
+   let (b1, pnl) = swap_d(&mut b, trade, debug);
+   (Portfolio { bag: b1 }, pnl)
 }
 
 pub fn print_portfolio(p: &Portfolio) {

@@ -4,8 +4,9 @@ use std::collections::HashSet;
 
 use book::csv_utils::{CsvWriter,print_csv};
 
-use crate::types::assets::{
-    Asset, parse_asset, add_asset, remove_asset, print_asset_d
+use crate::types::{
+   assets::{Asset,parse_asset,add_asset,remove_asset,print_asset_d,diff_usd},
+   usd::{mk_usd,USD}
 };
 
 #[derive(Debug, Clone)]
@@ -24,7 +25,7 @@ impl CsvWriter for Swap {
    }
 }
 
-// first task is to parse in orders
+// ---- first task is to parse in orders ----------------------------
 
 pub fn mk_swap(date: String, from: Asset, to: Asset) -> Swap {
    Swap { date, from, to }
@@ -49,11 +50,12 @@ pub fn read_csv_swap(line: &String) -> Result<Swap, String> {
 
 // now let's execute the swap against a (hash)set of assets.
 
-pub fn swap(p: &mut HashSet<Asset>, s: Swap) -> HashSet<Asset> {
+pub fn swap(p: &mut HashSet<Asset>, s: Swap) -> (HashSet<Asset>, USD) {
    swap_d(p, s, false)
 }
 
-pub fn swap_d(p: &mut HashSet<Asset>, s: Swap, debug: bool) -> HashSet<Asset> {
+pub fn swap_d(p: &mut HashSet<Asset>, s: Swap, debug: bool)
+   -> (HashSet<Asset>, USD) {
    if debug {
       println!("For trade");
       print_csv(&s);
@@ -62,7 +64,18 @@ pub fn swap_d(p: &mut HashSet<Asset>, s: Swap, debug: bool) -> HashSet<Asset> {
    add_asset(p, s.to.clone());
    print_asset_d(&p, &tom, debug);
    let fromm = s.from.clone();
+   let zuppa = pnl(p, &fromm);
    let bag = remove_asset(p, s.from.clone());
    print_asset_d(&bag, &fromm, debug);
-   bag
+   if debug { println!("PnL: {}", zuppa); }
+   (bag, zuppa)
+}
+
+// computes the profit (or loss) on an asset sold vice what I had it as
+
+pub fn pnl(bag: &HashSet<Asset>, sold: &Asset) -> USD {
+   match bag.get(sold) {
+      None => mk_usd(0.0),
+      Some(orig) => diff_usd(orig, sold)
+   }
 }
