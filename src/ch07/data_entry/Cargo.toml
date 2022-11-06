@@ -7,7 +7,7 @@ edition = "2021"
 
 [[bin]]
 name = "data_entry"
-path = "../bonus_data_entry.rs"
+path = "bonus_data_entry.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }
