@@ -9,7 +9,7 @@ use crate::types::usd::{USD,mk_usd};
 
 #[derive(Debug, Clone)]
 pub struct Asset {
-   token: String,
+   pub token: String,
    amount: f32,
    quote: f32
 }
@@ -51,6 +51,10 @@ impl PartialOrd for Asset {
 fn csv(asset: &Asset) -> String {
    let quot = mk_usd(asset.quote);
    format_args!("{},{},{}",asset.token, asset.amount, quot).to_string()
+}
+
+pub fn proto(token: String) -> Asset {
+   mk_asset(token, 0.0, 0.0)
 }
 
 pub fn mk_asset(token: String, amount: f32, quote: f32) -> Asset {
@@ -121,6 +125,10 @@ pub fn split_asset(a1: &Asset, a2: Asset) -> Option<Asset> {
 
 pub fn diff_usd(a1: &Asset, a2: &Asset) -> USD {
    mk_usd(a2.amount * a2.quote - a2.amount * a1.quote)
+}
+
+pub fn ratio_pair(a1: &Asset, a2: &Asset) -> (f32, f32) {
+   (a1.quote / a2.quote, a2.quote / a1.quote)
 }
 
 // ----- hash-set operations ---------------------------------------------

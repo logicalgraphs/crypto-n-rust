@@ -9,7 +9,7 @@ use std::{
 };
 
 use crate::types::{
-   assets::{Asset,print_assets,read_assets},
+   assets::{Asset,print_assets,read_assets,proto},
    trades::{Swap,swap_d},
    usd::USD
 };
@@ -54,4 +54,14 @@ pub fn execute_d(p: &Portfolio, trade: Swap, debug: bool) -> (Portfolio, USD) {
 pub fn print_portfolio(p: &Portfolio) {
    println!("\nPortfolio:\n");
    print_assets(&p.bag);
+}
+
+pub fn for_each_asset(p: &Portfolio, f: impl Fn(&Asset) -> ()) {
+   p.bag.iter().for_each(f);
+}
+
+// ----- fetchers -------------------------------------------------------
+
+pub fn fetch_asset_named(p: &Portfolio, name: String) -> Option<&Asset> {
+   p.bag.get(&proto(name))
 }

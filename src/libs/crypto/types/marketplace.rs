@@ -18,7 +18,10 @@ use std::{
 
 use book::list_utils::head;
 
-use crate::types::usd::{USD, mk_usd};
+use crate::types::{
+   assets::Asset,
+   usd::{USD, mk_usd}
+};
 
 /*
 date: 2022-10-18
@@ -37,7 +40,7 @@ $
 pub struct OrderBook {
    buy_side: String,
    sell_side: String,
-   ratio: f32,
+   pub ratio: f32,
    price: USD
 }
 
@@ -119,13 +122,22 @@ pub fn parse_lines_debug(n: u32, books: &mut HashSet<OrderBook>,
 
 // ----- Access -------------------------------------------------------
 
-pub fn fetch_orderbooks(markets: HashSet<OrderBook>, token: String)
+pub fn fetch_orderbooks(markets: &HashSet<OrderBook>, token: &String)
    -> HashSet<OrderBook> {
    let mut ans = HashSet::new();
    for o in markets.iter() {
-      if o.buy_side == token || o.sell_side == token {
+      if &o.buy_side == token || &o.sell_side == token {
          ans.insert(o.clone());
       }
    }
    ans
+}
+
+pub fn fetch_orderbooks_for(markets: &HashSet<OrderBook>, a: &Asset)
+   -> HashSet<OrderBook> {
+   fetch_orderbooks(markets, &a.token)
+}
+
+pub fn dual_asset(o: &OrderBook, a: &Asset) -> String {
+   (if o.buy_side == a.token { &o.sell_side } else { &o.buy_side }).clone()
 }
