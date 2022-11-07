@@ -11,7 +11,7 @@
 // we have this:
 
 use std::{
-   collections::HashSet,
+   collections::{HashSet,HashMap},
    fmt,
    hash::{Hash,Hasher},
    path::Path
@@ -156,4 +156,71 @@ pub fn fetch_orderbooks_for(markets: &HashSet<OrderBook>, a: &Asset)
 
 pub fn dual_asset(o: &OrderBook, a: &Asset) -> String {
    (if o.buy_side == a.token { &o.sell_side } else { &o.buy_side }).clone()
+}
+
+// ----- Bases -------------------------------------------------------
+
+// Okay, the buy-side assets. There are two cases:
+
+// 1. multiple: in this case, there is always an axlUSDC-dual
+// 2. uno: then there's either axlUSDC- or USK-dual, but in either pairing,
+//    there is an axlUSDC pricing for this asset, so no conversion is necessary
+//    for the axlUSDC-price
+
+// so the only complication is to reduce the n-tuple to a 1-tuple-axlUSDC-dual
+// then map those to name-quote pairs
+
+// this reduction can be simplified to this transformation:
+
+// hashset<orderbooks> -> hashmap<buy, [(sell, quote)]>
+// then filter on axlUSDC where right-side length > 1
+// THEN < buy, snd(head(filtered))> gets you the bases for $axlUSDC prices
+
+fn fetch_buys(market: &HashSet<OrderBook>)
+   -> HashMap<String, HashMap<String, USD>> {
+   let mut ans = HashMap::<String, HashMap<String, USD>>::new();
+   for o in market.iter() {
+      let key = o.buy_side.clone();
+      ans.insert(key.clone(), insert_then(ans.get(&key), &o));
+   }
+   ans
+}
+
+fn insert_then(m: Option<&HashMap<String, USD>>, o: &OrderBook)
+   -> HashMap<String, USD> {
+   let mut hash = match m {
+      None => HashMap::new(),
+      Some(h) => h.clone()
+   };
+   hash.insert(o.sell_side.clone(), o.price);
+   hash
+}
+
+fn extract_price(sells: &HashMap<String, USD>) -> USD {
+   let hashes = if sells.len() > 1 {
+      filter_vals(|key| key == "axlUSDC", sells)
+   } else { sells.clone() };
+   let prices = hashes.values().collect();
+   match head(prices) {
+      None => mk_usd(0.0),
+      Some(dollah) => dollah.clone()
+   }
+}
+
+fn filter_vals<V: Clone>(f: impl Fn(&String) -> bool, m: &HashMap<String, V>)
+   -> HashMap<String, V> {
+   let mut ans: HashMap<String, V> = HashMap::new();
+   for (k, v) in m.iter() {
+      if f(k) { ans.insert(k.clone(), v.clone()); }
+   }
+   ans
+}
+
+pub fn prices(market: &HashSet<OrderBook>) -> HashMap<String, USD> {
+   let buys = fetch_buys(market);
+   let mut ans: HashMap<String, USD> = HashMap::new();
+   for (k, v) in buys.iter() {
+      ans.insert(k.clone(), extract_price(v));
+   }
+   ans
 }
