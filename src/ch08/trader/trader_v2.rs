@@ -13,7 +13,8 @@ use book::{
 
 use crypto::types::{
    assets::{Asset, print_assets},
-   trades::{read_csv_swap,swap_d}
+   trades::{read_csv_swap,swap_d},
+   usd::mk_usd
 };
 
 fn usage() {
@@ -53,9 +54,9 @@ fn cont(bag: &mut HashSet<Asset>, lines: Vec<String>) {
 fn print_trades(bag: &mut HashSet<Asset>, line_opt: &Option<String>,
                 lines: Vec<String>) {
    if let Some(line) = line_opt { 
-      let mut new_bag = match read_csv_swap(line) {
+      let (mut new_bag, _) = match read_csv_swap(line) {
          Ok(trade) => { swap_d(bag, trade, true) },
-         Err(msg) =>  { println!("ERROR: {}", msg); bag.clone() }
+         Err(msg) =>  { println!("ERROR: {}", msg); (bag.clone(), mk_usd(0.0)) }
       };
       cont(&mut new_bag, lines);
    }
