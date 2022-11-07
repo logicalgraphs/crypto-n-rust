@@ -11,9 +11,10 @@
 // we have this:
 
 use std::{
-   fmt,
    collections::HashSet,
-   hash::{Hash,Hasher}
+   fmt,
+   hash::{Hash,Hasher},
+   path::Path
 };
 
 use book::list_utils::head;
@@ -100,18 +101,20 @@ pub fn scan_orderbook(lines: Vec<String>)
    }, rest.to_vec())
 }
 
-/*
+pub fn read_marketplace(file: impl AsRef<Path>) -> HashSet<OrderBook> {
+   read_marketplace_d(file, false)
+}
 
-To parse the marketplace:
-
+pub fn read_marketplace_d(file: impl AsRef<Path>, debug: bool)
+   -> HashSet<OrderBook> {
    use book::file_utils::lines_from_file;
 
    let lines = lines_from_file(file);
    let (_header, rows) = lines.split_at(3);
    let mut pairs = HashSet::new();
-   parse_lines(&mut pairs, rows.to_vec());
-
-*/
+   parse_lines_d(1, &mut pairs, rows.to_vec(), debug);
+   pairs
+}
 
 pub fn parse_lines(books: &mut HashSet<OrderBook>, lines: Vec<String>) {
    parse_lines_d(1, books, lines, false);
