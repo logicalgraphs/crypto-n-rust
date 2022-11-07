@@ -20,7 +20,7 @@ fn main() {
    if let Some(filename) = head(get_args()) {
       println!("Processing {}", filename);
       let markets = parse_n_print(filename);
-      let atom_books = fetch_orderbooks(markets, "ATOM".to_string());
+      let atom_books = fetch_orderbooks(&markets, &"ATOM".to_string());
       println!("The ATOM order books are:");
       for o in atom_books.iter() {
          println!("\t{}", o);
@@ -34,7 +34,7 @@ fn parse_n_print(file: impl AsRef<Path>) -> HashSet<OrderBook> {
    let lines = lines_from_file(file);
    let (_header, rows) = lines.split_at(3);
    let mut pairs = HashSet::new();
-   parse_lines(1, &mut pairs, rows.to_vec());
+   parse_lines(&mut pairs, rows.to_vec());
    println!("From {} lines, I have {} order books", lines.len(), pairs.len());
    pairs
 }

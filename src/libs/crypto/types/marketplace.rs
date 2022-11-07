@@ -100,12 +100,25 @@ pub fn scan_orderbook(lines: Vec<String>)
    }, rest.to_vec())
 }
 
-pub fn parse_lines(n: u32, books: &mut HashSet<OrderBook>, lines: Vec<String>) {
-   parse_lines_debug(n, books, lines, false);
+/*
+
+To parse the marketplace:
+
+   use book::file_utils::lines_from_file;
+
+   let lines = lines_from_file(file);
+   let (_header, rows) = lines.split_at(3);
+   let mut pairs = HashSet::new();
+   parse_lines(&mut pairs, rows.to_vec());
+
+*/
+
+pub fn parse_lines(books: &mut HashSet<OrderBook>, lines: Vec<String>) {
+   parse_lines_d(1, books, lines, false);
 }
 
-pub fn parse_lines_debug(n: u32, books: &mut HashSet<OrderBook>,
-                         lines: Vec<String>, debug: bool) {
+pub fn parse_lines_d(n: u32, books: &mut HashSet<OrderBook>,
+                     lines: Vec<String>, debug: bool) {
    if debug { println!("Processing order book {}", n); }
    let (mb_order, rest) = scan_orderbook(lines);
    match mb_order {
@@ -116,7 +129,7 @@ pub fn parse_lines_debug(n: u32, books: &mut HashSet<OrderBook>,
       Err(msg) => println!("{}", msg)
    };
    if rest.len() > 0 {
-      parse_lines(n + 1, books, rest);
+      parse_lines_d(n + 1, books, rest, debug);
    }
 }
 
