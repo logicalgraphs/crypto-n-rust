@@ -186,6 +186,8 @@ fn fetch_buys(market: &HashSet<OrderBook>)
    ans
 }
 
+// addresses the 'problem' that insert doesn't return the modified HashMap
+
 fn insert_then(m: Option<&HashMap<String, USD>>, o: &OrderBook)
    -> HashMap<String, USD> {
    let mut hash = match m {
@@ -223,4 +225,22 @@ pub fn prices(market: &HashSet<OrderBook>) -> HashMap<String, USD> {
       ans.insert(k.clone(), extract_price(v));
    }
    ans
+}
+
+// once we have the prices (above), it's simple to convert to an USK-table:
+// just look up the axlUSDC-price: that's on the axlUSDC/USK order book.
+
+pub fn prices_usk(market: &HashSet<OrderBook>) -> HashMap<String, f32> {
+   let pricz = prices(market);
+   let mut usks = HashMap::new();
+   if let Some(usk) = pricz.get("axlUSDC") {
+      let mult = usk.amount;
+      for (k,v) in pricz.iter() {
+         if k != "axlUSDC" {
+            usks.insert(k.clone(), v.amount * mult);
+         }
+      }
+      usks.insert("axlUSDC".to_string(), mult);
+   }
+   usks
 }
