@@ -34,28 +34,32 @@ fn main() {
 fn parse_n_print(p: &Portfolio, file: impl AsRef<Path>) {
    let lines = tail(lines_from_file(file));
    println!("date,from,to");
-   cont(&p, lines, 0.0);
+   cont(&p, lines, 0.0, 0.0);
 }
 
 // mutually recursive functions, because what even are for-loops, anyway? :<
 
-fn cont(p: &Portfolio, lines: Vec<String>, pnl: f32) {
+fn cont(p: &Portfolio, lines: Vec<String>, profit: f32, loss: f32) {
    if !lines.is_empty() {
       let (line, rest) = ht(lines);
-      print_trades(p, &line, rest, pnl);
+      print_trades(p, &line, rest, profit, loss);
    } else {
       print_portfolio(p);
-      println!("Total profit (or loss): {}", mk_usd(pnl));
+      println!("Total profit: {}", mk_usd(profit));
+      println!("Total loss: {}", mk_usd(loss));
+      println!("Net PnL: {}", mk_usd(profit + loss));
    }
 }
 
 fn print_trades(p: &Portfolio, line_opt: &Option<String>,
-                lines: Vec<String>, pnl: f32) {
+                lines: Vec<String>, profit: f32, loss: f32) {
    if let Some(line) = line_opt { 
       let (new_portfolio, sub_pnl) = match read_csv_swap(line) {
          Ok(trade) => { let (p1, u) = execute_d(p, trade, true); (p1, u.amount) },
          Err(msg) =>  { println!("ERROR: {}", msg); (p.clone(), 0.0) }
       };
-      cont(&new_portfolio, lines, sub_pnl + pnl);
+      let new_profit = profit + if sub_pnl > 0.0 { sub_pnl } else { 0.0 };
+      let new_loss   = loss + if sub_pnl < 0.0 { -1.0 * sub_pnl } else { 0.0 };
+      cont(&new_portfolio, lines, new_profit, new_loss);
    }
 }
