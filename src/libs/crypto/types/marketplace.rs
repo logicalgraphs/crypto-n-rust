@@ -244,3 +244,19 @@ pub fn prices_usk(market: &HashSet<OrderBook>) -> HashMap<String, f32> {
    }
    usks
 }
+
+// ----- rekt-age -------------------------------------------------------
+
+// Now, for recommendations, we want to sell our assets for a profit, so
+// we consider the sell-side
+
+pub fn fetch_sell_books(market: &HashSet<OrderBook>, a: &Asset)
+   -> HashSet<OrderBook> {
+   let mut ans: HashSet<OrderBook> = HashSet::new();
+   for o in market.iter() {
+      if o.sell_side == a.token {
+         ans.insert(o.clone());
+      }
+   }
+   ans
+}
