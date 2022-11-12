@@ -11,7 +11,7 @@ use crate::types::usd::{USD,mk_usd};
 pub struct Asset {
    pub token: String,
    amount: f32,
-   quote: f32
+   pub quote: f32
 }
 
 // ----- implementations ---------------------------------------------

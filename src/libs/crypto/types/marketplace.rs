@@ -54,6 +54,12 @@ impl fmt::Display for OrderBook {
    }
 }
 
+// the simple representation:
+
+pub fn orderbook(o: &OrderBook) -> String {
+   (o.buy_side.clone() + " / " + &o.sell_side).to_string()
+}
+
 impl Hash for OrderBook {
    fn hash<H: Hasher>(&self, state: &mut H) {
       self.buy_side.hash(state);
