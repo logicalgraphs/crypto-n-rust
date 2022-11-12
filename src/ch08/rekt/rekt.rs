@@ -1,18 +1,19 @@
 use std::{
-   collections::HashSet,
-   path::Path
+   collections::HashSet
 };
 
 use book::{
-   file_utils::lines_from_file,
    utils::get_args
 };
 
-use crypto::types::{
-   assets::Asset,
-   marketplace::{OrderBook,parse_lines,fetch_orderbooks_for,dual_asset},
-   portfolio::{Portfolio,assets_from_file,print_portfolio,for_each_asset,
-               fetch_asset_named}
+use crypto::{
+   types::{
+      assets::Asset,
+      marketplace::{OrderBook,read_marketplace,fetch_sell_books,orderbook},
+      portfolio::{Portfolio,assets_from_file,print_portfolio,for_each_asset},
+      usd::mk_usd
+   },
+   algos::orders::target_sell_ratio
 };
 
 fn usage() {
@@ -23,45 +24,26 @@ fn usage() {
 }
 
 fn main() {
-   if let [assets, markets_file] = get_args().as_slice() {
-      let markets = parse_n_print(markets_file);
-      let portfolio = assets_from_file(assets);
+   if let [assets_file, markets_file] = get_args().as_slice() {
+      let markets = read_marketplace(markets_file);
+      let portfolio = assets_from_file(assets_file);
       print_portfolio(&portfolio);
 
       println!("\nRecommendations\n");
 
       for_each_asset(&portfolio, |asset| rec(&portfolio, &markets, asset));
-/*
-      let atom_books = fetch_orderbooks(markets, "ATOM".to_string());
-      println!("The ATOM order books are:");
-      for o in atom_books.iter() {
-         println!("\t{}", o);
-      }
-*/
    } else {
       usage();
    }
 }
 
 fn rec(p: &Portfolio, m: &HashSet<OrderBook>, sell: &Asset) {
-   let books = fetch_orderbooks_for(m, sell);
+   let books = fetch_sell_books(m, sell);
    books.iter().for_each(|book| anal(p, sell, book));
 }
 
 fn anal(p: &Portfolio, sell: &Asset, book: &OrderBook) {
-   let buy_str = dual_asset(book, sell);
-   let buy1 = buy_str.clone();
-   match fetch_asset_named(p, buy_str) {
-      None => { println!("No bid for {} / {}", sell.token, buy1); },
-      Some(buy) => { println!("We have a pair {} / {}", sell.token, buy.token); }
+   if let Some(target) = target_sell_ratio(sell, book, 1.1) {
+      println!("SELL {} on {} at {}", &sell.token, orderbook(book), target);
    }
-}
-
-fn parse_n_print(file: impl AsRef<Path>) -> HashSet<OrderBook> {
-   let lines = lines_from_file(file);
-   let (_header, rows) = lines.split_at(3);
-   let mut pairs = HashSet::new();
-   parse_lines(1, &mut pairs, rows.to_vec());
-   println!("From {} lines, I have {} order books", lines.len(), pairs.len());
-   pairs
 }
