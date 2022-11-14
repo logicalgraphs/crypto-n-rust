@@ -258,9 +258,19 @@ pub fn prices_usk(market: &HashSet<OrderBook>) -> HashMap<String, f32> {
 
 pub fn fetch_sell_books(market: &HashSet<OrderBook>, a: &Asset)
    -> HashSet<OrderBook> {
+   fetch_books(&|o: &OrderBook| o.sell_side.clone(), market, a)
+}
+
+pub fn fetch_buy_books(market: &HashSet<OrderBook>, a: &Asset)
+   -> HashSet<OrderBook> {
+   fetch_books(&|o: &OrderBook| o.buy_side.clone(), market, a)
+}
+
+fn fetch_books(f: &dyn Fn(&OrderBook) -> String, market: &HashSet<OrderBook>, 
+               a: &Asset) -> HashSet<OrderBook> {
    let mut ans: HashSet<OrderBook> = HashSet::new();
    for o in market.iter() {
-      if o.sell_side == a.token {
+      if f(o) == a.token {
          ans.insert(o.clone());
       }
    }

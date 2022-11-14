@@ -7,7 +7,7 @@ edition = "2021"
 
 [[bin]]
 name = "rekt"
-path = "rekt.rs"
+path = "rekt_enhance.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }
