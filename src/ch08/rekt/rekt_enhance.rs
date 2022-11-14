@@ -38,12 +38,13 @@ fn main() {
          // println!("SHOW ME THE MARKETPLACES! {:?}", markets);
          let tokens: Vec<String> = toks.to_vec();
          let portfolio = consider(&assets_from_file(assets_file), &tokens);
-         let prx = prices(&markets);
          let prx_usk = prices_usk(&markets);
+         // println!("prices_usk: {:?}", prx_usk);
          print_portfolio(&portfolio);
          println!("\nRecommendations\n");
-         for_each_asset(&portfolio, |asset| rec(&markets, &prx, asset));
          for_each_asset(&portfolio, |asset| rec_usk(&markets, &prx_usk, asset));
+         let prx = prices(&markets);
+         for_each_asset(&portfolio, |asset| rec(&markets, &prx, asset));
       }
    } else {
       usage();
@@ -56,6 +57,7 @@ fn rec_usk(m: &HashSet<OrderBook>, prx_usk: &HashMap<String, f32>,
    for (k, v) in prx_usk {
       prx.insert(k.clone(), mk_usd(*v));
    }
+   // println!("Analyzing USK books: {:?}", prx);
    rec(m, &prx, sell);
 }
 
@@ -74,7 +76,7 @@ fn sell_analysis(prx: &HashMap<String, USD>, sell: &Asset, book: &OrderBook) {
 }
 
 fn buy_analysis(prx: &HashMap<String, USD>, sell: &Asset, book: &OrderBook) {
-   if let Some((buy, target)) = target_sell_ratio(prx, sell, book, 0.8) {
+   if let Some((buy, target)) = target_sell_ratio(prx, sell, book, 0.9) {
       let tok = &sell.token;
       println!("BUY {} by SELLing {} on {} at Price({}): {:.4}",
                buy, tok, orderbook(book), tok, 1.0 / target);
