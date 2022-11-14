@@ -245,6 +245,11 @@ pub fn fetch_usk_books(market: &HashSet<OrderBook>) -> HashMap<String, f32> {
          ans.insert(book.buy_side.clone(), book.ratio);
       }
    }
+
+   // we also need to add USK, itself, to this price-list.
+   if let Some(usk) = ans.get("axlUSDC") {
+      ans.insert("USK".to_string(), *usk);
+   }
    ans
 }
 
