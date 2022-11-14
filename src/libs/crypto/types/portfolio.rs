@@ -39,6 +39,24 @@ pub fn assets_from_file(file: impl AsRef<Path>) -> Portfolio {
    Portfolio { bag: read_assets(daters.to_vec()) }
 }
 
+pub fn consider(p: &Portfolio, assets: &Vec<String>) -> Portfolio {
+   if assets.len() == 0 {
+      p.clone()
+   } else {
+      all_things_considered(p, assets)
+   }
+}
+
+fn all_things_considered(p: &Portfolio, assets: &Vec<String>) -> Portfolio {
+   let mut ans: HashSet<Asset> = HashSet::new();
+   for token in assets {
+      if let Some(asset) = p.bag.get(&proto(token.to_string())) {
+         ans.insert(asset.clone());
+      }
+   }
+   Portfolio { bag: ans }
+}
+
 // -- and then
 
 pub fn execute(p: &Portfolio, trade: Swap) -> (Portfolio, USD) {

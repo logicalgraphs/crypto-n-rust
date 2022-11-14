@@ -236,19 +236,20 @@ pub fn prices(market: &HashSet<OrderBook>) -> HashMap<String, USD> {
 // once we have the prices (above), it's simple to convert to an USK-table:
 // just look up the axlUSDC-price: that's on the axlUSDC/USK order book.
 
-pub fn prices_usk(market: &HashSet<OrderBook>) -> HashMap<String, f32> {
-   let pricz = prices(market);
-   let mut usks = HashMap::new();
-   if let Some(usk) = pricz.get("axlUSDC") {
-      let mult = usk.amount;
-      for (k,v) in pricz.iter() {
-         if k != "axlUSDC" {
-            usks.insert(k.clone(), v.amount * mult);
-         }
+// but it's not that simple. Let's just consider the books that have USK
+
+pub fn fetch_usk_books(market: &HashSet<OrderBook>) -> HashMap<String, f32> {
+   let mut ans: HashMap<String, f32> = HashMap::new();
+   for book in market {
+      if book.sell_side == "USK".to_string() {
+         ans.insert(book.buy_side.clone(), book.ratio);
       }
-      usks.insert("axlUSDC".to_string(), mult);
    }
-   usks
+   ans
+}
+
+pub fn prices_usk(market: &HashSet<OrderBook>) -> HashMap<String, f32> {
+   fetch_usk_books(market)
 }
 
 // ----- rekt-age -------------------------------------------------------

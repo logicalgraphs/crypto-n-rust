@@ -10,9 +10,9 @@ use crypto::{
    types::{
       assets::Asset,
       marketplace::{OrderBook,read_marketplace,fetch_sell_books,
-                    orderbook,fetch_buy_books,prices},
-      portfolio::{assets_from_file,print_portfolio,for_each_asset},
-      usd::USD
+                    orderbook,fetch_buy_books,prices,prices_usk},
+      portfolio::{assets_from_file,print_portfolio,for_each_asset,consider},
+      usd::{USD,mk_usd}
    },
    algos::orders::target_sell_ratio
 };
@@ -30,16 +30,33 @@ fn usage() {
 }
 
 fn main() {
-   if let [assets_file, markets_file] = get_args().as_slice() {
-      let markets = read_marketplace(markets_file);
-      let portfolio = assets_from_file(assets_file);
-      let prx = prices(&markets);
-      print_portfolio(&portfolio);
-      println!("\nRecommendations\n");
-      for_each_asset(&portfolio, |asset| rec(&markets, &prx, asset));
+   let args = get_args();
+   if args.len() > 1 {
+      let (files, toks) = args.split_at(2);
+      if let [assets_file, markets_file] = files.to_vec().as_slice() {
+         let markets = read_marketplace(markets_file);
+         // println!("SHOW ME THE MARKETPLACES! {:?}", markets);
+         let tokens: Vec<String> = toks.to_vec();
+         let portfolio = consider(&assets_from_file(assets_file), &tokens);
+         let prx = prices(&markets);
+         let prx_usk = prices_usk(&markets);
+         print_portfolio(&portfolio);
+         println!("\nRecommendations\n");
+         for_each_asset(&portfolio, |asset| rec(&markets, &prx, asset));
+         for_each_asset(&portfolio, |asset| rec_usk(&markets, &prx_usk, asset));
+      }
    } else {
       usage();
    }
+}
+
+fn rec_usk(m: &HashSet<OrderBook>, prx_usk: &HashMap<String, f32>,
+           sell: &Asset) {
+   let mut prx: HashMap<String, USD> = HashMap::new();
+   for (k, v) in prx_usk {
+      prx.insert(k.clone(), mk_usd(*v));
+   }
+   rec(m, &prx, sell);
 }
 
 fn rec(m: &HashSet<OrderBook>, prx: &HashMap<String, USD>, sell: &Asset) {
