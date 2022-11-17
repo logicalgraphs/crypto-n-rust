@@ -17,7 +17,10 @@ use std::{
    path::Path
 };
 
-use book::list_utils::head;
+use book::{
+   csv_utils::{CsvWriter,print_csv},
+   list_utils::head
+};
 
 use crate::types::{
    assets::Asset,
@@ -46,6 +49,10 @@ pub struct OrderBook {
 }
 
 // ----- impl -------------------------------------------------------
+
+impl CsvWriter for OrderBook {
+   fn as_csv(&self) -> String { csv(self) }
+}
 
 impl fmt::Display for OrderBook {
    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -77,6 +84,7 @@ impl PartialEq for OrderBook {
 
 impl Eq for OrderBook {}
 
+// ----- constructors -------------------------------------------------------
 pub fn mk_orderbook(buy_side: String, sell_side: String, ratio: f32, price: USD)
    -> OrderBook {
    OrderBook { buy_side, sell_side, ratio, price }
@@ -281,4 +289,23 @@ fn fetch_books(f: &dyn Fn(&OrderBook) -> String, market: &HashSet<OrderBook>,
       }
    }
    ans
+}
+
+// ----- output -------------------------------------------------------
+
+fn csv(o: &OrderBook) -> String {
+   let irat = inverse_ratio(o);
+   format_args!("{},{},{},{},{}",o.buy_side,o.sell_side,o.ratio,irat,o.price)
+      .to_string()
+}
+
+pub fn print_marketplace(market: &HashSet<OrderBook>) {
+   println!("buy,sell,ratio,inverse,price");
+   market.iter().for_each(print_csv);
+}
+
+// ----- duals -------------------------------------------------------
+
+pub fn inverse_ratio(o: &OrderBook) -> f32 {
+   1.0 / o.ratio
 }
