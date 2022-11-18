@@ -9,9 +9,26 @@ use std::{
 // https://stackoverflow.com/questions/23100534/how-to-sum-the-values-in-an-array-slice-or-vec-in-rust
 
 pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
-   strs.iter()
-       .map(|n| n.parse().expect(&(n.to_owned() + " isn't a number")))
-       .collect()
+   parse_nums_res(strs).iter().map(|n| n.clone().expect("what?")).collect()
+}
+
+pub fn parse_nums_opt(strs: Vec<String>) -> Vec<f32> {
+   let mut ans: Vec<f32> = Vec::new();
+   for x in parse_nums_res(strs) {
+      if let Ok(n) = x {
+         ans.push(n);
+      }
+   }
+   ans
+}
+
+pub fn parse_nums_res(strs: Vec<String>) -> Vec<Result<f32, String>> {
+   strs.iter().map(|n| match n.parse() {
+      Ok(x) => Ok (x),
+      Err(_) => {
+        let msg = String::from(&(n.to_owned() + " isn't a number"));
+        Err(msg)
+      }}).collect()
 }
 
 // list functions
