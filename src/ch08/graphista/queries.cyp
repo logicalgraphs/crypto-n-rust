@@ -56,4 +56,9 @@ match p=(n:Coin { name: "KUJI"})-[r1]->(a:Coin)-[r2]->(b)-[r3]->(c)-[r4]->(n)
 where b <> n and c <> a
 return r1.multiplier,a.name,r2.multiplier,b.name,r3.multiplier,c.name,r4.multiplier
 
+// and a query to extract just the node names for paths:
+
+match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(b)-->(c)-->(d)-->(n) 
+where b <> n and c <> a and d <> b and c <> n
+return a.name,b.name,c.name,d.name
 
