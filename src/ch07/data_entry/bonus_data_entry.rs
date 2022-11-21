@@ -11,8 +11,10 @@ fn usage() {
 
 fn main() {
    if let Some(file) = head(get_args()) {
-      split(lines_from_file(file),"BORROWED".to_string())
-         .iter_mut().fold(1.0, preprocess_with_sign);
+      let dater = lines_from_file(file);
+      let (_hdr, body) = dater.split_at(2);
+      split(body.to_vec(),"BORROWED".to_string()).iter_mut()
+          .fold(1.0, preprocess_with_sign);
    } else {
       usage();
    }
