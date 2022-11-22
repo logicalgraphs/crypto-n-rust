@@ -1,4 +1,4 @@
-// we read in the marketplace and write out a csv WHICH WE GRAPH!
+// We read in a path then compute the efficacy of trading on that path
 
 use book::{
    file_utils::lines_from_file,
@@ -31,7 +31,7 @@ fn process_paths(ntoks: f32) -> impl Fn(&String) -> () {
 
 fn process_path(ntoks: f32) -> impl Fn(&String) -> () {
    move |line: &String| {
-      let nums: Vec<String> = line.split(',').map(str_str).collect();
+      let nums: Vec<String> = line.split(',').map(str_string).collect();
       println!("For {}:", line);
       let ans: f32 = parse_nums_opt(nums).iter().product::<f32>() * ntoks;
       println!("\t{} tokens becomes {}.", ntoks, ans);
