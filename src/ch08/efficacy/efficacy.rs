@@ -3,21 +3,31 @@
 use book::{
    file_utils::lines_from_file,
    list_utils::{tail,ht,parse_nums_opt},
-   string_utils::str_str,
+   string_utils::str_string,
    utils::get_args
 };
 
 fn usage() {
    println!("./efficacy ntokens <graph paths>");
-   println!("\n\tcomputes the number of tokens after trading a path.");
+   println!("\n\tcomputes the number of tokens after trading a path.\n");
 }
 
 fn main() {
+   let mut cont = false;
    if let (Some(toks), files) = ht(get_args()) {
-      let ntoks: f32 = toks.parse().expect("number of tokens");
-      files.iter().for_each(process_paths(ntoks));
-      println!("\nCaput apres defero.");
-   } else {
+      cont = !files.is_empty();
+      if cont {
+         match toks.parse() {
+            Ok(ntoks) => {
+               files.iter().for_each(process_paths(ntoks));
+               println!("\nCaput apres defero.");
+            },
+            Err(_) => { cont = false; }
+         }
+      }
+   }
+
+   if !cont {
       usage();
    }
 }
