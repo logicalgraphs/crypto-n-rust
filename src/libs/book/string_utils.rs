@@ -4,7 +4,7 @@ pub fn dequote(mut str: String) -> String {
    str
 }
 
-pub fn str_str(str: &str) -> String {
+pub fn str_string(str: &str) -> String {
    let mut ans = String::new();
    ans.push_str(str);
    ans
