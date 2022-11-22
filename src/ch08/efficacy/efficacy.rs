@@ -2,7 +2,8 @@
 
 use book::{
    file_utils::lines_from_file,
-   list_utils::{tail,ht},
+   list_utils::{tail,ht,parse_nums_opt},
+   string_utils::str_str,
    utils::get_args
 };
 
@@ -29,14 +30,10 @@ fn process_paths(ntoks: f32) -> impl Fn(&String) -> () {
 }
 
 fn process_path(ntoks: f32) -> impl Fn(&String) -> () {
-   |line: &String| {
-      let mut odd = true;
-      let mut sum = 0.0;
-      for datum in line.split(',') {
-         if odd {
-            let rat: f32 = datum.parse().exp
-         }
-         odd = !odd;
-      }
+   move |line: &String| {
+      let nums: Vec<String> = line.split(',').map(str_str).collect();
+      println!("For {}:", line);
+      let ans: f32 = parse_nums_opt(nums).iter().product::<f32>() * ntoks;
+      println!("\t{} tokens becomes {}.", ntoks, ans);
    }
 }
