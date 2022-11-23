@@ -88,4 +88,25 @@ match p=(n:Coin { name: "USK"})-->(a:Coin)-->(b)-->(c)-->(d)-->(z)
 where n = z and b <> n and a <> c and b <> d and c <> z
 return distinct n.name,a.name,b.name,c.name,d.name,z.name
 
+// -- ATOM / OSMO fun and games:
 
+match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(b)-->(c)-->(d)-->(z:Coin {name: "ATOM"})
+where b <> n and c <> z and a <> c and d <> n and a <> z and b <> z and b <> d
+return distinct n.name,a.name,b.name,c.name,d.name,z.name
+
+// and
+
+match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(b)-->(c)-->(z:Coin {name: "ATOM"})
+where b <> n and c <> z and a <> c and a <> z and b <> z and c <> n
+return distinct n.name,a.name,b.name,c.name,z.name
+
+// and
+
+match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(b)-->(z:Coin {name: "ATOM"})
+where b <> n and a <> z
+return distinct n.name,a.name,b.name,z.name
+
+// and finna
+
+match p=(n:Coin { name: "ATOM"})-->(a:Coin)-->(z:Coin {name: "OSMO"})
+return distinct n.name,a.name,z.name
