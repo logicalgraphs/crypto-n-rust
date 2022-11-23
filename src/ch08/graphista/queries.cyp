@@ -62,3 +62,30 @@ match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(b)-->(c)-->(d)-->(n)
 where b <> n and c <> a and d <> b and c <> n
 return a.name,b.name,c.name,d.name
 
+// ------------------------ pathing information
+
+// 0 deep
+
+match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(z)
+where n = z 
+return n.name,a.name,z.name
+
+// 1 deep
+
+match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(b)-->(z)
+where n = z 
+return n.name,a.name,b.name,z.name
+
+// 2 deep
+
+match p=(n:Coin { name: "ATOM"})-->(a:Coin)-->(b)-->(c)-->(z)
+where n = z and b <> n and a <> c
+return distinct n.name,a.name,b.name,c.name,z.name
+
+// 3 deeo, n.b.: we do allow assets SOME repeat appearances here
+
+match p=(n:Coin { name: "USK"})-->(a:Coin)-->(b)-->(c)-->(d)-->(z)
+where n = z and b <> n and a <> c and b <> d and c <> z
+return distinct n.name,a.name,b.name,c.name,d.name,z.name
+
+
