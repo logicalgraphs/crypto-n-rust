@@ -45,7 +45,7 @@ fn cont(p: &Portfolio, lines: Vec<String>, profit: f32, loss: f32) {
       print_trades(p, &line, rest, profit, loss);
    } else {
       print_portfolio(p);
-      println!("Total profit: {}", mk_usd(profit));
+      println!("\nTotal profit: {}", mk_usd(profit));
       println!("Total loss: {}", mk_usd(loss));
       println!("Net PnL: {}", mk_usd(profit - loss));
    }
