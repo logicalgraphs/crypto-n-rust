@@ -309,3 +309,17 @@ pub fn print_marketplace(market: &HashSet<OrderBook>) {
 pub fn inverse_ratio(o: &OrderBook) -> f32 {
    1.0 / o.ratio
 }
+
+// ---- a little hands-off reasoning about the marketplace -----------
+
+pub fn ratio_for(os: &HashSet<OrderBook>, from: &String, to: &String) -> f32 {
+   let mut ans = 0.0;
+   let domain = fetch_orderbooks(os, from);
+   let orderbooks = fetch_orderbooks(&domain, to); // should be 1 or 0
+
+   for book in orderbooks {
+      fn rat(book: &OrderBook) -> f32 { book.ratio }
+      ans = if &book.buy_side == from { rat } else { inverse_ratio }(&book);
+   }
+   ans
+}
