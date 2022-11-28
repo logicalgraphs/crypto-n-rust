@@ -59,6 +59,8 @@ fn process_path(ntoks: f32, market: &HashSet<OrderBook>)
    }
 }
 
+// this function is a comonadic extension, and so demonstrates `experiment`
+
 fn process_books(ntoks: f32, market: &HashSet<OrderBook>, path: &Vec<String>)
    -> f32 {
    let mut ans = ntoks;
