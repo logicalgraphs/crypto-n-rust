@@ -7,7 +7,7 @@ edition = "2021"
 
 [[bin]]
 name = "efficacy"
-path = "improved_efficacy.rs"
+path = "sordid_efficacy.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }
