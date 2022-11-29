@@ -19,7 +19,8 @@ use std::{
 
 use book::{
    csv_utils::{CsvWriter,print_csv},
-   list_utils::head
+   list_utils::head,
+   num_utils::parse_commaless
 };
 
 use crate::types::{
@@ -94,8 +95,8 @@ pub fn mk_orderbook(buy_side: String, sell_side: String, ratio: f32, price: USD)
 
 pub fn parse_orderbook(buy: &str, sell: &str, rat: &str, pric: &str)
    -> Result<OrderBook, String> {
-   let ratio: f32 = rat.parse().expect("ratio");
-   let pric1: f32 = pric.parse().expect("price");
+   let ratio: f32 = parse_commaless(rat)?;
+   let pric1: f32 = parse_commaless(pric)?;
    let price: USD = mk_usd(pric1);
    let buy_side = buy.to_string();
    let sell_side = sell.to_string();

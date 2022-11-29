@@ -14,7 +14,7 @@ pub fn integer_decode(val: f64) -> (u64, i16, i8) {
    (mantissa, exponent - (1023 + 52), sign)
 }
 
-pub fn parse_estimate(str: &String) -> Result<f32, String> {
+pub fn parse_estimate(str: &str) -> Result<f32, String> {
    match str.parse() {
       Ok(x) => Ok(x),
       Err(_) => {
@@ -43,7 +43,7 @@ pub fn parse_estimate(str: &String) -> Result<f32, String> {
    }
 }
 
-pub fn parse_commaless(str: &String) -> Result<f32, String> {
+pub fn parse_commaless(str: &str) -> Result<f32, String> {
    let mut no_comma = str.to_string();
    no_comma.retain(no(','));
    match no_comma.parse() {
