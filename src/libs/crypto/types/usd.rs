@@ -10,7 +10,7 @@ use std::{
 
 use book::{
    list_utils::last,
-   num_utils::integer_decode
+   num_utils::{integer_decode,parse_commaless}
 };
 
 #[derive(Debug, Clone, Copy)]
@@ -41,7 +41,7 @@ impl FromStr for USD {
 
    fn from_str(elt: &str) -> Result<Self, Self::Err> {
       if let Some(num) = last(elt.split('$').collect()) {
-         if let Ok(amount) = num.parse() {
+         if let Ok(amount) = parse_commaless(&num.to_string()) {
             Ok(mk_usd(amount))
          } else {
             panic!("{} isn't a number", num)

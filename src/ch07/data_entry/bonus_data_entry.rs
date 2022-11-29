@@ -1,6 +1,7 @@
 use book::{
    file_utils::lines_from_file,
    list_utils::{head,split},
+   num_utils::parse_commaless,
    utils::get_args
 };
 
@@ -25,9 +26,8 @@ fn preprocess_with_sign(sign: f32, lines: &mut Vec<String>) -> f32 {
    lines.retain(two);
    for line in lines {
       if let Some(position) = head(line.split(' ').collect()) {
-         let mut p1 = position.to_string();
-         p1.retain(no(','));
-         let num: f32 = p1.parse().expect("Not a number");
+         let num: f32 = parse_commaless(&position.to_string())
+                                 .expect("Not a number");
          println!("{}", sign * num);
       }
    }
@@ -37,9 +37,4 @@ fn preprocess_with_sign(sign: f32, lines: &mut Vec<String>) -> f32 {
 fn two(line: &String) -> bool {
    let words: Vec<&str> = line.split(' ').collect();
    words.len() > 1 && head(words) != Some("Balance:")
-}
-
-// a function that returns a function
-fn no(ch: char) -> impl Fn(char) -> bool {
-   move |chr| chr != ch
 }
