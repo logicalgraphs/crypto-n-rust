@@ -38,9 +38,7 @@ pub fn process_paths(ntoks: f32, market: &HashSet<OrderBook>)
    }
 }
 
-// ----- HELPER FUNCTIONS ---------------------------------------------
-
-fn process_path(ntoks: f32, market: &HashSet<OrderBook>)
+pub fn process_path(ntoks: f32, market: &HashSet<OrderBook>)
    -> impl Fn(&String) -> (f32, Vec<f32>, String) + '_ {
    move |line: &String| {
       let mut interms: Vec<f32> = Vec::from([ntoks]);
@@ -50,6 +48,8 @@ fn process_path(ntoks: f32, market: &HashSet<OrderBook>)
       (ans, interms.clone(), line.clone())
    }
 }
+
+// ----- HELPER FUNCTIONS ---------------------------------------------
 
 // this function is a comonadic extension, and so demonstrates `experiment`
 
