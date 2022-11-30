@@ -1,0 +1,6 @@
+        ['a', 'OSMO', 'asset', null, null, toMilliseconds(5), 100, null],
+        ['b', 'axlUSDC', 'stable', null, null, toMilliseconds(5), 100, 'a'],
+        ['c', 'ATOM', 'atom', null, null, toMilliseconds(5), 0, 'b'],
+        ['d', 'KUJI', 'kuji', null, null, toMilliseconds(5), 0, 'c'],
+        ['e', 'axlUSDC', 'stable', null, null, toMilliseconds(5), 0, 'd'],
+        ['f', 'OSMO', 'asset', null, null, toMilliseconds(5), 10, 'e']
