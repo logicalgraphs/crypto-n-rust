@@ -1,4 +1,4 @@
-// trail run with ./trader_v2 data/mini_me.csv
+// trial run with ./trader_v2 data/mini_me.csv
 
 use std::{
    collections::HashSet,
