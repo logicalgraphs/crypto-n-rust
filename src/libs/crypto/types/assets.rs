@@ -63,8 +63,10 @@ pub fn mk_asset(token: String, amount: f32, quote: f32) -> Asset {
 
 pub fn parse_asset(tok: &str, amt: &str, quot: &str)
    -> Result<Asset, String> {
-   let amount: f32 = amt.parse().expect("amount");
-   let quot1: USD = quot.parse().expect("quote");
+   let amount: f32 = amt.parse()
+         .expect(&("not amount: ".to_owned() + &amt.to_owned()));
+   let quot1: USD = quot.parse()
+         .expect(&("not quote: ".to_owned() + &quot.to_owned()));
    Ok(mk_asset(tok.to_string(), amount, quot1.amount))
 }
 
