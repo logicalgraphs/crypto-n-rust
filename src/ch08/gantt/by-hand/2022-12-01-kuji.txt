@@ -1,0 +1,29 @@
+     function daysToMilliseconds(days) {
+        return days * 24 * 60 * 60 * 1000;
+      }
+      data.addRows([
+        ['a', 'KUJI', 'asset',
+         new Date(2022, 11, 1), new Date(2022, 11, 2), daysToMilliseconds(1),  10,  null],
+        ['b', 'ATOM', 'triumvirate',
+         new Date(2022, 11, 2), new Date(2022, 11, 3), daysToMilliseconds(1), 0, 'a'],
+
+        // alternate path ATOM -> OSMO
+
+        ['b1', 'axlUSDC', 'stablecoin', 
+         new Date(2022, 11, 3), new Date(2022, 11, 4), daysToMilliseconds(1), 0, 'b'],
+        ['b2', 'USK', 'stablecoin', 
+         new Date(2022, 11, 4), new Date(2022, 11, 5), daysToMilliseconds(1), 0, 'b1'],
+        ['b3', 'KUJI', 'asset', 
+         new Date(2022, 11, 5), new Date(2022, 11, 6), daysToMilliseconds(1), 0, 'b2'],
+        ['b4', 'axlUSDC', 'stablecoin', 
+         new Date(2022, 11, 6), new Date(2022, 11, 7), daysToMilliseconds(1), 0, 'b3'],
+
+        ['c', 'OSMO', 'triumvirate',
+         new Date(2022, 11, 8), new Date(2022, 11, 9), daysToMilliseconds(1), 0, 'b,b4'],
+        ['d', 'axlUSDC', 'stablecoin',
+         new Date(2022, 11, 9), new Date(2022, 11, 10), daysToMilliseconds(1), 0, 'c'],
+        ['e', 'USK', 'stablecoin',
+         new Date(2022, 11, 10), new Date(2022, 11, 11), daysToMilliseconds(1), 0, 'd'],        
+        ['f', 'KUJI', 'asset',
+         new Date(2022, 11, 11), new Date(2022, 11, 12), daysToMilliseconds(1),  0,  'e'],
+      ]);
