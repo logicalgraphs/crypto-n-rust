@@ -1,0 +1,17 @@
+function daysToMilliseconds(days) {
+        return days * 24 * 60 * 60 * 1000;
+      }
+      data.addRows([
+        ['a', 'USK', 'stablecoin,asset',
+         new Date(2022, 11, 1), new Date(2022, 11, 2), daysToMilliseconds(1), 10, null],   
+        ['b', 'axlUSDC', 'stablecoin',
+         new Date(2022, 11, 2), new Date(2022, 11, 3), daysToMilliseconds(1), 0, 'a'],
+        ['c', 'KUJI', 'triumvirate',
+         new Date(2022, 11, 3), new Date(2022, 11, 4), daysToMilliseconds(1),  0,  'b'],
+        ['d', 'ATOM', 'triumvirate',
+         new Date(2022, 11, 4), new Date(2022, 11, 5), daysToMilliseconds(1), 0, 'c'],
+        ['e', 'axlUSDC', 'stablecoin',
+         new Date(2022, 11, 5), new Date(2022, 11, 6), daysToMilliseconds(1), 0, 'd'],
+        ['f', 'USK', 'stablecoin,asset',
+         new Date(2022, 11, 6), new Date(2022, 11, 7), daysToMilliseconds(1), 0, 'e'],   
+      ]);
