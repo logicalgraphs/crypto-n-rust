@@ -7,7 +7,7 @@ edition = "2021"
 
 [[bin]]
 name = "gantt"
-path = "gantt.rs"
+path = "multilayer_gantt.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }
