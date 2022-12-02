@@ -1,0 +1,18 @@
+[package]
+name = "gantt"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "gantt"
+path = "gantt.rs"
+
+[dependencies]
+book = { path = "../../libs/book" }
+crypto = { path = "../../libs/crypto" }
+
+strum_macros = "0.24"
+
+strum = { version = "0.24", features = ["derive"] }
