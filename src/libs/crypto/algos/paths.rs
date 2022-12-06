@@ -42,10 +42,9 @@ pub fn process_paths_for<'a>(ntoks: f32, tok: &'a str,
    -> impl Fn(&String) -> Vec<(f32, Vec<f32>, String)> + 'a {
    move |file: &String| {
       let lines = lines_from_file(file);
-      let paths_p: Option<Vec<(f32, Vec<f32>, String)>> = tail(lines).iter()
-          .map(process_path_for(ntoks, tok, market))
+      let mut paths: Vec<(f32, Vec<f32>, String)> = tail(lines).iter()
+          .filter_map(process_path_for(ntoks, tok, market))
           .collect();
-      let mut paths = if let Some(p) = paths_p { p } else { Vec::new() };
       paths.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
       paths
    }
@@ -78,7 +77,7 @@ pub fn process_path_for<'a>(ntoks: f32, tok: &'a str,
          let mut interms: Vec<f32> = Vec::from([ntoks]);
          let mut ans: f32 = ntoks;
          ans = process_books(ans, market, &mut interms, &path);
-         Some((ans, interms.clone(), line.clone()))
+         Some((ans, interms.clone(), path.join(",")))
       }
    }
 }
@@ -99,4 +98,3 @@ fn process_books(ntoks: f32, market: &HashSet<OrderBook>,
    }
    ans
 }
-
