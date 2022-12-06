@@ -39,6 +39,7 @@ fn go(args: &Vec<String>) {
    if let [toks, tok, marketplace] = args1.to_vec().as_slice() {
       cont = !files.is_empty();
       if cont {
+         println!("./vern, my main man, ./vern!\n");
          match toks.parse() {
             Ok(ntoks) => {
                let market = read_marketplace(marketplace);
@@ -47,10 +48,10 @@ fn go(args: &Vec<String>) {
                   let paths = process_paths_for(ntoks, tok, &market)(&file);
                   paths.iter().for_each(print_path(ntoks));
                }
-            println!("\nCaput apres defero.");
-         },
-         Err(_) => { cont = false; }
-      }
+               println!("\nHey, Ray! 😊");
+            },
+            Err(_) => { cont = false; }
+         }
       }
    }
 
