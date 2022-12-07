@@ -213,9 +213,21 @@ fn insert_then(m: Option<&HashMap<String, USD>>, o: &OrderBook)
    hash
 }
 
+// this assumes that if there are multiple sales prices, one of this is
+// axlUSDC. This is no longer the case with LP KUJI-ATOM.
+
+// So, a workaround from the assumption, then? Joy.
+
 fn extract_price(sells: &HashMap<String, USD>) -> USD {
    let hashes = if sells.len() > 1 {
-      filter_vals(|key| key == "axlUSDC", sells)
+      let works_mostly = filter_vals(|key| key == "axlUSDC", sells);
+      if works_mostly.len() == 0 {
+         let mut ans = sells.clone();
+         ans.retain(|_, v| v.amount > 0.0);
+         ans
+      } else {
+         works_mostly
+      }
    } else { sells.clone() };
    let prices = hashes.values().collect();
    match head(prices) {
