@@ -105,7 +105,7 @@ pub fn parse_orderbook(buy: &str, sell: &str, rat: &str, pric: &str)
 
 pub fn scan_orderbook(lines: Vec<String>)
    -> (Result<OrderBook, String>, Vec<String>) {
-   let (order, rest) = lines.split_at(6);
+   let (order, rest) = lines.split_at(7);
    (if let [buy, sell, rat, _sign, pric, _change] = order {
       parse_orderbook(buy, sell, rat, pric)
    } else {
