@@ -105,8 +105,9 @@ pub fn parse_orderbook(buy: &str, sell: &str, rat: &str, pric: &str)
 
 pub fn scan_orderbook(lines: Vec<String>)
    -> (Result<OrderBook, String>, Vec<String>) {
-   let (order, rest) = lines.split_at(6);
-   (if let [buy, sell, rat, _sign, pric, _change] = order {
+   let (order, rest) = lines.split_at(7);
+   (if let [buy, sell, rat, _sign, pric, _change,
+            _this_line_intentionally_left_blank] = order {
       parse_orderbook(buy, sell, rat, pric)
    } else {
       match head(order.to_vec()) {
@@ -125,7 +126,7 @@ pub fn read_marketplace_d(file: impl AsRef<Path>, debug: bool)
    use book::file_utils::lines_from_file;
 
    let lines = lines_from_file(file);
-   let (_header, rows) = lines.split_at(3);
+   let (_header, rows) = lines.split_at(4);
    let mut pairs = HashSet::new();
    parse_lines_d(1, &mut pairs, rows.to_vec(), debug);
    pairs
