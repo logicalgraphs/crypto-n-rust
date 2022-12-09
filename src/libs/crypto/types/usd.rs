@@ -76,3 +76,5 @@ pub fn mk_usd(amount: f32) -> USD {
    let decode = integer_decode(amount.into());
    USD { amount, decode }
 }
+
+pub fn no_monay() -> USD { mk_usd(0.0) }

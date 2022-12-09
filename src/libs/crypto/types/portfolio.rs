@@ -59,13 +59,13 @@ fn all_things_considered(p: &Portfolio, assets: &Vec<String>) -> Portfolio {
 
 // -- and then
 
-pub fn execute(p: &Portfolio, trade: Swap) -> (Portfolio, USD) {
+pub fn execute(p: &Portfolio, trade: &Swap) -> (Portfolio, USD) {
    execute_d(p, trade, false)
 }
 
-pub fn execute_d(p: &Portfolio, trade: Swap, debug: bool) -> (Portfolio, USD) {
+pub fn execute_d(p: &Portfolio, trade: &Swap, debug: bool) -> (Portfolio, USD) {
    let mut b = p.bag.clone();
-   let (b1, pnl) = swap_d(&mut b, trade, debug);
+   let (b1, pnl) = swap_d(&mut b, &trade, debug);
    (Portfolio { bag: b1 }, pnl)
 }
 
