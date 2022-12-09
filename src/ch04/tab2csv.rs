@@ -7,7 +7,9 @@ fn main() {
       let mut butter = String::new();
       stdin().read_line(&mut butter).expect("Done.");
       if butter == "" { break; }
-      let b2: String = butter.split_whitespace().map(append_comma).collect();
+      let b2: String = butter.split(|c: char| c == '\t')
+                             .map(append_comma)
+                             .collect();
       println!("{}", b2.trim());
    }
 }
