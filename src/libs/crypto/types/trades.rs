@@ -72,7 +72,7 @@ pub fn swap(p: &mut HashSet<Asset>, s: &Swap) -> (HashSet<Asset>, USD) {
 pub fn swap_d(p: &mut HashSet<Asset>, s: &Swap, debug: bool)
    -> (HashSet<Asset>, USD) {
    if debug {
-      println!("For trade");
+      println!("\nFor trade");
       print_csv(s);
    }
    let tom = s.to.clone();
