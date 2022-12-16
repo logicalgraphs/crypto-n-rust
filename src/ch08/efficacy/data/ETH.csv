@@ -1,3 +1,12 @@
-﻿n.name,a.name,b.name,z.name
+n.name,a.name,b.name,z.name
 wETH,USK,axlUSDC,wETH
 wETH,axlUSDC,USK,wETH
+wETH,USK,ATOM,axlUSDC,wETH
+wETH,USK,DOT,axlUSDC,wETH
+wETH,USK,STARS,axlUSDC,wETH
+wETH,USK,KUJI,axlUSDC,wETH
+wETH,axlUSDC,STARS,USK,wETH
+wETH,axlUSDC,ATOM,USK,wETH
+wETH,axlUSDC,SCRT,USK,wETH
+wETH,axlUSDC,DOT,USK,wETH
+wETH,axlUSDC,KUJI,USK,wETH
