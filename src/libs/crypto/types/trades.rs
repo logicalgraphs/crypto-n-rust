@@ -111,5 +111,5 @@ pub fn pnl(bag: &HashSet<Asset>, sold: &Asset) -> USD {
 // Are we a liquidation?
 
 pub fn is_liquidation(s: &Swap) -> bool {
-   Some(_) == s.liquidation
+   s.liquidation.is_some()
 }
