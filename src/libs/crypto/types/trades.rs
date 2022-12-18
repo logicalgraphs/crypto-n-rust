@@ -119,10 +119,10 @@ pub fn liquidations_count_and_premium(trades: &Vec<Swap>) -> (u8, Percentage) {
       trades.iter().fold((0, 0.0, 0.0), | (c, w, s), t | {
       if let Some(liq) = &t.liquidation {
          let amt = liq.weight.amount;
-         (c + 1, w + liq.percentage.percent * amt, s + amt)
+         (c + 1, w + liq.percentage.of(amt), s + amt)
       } else {
          (c, w, s)
       }
    });
-   (count, mk_percentage(weight / sum / 100.0))
+   (count, mk_percentage(weight / sum))
 }
