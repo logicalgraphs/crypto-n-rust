@@ -6,7 +6,7 @@ use book::csv_utils::{CsvWriter,print_csv};
 
 use crate::types::{
    assets::{Asset,parse_asset,add_asset,remove_asset,print_asset_d,diff_usd},
-   percentage::{Percentage},
+   percentage::{Percentage,mk_percentage},
    usd::{mk_usd,USD}
 };
 
@@ -111,5 +111,18 @@ pub fn pnl(bag: &HashSet<Asset>, sold: &Asset) -> USD {
 // Are we a liquidation?
 
 pub fn is_liquidation(s: &Swap) -> bool {
-   Some(_) == s.liquidation
+   s.liquidation.is_some()
+}
+
+pub fn liquidations_count_and_premium(trades: &Vec<Swap>) -> (u8, Percentage) {
+   let (count, weight, sum) =
+      trades.iter().fold((0, 0.0, 0.0), | (c, w, s), t | {
+      if let Some(liq) = &t.liquidation {
+         let amt = liq.weight.amount;
+         (c + 1, w + liq.percentage.percent * amt, s + amt)
+      } else {
+         (c, w, s)
+      }
+   });
+   (count, mk_percentage(weight / sum / 100.0))
 }
