@@ -29,7 +29,7 @@ fn parse_then_filter(prices: impl AsRef<Path>, assets: impl AsRef<Path>) {
    let price_lines = lines_from_file(prices);
    let assetss = lines_from_file(assets);
    let mut assets_set = HashSet::new();
-   assetss.iter().for_each(|coin| { insert_if(&mut assets_set, coin.to_string()); });
+   assetss.iter().for_each(|c| insert_if(&mut assets_set, c.to_string()));
    file_report("prices", &price_lines);
    file_report("assets", &assetss);
    let mut mappo = process_csv_prices(price_lines);

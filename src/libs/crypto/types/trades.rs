@@ -6,8 +6,15 @@ use book::csv_utils::{CsvWriter,print_csv};
 
 use crate::types::{
    assets::{Asset,parse_asset,add_asset,remove_asset,print_asset_d,diff_usd},
+   percentage::{Percentage},
    usd::{mk_usd,USD}
 };
+
+#[derive(Debug, Clone)]
+pub struct Liquidation {
+   weight: USD,
+   percentage: Percentage
+}
 
 #[derive(Debug, Clone)]
 pub struct Swap {
@@ -15,7 +22,8 @@ pub struct Swap {
    from: Asset,
    to: Asset,
    fees: USD,
-   commission: USD
+   commission: USD,
+   liquidation: Option<Liquidation>
 }
 
 // ----- impls -------------------------------------------------------
@@ -33,7 +41,8 @@ impl CsvWriter for Swap {
 
 pub fn mk_swap(date: String, from: Asset, to: Asset, fees: USD, commission: USD)
    -> Swap {
-   Swap { date, from, to, fees, commission }
+   let liquidation = None;
+   Swap { date, from, to, fees, commission, liquidation }
 }
 
 pub fn parse_swap(date: &str, sym1: &str, amt1: &str, sym2: &str, amt2: &str,
@@ -97,4 +106,10 @@ pub fn pnl(bag: &HashSet<Asset>, sold: &Asset) -> USD {
       None => mk_usd(0.0),
       Some(orig) => diff_usd(orig, sold)
    }
+}
+
+// Are we a liquidation?
+
+pub fn is_liquidation(s: &Swap) -> bool {
+   Some(_) == s.liquidation
 }
