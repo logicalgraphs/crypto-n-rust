@@ -6,8 +6,7 @@ use std::collections::{HashSet};
 
 use book::{
    file_utils::lines_from_file,
-   list_utils::{head,tail,ht},
-   string_utils::str_string
+   list_utils::{head,tail,ht}
 };
 
 use crate::types::marketplace::{OrderBook,ratio_for};
@@ -25,39 +24,26 @@ pub fn print_path(ntoks: f32) -> impl Fn(&(f32, Vec<f32>, String)) -> () {
 
 // Here we do the work of processing a string-input to a path experiment
 
-pub fn process_paths(ntoks: f32, market: &HashSet<OrderBook>)
-   -> impl Fn(&String) -> Vec<(f32, Vec<f32>, String)> + '_ {
-   move |file: &String| {
-      let lines = lines_from_file(file);
-      let mut paths: Vec<(f32, Vec<f32>, String)> = tail(lines).iter()
-          .filter_map(process_path(ntoks, market))
-          .collect();
-      paths.sort_by(|a, b| a.0.partial_cmp(&b.0)
-           .expect(&format!("I don't know how to compare {a:?} and {b:?}")) );
-      paths
-   }
+pub fn paths_processor(f: &dyn Fn(&String) -> Option<(f32, Vec<f32>, String)>,
+                       file: &String) -> Vec<(f32, Vec<f32>, String)> {
+   let lines = lines_from_file(file);
+   let mut paths: Vec<(f32, Vec<f32>, String)> =
+      tail(lines).iter().filter_map(f).collect();
+   paths.sort_by(|a, b| a.0.partial_cmp(&b.0)
+        .expect(&format!("I don't know how to compare {a:?} and {b:?}")) );
+   paths
 }
 
-pub fn process_paths_for<'a>(ntoks: f32, tok: &'a str,
-                             market: &'a HashSet<OrderBook>)
-   -> impl Fn(&String) -> Vec<(f32, Vec<f32>, String)> + 'a {
-   move |file: &String| {
-      let lines = lines_from_file(file);
-      let mut paths: Vec<(f32, Vec<f32>, String)> = tail(lines).iter()
+pub fn process_paths_for(ntoks: f32, tok: & str,
+                         market: &HashSet<OrderBook>, file: &String)
+   -> Vec<(f32, Vec<f32>, String)> {
+   let lines = lines_from_file(file);
+   let mut paths: Vec<(f32, Vec<f32>, String)> = tail(lines).iter()
           .filter_map(process_path_for(ntoks, tok, market))
           .collect();
-      paths.sort_by(|a, b| a.0.partial_cmp(&b.0)
-           .expect(&format!("I don't know how to compare {a:?} and {b:?}")) );
-      paths
-   }
-}
-
-pub fn process_path(ntoks: f32, market: &HashSet<OrderBook>)
-   -> impl Fn(&String) -> Option<(f32, Vec<f32>, String)> + '_ {
-   move |line: &String| {
-      let path: Vec<String> = line.split(',').map(str_string).collect();
-      process_with_path(ntoks, market, &path)
-   }
+   paths.sort_by(|a, b| a.0.partial_cmp(&b.0)
+        .expect(&format!("I don't know how to compare {a:?} and {b:?}")) );
+   paths
 }
 
 pub fn process_path_for<'a>(ntoks: f32, tok: &'a str,
@@ -74,7 +60,7 @@ pub fn process_path_for<'a>(ntoks: f32, tok: &'a str,
    }
 }
 
-fn process_with_path(ntoks: f32, market: &HashSet<OrderBook>,
+pub fn process_with_path(ntoks: f32, market: &HashSet<OrderBook>,
    path: &Vec<String>) -> Option<(f32, Vec<f32>, String)> {
    if path.is_empty() {
       None

@@ -8,12 +8,13 @@
 
 use book::{
    list_utils::ht,
+   string_utils::str_string,
    utils::get_args
 };
 
 use crypto::{
    types::marketplace::read_marketplace,
-   algos::paths::{process_paths,print_path}
+   algos::paths::{paths_processor,process_with_path,print_path}
 };
 
 fn usage() {
@@ -23,6 +24,7 @@ fn usage() {
 
 fn main() {
    let mut cont = false;
+
    if let (Some(toks), files1) = ht(get_args()) {
       if let (Some(market), files) = ht(files1) {
          cont = !files.is_empty();
@@ -30,9 +32,16 @@ fn main() {
             match toks.parse() {
                Ok(ntoks) => {
                   let marketplace = read_marketplace(market);
+
+                  let pathf = |line: &String| {
+                     let path: Vec<String> =
+                         line.split(',').map(str_string).collect();
+                     process_with_path(ntoks, &marketplace, &path)
+                  };
+
                   for file in files {
                      println!("For file {}:", &file);
-                     let paths = process_paths(ntoks, &marketplace)(&file);
+                     let paths = paths_processor(&pathf, &file);
                      paths.iter().for_each(print_path(ntoks));
                   }
                   println!("\nCaput apres defero.");
