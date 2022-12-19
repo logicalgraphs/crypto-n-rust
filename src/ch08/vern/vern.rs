@@ -24,7 +24,7 @@ use crypto::{
 fn usage() {
    let m = "<marketplace file>";
    let g = "<graph paths CSV file>";
-   println!("./vern ntokens start-token {m} {g}");
+   println!("./vern ntokens start-token end-token {m} {g}");
    println!("\n\tcomputes the number of tokens after trading a path.\n");
 }
 
@@ -35,8 +35,8 @@ fn main() {
 
 fn go(args: &Vec<String>) {
    let mut cont = false;
-   let (args1, files) = args.split_at(3);
-   if let [toks, tok, marketplace] = args1.to_vec().as_slice() {
+   let (args1, files) = args.split_at(4);
+   if let [toks, stok, _etok, marketplace] = args1.to_vec().as_slice() {
       cont = !files.is_empty();
       if cont {
          println!("./vern, my main man, ./vern!\n");
@@ -45,7 +45,7 @@ fn go(args: &Vec<String>) {
                let market = read_marketplace(marketplace);
                for file in files {
                   println!("For file {}:", &file);
-                  let paths = process_paths_for(ntoks, tok, &market)(&file);
+                  let paths = process_paths_for(ntoks, stok, &market, &file);
                   paths.iter().for_each(print_path(ntoks));
                }
                println!("\nHey, Ray! 😊");

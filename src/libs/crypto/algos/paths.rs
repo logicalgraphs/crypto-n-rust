@@ -6,7 +6,8 @@ use std::collections::{HashSet};
 
 use book::{
    file_utils::lines_from_file,
-   list_utils::{head,tail,ht}
+   list_utils::{head,tail,ht},
+   string_utils::str_string
 };
 
 use crate::types::marketplace::{OrderBook,ratio_for};
@@ -71,13 +72,13 @@ pub fn process_with_path(ntoks: f32, market: &HashSet<OrderBook>,
    }
 }
 
+// ----- HELPER FUNCTIONS ---------------------------------------------
+
 fn nan_or(a: (f32, Vec<f32>, String)) -> Option<(f32, Vec<f32>, String)> {
    if a.0.is_nan() { None } else { Some(a.clone()) }
 }
 
-// ----- HELPER FUNCTIONS ---------------------------------------------
-
-// this function is a comonadic extension, and so demonstrates `experiment`
+// process_books is a comonadic extension, and so demonstrates `experiment`
 
 fn process_books(ntoks: f32, market: &HashSet<OrderBook>,
                  interms: &mut Vec<f32>, path: &Vec<String>) -> f32 {
