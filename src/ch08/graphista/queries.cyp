@@ -66,25 +66,25 @@ return a.name,b.name,c.name,d.name
 
 // 0 deep
 
-match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(z)
+match p=(n)-->(a:Coin)-->(z)
 where n = z 
 return n.name,a.name,z.name
 
 // 1 deep
 
-match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(b)-->(z)
+match p=(n)-->(a:Coin)-->(b)-->(z)
 where n = z 
 return n.name,a.name,b.name,z.name
 
 // 2 deep
 
-match p=(n:Coin { name: "ATOM"})-->(a:Coin)-->(b)-->(c)-->(z)
+match p=(n)-->(a:Coin)-->(b)-->(c)-->(z)
 where n = z and b <> n and a <> c
 return distinct n.name,a.name,b.name,c.name,z.name
 
 // 3 deeo, n.b.: we do allow assets SOME repeat appearances here
 
-match p=(n:Coin { name: "USK"})-->(a:Coin)-->(b)-->(c)-->(d)-->(z)
+match p=(n)-->(a:Coin)-->(b)-->(c)-->(d)-->(z)
 where n = z and b <> n and a <> c and b <> d and c <> z
 return distinct n.name,a.name,b.name,c.name,d.name,z.name
 
@@ -94,9 +94,17 @@ match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(b)-->(c)-->(d)-->(z:Coin {name: "
 where b <> n and c <> z and a <> c and d <> n and a <> z and b <> z and b <> d
 return distinct n.name,a.name,b.name,c.name,d.name,z.name
 
+match p=(n:Coin { name: "ATOM"})-->(a:Coin)-->(b)-->(c)-->(d)-->(z:Coin {name: "OSMO"})
+where b <> n and c <> z and a <> c and d <> n and a <> z and b <> z and b <> d
+return distinct n.name,a.name,b.name,c.name,d.name,z.name
+
 // and
 
 match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(b)-->(c)-->(z:Coin {name: "ATOM"})
+where b <> n and c <> z and a <> c and a <> z and b <> z and c <> n
+return distinct n.name,a.name,b.name,c.name,z.name
+
+match p=(n:Coin { name: "ATOM"})-->(a:Coin)-->(b)-->(c)-->(z:Coin {name: "OSMO"})
 where b <> n and c <> z and a <> c and a <> z and b <> z and c <> n
 return distinct n.name,a.name,b.name,c.name,z.name
 
@@ -106,7 +114,14 @@ match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(b)-->(z:Coin {name: "ATOM"})
 where b <> n and a <> z
 return distinct n.name,a.name,b.name,z.name
 
+match p=(n:Coin { name: "ATOM"})-->(a:Coin)-->(b)-->(z:Coin {name: "OSMO"})
+where b <> n and a <> z
+return distinct n.name,a.name,b.name,z.name
+
 // and finna
 
 match p=(n:Coin { name: "ATOM"})-->(a:Coin)-->(z:Coin {name: "OSMO"})
+return distinct n.name,a.name,z.name
+
+match p=(n:Coin { name: "OSMO"})-->(a:Coin)-->(z:Coin {name: "ATOM"})
 return distinct n.name,a.name,z.name
