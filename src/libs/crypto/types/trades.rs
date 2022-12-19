@@ -2,19 +2,17 @@
 
 use std::collections::HashSet;
 
-use book::csv_utils::{CsvWriter,print_csv};
+use book::{
+   csv_utils::{CsvWriter,print_csv},
+   list_utils::tail
+};
 
 use crate::types::{
    assets::{Asset,parse_asset,add_asset,remove_asset,print_asset_d,diff_usd},
+   liquidations::{Liquidation,gather_liquidation_info},
    percentage::{Percentage,mk_percentage},
    usd::{mk_usd,USD}
 };
-
-#[derive(Debug, Clone)]
-pub struct Liquidation {
-   weight: USD,
-   percentage: Percentage
-}
 
 #[derive(Debug, Clone)]
 pub struct Swap {
@@ -30,32 +28,33 @@ pub struct Swap {
 
 impl CsvWriter for Swap {
    fn as_csv(&self) -> String {
-      format_args!("{},{},{},{},{}",self.date, 
+      format_args!("{},{},{},{},{},{}",self.date, 
                    self.from.as_csv(), self.to.as_csv(),
-                   self.fees, self.commission)
+                   self.fees, self.commission,
+                   self.liquidation.as_ref()
+                      .map_or(String::new(), |l| format!("{}", l.percentage)))
          .to_string()
    }
 }
 
 // ---- first task is to parse in orders ----------------------------
 
-pub fn mk_swap(date: String, from: Asset, to: Asset, fees: USD, commission: USD)
-   -> Swap {
-   let liquidation = None;
+pub fn mk_swap(date: String, from: Asset, to: Asset, fees: USD, 
+               commission: USD, liquidation: Option<Liquidation>) -> Swap {
    Swap { date, from, to, fees, commission, liquidation }
 }
 
 pub fn parse_swap(date: &str, sym1: &str, amt1: &str, sym2: &str, amt2: &str,
-                  quot2: &str, quot1: &str, costs: Vec<&str>)
-    -> Result<Swap, String> {
+                  quot2: &str, quot1: &str, perc: Option<Percentage>,
+                  costs: Vec<&str>) -> Result<Swap, String> {
    let to     = parse_asset(sym1, amt1, quot1)?;
    let from   = parse_asset(sym2, amt2, quot2)?;
-   let costs1: Vec<&&str> = costs.iter().rev().collect();
-   let (rev_costs, _) = costs1.split_at(3);
-   if let [comm, _, fee] = rev_costs {
+   let costs1: Vec<&&str> = costs.iter().skip(4).take(2).collect();
+   if let [comm, fee] = costs1.as_slice() {
       let commission: USD = comm.parse().expect("commission");
       let fees: USD = fee.parse().expect("fees");
-      Ok(mk_swap(date.to_string(), from, to, fees, commission))
+      let liq = perc.map(|p| to.liquidated_at(p));
+      Ok(mk_swap(date.to_string(), from, to, fees, commission, liq))
    } else {
       Err("Could not collect fee and commission data".to_string())
    }
@@ -63,10 +62,13 @@ pub fn parse_swap(date: &str, sym1: &str, amt1: &str, sym2: &str, amt2: &str,
 
 pub fn read_csv_swap(line: &String) -> Result<Swap, String> {
    let mut swap_dater: Vec<&str> = line.split(',').collect();
-   swap_dater.truncate(15);
-   let (swap, fees) = swap_dater.split_at(8);
-   if let [_, dat, sym1, amt1, sym2, amt2, qut1, qut2] = swap {
-      parse_swap(dat, sym1, amt1, sym2, amt2, qut1, qut2, fees.to_vec())
+   swap_dater.pop();
+   let mut daters = tail(swap_dater);
+   let perc = gather_liquidation_info(&mut daters)?;
+   let t_daters = tail(daters);
+   let (swap, fees) = t_daters.split_at(7);
+   if let [dat, sym1, amt1, sym2, amt2, qut1, qut2] = swap {
+      parse_swap(dat, sym1, amt1, sym2, amt2, qut1, qut2, perc, fees.to_vec())
    } else {
       Err("Can't parse line: ".to_owned() + line)
    }
@@ -110,16 +112,11 @@ pub fn pnl(bag: &HashSet<Asset>, sold: &Asset) -> USD {
 
 // Are we a liquidation?
 
-pub fn is_liquidation(s: &Swap) -> bool {
-   s.liquidation.is_some()
-}
-
 pub fn liquidations_count_and_premium(trades: &Vec<Swap>) -> (u8, Percentage) {
    let (count, weight, sum) =
       trades.iter().fold((0, 0.0, 0.0), | (c, w, s), t | {
       if let Some(liq) = &t.liquidation {
-         let amt = liq.weight.amount;
-         (c + 1, w + liq.percentage.of(amt), s + amt)
+         (c + 1, w + liq.weight(), s + liq.amount.amount)
       } else {
          (c, w, s)
       }

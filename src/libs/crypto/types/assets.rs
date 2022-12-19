@@ -5,7 +5,11 @@ use std::{
 };
 
 use book::csv_utils::{CsvWriter,print_csv};
-use crate::types::usd::{USD,mk_usd};
+use crate::types::{
+   liquidations::{Liquidation,mk_liquidation},
+   percentage::Percentage,
+   usd::{USD,mk_usd}
+};
 
 #[derive(Debug, Clone)]
 pub struct Asset {
@@ -15,6 +19,12 @@ pub struct Asset {
 }
 
 // ----- implementations ---------------------------------------------
+
+impl Asset {
+   pub fn liquidated_at(&self, p: Percentage) -> Liquidation {
+      mk_liquidation(mk_usd(self.amount * self.quote), p)
+   }
+}
 
 impl CsvWriter for Asset {
    fn as_csv(&self) -> String { csv(self) }
