@@ -30,9 +30,10 @@ pub fn process_paths(ntoks: f32, market: &HashSet<OrderBook>)
    move |file: &String| {
       let lines = lines_from_file(file);
       let mut paths: Vec<(f32, Vec<f32>, String)> = tail(lines).iter()
-          .map(process_path(ntoks, market))
+          .filter_map(process_path(ntoks, market))
           .collect();
-      paths.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+      paths.sort_by(|a, b| a.0.partial_cmp(&b.0)
+           .expect(&format!("I don't know how to compare {a:?} and {b:?}")) );
       paths
    }
 }
@@ -45,19 +46,17 @@ pub fn process_paths_for<'a>(ntoks: f32, tok: &'a str,
       let mut paths: Vec<(f32, Vec<f32>, String)> = tail(lines).iter()
           .filter_map(process_path_for(ntoks, tok, market))
           .collect();
-      paths.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
+      paths.sort_by(|a, b| a.0.partial_cmp(&b.0)
+           .expect(&format!("I don't know how to compare {a:?} and {b:?}")) );
       paths
    }
 }
 
 pub fn process_path(ntoks: f32, market: &HashSet<OrderBook>)
-   -> impl Fn(&String) -> (f32, Vec<f32>, String) + '_ {
+   -> impl Fn(&String) -> Option<(f32, Vec<f32>, String)> + '_ {
    move |line: &String| {
-      let mut interms: Vec<f32> = Vec::from([ntoks]);
       let path: Vec<String> = line.split(',').map(str_string).collect();
-      let mut ans: f32 = ntoks;
-      ans = process_books(ans, market, &mut interms, &path);
-      (ans, interms.clone(), line.clone())
+      process_with_path(ntoks, market, &path)
    }
 }
 
@@ -71,15 +70,23 @@ pub fn process_path_for<'a>(ntoks: f32, tok: &'a str,
       }
       let path: Vec<String> =
          raw_path.iter().skip_while(|n| n != &&tok).map(str_str_str).collect();
-      if path.is_empty() {
-         None
-      } else {
-         let mut interms: Vec<f32> = Vec::from([ntoks]);
-         let mut ans: f32 = ntoks;
-         ans = process_books(ans, market, &mut interms, &path);
-         Some((ans, interms.clone(), path.join(",")))
-      }
+      process_with_path(ntoks, market, &path)
    }
+}
+
+fn process_with_path(ntoks: f32, market: &HashSet<OrderBook>,
+   path: &Vec<String>) -> Option<(f32, Vec<f32>, String)> {
+   if path.is_empty() {
+      None
+   } else {
+      let mut interms: Vec<f32> = Vec::from([ntoks]);
+      let ans: f32 = process_books(ntoks, market, &mut interms, path);
+      nan_or((ans, interms.clone(), path.join(",")))
+   }
+}
+
+fn nan_or(a: (f32, Vec<f32>, String)) -> Option<(f32, Vec<f32>, String)> {
+   if a.0.is_nan() { None } else { Some(a.clone()) }
 }
 
 // ----- HELPER FUNCTIONS ---------------------------------------------
