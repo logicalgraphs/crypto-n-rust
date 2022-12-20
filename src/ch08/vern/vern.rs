@@ -14,11 +14,14 @@
 
 // ... also, I moved a lot of this stuff to the algos-library
 
-use book::utils::get_args;
+use book::{
+   string_utils::str_string,
+   utils::get_args
+};
 
 use crypto::{
    types::marketplace::read_marketplace,
-   algos::paths::{process_paths_for,print_path}
+   algos::paths::{paths_processor,process_with_path,print_path}
 };
 
 fn usage() {
@@ -36,16 +39,33 @@ fn main() {
 fn go(args: &Vec<String>) {
    let mut cont = false;
    let (args1, files) = args.split_at(4);
-   if let [toks, stok, _etok, marketplace] = args1.to_vec().as_slice() {
+   if let [toks, stok, etok, marketplace] = args1 {
       cont = !files.is_empty();
       if cont {
          println!("./vern, my main man, ./vern!\n");
          match toks.parse() {
             Ok(ntoks) => {
                let market = read_marketplace(marketplace);
+               let pathf = |line: &String| {
+                  let raw_path: Vec<&str> = line.split(',').collect();
+                  fn str_str_str(s: &&str) -> String {
+                     str_string(*s)
+                  }
+                  let lst: &str = etok;
+                  if raw_path.last() == Some(&lst) {
+                     let path: Vec<String> =
+                        raw_path.iter()
+                                .skip_while(|n| n != &&stok)
+                                .map(str_str_str)
+                                .collect();
+                     process_with_path(ntoks, &market, &path) 
+                  } else {
+                     None
+                  }
+               };
                for file in files {
                   println!("For file {}:", &file);
-                  let paths = process_paths_for(ntoks, stok, &market, &file);
+                  let paths = paths_processor(&pathf, &file);
                   paths.iter().for_each(print_path(ntoks));
                }
                println!("\nHey, Ray! 😊");

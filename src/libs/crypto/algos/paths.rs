@@ -6,8 +6,7 @@ use std::collections::{HashSet};
 
 use book::{
    file_utils::lines_from_file,
-   list_utils::{head,tail,ht},
-   string_utils::str_string
+   list_utils::{head,tail,ht}
 };
 
 use crate::types::marketplace::{OrderBook,ratio_for};
@@ -33,32 +32,6 @@ pub fn paths_processor(f: &dyn Fn(&String) -> Option<(f32, Vec<f32>, String)>,
    paths.sort_by(|a, b| a.0.partial_cmp(&b.0)
         .expect(&format!("I don't know how to compare {a:?} and {b:?}")) );
    paths
-}
-
-pub fn process_paths_for(ntoks: f32, tok: & str,
-                         market: &HashSet<OrderBook>, file: &String)
-   -> Vec<(f32, Vec<f32>, String)> {
-   let lines = lines_from_file(file);
-   let mut paths: Vec<(f32, Vec<f32>, String)> = tail(lines).iter()
-          .filter_map(process_path_for(ntoks, tok, market))
-          .collect();
-   paths.sort_by(|a, b| a.0.partial_cmp(&b.0)
-        .expect(&format!("I don't know how to compare {a:?} and {b:?}")) );
-   paths
-}
-
-pub fn process_path_for<'a>(ntoks: f32, tok: &'a str,
-                            market: &'a HashSet<OrderBook>)
-   -> impl Fn(&String) -> Option<(f32, Vec<f32>, String)> + 'a {
-   move |line: &String| {
-      let raw_path: Vec<&str> = line.split(',').collect();
-      fn str_str_str(s: &&str) -> String {
-         str_string(*s)
-      }
-      let path: Vec<String> =
-         raw_path.iter().skip_while(|n| n != &&tok).map(str_str_str).collect();
-      process_with_path(ntoks, market, &path)
-   }
 }
 
 pub fn process_with_path(ntoks: f32, market: &HashSet<OrderBook>,
