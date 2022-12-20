@@ -41,14 +41,15 @@ pub fn process_with_path(ntoks: f32, market: &HashSet<OrderBook>,
    } else {
       let mut interms: Vec<f32> = Vec::from([ntoks]);
       let ans: f32 = process_books(ntoks, market, &mut interms, path);
-      nan_or((ans, interms.clone(), path.join(",")))
+      nan_or_inf_or((ans, interms.clone(), path.join(",")))
    }
 }
 
 // ----- HELPER FUNCTIONS ---------------------------------------------
 
-fn nan_or(a: (f32, Vec<f32>, String)) -> Option<(f32, Vec<f32>, String)> {
-   if a.0.is_nan() { None } else { Some(a.clone()) }
+fn nan_or_inf_or(a: (f32, Vec<f32>, String))
+   -> Option<(f32, Vec<f32>, String)> {
+   if a.0.is_nan() || a.0.is_infinite() { None } else { Some(a.clone()) }
 }
 
 // process_books is a comonadic extension, and so demonstrates `experiment`
