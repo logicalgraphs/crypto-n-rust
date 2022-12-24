@@ -68,13 +68,13 @@ return a.name,b.name,c.name,d.name
 
 match p=(n)-->(a:Coin)-->(z)
 where n = z 
-return n.name,a.name,z.name
+return distinct n.name,a.name,z.name
 
 // 1 deep
 
 match p=(n)-->(a:Coin)-->(b)-->(z)
 where n = z 
-return n.name,a.name,b.name,z.name
+return distinct n.name,a.name,b.name,z.name
 
 // 2 deep
 
