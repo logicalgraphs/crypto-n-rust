@@ -105,7 +105,7 @@ pub fn expenses(s: &Swap) -> (USD, USD) {
 
 pub fn pnl(bag: &HashSet<Asset>, sold: &Asset) -> USD {
    match bag.get(sold) {
-      None => mk_usd(0.0),
+      None => { println!("Can't find {sold:?}"); mk_usd(0.0) },
       Some(orig) => diff_usd(orig, sold)
    }
 }

@@ -63,7 +63,7 @@ pub fn parse_trade_cont(cont: &dyn Fn(&Portfolio, Vec<String>, TradeState) -> ()
                         lines: Vec<String>, state: TradeState) {
    let mut new_trades = state.trades.clone();
    if let Some(line) = line_opt { 
-      println!("Parsing {line}");
+      println!("\nParsing {line}");
       let TradeState { profit, loss, fees, commission, .. } = state;
       let (new_portfolio, sub_pnl, (fs, cs), dt) = match read_csv_swap(line) {
          Ok(trde) => {
@@ -76,7 +76,6 @@ pub fn parse_trade_cont(cont: &dyn Fn(&Portfolio, Vec<String>, TradeState) -> ()
             (p.clone(), 0.0, (no_monay(), no_monay()), String::new())
          }
       };
-      println!("sub_pnl {sub_pnl}");
       let new_profit = profit + if sub_pnl > 0.0 { sub_pnl } else { 0.0 };
       let new_loss   = loss + if sub_pnl < 0.0 { -1.0 * sub_pnl } else { 0.0 };
       let state1 =
