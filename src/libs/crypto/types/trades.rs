@@ -50,7 +50,7 @@ pub fn parse_swap(date: &str, sym1: &str, amt1: &str, sym2: &str, amt2: &str,
    let to     = parse_asset(sym1, amt1, quot1)?;
    let from   = parse_asset(sym2, amt2, quot2)?;
    let costs1: Vec<&&str> = costs.iter().skip(4).take(2).collect();
-   if let [comm, fee] = costs1.as_slice() {
+   if let [fee, comm] = costs1.as_slice() {
       let commission: USD = comm.parse().expect("commission");
       let fees: USD = fee.parse().expect("fees");
       let liq = perc.map(|p| to.liquidated_at(p));

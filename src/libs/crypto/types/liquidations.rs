@@ -21,7 +21,7 @@ pub fn mk_liquidation(amount: USD, percentage: Percentage) -> Liquidation {
 
 pub fn gather_liquidation_info(line: &mut Vec<&str>)
    -> Result<Option<Percentage>, String> {
-   let ans = if line.first() == Some(&"Liquidation") {
+   let ans = if line.first() == Some(&"LIQUIDATION") {
       line.pop().map(|p| p.parse().expect(&format!("percentage {p}")))
    } else {
       None
