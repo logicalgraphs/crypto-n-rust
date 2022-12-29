@@ -39,7 +39,7 @@ For example:
 
 ![Kujira FIN trades, 2022-12-28](Kujira-FIN-trades-2022-12-28.png)
 
-2. `$ echo *multiline copypasta'd trades | tab2csv > data/trades.csv`
+2. `$ echo '*multiline copypasta'd trades*' | tab2csv > data/trades.csv`
 3. `$ cargo run data/assets.csv data/trades.csv`
 
 Your report should look something like (includes per-trade run-off):
