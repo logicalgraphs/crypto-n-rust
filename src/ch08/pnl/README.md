@@ -4,7 +4,7 @@ PnL ('profit-n-loss') from yesterdæg's Kujira Trades
 
 ## Setup
 
-0. [BUIDL `tab2csv`](../../ch04)
+0. [BUIDL `tab2csv` and `stamp`](../../ch04)
 1. `$ cd $CARGO_HOME/ch08/pnl; cargo build`
 2. establish [your initial assets](data/assets.csv)
 
@@ -45,3 +45,12 @@ For example:
 Your report should look something like (includes per-trade run-off):
 
 ![trade report, 2022-12-28](trade-report-2022-12-28.png)
+
+## Follow through
+
+1. copypasta the output assets with headers
+2. `$ echo '*multiline assets CSV*' | stamp > data/assets.csv`
+
+This establishes current state of your bags for tomorrow's yesterday's reports.
+
+And I just unironically wrote "tomorrow's yesterday's." I didn't even blink.
