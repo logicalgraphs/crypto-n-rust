@@ -55,3 +55,12 @@ This establishes current state of your bags for tomorrow's yesterday's
 daily trade report.
 
 And I just unironically wrote "tomorrow's yesterday's." I didn't even blink.
+
+## Oh, and by the way, ...
+
+You can do more than just copy-pasta the assets into `data/`. You can, for
+example, upload the CSV into an analytics-tool, like, ... [dare I say] ...
+a SPREADSHEETSZORXEN! then view your bag which will allow you to see your
+portfolio balance and prominent assets in your bag, e.g.:
+
+![assets, 2022-12-28](assets-2022-12-28.png)
