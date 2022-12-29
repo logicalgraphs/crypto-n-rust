@@ -21,4 +21,4 @@ The quotes are derived from tokens listed in
 [data-files/csv/portfolio_coins.lsv](data-files/csv/portfolio_coins.lsv).
 
 2. [Daily quotes from Kujira FIN](src/ch08/bases/)
-
+3. [PnL](src/ch08/pnl/) ('profit-n-loss') from yesterdæg's Kujira trades
