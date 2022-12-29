@@ -22,3 +22,5 @@ The quotes are derived from tokens listed in
 
 2. [Daily quotes from Kujira FIN](src/ch08/bases/)
 3. [PnL](src/ch08/pnl/) ('profit-n-loss') from yesterdæg's Kujira trades
+4. [Daily Benqi positions](src/ch07/data_entry) reports the daily Benqi market
+positions.
