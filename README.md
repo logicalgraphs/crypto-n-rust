@@ -11,6 +11,15 @@ We do crypto. We do Rust. We do crypto 'n Rust.
 * Chapter 03: [Modules](03-modules.md) WIP
   * programs: [utils.rs](src/ch03/utils.rs) [winter.rs](src/ch03/winter.rs)
 
+## Setup
+
+Your `env` should contain:
+
+* `RUST_BOOK` ... this directory
+* `CARGO_HOME`=`$RUST_BOOK/src`
+
+## Daily Reports
+
 "How do I do the 'daily reports' that geophf does?" you ask.
 
 Good question! [Here's](daily-reports.md) my answer.
