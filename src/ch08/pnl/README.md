@@ -52,6 +52,6 @@ Your report should look something like (includes per-trade run-off):
 2. `$ echo '*multiline assets CSV*' | stamp > data/assets.csv`
 
 This establishes current state of your bags for tomorrow's yesterday's 
-daily trade reports.
+daily trade report.
 
 And I just unironically wrote "tomorrow's yesterday's." I didn't even blink.
