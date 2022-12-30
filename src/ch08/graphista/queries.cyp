@@ -13,6 +13,16 @@ merge (c:Coin {name: row.buy})
 merge (c1:Coin {name: row.sell})
 merge (c)<-[r:RATIO {multiplier: toFloat(row.inverse)}]-(c1)
 
+// remove ATOM/OSMO/ATOM paths
+
+match (n:Coin { name: 'ATOM'})-[r]-(n1:Coin { name: 'OSMO'}) delete r
+
+// and
+
+match (n:Coin)
+where n.name in ['SCRT', 'STARS']
+detach delete n
+
 // active order books:
 
 match p=(c)-[r]->(c1) where r.multiplier > 0 return p
