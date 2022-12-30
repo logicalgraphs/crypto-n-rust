@@ -10,7 +10,7 @@ PnL ('profit-n-loss') from yesterdæg's Kujira Trades
 
 ## Run
 
-1. copypasta your trades from yesterday. Do not include the last (totals) line.
+1. copypasta your trades from yesterday, include the last (totals) line.
 `pnl` expects CSV with headers:
 
 
