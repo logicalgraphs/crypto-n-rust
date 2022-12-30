@@ -33,8 +33,9 @@ fn main() {
 }
 
 fn parse_n_print(p: &Portfolio, file: impl AsRef<Path>) {
-   let lines = tail(lines_from_file(file));
-   cont(&p, lines, init_trade_state());
+   let mut lines = tail(lines_from_file(file));
+   let trade_state = init_trade_state(lines.pop());
+   cont(&p, lines, trade_state);
 }
 
 // mutually recursive functions, because what even are for-loops, anyway? :<
