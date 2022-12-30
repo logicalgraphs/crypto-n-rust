@@ -10,7 +10,7 @@ PnL ('profit-n-loss') from yesterdæg's Kujira Trades
 
 ## Run
 
-1. copypasta your trades from yesterday. Do not include the last (totals) line.
+1. copypasta your trades from yesterday, include the last (totals) line.
 `pnl` expects CSV with headers:
 
 
@@ -37,14 +37,14 @@ where
 
 For example:
 
-![Kujira FIN trades, 2022-12-28](Kujira-FIN-trades-2022-12-28.png)
+![Kujira FIN trades, 2022-12-28](imgs/Kujira-FIN-trades-2022-12-28.png)
 
 2. `$ echo '*multiline copypasta'd trades*' | tab2csv > data/trades.csv`
 3. `$ cargo run data/assets.csv data/trades.csv`
 
 Your report should look something like (includes per-trade run-off):
 
-![trade report, 2022-12-28](trade-report-2022-12-28.png)
+![trade report, 2022-12-28](imgs/trade-report-2022-12-28.png)
 
 ## Follow through
 
@@ -63,4 +63,4 @@ example, upload the CSV into an analytics-tool, like, ... [dare I say] ...
 a SPREADSHEETSZORXEN! then view your bag which will allow you to see your
 portfolio balance and prominent assets in your bag, e.g.:
 
-![assets, 2022-12-28](assets-2022-12-28.png)
+![assets, 2022-12-28](imgs/assets-2022-12-28.png)

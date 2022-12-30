@@ -4,8 +4,8 @@
 
 use crypto::types::{
    portfolio::{Portfolio,execute_d},
-   trades::{expenses,read_csv_swap,Swap,liquidations_count_and_premium},
-   usd::{mk_usd, no_monay}
+   trades::{Swap,read_csv_swap,liquidations_count_and_premium},
+   usd::{USD,mk_usd}
 };
 
 pub struct TradeState {
@@ -17,14 +17,37 @@ pub struct TradeState {
    trades: Vec<Swap>
 }
 
-pub fn init_trade_state() -> TradeState {
-   let trades: Vec<Swap> = Vec::new();
-   mk_trade_state(String::new(), 0.0, 0.0, 0.0, 0.0, trades)
+pub fn init_trade_state(last_line_p: Option<String>) -> TradeState {
+   if let Some(last_line) = last_line_p {
+      let fees_comms: Vec<&str> = last_line.split(',').collect();
+      let fc: Vec<&&str> = fees_comms.iter().skip(3).take(2).collect();
+      init_trade_state_cont(&last_line, fc)
+   } else {
+      panic!("Cannot find last line of trades-file")
+   }
+}
+
+fn init_trade_state_cont(last_line: &str, fc: Vec<&&str>) -> TradeState {
+   if let [fee, comm] = fc.as_slice() {
+      let trades: Vec<Swap> = Vec::new();
+      let fees: USD = fee.parse().expect(&format!("fee {fee}"));
+      let comms: USD = comm.parse().expect(&format!("commission {comm}"));
+      let date = String::new();
+      mk_trade_state(date,0.0,0.0,fees.amount,comms.amount,trades)
+   } else {
+      panic!("Cannot split out fees and commission from {last_line}.")
+   }
 }
 
 pub fn mk_trade_state(date: String, profit: f32, loss: f32, fees: f32,
                       commission: f32, trades: Vec<Swap>) -> TradeState {
    TradeState { date, profit, loss, fees, commission, trades }
+}
+
+fn update_pnl(state: &TradeState, date: String, profit: f32, loss: f32,
+                      trades: Vec<Swap>) -> TradeState {
+   let TradeState { fees, commission, .. } = state.clone();
+   mk_trade_state(date, profit, loss, *fees, *commission, trades)
 }
 
 pub fn report(state: &TradeState) {
@@ -64,23 +87,22 @@ pub fn parse_trade_cont(cont: &dyn Fn(&Portfolio, Vec<String>, TradeState) -> ()
    let mut new_trades = state.trades.clone();
    if let Some(line) = line_opt { 
       println!("\nParsing {line}");
-      let TradeState { profit, loss, fees, commission, .. } = state;
-      let (new_portfolio, sub_pnl, (fs, cs), dt) = match read_csv_swap(line) {
+      let TradeState { profit, loss, .. } = state;
+      let (new_portfolio, sub_pnl, dt) = match read_csv_swap(line) {
          Ok(trde) => {
             let (p1, u) = execute_d(p, &trde, true);
             new_trades.push(trde.clone());
-            (p1, u.amount, expenses(&trde), trde.date)
+            (p1, u.amount, trde.date)
          },
          Err(msg) =>  {
             println!("ERROR: {}", msg);
-            (p.clone(), 0.0, (no_monay(), no_monay()), String::new())
+            (p.clone(), 0.0, String::new())
          }
       };
       let new_profit = profit + if sub_pnl > 0.0 { sub_pnl } else { 0.0 };
       let new_loss   = loss + if sub_pnl < 0.0 { -1.0 * sub_pnl } else { 0.0 };
       let state1 =
-          mk_trade_state(dt, new_profit, new_loss, fees + fs.amount,
-                         commission + cs.amount, new_trades);
+          update_pnl(&state, dt, new_profit, new_loss, new_trades);
       cont(&new_portfolio, lines, state1);
    }
 }
