@@ -9,7 +9,7 @@ marketplace.
 2. copypasta your [Benqi marketplace positions](https://app.benqi.fi/overview)
 3. `$ echo '*multiline benqi marketplace*' | stamp > data/benqi_positions.lsv`
 
-![Benqi Overview](benqi-marketplace.png)
+![Benqi Overview](imgs/benqi-marketplace.png)
 
 ## Run
 
@@ -17,7 +17,7 @@ marketplace.
 
 You should see a report looking something like this:
 
-![My supplies and borrows](supplies-borrows.png)
+![My supplies and borrows](imgs/supplies-borrows.png)
 
 which you can copypasta onto your portfolio spreadsheetszorxen, that you 
 have establish from anon to accept these positions and suchlike.
