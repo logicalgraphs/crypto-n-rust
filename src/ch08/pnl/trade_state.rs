@@ -78,7 +78,7 @@ pub fn report(state: &TradeState) {
    let lg = "https://github.com/logicalgraphs";
    let dir = "crypto-n-rust/blob/main/src/ch08/pnl/";
    let src = "pnl_with_liquidations.rs";
-   println!("pnl sources: {lg}/{dir}{src}\n\nAssets\n");
+   println!("pnl sources: {lg}/{dir}{src}\n\nAssets in play\n");
 }
 
 pub fn parse_trade_cont(cont: &dyn Fn(&Portfolio, Vec<String>, TradeState) -> (),
