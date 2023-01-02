@@ -51,7 +51,7 @@ fn main() {
             let mut parents: Vec<String> = Vec::new();
             let frist_tail = "null".to_string();
             print_tasks(&mut parents, &mut indices, mein, 
-                        &path, 1, 10, frist_tail);
+                        &path, 1, 50, frist_tail);
             print_closer();
          }
       }
@@ -62,11 +62,11 @@ fn main() {
 
 fn print_prelude() {
    let url = "https://observablehq.com/@aaronkyle/google-gantt";
-   println!("goto:\n{url}\n");
-   println!("function daysToMilliseconds(days) {{
+   println!("goto:\n{url}
+   function daysToMilliseconds(days) {{
         return days * 24 * 60 * 60 * 1000;
       }}
-      function dec(d) {{
+      function jan(d) {{
         return new Date(2022, 11, d);
       }}
       data.addRows([");
@@ -99,7 +99,7 @@ fn print_task(indices: &mut Vec<char>, mein: &str, h: &str,
               prev: &mut Vec<String>, day: u8, comp: u8, back: String)
     -> (String, u8) {
    fn mk_day(d: u8) -> String {
-      format!("dec({d})")
+      format!("jan({d})")
    }
 
    let mill = "daysToMilliseconds(1)";
