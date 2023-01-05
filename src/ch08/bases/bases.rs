@@ -33,7 +33,7 @@ fn main() {
 
 fn print_prices<T: Display>(header: &str, p: &HashMap<String, T>) {
    println!("\n{header}:\n");
-   for (k, v) in p {
-      println!("{k}  {v}");
-   }
+   let mut v: Vec<_> = p.into_iter().collect();
+   v.sort_by(|x,y| x.0.cmp(&y.0));
+   v.iter().for_each(|(k,v)| println!("{k}  {v}"));
 }

@@ -16,7 +16,7 @@ the environmental variables, and stuff)
 
 1. copypasta the [Kujira FIN order book market prices](https://fin.kujira.app/trade/kujira14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sl4e867?q=all).
 
-![FIN order books](FIN-order-books.png)
+![FIN order books](imgs/FIN-order-books.png)
 
 2. `echo '*the multiline copied prices*' | tab2csv > $FIN_DIR/market.lsv`
 
@@ -24,4 +24,4 @@ the environmental variables, and stuff)
 
 The generated report will look like the following:
 
-![extracted market prices](extracted-market-prices.png)
+![extracted market prices](imgs/extracted-market-prices.png)
