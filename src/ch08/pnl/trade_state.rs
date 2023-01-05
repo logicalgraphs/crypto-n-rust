@@ -8,6 +8,8 @@ use crypto::types::{
    usd::{USD,mk_usd}
 };
 
+use book::string_utils::plural;
+
 pub struct TradeState {
    date: String,
    profit: f32,
@@ -63,16 +65,16 @@ pub fn report(state: &TradeState) {
    let costs: f32 = fees + commission;
    println!("total costs: {}\n", mk_usd(costs));
    let figure: f32 = subtotal - costs;
-   let ntrades = trades.len();
+   let ntrades: u32 = trades.len().try_into().unwrap();
    let avg = mk_usd(figure / ntrades as f32);
    let total = mk_usd(figure);
-   println!("Total profit (or loss): {total} on {ntrades} trades");
+   println!("Total profit (or loss): {total} on {}", plural(ntrades, "trade"));
    println!("average: {avg} per trade\n");
 
    let (nliqs, perc) = liquidations_count_and_premium(trades);
+   let n: u32 = nliqs.into();
    if nliqs > 0 {
-      let s = if nliqs == 1 { "" } else { "s" };
-      println!("{nliqs} liquidation{s} at a {perc} premium (avg)\n");
+      println!("{} at a {perc} premium (avg)\n", plural(n, "liquidation"));
    }
 
    let lg = "https://github.com/logicalgraphs";
