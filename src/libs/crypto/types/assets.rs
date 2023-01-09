@@ -104,7 +104,9 @@ pub fn read_assets(lines: Vec<String>) -> HashSet<Asset> {
 
 pub fn print_assets(assets: &HashSet<Asset>) {
    println!("asset,amount,quote");
-   assets.iter().for_each(print_csv);
+   let mut bassets: Vec<&Asset> = assets.into_iter().collect();
+   bassets.sort();
+   bassets.iter().for_each(|ass| println!("{}", ass.as_csv()));
 }
 
 pub fn print_asset_d(bag: &HashSet<Asset>, a: &Asset, debug: bool) {
