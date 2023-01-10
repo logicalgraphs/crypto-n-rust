@@ -9,4 +9,6 @@ usage:
 
 STILL a lot of manual labor, but, we now have this!
 
+![FIN order book volumes](imgs/vols.png)
+
 volumes reposed [here](data/volumes.csv).
