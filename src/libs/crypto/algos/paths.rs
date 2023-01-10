@@ -9,16 +9,20 @@ use book::{
    list_utils::{head,tail,ht}
 };
 
-use crate::types::marketplace::{OrderBook,ratio_for};
+use crate::types::{
+   marketplace::{OrderBook,ratio_for},
+   percentage::{mk_percentage}
+};
 
 // We start out with a higher-order function to print a path experiment:
 
 pub fn print_path(ntoks: f32) -> impl Fn(&(f32, Vec<f32>, String)) -> () {
    move | p: &(f32, Vec<f32>, String) |  {
       let (ans, interms, line) = p;
-      println!("For {}:", line);
-      println!("    {:?}", interms);
-      println!("\t{} tokens becomes {}.", ntoks, ans);
+      println!("For {line}:");
+      println!("    {interms:?}");
+      let roi = mk_percentage((ans - ntoks) / ntoks);
+      println!("\t{ntoks} tokens becomes {ans}, {roi} ROI.");
    }
 }
 
