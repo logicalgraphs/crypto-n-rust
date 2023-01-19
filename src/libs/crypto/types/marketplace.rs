@@ -93,7 +93,7 @@ pub fn mk_orderbook(buy_side: String, sell_side: String, ratio: f32, price: USD)
 
 // ----- scanners/parsers ---------------------------------------------------
 
-pub fn parse_orderbook(buy: &str, sell: &str, rat: &str, pric: &str)
+fn parse_orderbook(buy: &str, sell: &str, rat: &str, pric: &str)
    -> Result<OrderBook, String> {
    let ratio: f32 = parse_commaless(rat)?;
    let pric1: f32 = parse_commaless(pric)?;
@@ -106,15 +106,27 @@ pub fn parse_orderbook(buy: &str, sell: &str, rat: &str, pric: &str)
 pub fn scan_orderbook(lines: Vec<String>)
    -> (Result<OrderBook, String>, Vec<String>) {
    let (order, rest) = lines.split_at(7);
-   (if let [buy, sell, rat, _sign, pric, _change,
-            _this_line_intentionally_left_blank] = order {
+   let mut remaining = rest.to_vec();
+   (if let [buy, sell, a, b, c, d, _e] = order {
+
+      // we now must consider margin-calls for order books
+
+      let (rat, pric) = if a == "2.5x" {
+
+         // in which case we adjust the input scan-stream
+
+         remaining.remove(0);
+         (b, d)
+      } else {
+         (a, c)
+      };
       parse_orderbook(buy, sell, rat, pric)
    } else {
       match head(order.to_vec()) {
          Some(buy) => Err("Can't parse pair starting with: ".to_owned() + &buy),
          None      => Err("Panik at ze Disco!".to_string())
       }
-   }, rest.to_vec())
+   }, remaining)
 }
 
 pub fn read_marketplace(file: impl AsRef<Path>) -> HashSet<OrderBook> {

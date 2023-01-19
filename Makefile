@@ -17,6 +17,9 @@ process: encsvify
 filter: filterify
 	@echo "Can you? Can you trip like I do?"
 
+bases: basic
+	@echo "Not FORTRAN. Ah! FORTRAN! The good ol' days!"
+
 # ----- LOADER AND REPORT DEPENDENCIES -----------------------------------
 
 LE_DATE=$(shell date +%Y-%m-%d)
@@ -32,6 +35,7 @@ LIST_CMD="listings/latest?start=1&limit=5000&convert=USD"
 CURL_CMD=$(SCRIPTS_DIR)/curl-cmc.sh
 
 RUN_RUST=cargo run
+MARKET=$(FIN_DIR)/market.lsv
 
 clean: FORCE
 	rm $(JSON_LISTING); \
@@ -64,6 +68,11 @@ filterify: $(CSV_LISTING)
 	cd $(SRC_DIR)/ch06/cmc_filter/; \
 	$(RUN_RUST) $(CSV_LISTING) $(HOLDINGS) > $(PORT_LISTING); \
 	cat $(PORT_LISTING)
+
+basic: FORCE
+	@echo "Extracting market prices of assets on FIN..."; \
+	cd $(CRYPTO_TOOLS)/bases/; \
+	$(RUN_RUST) $(MARKET)
 
 # ----- ... and then we:
 
