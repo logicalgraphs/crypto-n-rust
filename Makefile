@@ -20,6 +20,9 @@ filter: filterify
 bases: basic
 	@echo "Not FORTRAN. Ah! FORTRAN! The good ol' days!"
 
+pnl: peenelles
+	@echo "Pie Jesu Domine, Dona eis requiem."
+
 # ----- LOADER AND REPORT DEPENDENCIES -----------------------------------
 
 LE_DATE=$(shell date +%Y-%m-%d)
@@ -73,6 +76,11 @@ basic: FORCE
 	@echo "Extracting market prices of assets on FIN..."; \
 	cd $(CRYPTO_TOOLS)/bases/; \
 	$(RUN_RUST) $(MARKET)
+
+peenelles: FORCE
+	@echo "Running profit and lost report for FIN trades..."; \
+	cd $(CRYPTO_TOOLS)/pnl/; \
+	$(RUN_RUST) $(FIN_DIR)/assets.csv $(FIN_DIR)/trades.csv
 
 # ----- ... and then we:
 
