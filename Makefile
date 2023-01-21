@@ -23,6 +23,9 @@ bases: basic
 pnl: peenelles
 	@echo "Pie Jesu Domine, Dona eis requiem."
 
+benqi: benqs
+	@echo "Tuppence a bag."
+
 # ----- LOADER AND REPORT DEPENDENCIES -----------------------------------
 
 LE_DATE=$(shell date +%Y-%m-%d)
@@ -81,6 +84,11 @@ peenelles: FORCE
 	@echo "Running profit and lost report for FIN trades..."; \
 	cd $(CRYPTO_TOOLS)/pnl/; \
 	$(RUN_RUST) $(FIN_DIR)/assets.csv $(FIN_DIR)/trades.csv
+
+benqs: FORCE
+	@echo "Benqi marketplace positions"; \
+	cd $(CARGO_HOME)/ch07/data_entry; \
+	$(RUN_RUST) $(AVAX_DIR)/benqi_positions.lsv
 
 # ----- ... and then we:
 
