@@ -10,8 +10,7 @@ name = "gantt"
 path = "multilayer_gantt.rs"
 
 [dependencies]
-book = { path = "../../libs/book" }
-crypto = { path = "../../libs/crypto" }
+book = { path = "../../../libs/book" }
 
 strum_macros = "0.24"
 
