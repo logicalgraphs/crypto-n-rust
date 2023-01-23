@@ -1,13 +1,13 @@
 // to load ratios:
 
-load csv with headers from "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/src/ch08/graphista/data/market.csv" as row
+load csv with headers from "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/src/ch08/graphista/data/market-graph.csv" as row
 merge (c:Coin {name: row.buy})
 merge (c1:Coin {name: row.sell})
 merge (c)-[r:RATIO {multiplier: toFloat(row.ratio)}]->(c1)
 
 // to load inverse ratios:
 
-load csv with headers from "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/src/ch08/graphista/data/market.csv" as row
+load csv with headers from "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/src/ch08/graphista/data/market-graph.csv" as row
 with row where row.ratio <> "0"
 merge (c:Coin {name: row.buy})
 merge (c1:Coin {name: row.sell})
