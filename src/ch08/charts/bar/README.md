@@ -35,7 +35,7 @@ Observable](https://observablehq.com/@observablehq/plot-bar?collection=@observab
 * To execute the code, find the arrow on the upper right side of your 
 code-block. Select it.
 
-![execute code](images/execute-code.png)
+![execute code](imgs/execute-code.png)
 
 When you add and execute all three code-blocks, voilà: your chart appeareth.
 
