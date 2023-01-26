@@ -7,7 +7,7 @@ pub fn h(n: u8, content: &str) -> String {
 }
 
 pub fn ol(list: &Vec<String>) -> String {
-   let lis: Vec<String> = list.iter().map(|itm| li(itm)).collect();
+   let lis: Vec<String> = list.iter().map(li).collect();
    elt("ol", &lis.join("\n"))
 }
 
@@ -22,7 +22,7 @@ pub fn p(content: &str) -> String {
 
 // ----- Helper functions ---------------------------------------------
 
-fn li(s: &str) -> String {
+fn li(s: &String) -> String {
   elt("li", s)
 }
 
@@ -35,10 +35,10 @@ fn eattrs(tag: &str, attribs: &Vec<(&str, &str)>, content: &str) -> String {
 }
 
 fn attrs(attribs: &Vec<(&str, &str)>) -> String {
-   let new_attribs: Vec<String> = attribs.iter().map(|p| attr(p)).collect();
+   let new_attribs: Vec<String> = attribs.iter().map(attr).collect();
    new_attribs.join(" ")
 }
 
 fn attr(a: &(&str, &str)) -> String {
-   format!("{}={}", quot(a.0), quot(a.1))
+   format!("{}={}", a.0, quot(a.1))
 }
