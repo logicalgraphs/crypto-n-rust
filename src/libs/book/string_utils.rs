@@ -4,6 +4,10 @@ pub fn dequote(mut str: String) -> String {
    str
 }
 
+pub fn quot(s: &str) -> String {
+   format!("\"{s}\"")
+}
+
 pub fn str_string(str: &str) -> String {
    let mut ans = String::new();
    ans.push_str(str);

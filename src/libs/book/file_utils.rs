@@ -28,7 +28,7 @@ pub fn extract_date_and_body(file: impl AsRef<Path>)
       -> (String, Vec<String>) {
    if let (Some(first_line), rest) =
       ht(lines_from_file(file)) {
-      if let Some(date) = first_line.strip_prefix("date scraped: ") {
+      if let Some(date) = first_line.strip_prefix("date: ") {
          (date.to_string(),tail(rest))   // skipping the blank line
       } else {
         panic!("Could not extract the date from the file.");
