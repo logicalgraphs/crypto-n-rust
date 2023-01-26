@@ -66,7 +66,7 @@ impl Ord for USD {
 
 impl PartialOrd for USD {
    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-      Some(self.cmp(other))
+      self.amount.partial_cmp(&other.amount)
    }
 }
 

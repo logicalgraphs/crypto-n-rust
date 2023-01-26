@@ -1,6 +1,7 @@
 // types, regardless underlying data sources
 
 use std::{
+   cmp::Ordering,
    fmt,
    str::FromStr
 };
@@ -37,6 +38,12 @@ impl FromStr for Percentage {
       } else {
          Err(format!("Not a percentage: {elt}"))
       }
+   }
+}
+
+impl PartialOrd for Percentage {
+   fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+      self.percent.partial_cmp(&other.percent)
    }
 }
 
