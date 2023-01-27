@@ -1,0 +1,19 @@
+
+Make commands:
+
+* alles/default:
+        fetch, process, and filter CMC quotes
+
+* bases:
+        give the market prices of all tokens on FIN
+
+* pnl:
+        run the trading PnL ('profits-n-losses') report
+
+* benqi:
+        extracts current positions on benqi marketplace
+
+* bow mode=<html|text>:
+	reports the top-5 LPs by volume and by APR(combined) either as
+	HTML or as text, depending on mode-variable.
+

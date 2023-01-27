@@ -26,6 +26,12 @@ pnl: peenelles
 benqi: benqs
 	@echo "Tuppence a bag."
 
+bow: arrow
+	@echo "Rain man."
+
+help: FORCE
+	@cat $(RUST_BOOK)/commands.txt
+
 # ----- LOADER AND REPORT DEPENDENCIES -----------------------------------
 
 LE_DATE=$(shell date +%Y-%m-%d)
@@ -89,6 +95,11 @@ benqs: FORCE
 	@echo "Benqi marketplace positions"; \
 	cd $(CARGO_HOME)/ch07/data_entry; \
 	$(RUN_RUST) $(AVAX_DIR)/benqi_positions.lsv
+
+arrow: FORCE
+	@echo "BOW top-5 LPs"; \
+	cd $(CRYPTO_TOOLS)/lps/; \
+	$(RUN_RUST) $(mode) $(BOW_DIR)/lps.lsv
 
 # ----- ... and then we:
 
