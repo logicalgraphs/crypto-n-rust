@@ -2,7 +2,7 @@
 Make commands:
 
 * alles/default:
-        fetch, process, and filter CMC quotes
+        fetch, process, and filter CoinMarketCap.com-quotes
 
 * bases:
         give the market prices of all tokens on FIN
