@@ -18,3 +18,5 @@ pub fn plural(n: u32, noun: &str) -> String {
    let s = if n == 1 { "" } else { "s" };
    format!("{n} {noun}{s}")
 }
+
+pub fn to_string(s: &str) -> String { s.to_string() }

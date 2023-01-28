@@ -7,6 +7,7 @@ use book::{
    file_utils::extract_date_and_body,
    html_utils::{a,h,ol,p},
    list_utils::ht,
+   string_utils::to_string,
    utils::{get_args,id}
 };
 
@@ -65,6 +66,7 @@ fn main() {
          let mut vols: Vec<LP> = lps.clone();
          vols.sort_by(|a, b| b.volume.partial_cmp(&a.volume).unwrap());
          print_top5s(&vols, &mode, "volume");
+         print_100k(&mode);
          lps.sort_by(|a, b| b.apr.partial_cmp(&a.apr).unwrap());
          print_top5s(&lps, &mode, "APR(combined)");
          print_footer(&mode);
@@ -73,6 +75,12 @@ fn main() {
    } else {
       usage();
    }
+}
+
+fn print_100k(mode: &Mode) {
+   let paragraph = if mode == &Mode::TEXT { to_string } else { p };
+   let mesg = "Showing all LPs with $100k+ volume";
+   println!("{}\n", paragraph(mesg))
 }
 
 fn print_footer(mode: &Mode) {
