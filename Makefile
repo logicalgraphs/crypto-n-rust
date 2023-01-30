@@ -5,6 +5,8 @@ SRC_DIR=$(RUST_BOOK)/src
 
 SCRIPTS_DIR=$(SRC_DIR)/scripts
 
+LE_DATE=$(shell date +%Y-%m-%d)
+
 alles: fetch process filter
 	@true
 
@@ -33,8 +35,6 @@ help: FORCE
 	@cat $(RUST_BOOK)/commands.txt
 
 # ----- LOADER AND REPORT DEPENDENCIES -----------------------------------
-
-LE_DATE=$(shell date +%Y-%m-%d)
 
 JSON_LISTING=$(DATA_DIR)/listings/listings-$(LE_DATE).json
 CSV_LISTING=$(DATA_DIR)/csv/alles/listings-$(LE_DATE).csv
@@ -99,7 +99,7 @@ benqs: FORCE
 arrow: FORCE
 	@echo "BOW top-5 LPs"; \
 	cd $(CRYPTO_TOOLS)/lps/; \
-	$(RUN_RUST) $(mode) $(BOW_DIR)/lps.lsv
+	$(RUN_RUST) $(LE_DATE) $(mode) $(BOW_DIR)/lps.lsv
 
 # ----- ... and then we:
 

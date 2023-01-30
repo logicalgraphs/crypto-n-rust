@@ -51,25 +51,27 @@ fn mk_mode(m: &str) -> Mode {
 }
 
 fn usage() {
-   println!("./lps <mode> <lp-file>");
+   println!("./lps <date> <mode> <lp-file>");
    println!("\n\twhere mode is {{text|html}}");
    println!("\nPrints the top-5s of the LPs by volume and APR.\n");
 }
 
 fn main() {
    let args = get_args();
-   if let (Some(made), files) = ht(args) {
-      let mode = mk_mode(&made);
-      for file in files {
-         let (_, lines) = extract_date_and_body(file);
-         let mut lps = process_lps(lines);
-         let mut vols: Vec<LP> = lps.clone();
-         vols.sort_by(|a, b| b.volume.partial_cmp(&a.volume).unwrap());
-         print_top5s(&vols, &mode, "volume");
-         print_100k(&mode);
-         lps.sort_by(|a, b| b.apr.partial_cmp(&a.apr).unwrap());
-         print_top5s(&lps, &mode, "APR(combined)");
-         print_footer(&mode);
+   if let (Some(date), args1) = ht(args) {
+      if let (Some(made), files) = ht(args1) {
+         let mode = mk_mode(&made);
+         for file in files {
+            let (_, lines) = extract_date_and_body(file);
+            let mut lps = process_lps(lines);
+            let mut vols: Vec<LP> = lps.clone();
+            vols.sort_by(|a, b| b.volume.partial_cmp(&a.volume).unwrap());
+            print_top5s(&date, &vols, &mode, "volume");
+            print_100k(&mode);
+            lps.sort_by(|a, b| b.apr.partial_cmp(&a.apr).unwrap());
+            print_top5s(&date, &lps, &mode, "APR(combined)");
+            print_footer(&mode);
+         }
       }
       println!("Hi, mom!");
    } else {
@@ -126,10 +128,10 @@ fn h2(s: String) -> String {
    h(2, &s)
 }
 
-fn print_top5s(lps: &Vec<LP>, mode: &Mode, kind: &str) {
+fn print_top5s(date: &str, lps: &Vec<LP>, mode: &Mode, kind: &str) {
    let headerf = if mode == &Mode::HTML { h2 } else { id };
    let listerf = if mode == &Mode::HTML { ol } else { list };
-   let header = format!("Top 5 LPs on @TeamKujira BOW by {kind}");
+   let header = format!("Top 5 LPs on @TeamKujira BOW by {kind}, {date}");
    println!("{}\n", headerf(header));
    let stringy: Vec<String> = lps.iter().map(|a| a.as_csv()).take(5).collect();
    println!("{}\n", listerf(&stringy));
