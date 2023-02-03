@@ -124,8 +124,12 @@ fn process_lp(lines: Vec<String>, lps: &mut Vec<LP>) {
    }
 }
 
+fn spacer() -> String {
+   p("&nbsp;")
+}
+
 fn h2(s: String) -> String {
-   h(2, &s)
+   format!("{}\n{}", h(2, &s), spacer())
 }
 
 fn print_top5s(date: &str, lps: &Vec<LP>, mode: &Mode, kind: &str) {
