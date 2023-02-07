@@ -29,27 +29,27 @@ impl<'de> Deserialize<'de> for Coin {
       let json: Value = Value::deserialize(deserializer)?;
       let quot: &Value = json.get("quote").expect("quote");
       let usd: &Value = quot.get("USD").expect("USD");
-      let amount = val_num::<f32>(usd, "price".to_string());
-      let cmc_id = val_num::<u32>(&json, "id".to_string());
-      let rank = val_num::<u32>(&json, "cmc_rank".to_string());
-      let name = dequote(val_str(&json, &"name".to_string()));
-      let symbol = dequote(val_str(&json, &"symbol".to_string()));
-      let date = val_date(&json, &"last_updated".to_string());
+      let amount = val_num::<f32>(usd, "price");
+      let cmc_id = val_num::<u32>(&json, "id");
+      let rank = val_num::<u32>(&json, "cmc_rank");
+      let name = dequote(val_str(&json, "name"));
+      let symbol = dequote(val_str(&json, "symbol"));
+      let date = val_date(&json, "last_updated");
       Ok(mk_coin(date, cmc_id, rank, name, symbol, amount))
    }
 }
 
-pub fn val_str(val: &Value, idx: &String) -> String {
+pub fn val_str(val: &Value, idx: &str) -> String {
    val[idx].to_string()
 }
 
-pub fn val_num<T: std::str::FromStr>(val: &Value, idx: String) -> T
+pub fn val_num<T: std::str::FromStr>(val: &Value, idx: &str) -> T
       where <T as std::str::FromStr>::Err: std::fmt::Debug {
-   let val_str: String = val_str(val, &idx);
-   val_str.parse().expect(&idx)
+   let val_str: String = val_str(val, idx);
+   val_str.parse().expect(idx)
 }
 
-pub fn val_date(val: &Value, idx: &String) -> String {
+pub fn val_date(val: &Value, idx: &str) -> String {
    let mut date = dequote(val_str(val, idx));
    date.truncate(10);
    date
