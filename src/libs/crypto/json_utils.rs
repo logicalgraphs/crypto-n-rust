@@ -4,7 +4,7 @@
 
 // serde_json was recommended via https://stackoverflow.com/questions/30292752/how-do-i-parse-a-json-file
 
-use book::string_utils::dequote;
+use book::json_utils::{unquot,val_num,val_date};
 use crate::types::coins::{Coin, mk_coin};
 
 extern crate serde;
@@ -32,25 +32,9 @@ impl<'de> Deserialize<'de> for Coin {
       let amount = val_num::<f32>(usd, "price");
       let cmc_id = val_num::<u32>(&json, "id");
       let rank = val_num::<u32>(&json, "cmc_rank");
-      let name = dequote(val_str(&json, "name"));
-      let symbol = dequote(val_str(&json, "symbol"));
+      let name = unquot(&json, "name");
+      let symbol = unquot(&json, "symbol");
       let date = val_date(&json, "last_updated");
       Ok(mk_coin(date, cmc_id, rank, name, symbol, amount))
    }
-}
-
-pub fn val_str(val: &Value, idx: &str) -> String {
-   val[idx].to_string()
-}
-
-pub fn val_num<T: std::str::FromStr>(val: &Value, idx: &str) -> T
-      where <T as std::str::FromStr>::Err: std::fmt::Debug {
-   let val_str: String = val_str(val, idx);
-   val_str.parse().expect(idx)
-}
-
-pub fn val_date(val: &Value, idx: &str) -> String {
-   let mut date = dequote(val_str(val, idx));
-   date.truncate(10);
-   date
 }
