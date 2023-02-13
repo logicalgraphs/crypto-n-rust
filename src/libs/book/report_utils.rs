@@ -1,12 +1,14 @@
 // common functions to generate reports
 
+use strum_macros::EnumIter; // 0.17.1
+
 use crate::{
    csv_utils::CsvWriter,
    html_utils::{a,h,ol,p},
    utils::id
 };
 
-#[derive(PartialEq)]
+#[derive(PartialEq, EnumIter)]
 pub enum Mode { HTML, TEXT }
 
 pub fn mk_mode(m: &str) -> Mode {
@@ -40,13 +42,33 @@ fn h2(s: String) -> String {
    format!("{}\n{}", h(2, &s), spacer())
 }
 
-pub fn print_top5s<T: CsvWriter>(title: &str, date: &str, lps: &Vec<T>, 
+pub fn print_top<T: CsvWriter + Clone>(n: usize, title: &str, date: &str, 
+      lps: &Vec<T>, mode: &Mode) {
+   let mut new_lps: Vec<T> = Vec::new();
+   let mut x = 0;
+   for b in lps {
+      if x > n { break; }
+      new_lps.push(b.clone());
+      x += 1;
+   }
+   print_top_of(title, date, &new_lps, mode);
+}
+
+pub fn print_top_by<T: CsvWriter + Clone>(f: impl FnMut(&T) -> bool, 
+      title: &str, date: &str, lps: &Vec<T>, mode: &Mode) {
+   let mut new_lps: Vec<T> = lps.to_vec();
+   new_lps.retain(f);
+   print_top_of(title, date, &new_lps, mode);
+}
+
+pub fn print_top_of<T: CsvWriter>(title: &str, date: &str, lps: &Vec<T>, 
       mode: &Mode) {
+   let n = lps.len();
    let headerf = if mode == &Mode::HTML { h2 } else { id };
    let listerf = if mode == &Mode::HTML { ol } else { list };
-   let header = format!("Top 5 {title}, {date}");
+   let header = format!("Top {n} {title}, {date}");
    println!("{}\n", headerf(header));
-   let stringy: Vec<String> = lps.iter().map(|a| a.as_csv()).take(5).collect();
+   let stringy: Vec<String> = lps.iter().map(|a| a.as_csv()).take(n).collect();
    println!("{}\n", listerf(&stringy));
 }
 

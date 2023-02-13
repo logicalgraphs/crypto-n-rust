@@ -11,7 +11,14 @@ use std::{
    io::Read
 };
 
-use book::json_utils::unquot;
+use book::{
+   csv_utils::CsvWriter,
+   html_utils::a,
+   json_utils::unquot,
+   num_utils::mk_estimate,
+   report_utils::{Mode, print_footer, print_top_of},
+   utils::get_args
+};
 
 // The skeleton upon which this get-fetch example is based is:
 // https://stackoverflow.com/questions/43222429/how-do-you-make-a-get-request-in-rust#:~:text=Sending%20a%20GET%20request%20is,send().unwrap()%3B%20assert_eq!
@@ -32,8 +39,13 @@ struct Book {
    //        "ticker_id":"STARS_USK"},
    base: String,
    target: String,
-   pool_id: String
+   pool_id: String,
+   vol_24h: f32
 }
+
+struct LinkedBook { book: Book }
+
+fn mk_linked(b: &Book) -> LinkedBook { LinkedBook { book: b.clone() } }
 
 #[derive(Deserialize)]
 struct Books {
@@ -53,7 +65,12 @@ impl<'de> Deserialize<'de> for Book {
       let base = unquot(&json, "base_currency");
       let target = unquot(&json, "target_currency");
       let pool_id = unquot(&json, "pool_id");
-      Ok(Book { base, target, pool_id })
+      let ask1 = unquot(&json, "ask");
+      let ask: f32 = ask1.parse().expect("ask");
+      let vol_raw2 = unquot(&json, "base_volume");
+      let vol_raw: f32 = vol_raw2.parse().expect("24h vol");
+      let vol_24h = vol_raw * ask;
+      Ok(Book { base, target, pool_id, vol_24h })
    }
 }
 
@@ -74,6 +91,21 @@ impl PartialEq for Book {
 }
 
 impl Eq for Book {}
+
+impl CsvWriter for Book {
+   fn as_csv(&self) -> String {
+      format!("{}/{},${}", self.base, self.target, mk_estimate(self.vol_24h))
+   }
+}
+
+impl CsvWriter for LinkedBook {
+   fn as_csv(&self) -> String {
+      let book = &self.book;
+      let lnk = a(&url(&self.book), &format!("{}/{}", book.base, book.target));
+      let vol = mk_estimate(book.vol_24h);
+      format!("{lnk},${vol}")
+   }
+}
 
 fn fetch_books(fin: &HashSet<Book>, token: &str) -> HashSet<Book> {
    let mut ans = HashSet::new();
@@ -97,16 +129,30 @@ fn count(books: &HashSet<Book>, token: &str) -> usize {
    ans
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-   let mut res =
-      reqwest::get("https://api.kujira.app/api/coingecko/tickers")?;
-   let mut body = String::new();
-   res.read_to_string(&mut body)?;
+fn usage() {
+   println!("./top_order_books <date>\n");
+   println!("\tGives the top order books by volume");
+}
 
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+   let args = get_args();
+   if let Some(date) = args.first() {
+      let mut res =
+         reqwest::get("https://api.kujira.app/api/coingecko/tickers")?;
+      let mut body = String::new();
+      res.read_to_string(&mut body)?;
+      reportage(&date, &body);
+   } else {
+      usage();
+   }
+   Ok(())
+}
+
+fn reportage(date: &str, body: &str) {
    let books = parse_books(&body);
    println!("I got {} books", books.len());
-   let books5: Vec<Book> = books.clone().into_iter().take(5).collect();
-   println!("\nThe first 5 of which are:\n{books5:?}\n");
+   // let books5: Vec<Book> = books.clone().into_iter().take(5).collect();
+   // println!("\nThe first 5 of which are:\n{books5:?}\n");
    count(&books, "axlUSDC");
    count(&books, "USK");
    let mars = fetch_books(&books, "MARS");
@@ -114,5 +160,28 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
    for m in mars {
       println!("{}: {}", ticker_id(&m), url(&m));
    }
-   Ok(())
+   let mut tops: Vec<Book> = books.into_iter().collect();
+   tops.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
+   let topus: Vec<Book> =
+      tops.into_iter().take_while(|b| b.vol_24h > 1000.0).collect();
+   print_txt(&topus, date);
+   print_html(&topus, date);
+}
+
+fn print_txt(tops: &Vec<Book>, date: &str) {
+   printer(tops, date, &Mode::TEXT);
+}
+
+fn foot(mode: &Mode) {
+   print_footer(mode, "src/ch09/top_order_books", "top_order_books");
+}
+
+fn print_html(tops: &Vec<Book>, date: &str) {
+   let linkies: Vec<LinkedBook> = tops.into_iter().map(mk_linked).collect();
+   printer(&linkies, date, &Mode::HTML);
+}
+
+fn printer<T: CsvWriter>(tops: &Vec<T>, date: &str, mode: &Mode) {
+   print_top_of("FIN order books by volume", date, tops, mode);
+   foot(mode);
 }

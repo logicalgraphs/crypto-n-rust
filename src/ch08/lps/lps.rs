@@ -7,7 +7,7 @@ use book::{
    file_utils::extract_date_and_body,
    html_utils::p,
    list_utils::ht,
-   report_utils::{Mode, mk_mode, print_footer, print_top5s},
+   report_utils::{Mode, mk_mode, print_footer, print_top},
    string_utils::to_string,
    utils::get_args
 };
@@ -59,10 +59,10 @@ fn main() {
             let mut lps = process_lps(lines);
             let mut vols: Vec<LP> = lps.clone();
             vols.sort_by(|a, b| b.volume.partial_cmp(&a.volume).unwrap());
-            print_top5s(&title("volume"), &date, &vols, &mode);
+            print_top(5, &title("volume"), &date, &vols, &mode);
             print_100k(&mode);
             lps.sort_by(|a, b| b.apr.partial_cmp(&a.apr).unwrap());
-            print_top5s(&title("APR(combined"), &date, &lps, &mode);
+            print_top(5, &title("APR(combined"), &date, &lps, &mode);
             print_footer(&mode, "src/ch08/lps", "lps");
          }
       }

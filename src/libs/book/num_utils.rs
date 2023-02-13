@@ -77,6 +77,6 @@ impl fmt::Display for Estimate {
          v if v.abs() > 999.99    => (v/1000.0,    "K"),
          v                        => (v, "")
       };
-      write!(formatter, "{mantissa:.3}{exponent}")
+      write!(formatter, "{mantissa:.2}{exponent}")
    }
 }
