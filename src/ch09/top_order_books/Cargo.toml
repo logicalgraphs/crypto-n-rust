@@ -1,13 +1,13 @@
 [package]
-name = "the_planet_mars"
+name = "top_order_books"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-name = "the_planet_mars"
-path = "the_planet_mars.rs"
+name = "top_order_books"
+path = "top_order_books.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }
