@@ -1,10 +1,10 @@
-date: 2023-02-07
+date: 2023-02-12
 
 My LP	Unstaked	Incentives
 FURYLuna 2.0
 ampLUNA/LUNA
-21,594.
-73
+9,572.
+37
 $
 collecting data...
 0.
@@ -17,12 +17,12 @@ collecting data...
 -
 FURY
 ampLUNA/USK
-11,876.
-79
+10,828.
+23
 $
 collecting data...
-7.
-67
+5.
+04
 %
 17.
 792
@@ -30,12 +30,12 @@ collecting data...
 000
 AQUA
 AQUA/USK
-27,271.
-12
+27,318.
+30
 $
 collecting data...
-367.
-97
+274.
+01
 %
 1,384.
 268
@@ -44,8 +44,8 @@ collecting data...
 AQUA
 FURY
 ASTRO/USK
-50.
-08
+46.
+07
 $
 collecting data...
 0.
@@ -57,24 +57,24 @@ collecting data...
 000
 -
 ATOM/axlUSDC
-208,974.
-18
+160,453.
+29
 $
 collecting data...
 35.
-46
+91
 %
 19.
 095
 0.
 000
 ATOM/USK
-247,145.
-43
+188,681.
+84
 $
 collecting data...
-38.
-02
+36.
+88
 %
 18.
 699
@@ -82,7 +82,7 @@ collecting data...
 000
 AXL/USK
 2.
-75
+64
 $
 collecting data...
 0.
@@ -94,22 +94,22 @@ collecting data...
 000
 -
 axlUSDC/USK
-603,168.
-14
+604,065.
+31
 $
 collecting data...
-17.
-26
+13.
+37
 %
 63.
 471
 0.
 000
-FURY
+Luna 2.0FURY
 CMDX
 CMDX/USK
 10.
-95
+74
 $
 collecting data...
 0.
@@ -122,8 +122,8 @@ collecting data...
 -
 CMST
 CMST/USK
-157.
-44
+155.
+39
 $
 collecting data...
 0.
@@ -150,8 +150,8 @@ collecting data...
 -
 DAI
 DAI/USK
-5,142.
-47
+5,042.
+92
 $
 collecting data...
 0.
@@ -163,24 +163,24 @@ collecting data...
 000
 -
 DOT/axlUSDC
-60,754.
-54
+55,243.
+07
 $
 collecting data...
-59.
-93
+51.
+20
 %
 1,194.
 791
 0.
 000
 DOT/USK
-48,054.
-16
+46,256.
+46
 $
 collecting data...
-75.
-76
+61.
+15
 %
 1,574.
 331
@@ -188,12 +188,12 @@ collecting data...
 000
 FURY
 FURY/USK
-2,756.
-32
+2,104.
+68
 $
 collecting data...
-29.
-10
+30.
+85
 %
 1,596.
 010
@@ -201,24 +201,24 @@ collecting data...
 000
 FURY
 gPAXG/axlUSDC
-248,576.
-27
+241,456.
+22
 $
 collecting data...
-35.
-90
+28.
+93
 %
 0.
 000
 0.
 000
 gPAXG/USK
-160,545.
-78
+157,479.
+09
 $
 collecting data...
-55.
-40
+44.
+20
 %
 0.
 000
@@ -238,14 +238,28 @@ collecting data...
 0.
 000
 -
-Juno
-JUNO/USK
-6,464.
-84
+INJ
+INJ/USK
+16.
+35
 $
 collecting data...
-46.
-43
+0.
+00
+%
+0.
+000
+0.
+000
+-
+Juno
+JUNO/USK
+4,210.
+20
+$
+collecting data...
+35.
+30
 %
 91.
 095
@@ -253,33 +267,34 @@ collecting data...
 000
 Juno
 KUJI/ATOM
-458,488.
-93
+313,123.
+50
 $
 collecting data...
-15.
-21
+17.
+27
 %
 23.
 722
 0.
 000
 KUJI/axlUSDC
-345,693.
-06
+329,264.
+86
 $
 collecting data...
-21.
-82
+18.
+29
 %
 75.
 510
 0.
 000
+AQUA
 Luna 2.0
 KUJI/LUNA
-1,015.
-60
+1,510.
+20
 $
 collecting data...
 0.
@@ -291,46 +306,60 @@ collecting data...
 254
 -
 KUJI/USK
-247,107.
-96
+221,943.
+30
 $
 collecting data...
-28.
-69
+24.
+79
 %
 363.
 652
 0.
 000
 FURYFURY
-LOCAL/USK
-41,979.
-02
+LINK/USK
+0.
+00
 $
 collecting data...
-93.
-50
+0.
+00
+%
+0.
+000
+0.
+000
+-
+LOCAL/USK
+41,872.
+15
+$
+collecting data...
+89.
+21
 %
 0.
 000
 0.
 000
 LOOP/USK
-2,252.
-37
+1,820.
+05
 $
 collecting data...
-187.
-88
+0.
+00
 %
 0.
 000
 0.
 000
+-
 Luna 2.0
 LUNA/axlUSDC
-403.
-93
+375.
+72
 $
 collecting data...
 0.
@@ -343,44 +372,44 @@ collecting data...
 -
 Luna 2.0
 LUNA/USK
-34,795.
-78
+55,527.
+32
 $
 collecting data...
-68.
-17
+31.
+88
 %
 37.
 374
 0.
 000
 MARS/axlUSDC
-56,057.
-06
+64,775.
+96
 $
 collecting data...
-195.
-40
+114.
+75
 %
 0.
 000
 0.
 000
 MARS/USK
-47,658.
-43
+56,739.
+26
 $
 collecting data...
-220.
-02
+124.
+33
 %
 0.
 000
 0.
 000
 OSMO/USK
-2,201.
-38
+1,573.
+88
 $
 collecting data...
 0.
@@ -392,8 +421,8 @@ collecting data...
 000
 -
 SCRT/USK
-12,491.
-41
+9,906.
+01
 $
 collecting data...
 0.
@@ -405,25 +434,26 @@ collecting data...
 000
 -
 SHD/USK
-1,306.
-88
+419.
+02
 $
 collecting data...
-16.
-46
+0.
+00
 %
 0.
 000
 0.
 000
+-
 Stars
 STARS/USK
-33,499.
-44
+30,921.
+99
 $
 collecting data...
-72.
-85
+67.
+55
 %
 2,467.
 129
@@ -431,8 +461,8 @@ collecting data...
 000
 Stars
 stATOM/ATOM
-405.
-76
+371.
+74
 $
 collecting data...
 0.
@@ -444,12 +474,12 @@ collecting data...
 000
 -
 STRD/USK
-7,347.
-12
+8,109.
+83
 $
 collecting data...
-75.
-08
+81.
+24
 %
 0.
 000
@@ -457,8 +487,8 @@ collecting data...
 000
 wAVAX
 wAVAX/USK
-50.
-63
+49.
+15
 $
 collecting data...
 0.
@@ -470,24 +500,24 @@ collecting data...
 989
 -
 wBNB/axlUSDC
-160,604.
-15
+159,588.
+38
 $
 collecting data...
-44.
-13
+34.
+46
 %
 780,752.
 587
 0.
 000
 wBNB/USK
-159,354.
-84
+112,921.
+85
 $
 collecting data...
-44.
-47
+48.
+71
 %
 765,079.
 789
@@ -509,8 +539,8 @@ collecting data...
 -
 wBTC
 wBTC/USK
-77.
-77
+76.
+26
 $
 collecting data...
 0.
@@ -522,24 +552,24 @@ collecting data...
 000
 -
 wETH/axlUSDC
-188,273.
-46
+181,647.
+09
 $
 collecting data...
-19.
-76
+15.
+93
 %
 921,139.
 249
 0.
 000
 wETH/USK
-85,593.
+85,235.
 38
 $
 collecting data...
-43.
-48
+33.
+95
 %
 1,072,393.
 446
@@ -559,8 +589,8 @@ collecting data...
 000
 -
 wMATIC/USK
-19.
-93
+23.
+12
 $
 collecting data...
 0.
@@ -571,3 +601,7 @@ collecting data...
 0.
 000
 -
+3,190,739.
+16
+$
+
