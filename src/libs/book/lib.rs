@@ -6,4 +6,5 @@ pub mod html_utils;
 pub mod json_utils;
 pub mod list_utils;
 pub mod num_utils;
+pub mod report_utils;
 pub mod string_utils;
