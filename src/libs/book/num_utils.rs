@@ -1,4 +1,7 @@
-use std::mem;
+use std::{
+   fmt,
+   mem
+};
 
 // for when we need to serialize or to hash an f64 value
 
@@ -13,6 +16,21 @@ pub fn integer_decode(val: f64) -> (u64, i16, i8) {
    };
    (mantissa, exponent - (1023 + 52), sign)
 }
+
+pub fn parse_commaless(str: &str) -> Result<f32, String> {
+   let mut no_comma = str.to_string();
+   no_comma.retain(no(','));
+   match no_comma.parse() {
+      Ok(x) => Ok(x),
+      Err(_) => Err(str.to_owned() + " is not a number")
+   }
+}
+
+fn no(ch: char) -> impl Fn(char) -> bool {
+   move |chr| chr != ch
+}
+
+// --- Estimates -------------------------------------------------------
 
 pub fn parse_estimate(str: &str) -> Result<f32, String> {
    match str.parse() {
@@ -43,15 +61,22 @@ pub fn parse_estimate(str: &str) -> Result<f32, String> {
    }
 }
 
-pub fn parse_commaless(str: &str) -> Result<f32, String> {
-   let mut no_comma = str.to_string();
-   no_comma.retain(no(','));
-   match no_comma.parse() {
-      Ok(x) => Ok(x),
-      Err(_) => Err(str.to_owned() + " is not a number")
-   }
+#[derive(Debug, Clone)]
+pub struct Estimate {
+   pub val: f32
 }
 
-fn no(ch: char) -> impl Fn(char) -> bool {
-   move |chr| chr != ch
+pub fn mk_estimate(val: f32) -> Estimate {
+   Estimate { val }
+}
+
+impl fmt::Display for Estimate {
+   fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+      let (mantissa, exponent) = match self.val {
+         v if v.abs() > 999999.99 => (v/1000000.0, "M"),
+         v if v.abs() > 999.99    => (v/1000.0,    "K"),
+         v                        => (v, "")
+      };
+      write!(formatter, "{mantissa:.3}{exponent}")
+   }
 }
