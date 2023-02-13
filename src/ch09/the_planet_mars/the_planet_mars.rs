@@ -18,7 +18,15 @@ use book::json_utils::unquot;
 
 #[derive(Debug, Clone)]
 struct Book {
-   // e.g.: {"base":"STARS",
+   // e.g.: {"ask":"1.8020000000","base_currency":"LUNA",
+   //        "base_volume":"899.7562950000","bid":"1.7890000000",
+   //        "high":"1.8709996622","last_price":"1.7890005387",
+   //        "low":"1.7609999772",
+   //        "pool_id":"kujira1yg8930mj8...p0kur",
+   //        "target_currency":"axlUSDC","target_volume":"1647.8921550000",
+   //        "ticker_id":"LUNA_axlUSDC"},
+
+// not this anymore:
    //        "pool_id":"kujira1nm3yktzc...v849dd3ulaygw75mqqxvtnck",
    //        "target":"USK",
    //        "ticker_id":"STARS_USK"},
@@ -29,7 +37,7 @@ struct Book {
 
 #[derive(Deserialize)]
 struct Books {
-   #[serde(rename(deserialize="pairs"))]
+   #[serde(rename(deserialize="tickers"))]
    books: Vec<Book>
 }
 
@@ -42,8 +50,8 @@ impl<'de> Deserialize<'de> for Book {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
           where D: Deserializer<'de> {
       let json: Value = Value::deserialize(deserializer)?;
-      let base = unquot(&json, "base");
-      let target = unquot(&json, "target");
+      let base = unquot(&json, "base_currency");
+      let target = unquot(&json, "target_currency");
       let pool_id = unquot(&json, "pool_id");
       Ok(Book { base, target, pool_id })
    }
@@ -91,7 +99,7 @@ fn count(books: &HashSet<Book>, token: &str) -> usize {
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
    let mut res =
-      reqwest::get("https://api.kujira.app/api/coingecko/pairs")?;
+      reqwest::get("https://api.kujira.app/api/coingecko/tickers")?;
    let mut body = String::new();
    res.read_to_string(&mut body)?;
 
