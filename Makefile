@@ -31,6 +31,9 @@ benqi: benqs
 bow: arrow
 	@echo "Rain man."
 
+fin: top
+	@echo "Top FIN order books."
+
 help: FORCE
 	@cat $(RUST_BOOK)/commands.txt
 
@@ -100,6 +103,11 @@ arrow: FORCE
 	@echo "BOW top-5 LPs"; \
 	cd $(CRYPTO_TOOLS)/lps/; \
 	$(RUN_RUST) $(LE_DATE) $(mode) $(BOW_DIR)/lps.lsv
+
+top: FORCE
+	@echo "FIN top-trading order books"; \
+	cd $(SRC_DIR)/ch09/top_order_books; \
+	$(RUN_RUST) $(LE_DATE)
 
 # ----- ... and then we:
 
