@@ -5,10 +5,8 @@ use std::fmt;
 use book::{
    csv_utils::CsvWriter,
    file_utils::extract_date_and_body,
-   html_utils::p,
    list_utils::ht,
-   report_utils::{Mode, mk_mode, print_footer, print_top},
-   string_utils::to_string,
+   report_utils::{mk_mode, print_footer, print_top, print_message},
    utils::get_args
 };
 
@@ -18,32 +16,35 @@ use crypto::types::{
 };
 
 mod numbers;
-use crate::numbers::{parse_usd,parse_percent,skip_percent_or_collecting};
+use crate::numbers::{parse_usd,parse_percent,parse_percent_or_collecting};
 
 #[derive(Debug,Clone)]
 struct LP {
    name: String,
    volume: USD,
-   apr: Percentage
+   apr_21_day: Percentage,
+   apr_combined: Percentage
 }
 
 impl fmt::Display for LP {
    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-      write!(formatter, "LP {} volume: {}, APR: {}",
-             self.name, self.volume, self.apr)
+      write!(formatter,
+             "LP {} volume: {}, APR(21 day trading): {}, APR(combined): {}",
+             self.name, self.volume, self.apr_21_day, self.apr_combined)
    }
 }
 
 impl CsvWriter for LP {
    fn as_csv(&self) -> String {
-      format!("{},{},{}", self.name, self.volume, self.apr)
+      format!("{},{},{},{}", self.name, self.volume,
+                             self.apr_21_day, self.apr_combined)
    }
 }
 
 fn usage() {
    println!("./lps <date> <mode> <lp-file>");
    println!("\n\twhere mode is {{text|html}}");
-   println!("\nPrints the top-5s of the LPs by volume and APR.\n");
+   println!("\nPrints the top-5s of the LPs by volume and APRs.\n");
 }
 
 fn main() {
@@ -60,9 +61,14 @@ fn main() {
             let mut vols: Vec<LP> = lps.clone();
             vols.sort_by(|a, b| b.volume.partial_cmp(&a.volume).unwrap());
             print_top(5, &title("volume"), &date, &vols, &mode);
-            print_100k(&mode);
-            lps.sort_by(|a, b| b.apr.partial_cmp(&a.apr).unwrap());
-            print_top(5, &title("APR(combined"), &date, &lps, &mode);
+            print_message(&mode, "Showing all LPs with $100k+ volume");
+            lps.sort_by(
+               |a, b| b.apr_combined.partial_cmp(&a.apr_combined).unwrap());
+            print_top(5, &title("APR(combined)"), &date, &lps, &mode);
+            print_message(&mode, "Showing all LPs with 100%+ APR/APY");
+            lps.sort_by(
+               |a, b| b.apr_21_day.partial_cmp(&a.apr_21_day).unwrap());
+            print_top(5, &title("APR(21 Day Trading)"), &date, &lps, &mode);
             print_footer(&mode, "src/ch08/lps", "lps");
          }
       }
@@ -70,12 +76,6 @@ fn main() {
    } else {
       usage();
    }
-}
-
-fn print_100k(mode: &Mode) {
-   let paragraph = if mode == &Mode::TEXT { to_string } else { p };
-   let mesg = "Showing all LPs with $100k+ volume";
-   println!("{}\n", paragraph(mesg))
 }
 
 fn process_lps(lines: Vec<String>) -> Vec<LP> {
@@ -90,11 +90,11 @@ fn process_lp(lines: Vec<String>, lps: &mut Vec<LP>) {
    if !meat.is_empty() {
       if let (Some(lp), rest) = ht(meat) {
          let (vol, rest1) = parse_usd(&rest);
-         let rest2 = skip_percent_or_collecting(&rest1);
+         let (apr_21_day, rest2) = parse_percent_or_collecting(&rest1);
          let (aprr, rest3) = parse_percent(&rest2);
          if let Ok(volume) = vol {
-            if let Ok(apr) = aprr {
-               lps.push(LP { name: lp, volume, apr });
+            if let Ok(apr_combined) = aprr {
+               lps.push(LP { name: lp, volume, apr_21_day, apr_combined });
             }
          }
          process_lp(rest3, lps);

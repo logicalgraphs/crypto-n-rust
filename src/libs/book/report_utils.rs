@@ -5,6 +5,7 @@ use strum_macros::EnumIter; // 0.17.1
 use crate::{
    csv_utils::CsvWriter,
    html_utils::{a,h,ol,p},
+   string_utils::to_string,
    utils::id
 };
 
@@ -34,6 +35,11 @@ pub fn print_footer(mode: &Mode, src_dir: &str, program: &str) {
    println!("{blurb}");
 }
 
+pub fn print_message(mode: &Mode, mesg: &str) {
+   let paragraph = if mode == &Mode::TEXT { to_string } else { p };
+   println!("{}\n", paragraph(mesg))
+}
+
 fn spacer() -> String {
    p("&nbsp;")
 }
@@ -45,7 +51,7 @@ fn h2(s: String) -> String {
 pub fn print_top<T: CsvWriter + Clone>(n: usize, title: &str, date: &str, 
       lps: &Vec<T>, mode: &Mode) {
    let mut new_lps: Vec<T> = Vec::new();
-   let mut x = 0;
+   let mut x = 1;
    for b in lps {
       if x > n { break; }
       new_lps.push(b.clone());
