@@ -13,8 +13,7 @@
 use std::{
    collections::{HashSet,HashMap},
    fmt,
-   hash::{Hash,Hasher},
-   path::Path
+   hash::{Hash,Hasher}
 };
 
 use book::{
@@ -129,12 +128,11 @@ pub fn scan_orderbook(lines: Vec<String>)
    }, remaining)
 }
 
-pub fn read_marketplace(file: impl AsRef<Path>) -> HashSet<OrderBook> {
+pub fn read_marketplace(file: &str) -> HashSet<OrderBook> {
    read_marketplace_d(file, false)
 }
 
-pub fn read_marketplace_d(file: impl AsRef<Path>, debug: bool)
-   -> HashSet<OrderBook> {
+pub fn read_marketplace_d(file: &str, debug: bool) -> HashSet<OrderBook> {
    use book::file_utils::lines_from_file;
 
    let lines = lines_from_file(file);

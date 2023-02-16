@@ -3,10 +3,7 @@
 
 // yeah, that.
 
-use std::{
-   collections::HashSet,
-   path::Path
-};
+use std::collections::HashSet;
 
 use crate::types::{
    assets::{Asset,print_assets,read_assets,proto},
@@ -33,7 +30,7 @@ pub fn seed_portfolio(bag: HashSet<Asset>) -> Portfolio {
    Portfolio { bag: bag1 }
 }
 
-pub fn assets_from_file(file: impl AsRef<Path>) -> Portfolio {
+pub fn assets_from_file(file: &str) -> Portfolio {
    let lines = lines_from_file(file);
    let (_, daters) = lines.split_at(3);
    Portfolio { bag: read_assets(daters.to_vec()) }

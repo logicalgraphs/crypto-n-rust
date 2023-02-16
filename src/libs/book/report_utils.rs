@@ -76,7 +76,7 @@ fn list(l: &Vec<String>) -> String {
    let mut i = 1;
    let mut ans = String::new();
    for x in l {
-      ans = format!("{ans}\n{i}. {x}");
+      ans = format!("{ans}\n{i},{x}");
       i += 1;
    }
    ans

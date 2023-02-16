@@ -31,9 +31,6 @@ benqi: benqs
 bow: arrow
 	@echo "Rain man."
 
-fin: top
-	@echo "Top FIN order books."
-
 help: FORCE
 	@cat $(RUST_BOOK)/commands.txt
 
@@ -47,7 +44,8 @@ HOLDINGS=$(DATA_DIR)/csv/portfolio_coins.lsv
 
 LIST_CMD="listings/latest?start=1&limit=5000&convert=USD"
 
-CURL_CMD=$(SCRIPTS_DIR)/curl-cmc.sh
+CURL_CMD=$(SCRIPTS_DIR)/curl.sh
+CMC_ENDPOINT=https://pro-api.coinmarketcap.com/v1
 
 RUN_RUST=cargo run
 MARKET=$(FIN_DIR)/market.lsv
@@ -65,7 +63,7 @@ nuke: FORCE
 
 fetchers: $(JSON_LISTING)
 	@echo "Loading e-coin listing file for $(LE_DATE) ..."; \
-	$(CURL_CMD) cryptocurrency/$(LIST_CMD) $(JSON_LISTING)
+	$(CURL_CMD) $(CMC_ENDPOINT)/cryptocurrency/$(LIST_CMD) $(JSON_LISTING)
 
 $(JSON_LISTING): FORCE
 	@true
@@ -104,10 +102,14 @@ arrow: FORCE
 	cd $(CRYPTO_TOOLS)/lps/; \
 	$(RUN_RUST) $(LE_DATE) $(mode) $(BOW_DIR)/lps.lsv
 
-top: FORCE
-	@echo "FIN top-trading order books"; \
-	cd $(SRC_DIR)/ch09/top_order_books; \
-	$(RUN_RUST) $(LE_DATE)
+FIN_TICKERS=https://api.kujira.app/api/coingecko/tickers
+FIN_VOLUMES_JSON=$(FIN_DIR)/order_book_volumes.json
+
+# top: FORCE
+# @echo "FIN top-trading order books"; \
+# $(CURL_CMD) $(FIN_TICKERS) $(FIN_VOLUMES_JSON); \
+# cd $(SRC_DIR)/ch09/top_order_books; \
+# $(RUN_RUST) -- --raw $(LE_DATE) $(FIN_VOLUMES_JSON)
 
 # ----- ... and then we:
 

@@ -1,175 +1,93 @@
-extern crate reqwest; // 0.9.18
-
-extern crate serde;
-
-use serde::{Deserialize,Deserializer};
-use serde_json::{Value, from_str};
-
-use std::{
-   collections::HashSet,
-   hash::{Hash,Hasher},
-   io::Read
-};
-
 use book::{
    csv_utils::CsvWriter,
-   html_utils::a,
-   json_utils::unquot,
-   num_utils::mk_estimate,
+   file_utils::lines_from_file,
+   list_utils::ht,
    report_utils::{Mode, print_footer, print_top_of},
    utils::get_args
 };
 
+mod books;
+use crate::books::{Book,parse_books,count};
+
+mod linked_books;
+use crate::linked_books::{LinkedBook,mk_linked};
+
+mod analyzed_books;
+use crate::analyzed_books::analyze;
+
 // The skeleton upon which this get-fetch example is based is:
 // https://stackoverflow.com/questions/43222429/how-do-you-make-a-get-request-in-rust#:~:text=Sending%20a%20GET%20request%20is,send().unwrap()%3B%20assert_eq!
 
-#[derive(Debug, Clone)]
-struct Book {
-   // e.g.: {"ask":"1.8020000000","base_currency":"LUNA",
-   //        "base_volume":"899.7562950000","bid":"1.7890000000",
-   //        "high":"1.8709996622","last_price":"1.7890005387",
-   //        "low":"1.7609999772",
-   //        "pool_id":"kujira1yg8930mj8...p0kur",
-   //        "target_currency":"axlUSDC","target_volume":"1647.8921550000",
-   //        "ticker_id":"LUNA_axlUSDC"},
+/* original code to read from an endpoint then process in Rust:
 
-// not this anymore:
-   //        "pool_id":"kujira1nm3yktzc...v849dd3ulaygw75mqqxvtnck",
-   //        "target":"USK",
-   //        "ticker_id":"STARS_USK"},
-   base: String,
-   target: String,
-   pool_id: String,
-   vol_24h: f32
-}
+reqwest = "0.9.18" in cargo file
 
-struct LinkedBook { book: Book }
-
-fn mk_linked(b: &Book) -> LinkedBook { LinkedBook { book: b.clone() } }
-
-#[derive(Deserialize)]
-struct Books {
-   #[serde(rename(deserialize="tickers"))]
-   books: Vec<Book>
-}
-
-fn parse_books(str: &str) -> HashSet<Book> {
-   let books: Books = from_str(str).expect("booked!");
-   books.books.into_iter().collect()
-}
-
-impl<'de> Deserialize<'de> for Book {
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-          where D: Deserializer<'de> {
-      let json: Value = Value::deserialize(deserializer)?;
-      let base = unquot(&json, "base_currency");
-      let target = unquot(&json, "target_currency");
-      let pool_id = unquot(&json, "pool_id");
-      let ask1 = unquot(&json, "ask");
-      let ask: f32 = ask1.parse().expect("ask");
-      let vol_raw2 = unquot(&json, "base_volume");
-      let vol_raw: f32 = vol_raw2.parse().expect("24h vol");
-      let vol_24h = vol_raw * ask;
-      Ok(Book { base, target, pool_id, vol_24h })
-   }
-}
-
-impl Hash for Book {
-   fn hash<H: Hasher>(&self, state: &mut H) {
-      self.base.hash(state);
-      self.target.hash(state);
-      self.pool_id.hash(state);
-   }
-}
-
-impl PartialEq for Book {
-   fn eq(&self, other: &Self) -> bool {
-      self.base == other.base
-         && self.target == other.target
-         && self.pool_id == other.pool_id
-   }
-}
-
-impl Eq for Book {}
-
-impl CsvWriter for Book {
-   fn as_csv(&self) -> String {
-      format!("{}/{},${}", self.base, self.target, mk_estimate(self.vol_24h))
-   }
-}
-
-impl CsvWriter for LinkedBook {
-   fn as_csv(&self) -> String {
-      let book = &self.book;
-      let lnk = a(&url(&self.book), &format!("{}/{}", book.base, book.target));
-      let vol = mk_estimate(book.vol_24h);
-      format!("{lnk},${vol}")
-   }
-}
-
-fn fetch_books(fin: &HashSet<Book>, token: &str) -> HashSet<Book> {
-   let mut ans = HashSet::new();
-   for b in fin {
-      if b.base == token || b.target == token { ans.insert(b.clone()); }
-   }
-   ans
-}
-
-fn ticker_id(b: &Book) -> String {
-   format!("{}_{}", b.base, b.target)
-}
-
-fn url(b: &Book) -> String {
-   format!("https://fin.kujira.app/trade/{}", b.pool_id)
-}
-
-fn count(books: &HashSet<Book>, token: &str) -> usize {
-   let ans = fetch_books(&books, token).len();
-   println!("There are {ans} {token} books");
-   ans
-}
+let mut res = reqwest::get("https://api.kujira.app/api/coingecko/tickers")?;
+let mut body = String::new();
+res.read_to_string(&mut body)?;
+reportage(&date, &body);
+*/
 
 fn usage() {
-   println!("./top_order_books <date>\n");
+   println!("./top_order_books [--raw] <date> <order-book volumes.json>\n");
    println!("\tGives the top order books by volume");
+   println!("\t--raw flag gives exact volumes and percent-analyses.");
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
    let args = get_args();
-   if let Some(date) = args.first() {
-      let mut res =
-         reqwest::get("https://api.kujira.app/api/coingecko/tickers")?;
-      let mut body = String::new();
-      res.read_to_string(&mut body)?;
-      reportage(&date, &body);
-   } else {
+   let mut success = false;
+   if let (Some(frist), r1) = ht(args) {
+      let raw = frist == "--raw";
+      if let (Some(date), r2) = if !raw { (Some(frist), r1) } else { ht(r1) } {
+/*
+         let mut res =
+            reqwest::get("https://api.kujira.app/api/coingecko/tickers")?;
+         let mut body = String::new();
+         res.read_to_string(&mut body)?;
+         reportage(&date, &body, raw);
+*/
+         for filename in r2 {
+            success = true;
+            let file = lines_from_file(&filename).join(" ");
+            reportage(&date, &file, raw);
+         }
+      }
+   }
+   if !success {
       usage();
    }
    Ok(())
 }
 
-fn reportage(date: &str, body: &str) {
+fn reportage(date: &str, body: &str, raw: bool) {
    let books = parse_books(&body);
    println!("I got {} books", books.len());
-   // let books5: Vec<Book> = books.clone().into_iter().take(5).collect();
-   // println!("\nThe first 5 of which are:\n{books5:?}\n");
    count(&books, "axlUSDC");
    count(&books, "USK");
+
+/* fetch_books demo
    let mars = fetch_books(&books, "MARS");
    println!("The MARS books URLs are:");
    for m in mars {
-      println!("{}: {}", ticker_id(&m), url(&m));
+      println!("{}: {}", ticker(&m), url(&m));
    }
-   let mut tops: Vec<Book> = books.into_iter().collect();
-   tops.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
+*/
+   let mut alles: Vec<Book> = books.into_iter().collect();
+   alles.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
+   if raw { print_alles(&alles, date); }
    let topus: Vec<Book> =
-      tops.into_iter().take_while(|b| b.vol_24h > 1000.0).collect();
+      alles.into_iter().take_while(|b| b.vol_24h > 1000.0).collect();
    print_txt(&topus, date);
    print_html(&topus, date);
 }
 
-fn print_txt(tops: &Vec<Book>, date: &str) {
+fn print_txt<T: CsvWriter>(tops: &Vec<T>, date: &str) {
    printer(tops, date, &Mode::TEXT);
+}
+
+fn print_alles(alles: &Vec<Book>, date: &str) {
+   print_txt(&analyze(alles), date);
 }
 
 fn foot(mode: &Mode) {
