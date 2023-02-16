@@ -7,8 +7,7 @@ number, be it a percentage or a dallah-dallah.
 
 use book::{
    list_utils::tail,
-   num_utils::parse_commaless,
-   utils::id
+   num_utils::parse_commaless
 };
 
 use crypto::types::{
@@ -57,8 +56,11 @@ pub fn parse_percent(lines: &Vec<String>)
    }
 }
 
-pub fn skip_percent_or_collecting(lines: &Vec<String>) -> Vec<String> {
+pub fn parse_percent_or_collecting(lines: &Vec<String>)
+   -> (Percentage, Vec<String>) {
    let (val, rest) = parse_percent(lines);
-   let f = if let Err(_) = val { tail } else { id };
-   f(rest)
+   match val {
+     Err(_) => (mk_percentage(0.0), tail(rest)),
+     Ok(p) => (p, rest)
+   }
 }
