@@ -108,9 +108,10 @@ arrow: FORCE
 FIN_TICKERS=https://api.kujira.app/api/coingecko/tickers
 FIN_VOLUMES_JSON=$(FIN_DIR)/order_book_volumes.json
 
+# $(CURL_CMD) $(FIN_TICKERS) $(FIN_VOLUMES_JSON); \
+
 top: FORCE
 	@echo "Please be sure $(FIN_VOLUMES_JSON) is updated first!"; \
-	$(CURL_CMD) $(FIN_TICKERS) $(FIN_VOLUMES_JSON); \
 	cd $(SRC_DIR)/ch09/top_order_books; \
 	$(RUN_RUST) -- --raw $(LE_DATE) $(FIN_VOLUMES_JSON)
 
