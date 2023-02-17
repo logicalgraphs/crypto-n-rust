@@ -56,7 +56,7 @@ fn main() {
             format!("LPs on @TeamKujira BOW by {kind}")
          }
          for file in files {
-            let (_, lines) = extract_date_and_body(file);
+            let (_, lines) = extract_date_and_body(&file);
             let mut lps = process_lps(lines);
             let mut vols: Vec<LP> = lps.clone();
             vols.sort_by(|a, b| b.volume.partial_cmp(&a.volume).unwrap());
