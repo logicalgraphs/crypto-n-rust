@@ -17,3 +17,6 @@ Make commands:
 	reports the top-5 LPs by volume and by APR(combined) either as
 	HTML or as text, depending on mode-variable.
 
+* vols
+	Computes the 24-hour volumes for the FIN order books
+	Please make sure the scrap is echoed to $FIN_VOLUMES_JSON first!

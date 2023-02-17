@@ -31,6 +31,9 @@ benqi: benqs
 bow: arrow
 	@echo "Rain man."
 
+vols: top
+	@true
+
 help: FORCE
 	@cat $(RUST_BOOK)/commands.txt
 
@@ -105,11 +108,11 @@ arrow: FORCE
 FIN_TICKERS=https://api.kujira.app/api/coingecko/tickers
 FIN_VOLUMES_JSON=$(FIN_DIR)/order_book_volumes.json
 
-# top: FORCE
-# @echo "FIN top-trading order books"; \
-# $(CURL_CMD) $(FIN_TICKERS) $(FIN_VOLUMES_JSON); \
-# cd $(SRC_DIR)/ch09/top_order_books; \
-# $(RUN_RUST) -- --raw $(LE_DATE) $(FIN_VOLUMES_JSON)
+top: FORCE
+	@echo "Please be sure $(FIN_VOLUMES_JSON) is updated first!"; \
+	$(CURL_CMD) $(FIN_TICKERS) $(FIN_VOLUMES_JSON); \
+	cd $(SRC_DIR)/ch09/top_order_books; \
+	$(RUN_RUST) -- --raw $(LE_DATE) $(FIN_VOLUMES_JSON)
 
 # ----- ... and then we:
 
