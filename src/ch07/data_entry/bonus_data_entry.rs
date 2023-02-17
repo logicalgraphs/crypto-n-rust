@@ -12,7 +12,7 @@ fn usage() {
 
 fn main() {
    if let Some(file) = head(get_args()) {
-      let dater = lines_from_file(file);
+      let dater = lines_from_file(&file);
       let (_hdr, body) = dater.split_at(2);
       split(body.to_vec(),"Borrowed".to_string()).iter_mut()
           .fold(1.0, preprocess_with_sign);
