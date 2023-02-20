@@ -7,7 +7,9 @@ edition = "2021"
 
 [lib]
 name = "data_entry"
-path = "form.rs"
+path = "lib.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }
+crypto = { path = "../../libs/crypto" }
+itertools = "0.9.0"

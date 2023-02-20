@@ -5,7 +5,7 @@ use book::{
    utils::get_args
 };
 
-use data_entry::preprocess_with_sign;
+use data_entry::form::preprocess_with_sign;
 
 fn usage() {
    println!("\n./benqi <file>");
