@@ -10,11 +10,8 @@ Make commands:
 * pnl:
         run the trading PnL ('profits-n-losses') report
 
-* benqi:
-        extracts current positions on benqi marketplace
-
-* geist:
-	Same for geist
+* benqi: or geist: or grain:
+        extracts current positions on benqi/geist/granary marketplaces
 
 * bow mode=<html|text>:
 	reports the top-5 LPs by volume and by APR(combined) either as
