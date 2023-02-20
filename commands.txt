@@ -13,6 +13,9 @@ Make commands:
 * benqi:
         extracts current positions on benqi marketplace
 
+* geist:
+	Same for geist
+
 * bow mode=<html|text>:
 	reports the top-5 LPs by volume and by APR(combined) either as
 	HTML or as text, depending on mode-variable.

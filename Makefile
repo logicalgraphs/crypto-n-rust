@@ -28,6 +28,9 @@ pnl: peenelles
 benqi: benqs
 	@echo "Tuppence a bag."
 
+geist: ghost
+	@echo "BOO!"
+
 bow: arrow
 	@echo "Rain man."
 
@@ -97,8 +100,13 @@ peenelles: FORCE
 
 benqs: FORCE
 	@echo "Benqi marketplace positions"; \
-	cd $(CARGO_HOME)/ch07/data_entry; \
+	cd $(CARGO_HOME)/ch07/data_entry/benqi; \
 	$(RUN_RUST) $(MONEY_MARKETS_DIR)/benqi_positions.lsv
+
+ghost: FORCE
+	@echo "Geist marketplace positions"; \
+	cd $(CARGO_HOME)/ch07/data_entry/benqi; \
+	$(RUN_RUST) $(MONEY_MARKETS_DIR)/geist.lsv
 
 arrow: FORCE
 	@echo "BOW top-5 LPs"; \
