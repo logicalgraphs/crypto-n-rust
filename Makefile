@@ -31,6 +31,9 @@ benqi: benqs
 geist: ghost
 	@echo "BOO!"
 
+grain: granary
+	@echo "Wheat!"
+
 bow: arrow
 	@echo "Rain man."
 
@@ -107,6 +110,11 @@ ghost: FORCE
 	@echo "Geist marketplace positions"; \
 	cd $(CARGO_HOME)/ch07/data_entry/benqi; \
 	$(RUN_RUST) $(MONEY_MARKETS_DIR)/geist.lsv
+
+granary: FORCE
+	@echo "Granary marketplace positions"; \
+	cd $(CARGO_HOME)/ch07/data_entry/benqi; \
+	$(RUN_RUST) $(MONEY_MARKETS_DIR)/granary.lsv
 
 arrow: FORCE
 	@echo "BOW top-5 LPs"; \

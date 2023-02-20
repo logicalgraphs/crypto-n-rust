@@ -6,7 +6,7 @@
 
 use std::collections::HashSet;
 
-use crate::rows::{Row,find_triple,locate};
+use crate::rows::{Row,find_triple};
 
 use book::csv_utils::print_csv;
 
@@ -42,9 +42,7 @@ pub fn preprocess_with_sign(sign: f32, lines: &mut Vec<String>) -> f32 {
    let lines1: Vec<&String> = lines.iter().filter(|x| !x.is_empty()).collect();
    let mut assets: HashSet<Row> = HashSet::new();
    process(sign, &lines1, &mut assets);
-   if let Some(mim) = locate("MIM", &assets) {
-      print_csv(&mim);
-   }
+   assets.iter().for_each(print_csv);
    sign * -1.0
 }
 
