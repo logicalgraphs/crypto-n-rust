@@ -98,7 +98,7 @@ peenelles: FORCE
 benqs: FORCE
 	@echo "Benqi marketplace positions"; \
 	cd $(CARGO_HOME)/ch07/data_entry; \
-	$(RUN_RUST) $(AVAX_DIR)/benqi_positions.lsv
+	$(RUN_RUST) $(MONEY_MARKETS_DIR)/benqi_positions.lsv
 
 arrow: FORCE
 	@echo "BOW top-5 LPs"; \
