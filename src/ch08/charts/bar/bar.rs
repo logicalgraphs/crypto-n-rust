@@ -22,7 +22,7 @@ fn main() {
    if !files.is_empty() {
       print_prelude();
       for file in files {
-         let protocols = tail(lines_from_file(file));
+         let protocols = tail(lines_from_file(&file));
          buidl_arr(&protocols);
          draw_bar_chart();
       }
