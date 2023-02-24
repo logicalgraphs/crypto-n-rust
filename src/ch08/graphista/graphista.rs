@@ -8,13 +8,13 @@ use book::{
 use crypto::types::marketplace::{read_marketplace,print_marketplace};
 
 fn usage() {
-   println!("./graphista <market LSV file>");
+   println!("./graphista <market LSV file> > data/market-graph.csv");
    println!("\n\treads in the market data and outputs it as CSV TO GRAPH!");
 }
 
 fn main() {
    if let Some(file) = head(get_args()) {
-      let market = read_marketplace(file);
+      let market = read_marketplace(&file);
       print_marketplace(&market);
    } else {
       usage();
