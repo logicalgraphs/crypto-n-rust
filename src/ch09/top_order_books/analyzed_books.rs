@@ -2,9 +2,10 @@ use book::{
    csv_utils::CsvWriter
 };
 
-use crypto::types::percentage::{Percentage,mk_percentage};
-
-use crate::books::{Book,ticker};
+use crypto::types::{
+   books::{Book,ticker},
+   percentage::{Percentage,mk_percentage}
+};
 
 pub struct BookShare { book: Book, perc: Percentage }
 

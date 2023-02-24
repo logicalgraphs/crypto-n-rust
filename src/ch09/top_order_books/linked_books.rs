@@ -3,7 +3,7 @@ use book::{
    html_utils::a
 };
 
-use crate::books::{Book,estimate,ticker,url};
+use crypto::types::books::{Book,estimate,ticker,url};
 
 pub struct LinkedBook { book: Book }
 

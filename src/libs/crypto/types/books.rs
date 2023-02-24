@@ -1,3 +1,5 @@
+// extracts current market data from https://api.kujira.app/api/coingecko/tickers
+
 extern crate serde;
 
 use serde::{Deserialize,Deserializer};
@@ -89,6 +91,15 @@ pub fn fetch_books(fin: &HashSet<Book>, token: &str) -> HashSet<Book> {
    ans
 }
 
+pub fn fetch_books_by_vol(fin: &HashSet<Book>, vol: f32) -> Vec<Book> {
+   let mut alles: Vec<Book> = Vec::new();
+   for book in fin {
+      alles.push(book.clone());
+   }
+   alles.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
+   alles.into_iter().take_while(|b| b.vol_24h > vol).collect()
+}
+
 pub fn ticker(b: &Book) -> String {
    format!("{}/{}", b.base, b.target)
 }
@@ -106,5 +117,3 @@ pub fn count(books: &HashSet<Book>, token: &str) -> usize {
    println!("There are {ans} {token} books");
    ans
 }
-
-
