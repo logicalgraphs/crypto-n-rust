@@ -85,6 +85,7 @@ impl PartialEq for OrderBook {
 impl Eq for OrderBook {}
 
 // ----- constructors -------------------------------------------------------
+
 pub fn mk_orderbook(buy_side: String, sell_side: String, ratio: f32, price: USD)
    -> OrderBook {
    OrderBook { buy_side, sell_side, ratio, price }
