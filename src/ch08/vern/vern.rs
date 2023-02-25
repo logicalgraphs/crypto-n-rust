@@ -48,36 +48,7 @@ fn go(args: &Vec<String>) {
          println!("./vern, my main man, ./vern!\n");
          match toks.parse() {
             Ok(ntoks) => {
-               let market = read_marketplace(marketplace);
-               let books = load_books(order_books);
-               let pathf = |line: &String| {
-                  let raw_path: Vec<&str> = line.split(',').collect();
-                  fn str_str_str(s: &&str) -> String {
-                     str_string(*s)
-                  }
-                  let lst: &str = etok;
-                  if raw_path.last() == Some(&lst) {
-                     let path: Vec<String> =
-                        raw_path.iter()
-                                .skip_while(|n| n != &&stok)
-                                .map(str_str_str)
-                                .collect();
-                     process_with_path(ntoks, &market, &path) 
-                  } else {
-                     None
-                  }
-               };
-               for file in files {
-                  println!("For file {}:", &file);
-                  let paths = paths_processor(&pathf, &file);
-                  paths.iter().for_each(print_path(ntoks));
-               }
-               println!("\nHey, Ray! 😊");
-
-               if let Some(price) = prices(&market).get(stok) {
-                  println!("{stok} market order worth {}",
-                           mk_usd(price.amount * ntoks));
-               }
+               paths(ntoks, marketplace, order_books, etok, stok, &files);
             },
             Err(_) => { cont = false; }
          }
@@ -86,5 +57,40 @@ fn go(args: &Vec<String>) {
 
    if !cont {
       usage();
+   }
+}
+
+fn str_str_str(s: &&str) -> String {
+   str_string(*s)
+}
+
+fn paths(ntoks: f32, marketpl: &str, orders: &str, etok: &str,
+         stok: &str, files: &[String]) {
+   let market = read_marketplace(marketpl);
+   let books = load_books(orders);
+   let pathf = |line: &String| {
+      let raw_path: Vec<&str> = line.split(',').collect();
+      let lst: &str = etok;
+      if raw_path.last() == Some(&lst) {
+         let path: Vec<String> =
+            raw_path.iter()
+               .skip_while(|n| n != &&stok)
+               .map(str_str_str)
+               .collect();
+         process_with_path(ntoks, &market, &path) 
+      } else {
+         None
+      }
+   };
+   for file in files {
+      println!("For file {}:", &file);
+      let paths = paths_processor(&pathf, file);
+      paths.iter().for_each(print_path(ntoks));
+   }
+   println!("\nHey, Ray! 😊");
+
+   if let Some(price) = prices(&market).get(stok) {
+      println!("{stok} market order worth {}",
+         mk_usd(price.amount * ntoks));
    }
 }
