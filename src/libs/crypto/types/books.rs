@@ -12,6 +12,7 @@ use std::{
 
 use book::{
    csv_utils::CsvWriter,
+   file_utils::lines_from_file,
    json_utils::unquot,
    num_utils::mk_estimate
 };
@@ -36,6 +37,11 @@ pub struct Book {
 struct Books {
    #[serde(rename(deserialize="tickers"))]
    books: Vec<Book>
+}
+
+pub fn load_books(filename: &str) -> HashSet<Book> {
+   let file = lines_from_file(&filename).join(" ");
+   parse_books(&file)
 }
 
 pub fn parse_books(str: &str) -> HashSet<Book> {

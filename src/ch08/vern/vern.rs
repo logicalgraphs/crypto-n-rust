@@ -20,32 +20,35 @@ use book::{
 };
 
 use crypto::{
-   types::marketplace::read_marketplace,
+   types::{marketplace::read_marketplace,
+           books::{load_books,fetch_books_by_vol}},
    algos::paths::{paths_processor,process_with_path,print_path}
 };
 
 fn usage() {
    let m = "<marketplace file>";
+   let j = "<book ticker json file>";
    let g = "<graph paths CSV file>";
-   println!("./vern ntokens start-token end-token {m} {g}");
+   println!("./vern ntokens start-token end-token {m} {j} {g}");
    println!("\n\tcomputes the number of tokens after trading a path.\n");
 }
 
 fn main() {
    let args = get_args();
-   if args.len() < 4 { usage(); } else { go(&args); }
+   if args.len() < 5 { usage(); } else { go(&args); }
 }
 
 fn go(args: &Vec<String>) {
    let mut cont = false;
-   let (args1, files) = args.split_at(4);
-   if let [toks, stok, etok, marketplace] = args1 {
+   let (args1, files) = args.split_at(5);
+   if let [toks, stok, etok, marketplace, order_books] = args1 {
       cont = !files.is_empty();
       if cont {
          println!("./vern, my main man, ./vern!\n");
          match toks.parse() {
             Ok(ntoks) => {
                let market = read_marketplace(marketplace);
+               let books = load_books(order_books);
                let pathf = |line: &String| {
                   let raw_path: Vec<&str> = line.split(',').collect();
                   fn str_str_str(s: &&str) -> String {
