@@ -20,8 +20,9 @@ use book::{
 };
 
 use crypto::{
-   types::{marketplace::read_marketplace,
-           books::{load_books,fetch_books_by_vol}},
+   types::{marketplace::{read_marketplace,prices},
+           books::{load_books,fetch_books_by_vol},
+           usd::mk_usd},
    algos::paths::{paths_processor,process_with_path,print_path}
 };
 
@@ -72,6 +73,11 @@ fn go(args: &Vec<String>) {
                   paths.iter().for_each(print_path(ntoks));
                }
                println!("\nHey, Ray! 😊");
+
+               if let Some(price) = prices(&market).get(stok) {
+                  println!("{stok} market order worth {}",
+                           mk_usd(price.amount * ntoks));
+               }
             },
             Err(_) => { cont = false; }
          }
