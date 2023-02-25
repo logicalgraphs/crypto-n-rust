@@ -90,20 +90,20 @@ impl CsvWriter for Book {
 }
 
 pub fn fetch_books(fin: &HashSet<Book>, token: &str) -> HashSet<Book> {
-   let mut ans = HashSet::new();
-   for b in fin {
-      if b.base == token || b.target == token { ans.insert(b.clone()); }
-   }
-   ans
+   book_fetcher(|b| b.base == token || b.target == token, fin)
 }
 
-pub fn fetch_books_by_vol(fin: &HashSet<Book>, vol: f32) -> Vec<Book> {
-   let mut alles: Vec<Book> = Vec::new();
-   for book in fin {
-      alles.push(book.clone());
+pub fn fetch_books_by_vol(fin: &HashSet<Book>, vol: f32) -> HashSet<Book> {
+   book_fetcher(|b| b.vol_24h > vol, fin)
+}
+
+pub fn book_fetcher(f: impl Fn(&Book) -> bool, fin: &HashSet<Book>)
+   -> HashSet<Book> {
+   let mut ans = HashSet::new();
+   for b in fin {
+      if f(b) { ans.insert(b.clone()); }
    }
-   alles.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
-   alles.into_iter().take_while(|b| b.vol_24h > vol).collect()
+   ans
 }
 
 pub fn ticker(b: &Book) -> String {

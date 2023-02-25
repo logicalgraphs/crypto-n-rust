@@ -20,10 +20,15 @@ use book::{
 };
 
 use crypto::{
-   types::{marketplace::{read_marketplace,prices},
-           books::{load_books,fetch_books_by_vol},
-           usd::mk_usd},
-   algos::paths::{paths_processor,process_with_path,print_path}
+   types::{
+     books::load_books,
+     marketplace::{read_marketplace,prices},
+     usd::mk_usd
+   },
+   algos::{
+      orders::active_order_books,
+      paths::{paths_processor,process_with_path,print_path}
+   }
 };
 
 fn usage() {
@@ -66,8 +71,15 @@ fn str_str_str(s: &&str) -> String {
 
 fn paths(ntoks: f32, marketpl: &str, orders: &str, etok: &str,
          stok: &str, files: &[String]) {
-   let market = read_marketplace(marketpl);
    let books = load_books(orders);
+   let market = read_marketplace(marketpl);
+   let quotes = prices(&market);
+   let (vol, vol24) = if let Some(price) = quotes.get(stok) {
+         let base = price.amount * ntoks;
+         (base, base * 24.0)
+   } else { (1000.0, 1000.0) };
+   let mut lively = market.clone();
+   active_order_books(&mut lively, &books, vol24);
    let pathf = |line: &String| {
       let raw_path: Vec<&str> = line.split(',').collect();
       let lst: &str = etok;
@@ -77,7 +89,7 @@ fn paths(ntoks: f32, marketpl: &str, orders: &str, etok: &str,
                .skip_while(|n| n != &&stok)
                .map(str_str_str)
                .collect();
-         process_with_path(ntoks, &market, &path) 
+         process_with_path(ntoks, &lively, &path)
       } else {
          None
       }
@@ -87,10 +99,7 @@ fn paths(ntoks: f32, marketpl: &str, orders: &str, etok: &str,
       let paths = paths_processor(&pathf, file);
       paths.iter().for_each(print_path(ntoks));
    }
-   println!("\nHey, Ray! 😊");
-
-   if let Some(price) = prices(&market).get(stok) {
-      println!("{stok} market order worth {}",
-         mk_usd(price.amount * ntoks));
-   }
+   let pre = "\nHey, Ray! 😊 Given the trade was ";
+   println!("{pre}{}, the top {} order books were used",
+            mk_usd(vol), lively.len());
 }
