@@ -145,7 +145,7 @@ Examples: ATOM/OSMO is the Achilles Heel of Kujira, so I use the ATOM/OSMO
 swap on the Osmosis Zone. Same for ampLUNA/LUNA on Terra, same for 
 stATOM/ATOM on Stride.
 
-A sythetic order book is constructed from the existing prices of Kujira's
+A synthetic order book is constructed from the existing prices of Kujira's
 order book prices, but is manually provided the ratio (from external
 trade results).
 
@@ -171,6 +171,15 @@ pub fn read_synthetic_order_books(file: &str, quotes: &HashMap<String, USD>)
       }
    }
    pairs
+}
+
+pub fn merge_synthetics(markets: &mut HashSet<OrderBook>,
+                        quotes: &HashMap<String, USD>,
+			synthetics: &str) {
+   let synths = read_synthetic_order_books(&synthetics, &quotes);
+   for s in synths {
+      markets.insert(s.clone());
+   }
 }
 
 pub fn read_marketplace_d(file: &str, debug: bool) -> HashSet<OrderBook> {

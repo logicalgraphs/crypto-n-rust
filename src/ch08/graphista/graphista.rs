@@ -3,7 +3,7 @@
 use book::utils::get_args;
 
 use crypto::types::marketplace::{
-   read_marketplace,print_marketplace,prices,read_synthetic_order_books
+   read_marketplace,print_marketplace,prices,merge_synthetics
 };
 
 fn usage() {
@@ -17,10 +17,7 @@ fn main() {
    if let [marketplace, synthetics] = get_args().as_slice() {
       let mut market = read_marketplace(&marketplace);
       let quotes = prices(&market);
-      let synths = read_synthetic_order_books(&synthetics, &quotes);
-      for s in synths {
-         market.insert(s.clone());
-      }
+      merge_synthetics(&mut market, &quotes, synthetics);
       print_marketplace(&market);
    } else {
       usage();
