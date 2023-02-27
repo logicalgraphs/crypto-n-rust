@@ -22,7 +22,7 @@ use book::{
 use crypto::{
    types::{
      books::load_books,
-     marketplace::{read_marketplace,prices},
+     marketplace::{read_marketplace,prices,merge_synthetics},
      usd::mk_usd
    },
    algos::{
@@ -32,10 +32,11 @@ use crypto::{
 };
 
 fn usage() {
-   let m = "<marketplace file>";
+   let m = "<marketplace LSV file>";
+   let s = "<synthetics TSV file>";
    let j = "<book ticker json file>";
    let g = "<graph paths CSV file>";
-   println!("./vern ntokens start-token end-token {m} {j} {g}");
+   println!("./vern ntokens start-token end-token {m} {j} {s} {g}");
    println!("\n\tcomputes the number of tokens after trading a path.\n");
 }
 
@@ -46,14 +47,14 @@ fn main() {
 
 fn go(args: &Vec<String>) {
    let mut cont = false;
-   let (args1, files) = args.split_at(5);
-   if let [toks, stok, etok, marketplace, order_books] = args1 {
+   let (args1, files) = args.split_at(6);
+   if let [toks, stok, etok, marketplace, synt, order_books] = args1 {
       cont = !files.is_empty();
       if cont {
          println!("./vern, my main man, ./vern!\n");
          match toks.parse() {
             Ok(ntoks) => {
-               paths(ntoks, marketplace, order_books, etok, stok, &files);
+               paths(ntoks, marketplace, synt, order_books, etok, stok, &files);
             },
             Err(_) => { cont = false; }
          }
@@ -69,7 +70,7 @@ fn str_str_str(s: &&str) -> String {
    str_string(*s)
 }
 
-fn paths(ntoks: f32, marketpl: &str, orders: &str, etok: &str,
+fn paths(ntoks: f32, marketpl: &str, synth: &str, orders: &str, etok: &str,
          stok: &str, files: &[String]) {
    let books = load_books(orders);
    let market = read_marketplace(marketpl);
@@ -80,6 +81,7 @@ fn paths(ntoks: f32, marketpl: &str, orders: &str, etok: &str,
    } else { (1000.0, 1000.0) };
    let mut lively = market.clone();
    active_order_books(&mut lively, &books, vol24);
+   merge_synthetics(&mut lively, &quotes, synth);
    let pathf = |line: &String| {
       let raw_path: Vec<&str> = line.split(',').collect();
       let lst: &str = etok;
