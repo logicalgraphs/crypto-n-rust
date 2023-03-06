@@ -39,13 +39,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
    if let (Some(frist), r1) = ht(args) {
       let raw = frist == "--raw";
       if let (Some(date), r2) = if !raw { (Some(frist), r1) } else { ht(r1) } {
-/*
-         let mut res =
-            reqwest::get("https://api.kujira.app/api/coingecko/tickers")?;
-         let mut body = String::new();
-         res.read_to_string(&mut body)?;
-         reportage(&date, &body, raw);
-*/
          for filename in r2 {
             success = true;
             let file = lines_from_file(&filename).join(" ");
@@ -64,25 +57,19 @@ fn reportage(date: &str, body: &str, raw: bool) {
    println!("I got {} books", books.len());
    count(&books, "axlUSDC");
    count(&books, "USK");
-
-/* fetch_books demo
-   let mars = fetch_books(&books, "MARS");
-   println!("The MARS books URLs are:");
-   for m in mars {
-      println!("{}: {}", ticker(&m), url(&m));
-   }
-*/
    let mut alles: Vec<Book> = books.into_iter().collect();
    alles.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
    if raw { print_alles(&alles, date); }
    let topus: Vec<Book> =
       alles.into_iter().take_while(|b| b.vol_24h > 1000.0).collect();
-   print_txt(&topus, date);
+   let v: Vec<Book> = topus.clone().into_iter().take(5).collect();
+   print_txt(&v, date);
    print_html(&topus, date);
 }
 
 fn print_txt<T: CsvWriter>(tops: &Vec<T>, date: &str) {
    printer(tops, date, &Mode::TEXT);
+   println!("\nfull report archived at ");
 }
 
 fn print_alles(alles: &Vec<Book>, date: &str) {
