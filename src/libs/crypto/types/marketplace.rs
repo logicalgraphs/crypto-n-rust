@@ -18,6 +18,7 @@ use std::{
 
 use book::{
    csv_utils::{CsvWriter,print_csv},
+   file_utils::lines_from_file,
    list_utils::head,
    num_utils::parse_commaless
 };
@@ -64,7 +65,7 @@ impl fmt::Display for OrderBook {
 // the simple representation:
 
 pub fn orderbook(o: &OrderBook) -> String {
-   (o.buy_side.clone() + " / " + &o.sell_side).to_string()
+   format!("{}/{}", o.buy_side, o.sell_side)
 }
 
 impl Hash for OrderBook {
@@ -85,8 +86,12 @@ impl PartialEq for OrderBook {
 impl Eq for OrderBook {}
 
 // ----- constructors -------------------------------------------------------
-pub fn mk_orderbook(buy_side: String, sell_side: String, ratio: f32, price: USD)
+
+pub fn mk_orderbook(buy: &str, sell: &str, ratio: f32, pric: &USD)
    -> OrderBook {
+   let buy_side = buy.to_string();
+   let sell_side = sell.to_string();
+   let price = mk_usd(pric.amount);
    OrderBook { buy_side, sell_side, ratio, price }
 }
 
@@ -97,9 +102,7 @@ fn parse_orderbook(buy: &str, sell: &str, rat: &str, pric: &str)
    let ratio: f32 = parse_commaless(rat)?;
    let pric1: f32 = parse_commaless(pric)?;
    let price: USD = mk_usd(pric1);
-   let buy_side = buy.to_string();
-   let sell_side = sell.to_string();
-   Ok(mk_orderbook(buy_side, sell_side, ratio, price))
+   Ok(mk_orderbook(buy, sell, ratio, &price))
 }
 
 pub fn scan_orderbook(lines: Vec<String>)
@@ -128,13 +131,58 @@ pub fn scan_orderbook(lines: Vec<String>)
    }, remaining)
 }
 
+
 pub fn read_marketplace(file: &str) -> HashSet<OrderBook> {
    read_marketplace_d(file, false)
 }
 
-pub fn read_marketplace_d(file: &str, debug: bool) -> HashSet<OrderBook> {
-   use book::file_utils::lines_from_file;
+// Sythetic order books.
 
+/*
+Sythetic order books are order books, that are not order books.
+
+Examples: ATOM/OSMO is the Achilles Heel of Kujira, so I use the ATOM/OSMO
+swap on the Osmosis Zone. Same for ampLUNA/LUNA on Terra, same for 
+stATOM/ATOM on Stride.
+
+A synthetic order book is constructed from the existing prices of Kujira's
+order book prices, but is manually provided the ratio (from external
+trade results).
+
+So, synthetic order books walk and talk just like order books, they just
+so happen to be loaded in differently and can be treated differently when
+discovering arbitration paths.
+*/
+
+pub fn read_synthetic_order_books(file: &str, quotes: &HashMap<String, USD>)
+   -> HashSet<OrderBook> {
+   let lines = lines_from_file(file);
+   let (_header, rows) = lines.split_at(4);
+   let mut pairs = HashSet::new();
+   for row in rows {
+      let tsv: Vec<&str> = row.split('\t').collect();
+      if let [buy, sell, rat] = tsv.as_slice() {
+        let ratio = rat.parse().expect(&format!("Synthetic ratio {rat}"));
+        if let Some(price) = quotes.get(&buy.to_string()) {
+           pairs.insert(mk_orderbook(buy, sell, ratio, price));
+        }
+      } else {
+        println!("Could not process line {row}");
+      }
+   }
+   pairs
+}
+
+pub fn merge_synthetics(markets: &mut HashSet<OrderBook>,
+                        quotes: &HashMap<String, USD>,
+			synthetics: &str) {
+   let synths = read_synthetic_order_books(&synthetics, &quotes);
+   for s in synths {
+      markets.insert(s.clone());
+   }
+}
+
+pub fn read_marketplace_d(file: &str, debug: bool) -> HashSet<OrderBook> {
    let lines = lines_from_file(file);
    let (_header, rows) = lines.split_at(4);
    let mut pairs = HashSet::new();

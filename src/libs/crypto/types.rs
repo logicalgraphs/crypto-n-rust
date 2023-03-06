@@ -1,4 +1,5 @@
 pub mod assets;
+pub mod books;
 pub mod coins;
 pub mod liquidations;
 pub mod marketplace;

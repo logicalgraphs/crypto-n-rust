@@ -6,8 +6,7 @@ use book::{
    utils::get_args
 };
 
-mod books;
-use crate::books::{Book,parse_books,count};
+use crypto::types::books::{Book,parse_books,count};
 
 mod linked_books;
 use crate::linked_books::{LinkedBook,mk_linked};

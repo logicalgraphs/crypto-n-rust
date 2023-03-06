@@ -21,7 +21,7 @@ fn usage() {
 fn main() {
    if let Some(filename) = head(get_args()) {
       println!("Processing {}", filename);
-      let markets = read_marketplace(filename);
+      let markets = read_marketplace(&filename);
       print_prices("Prices", &prices(&markets));
 
       // bonus:

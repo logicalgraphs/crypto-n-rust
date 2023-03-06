@@ -1,9 +1,5 @@
 // computes profit and loss (pnl) from trades
 
-use std::{
-   path::Path
-};
-
 use book::{
    utils::get_args,
    file_utils::lines_from_file,
@@ -32,7 +28,7 @@ fn main() {
    }
 }
 
-fn parse_n_print(p: &Portfolio, file: impl AsRef<Path>) {
+fn parse_n_print(p: &Portfolio, file: &str) {
    let mut lines = tail(lines_from_file(file));
    let trade_state = init_trade_state(lines.pop());
    cont(&p, lines, trade_state);
@@ -44,6 +40,8 @@ fn cont(p: &Portfolio, lines: Vec<String>, state: TradeState) {
    if !lines.is_empty() {
       let (line, rest) = ht(lines);
       parse_trade_cont(&cont, p, &line, rest, state);
+      // you like how I put call_cc in this code?
+      // call_cc: call-with-current-continuation
    } else {
       print_portfolio(p);
       report(&state);

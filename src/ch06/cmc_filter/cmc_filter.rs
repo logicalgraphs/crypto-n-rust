@@ -1,9 +1,6 @@
 // filters and prints only the held assets' prices
 
-use std::{
-   path::Path,
-   collections::{HashMap,HashSet}
-};
+use std::collections::{HashMap,HashSet};
 
 use book::{
    utils::get_args,
@@ -25,7 +22,7 @@ fn main() {
    }
 }
 
-fn parse_then_filter(prices: impl AsRef<Path>, assets: impl AsRef<Path>) {
+fn parse_then_filter(prices: &str, assets: &str) {
    let price_lines = lines_from_file(prices);
    let assetss = lines_from_file(assets);
    let mut assets_set = HashSet::new();

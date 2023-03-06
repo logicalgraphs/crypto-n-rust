@@ -1,3 +1,5 @@
+// extracts current market data from https://api.kujira.app/api/coingecko/tickers
+
 extern crate serde;
 
 use serde::{Deserialize,Deserializer};
@@ -10,6 +12,7 @@ use std::{
 
 use book::{
    csv_utils::CsvWriter,
+   file_utils::lines_from_file,
    json_utils::unquot,
    num_utils::mk_estimate
 };
@@ -34,6 +37,11 @@ pub struct Book {
 struct Books {
    #[serde(rename(deserialize="tickers"))]
    books: Vec<Book>
+}
+
+pub fn load_books(filename: &str) -> HashSet<Book> {
+   let file = lines_from_file(&filename).join(" ");
+   parse_books(&file)
 }
 
 pub fn parse_books(str: &str) -> HashSet<Book> {
@@ -82,9 +90,18 @@ impl CsvWriter for Book {
 }
 
 pub fn fetch_books(fin: &HashSet<Book>, token: &str) -> HashSet<Book> {
+   book_fetcher(|b| b.base == token || b.target == token, fin)
+}
+
+pub fn fetch_books_by_vol(fin: &HashSet<Book>, vol: f32) -> HashSet<Book> {
+   book_fetcher(|b| b.vol_24h > vol, fin)
+}
+
+pub fn book_fetcher(f: impl Fn(&Book) -> bool, fin: &HashSet<Book>)
+   -> HashSet<Book> {
    let mut ans = HashSet::new();
    for b in fin {
-      if b.base == token || b.target == token { ans.insert(b.clone()); }
+      if f(b) { ans.insert(b.clone()); }
    }
    ans
 }
@@ -106,5 +123,3 @@ pub fn count(books: &HashSet<Book>, token: &str) -> usize {
    println!("There are {ans} {token} books");
    ans
 }
-
-
