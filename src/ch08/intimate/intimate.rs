@@ -36,7 +36,7 @@ fn main() {
          if cont {
             match toks.parse() {
                Ok(ntoks) => {
-                  let marketplace = read_marketplace(market);
+                  let marketplace = read_marketplace(&market);
                   for path in paths { // there should be one path?
                      let le_path: Vec<String> =
                         path.split(',').map(str_string).collect();
