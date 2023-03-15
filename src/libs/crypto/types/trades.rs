@@ -50,8 +50,16 @@ pub fn parse_swap(date: &str, sym1: &str, amt1: &str, sym2: &str, amt2: &str,
    Ok(mk_swap(date.to_string(), from, to, liq))
 }
 
-pub fn read_csv_swap(line: &String) -> Result<Swap, String> {
-   let mut swap_dater: Vec<&str> = line.split(',').collect();
+pub fn read_csv_swap(line: &str) -> Result<Swap, String> {
+   swap_reader(line, ',')
+}
+
+pub fn read_tsv_swap(line: &str) -> Result<Swap, String> {
+   swap_reader(line, '\t')
+}
+
+fn swap_reader(line: &str, separator: char) -> Result<Swap, String> {
+   let mut swap_dater: Vec<&str> = line.split(separator).collect();
    swap_dater.pop();
    let mut daters = tail(swap_dater);
    let perc = gather_liquidation_info(&mut daters)?;
@@ -60,7 +68,7 @@ pub fn read_csv_swap(line: &String) -> Result<Swap, String> {
    if let [dat, sym1, amt1, sym2, amt2, qut1, qut2] = swap {
       parse_swap(dat, sym1, amt1, sym2, amt2, qut1, qut2, perc)
    } else {
-      Err("Can't parse line: ".to_owned() + line)
+      Err(format!("Can't parse line: {line}"))
    }
 }
 

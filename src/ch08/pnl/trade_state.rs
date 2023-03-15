@@ -4,7 +4,7 @@
 
 use crypto::types::{
    portfolio::{Portfolio,execute_d},
-   trades::{Swap,read_csv_swap,liquidations_count_and_premium},
+   trades::{Swap,read_tsv_swap,liquidations_count_and_premium},
    usd::{USD,mk_usd}
 };
 
@@ -21,8 +21,10 @@ pub struct TradeState {
 
 pub fn init_trade_state(last_line_p: Option<String>) -> TradeState {
    if let Some(last_line) = last_line_p {
-      let fees_comms: Vec<&str> = last_line.split(',').collect();
-      let fc: Vec<&&str> = fees_comms.iter().skip(3).take(2).collect();
+      let fees_comms: Vec<&str> = last_line.split('\t').collect();
+      let fc: Vec<&&str> = fees_comms.iter()
+                                     .filter(|x| !x.is_empty())
+                                     .skip(1).take(2).collect();
       init_trade_state_cont(&last_line, fc)
    } else {
       panic!("Cannot find last line of trades-file")
@@ -37,7 +39,7 @@ fn init_trade_state_cont(last_line: &str, fc: Vec<&&str>) -> TradeState {
       let date = String::new();
       mk_trade_state(date,0.0,0.0,fees.amount,comms.amount,trades)
    } else {
-      panic!("Cannot split out fees and commission from {last_line}.")
+      panic!("Cannot extract fees and commission from {last_line}; fc {fc:?}")
    }
 }
 
@@ -90,7 +92,7 @@ pub fn parse_trade_cont(cont: &dyn Fn(&Portfolio, Vec<String>, TradeState) -> ()
    if let Some(line) = line_opt { 
       println!("\nParsing {line}");
       let TradeState { profit, loss, .. } = state;
-      let (new_portfolio, sub_pnl, dt) = match read_csv_swap(line) {
+      let (new_portfolio, sub_pnl, dt) = match read_tsv_swap(line) {
          Ok(trde) => {
             let (p1, u) = execute_d(p, &trde, true);
             new_trades.push(trde.clone());

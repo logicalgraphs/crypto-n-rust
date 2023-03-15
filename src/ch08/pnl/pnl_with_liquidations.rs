@@ -14,7 +14,7 @@ mod trade_state;
 use crate::trade_state::{TradeState,init_trade_state,report,parse_trade_cont};
 
 fn usage() {
-   println!("\n./pnl <assets CSV file> <trades CSV file>");
+   println!("\n./pnl <assets CSV file> <trades TSV file>");
    println!("\n\tprints the profits and losses from trades.");
 }
 
