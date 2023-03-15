@@ -1,4 +1,0 @@
-Trade,type,date,Asset,amount,for,amount,at price,valuation,tx_id,commission,fee,KUJI ($),fee ($),commission ($),ratio,inverted,premium/ROI,
-1,BUY,2023-03-04,JUNO,142.7389,USK,146.8784,$1.0000,$1.0290,https://finder.kujira.app/kaiyo-1/tx/8260A8A0652D255EDA3DC9A4CC8D475B0116804581D67C1989E923BEDDC79A0F,0.107054,0.000349,$0.524,$0.000,$0.1102,1.03,0.9718168226,
-2,BUY,2023-03-04,LUNA,32.4254,axlUSDC,50,$1.0000,$1.5420,https://finder.kujira.app/kaiyo-1/tx/1485A20ED508C4A961873A2073EAC4F0FFEF50032510355618BD57CD6B4340FE,0.024319,0.000311,$0.536,$0.000,$0.0375,1.54,0.648508,
-charges,,,$0.000,$0.1477,total:,$0.1480,
