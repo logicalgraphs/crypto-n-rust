@@ -99,7 +99,7 @@ basic: FORCE
 peenelles: FORCE
 	@echo "Running profit and lost report for FIN trades..."; \
 	cd $(CRYPTO_TOOLS)/pnl/; \
-	$(RUN_RUST) $(FIN_DIR)/assets.csv $(FIN_DIR)/trades.csv
+	$(RUN_RUST) $(FIN_DIR)/assets.csv $(FIN_DIR)/trades.tsv
 
 benqs: FORCE
 	@echo "Benqi marketplace positions"; \
