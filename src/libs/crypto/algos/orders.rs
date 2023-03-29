@@ -4,7 +4,7 @@ use std::collections::{HashMap,HashSet};
 
 use crate::types::{
    assets::Asset,
-   books::{Book,fetch_books_by_vol,ticker},
+   books::{Book,fetch_books_by_vol,ticker,book_orderbook,prices},
    marketplace::{OrderBook,dual_asset,orderbook},
    usd::USD
 };
@@ -28,4 +28,9 @@ pub fn active_order_books(market: &mut HashSet<OrderBook>,
    let winnow: HashSet<String> =
       fetch_books_by_vol(tickers, vol).iter().map(ticker).collect();
    market.retain(|b| winnow.contains(&orderbook(&b)));
+}
+
+pub fn books_orderbooks(books: &HashSet<Book>) -> HashSet<OrderBook> {
+   let ps = prices(books);
+   books.into_iter().map(book_orderbook(&ps)).collect()
 }

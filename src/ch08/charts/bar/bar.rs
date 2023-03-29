@@ -62,8 +62,13 @@ fn buidl_obj(protocol: &String) {
 
 fn draw_bar_chart() {
    let blok = quot("blockchain");
+   let sp = format!("+ {}",  quot(" "));
 
-   println!("label = d => d.protocol + \" \" + d.blockchain[0]\n");
+   fn bloc_ix(x: u8) -> String {
+      format!(" + d.blockchain[{x}]")
+   }
+
+   println!("label = d => d.protocol{sp}{}{}\n", bloc_ix(0), bloc_ix(1));
    println!("Plot.plot({{
   x: {{
     domain: d3.sort(protocols, d => -d.gain).map(label)

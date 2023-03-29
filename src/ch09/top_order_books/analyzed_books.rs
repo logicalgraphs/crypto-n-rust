@@ -22,6 +22,6 @@ pub fn analyze(books: &Vec<Book>) -> Vec<BookShare> {
 impl CsvWriter for BookShare {
    fn as_csv(&self) -> String {
       let b = &self.book;
-      format!("{},{},{}", ticker(b), b.vol_24h, &self.perc)
+      format!("{},${},{}", ticker(b), b.vol_24h, &self.perc)
    }
 }

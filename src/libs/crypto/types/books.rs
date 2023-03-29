@@ -6,7 +6,7 @@ use serde::{Deserialize,Deserializer};
 use serde_json::{Value, from_str};
 
 use std::{
-   collections::HashSet,
+   collections::{HashMap,HashSet},
    hash::{Hash,Hasher}
 };
 
@@ -15,6 +15,11 @@ use book::{
    file_utils::lines_from_file,
    json_utils::unquot,
    num_utils::mk_estimate
+};
+
+use crate::types::{
+   marketplace::{OrderBook,mk_orderbook},
+   usd::{USD,mk_usd}
 };
 
 #[derive(Debug, Clone)]
@@ -30,7 +35,8 @@ pub struct Book {
    base: String,
    target: String,
    pool_id: String,
-   pub vol_24h: f32
+   pub vol_24h: f32,
+   pub last: USD
 }
 
 #[derive(Deserialize)]
@@ -56,12 +62,13 @@ impl<'de> Deserialize<'de> for Book {
       let base = unquot(&json, "base_currency");
       let target = unquot(&json, "target_currency");
       let pool_id = unquot(&json, "pool_id");
-      let ask1 = unquot(&json, "ask");
-      let ask: f32 = ask1.parse().expect("ask");
+      let lask1 = unquot(&json, "last_price");
+      let lask: f32 = lask1.parse().expect("last_price");
       let vol_raw2 = unquot(&json, "base_volume");
       let vol_raw: f32 = vol_raw2.parse().expect("24h vol");
-      let vol_24h = vol_raw * ask;
-      Ok(Book { base, target, pool_id, vol_24h })
+      let vol_24h = vol_raw * lask;
+      let last = mk_usd(lask);
+      Ok(Book { base, target, pool_id, vol_24h, last })
    }
 }
 
@@ -122,4 +129,50 @@ pub fn count(books: &HashSet<Book>, token: &str) -> usize {
    let ans = fetch_books(&books, token).len();
    println!("There are {ans} {token} books");
    ans
+}
+
+pub fn book_orderbook(target_prices: &HashMap<String, USD>)
+   -> impl Fn(&Book) -> OrderBook + '_ {
+   |b| {
+      let sold = &b.target;
+      let err_msg = format!("Calamity! No price for {sold}!");
+      let targe = target_prices.get(sold).expect(&err_msg);
+      let ratio = b.last.amount / targe.amount;
+      mk_orderbook(&b.base, &b.target, ratio, &b.last)
+   }
+}
+
+pub fn prices(books: &HashSet<Book>) -> HashMap<String, USD> {
+   let mut prices: HashMap<String, USD> = HashMap::new();
+   let usdcs = fetch_books(books, "axlUSDC");
+   let usk = usk_price(&usdcs);
+   prices.insert("USK".to_string(), usk);
+   prices.insert("axlUSDC".to_string(), mk_usd(1.0));
+
+   // we give precedence to the USDC order book prices.
+   for b in usdcs {
+      mb_insert(&mut prices, &b);
+   }
+
+   // then we load all the prices
+   for b in books {
+      mb_insert(&mut prices, &b);
+   }
+   prices
+}
+
+fn usk_price(usdcs: &HashSet<Book>) -> USD {
+   let usks = usdcs.into_iter().find(|b| b.target == "USK");
+   if let Some(u) = usks {
+      mk_usd(1.0/ u.last.amount)
+   } else {
+      panic!("Could not find USK price in order books!")
+   }
+}
+
+fn mb_insert(hm: &mut HashMap<String, USD>, b: &Book) {
+   let key = &b.base;
+   if !hm.contains_key(key) {
+      hm.insert(key.clone(), b.last);
+   }
 }

@@ -21,3 +21,11 @@ Make commands:
 	Computes the 24-hour volumes for the FIN order books
 	Please make sure the scrap of $FIN_TICKERS is echoed to
 	$FIN_VOLUMES_JSON first!
+
+* bar
+	Going to the pub!
+	prints a bar-chart of the protocols' performance
+
+* voronoi
+	portfolio asset allocation by protocol
+
