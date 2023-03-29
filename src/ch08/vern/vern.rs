@@ -14,6 +14,8 @@
 
 // ... also, I moved a lot of this stuff to the algos-library
 
+use std::collections::HashSet;
+
 use book::{
    string_utils::str_string,
    utils::get_args
@@ -32,7 +34,7 @@ use crypto::{
 };
 
 fn usage() {
-   let m = "<marketplace LSV file>";
+   let m = "<marketplace JSON file>";
    let s = "<synthetics TSV file>";
    let g = "<graph paths CSV file>";
    println!("./vern ntokens start-token end-token {m} {s} {g}");
@@ -81,7 +83,7 @@ fn paths(ntoks: f32, marketpl: &str, synth: &str,
    let mut lively = market.clone();
    active_order_books(&mut lively, &books, vol24);
    merge_synthetics(&mut lively, &quotes, synth);
-   let pathf = |line: &String| {
+   let pathf = |line: &String, processed: &mut HashSet<Vec<String>>| {
       let raw_path: Vec<&str> = line.split(',').collect();
       let lst: &str = etok;
       if raw_path.last() == Some(&lst) {
@@ -90,14 +92,20 @@ fn paths(ntoks: f32, marketpl: &str, synth: &str,
                .skip_while(|n| n != &&stok)
                .map(str_str_str)
                .collect();
-         process_with_path(ntoks, &lively, &path)
+         if !processed.contains(&path) {
+            processed.insert(path.clone());
+            process_with_path(ntoks, &lively, &path)
+         } else {
+            None
+         }
       } else {
          None
       }
    };
+   let mut processed_paths: HashSet<Vec<String>> = HashSet::new();
    for file in files {
       println!("For file {}:", &file);
-      let paths = paths_processor(&pathf, file);
+      let paths = paths_processor(&pathf, file, &mut processed_paths);
       paths.iter().for_each(print_path(ntoks));
    }
    let pre = "\nHey, Ray! 😊 Given the trade was ";
