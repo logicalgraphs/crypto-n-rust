@@ -36,7 +36,7 @@ pub struct Book {
    target: String,
    pool_id: String,
    pub vol_24h: f32,
-   pub last: USD
+   pub last: f32
 }
 
 #[derive(Deserialize)]
@@ -63,11 +63,10 @@ impl<'de> Deserialize<'de> for Book {
       let target = unquot(&json, "target_currency");
       let pool_id = unquot(&json, "pool_id");
       let lask1 = unquot(&json, "last_price");
-      let lask: f32 = lask1.parse().expect("last_price");
+      let last: f32 = lask1.parse().expect("last_price");
       let vol_raw2 = unquot(&json, "base_volume");
       let vol_raw: f32 = vol_raw2.parse().expect("24h vol");
-      let vol_24h = vol_raw * lask;
-      let last = mk_usd(lask);
+      let vol_24h = vol_raw * last;
       Ok(Book { base, target, pool_id, vol_24h, last })
    }
 }
@@ -131,14 +130,14 @@ pub fn count(books: &HashSet<Book>, token: &str) -> usize {
    ans
 }
 
-pub fn book_orderbook(target_prices: &HashMap<String, USD>)
-   -> impl Fn(&Book) -> OrderBook + '_ {
+pub fn book_orderbook(prices: &HashMap<String, USD>)
+    -> impl Fn(&Book) -> OrderBook + '_ {
    |b| {
-      let sold = &b.target;
-      let err_msg = format!("Calamity! No price for {sold}!");
-      let targe = target_prices.get(sold).expect(&err_msg);
-      let ratio = b.last.amount / targe.amount;
-      mk_orderbook(&b.base, &b.target, ratio, &b.last)
+      let base = &b.base;
+      let err_msg = format!("Calamity! No price for {base}!");
+      let price = prices.get(base).expect(&err_msg);
+      let ratio = b.last;
+      mk_orderbook(base, &b.target, ratio, &price)
    }
 }
 
@@ -148,15 +147,30 @@ pub fn prices(books: &HashSet<Book>) -> HashMap<String, USD> {
    let usk = usk_price(&usdcs);
    prices.insert("USK".to_string(), usk);
    prices.insert("axlUSDC".to_string(), mk_usd(1.0));
+   let mut other_books: HashSet<Book> = books.clone();
 
-   // we give precedence to the USDC order book prices.
+   // we insert the USDC order book prices, because last_price==ratio==quote
+   // for the USDC order books, at any rate.
+
    for b in usdcs {
       mb_insert(&mut prices, &b);
+      other_books.remove(&b);
    }
 
-   // then we load all the prices
-   for b in books {
-      mb_insert(&mut prices, &b);
+   // we insert the USK order books for those tokens that have only an USK
+   // counterpart.
+
+   let usks = fetch_books(&other_books, "USK");
+
+   for b in usks {
+      mb_insert_usk(&mut prices, &b, &usk);
+      other_books.remove(&b);
+   }
+
+   // then we load all the remaining prices. Now, last_price === ratio
+
+   for b in other_books {
+      mb_insert_price(&mut prices, &b);
    }
    prices
 }
@@ -164,15 +178,37 @@ pub fn prices(books: &HashSet<Book>) -> HashMap<String, USD> {
 fn usk_price(usdcs: &HashSet<Book>) -> USD {
    let usks = usdcs.into_iter().find(|b| b.target == "USK");
    if let Some(u) = usks {
-      mk_usd(1.0/ u.last.amount)
+      mk_usd(1.0 / u.last)
    } else {
       panic!("Could not find USK price in order books!")
    }
 }
 
 fn mb_insert(hm: &mut HashMap<String, USD>, b: &Book) {
+   mb_insert_f(hm, b, |x| mk_usd(x.last))
+}
+
+fn mb_insert_usk(hm: &mut HashMap<String, USD>, b: &Book, usk: &USD) {
+   mb_insert_f(hm, b, |x| mk_usd(x.last * usk.amount))
+}
+
+fn mb_insert_price(hm: &mut HashMap<String, USD>, b: &Book) {
+   let h2 = hm.clone();
+   mb_insert_f(hm, b, |x| price(x, &h2))
+}
+
+fn mb_insert_f(hm: &mut HashMap<String, USD>, b: &Book,
+               f: impl Fn(&Book) -> USD) {
    let key = &b.base;
    if !hm.contains_key(key) {
-      hm.insert(key.clone(), b.last);
+      hm.insert(key.clone(), f(b));
+   }
+}
+
+fn price(b: &Book, hm: &HashMap<String, USD>) -> USD {
+   if let Some(targe) = hm.get(&b.target) {
+      mk_usd(targe.amount * b.last)
+   } else {
+      panic!("Could not find {} price!", b.target)
    }
 }
