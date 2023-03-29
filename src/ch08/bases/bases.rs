@@ -11,10 +11,14 @@ use book::{
    list_utils::head
 };
 
-use crypto::types::marketplace::{read_marketplace,prices,prices_usk};
+use crypto::{
+   types::marketplace::{prices,prices_usk},
+   algos::orders::read_marketplace
+};
+
 
 fn usage() {
-   println!("\n./bases <marketplace LSV file>");
+   println!("\n./bases <marketplace JSON file>");
    println!("\n\tprints the marketplace tokens and prices");
 }
 

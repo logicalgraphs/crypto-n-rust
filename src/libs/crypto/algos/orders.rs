@@ -36,5 +36,6 @@ pub fn books_orderbooks(books: &HashSet<Book>) -> HashSet<OrderBook> {
 }
 
 pub fn read_marketplace(file: &str) -> HashSet<OrderBook> {
+   println!("Reading order books from {file}");
    books_orderbooks(&load_books(file))
 }
