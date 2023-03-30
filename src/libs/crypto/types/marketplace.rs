@@ -184,8 +184,8 @@ fn fetch_buys(market: &HashSet<OrderBook>)
    -> HashMap<String, HashMap<String, USD>> {
    let mut ans = HashMap::<String, HashMap<String, USD>>::new();
    for o in market.iter() {
-      let key = o.buy_side.clone();
-      ans.insert(key.clone(), insert_then(ans.get(&key), &o));
+      let key = &o.buy_side;
+      ans.insert(key.clone(), insert_then(ans.get(key), &o));
    }
    ans
 }
@@ -207,7 +207,17 @@ fn insert_then(m: Option<&HashMap<String, USD>>, o: &OrderBook)
 
 // So, a workaround from the assumption, then? Joy.
 
-fn extract_price(sells: &HashMap<String, USD>) -> USD {
+fn extract_price(k: &str, sells: &HashMap<String, USD>) -> USD {
+   if k == "axlUSDC" {
+      if let Some(ans) = sells.values().collect::<Vec<_>>().first() {
+         mk_usd(1.0 / ans.amount)
+      } else { panic!("Cannot extract USK from axlUSDC order book!") }
+   } else {
+      extract_price1(sells)
+   }
+}
+
+fn extract_price1(sells: &HashMap<String, USD>) -> USD {
    let hashes = if sells.len() > 1 {
       let works_mostly = filter_vals(|key| key == "axlUSDC", sells);
       if works_mostly.len() == 0 {
@@ -238,7 +248,7 @@ pub fn prices(market: &HashSet<OrderBook>) -> HashMap<String, USD> {
    let buys = fetch_buys(market);
    let mut ans: HashMap<String, USD> = HashMap::new();
    for (k, v) in buys.iter() {
-      ans.insert(k.clone(), extract_price(v));
+      ans.insert(k.clone(), extract_price(&k, v));
    }
    ans
 }

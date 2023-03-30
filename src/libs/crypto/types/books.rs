@@ -19,7 +19,7 @@ use book::{
 
 use crate::types::{
    marketplace::{OrderBook,mk_orderbook},
-   usd::{USD,mk_usd}
+   usd::{USD,mk_usd,no_monay}
 };
 
 #[derive(Debug, Clone)]
@@ -201,7 +201,8 @@ fn mb_insert_f(hm: &mut HashMap<String, USD>, b: &Book,
                f: impl Fn(&Book) -> USD) {
    let key = &b.base;
    if !hm.contains_key(key) {
-      hm.insert(key.clone(), f(b));
+      let zot = if b.vol_24h > 100.0 { f(b) } else { no_monay() };
+      hm.insert(key.clone(), zot);
    }
 }
 
