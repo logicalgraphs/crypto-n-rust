@@ -14,9 +14,10 @@ the environmental variables, and stuff)
 
 ## RUN
 
-1. copypasta the /tickers market prices. [Endpoint](https://api.kujira.app/api/coingecko/tickers) to $FIN_VOLUMES_JSON
+1. copypasta the /tickers market prices to `$FIN_VOLUMES_JSON`
+[Endpoint](https://api.kujira.app/api/coingecko/tickers) 
 
-2. `cargo run $FIN_DIR/market.lsv`
+2. `cargo run $FIN_VOLUMES_JSON`
 
 The generated report will look like the following:
 
