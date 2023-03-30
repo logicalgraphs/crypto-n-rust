@@ -14,13 +14,9 @@ the environmental variables, and stuff)
 
 ## RUN
 
-1. copypasta the [Kujira FIN order book market prices](https://fin.kujira.app/trade/kujira14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sl4e867?q=all).
+1. copypasta the /tickers market prices. [Endpoint](https://api.kujira.app/api/coingecko/tickers) to $FIN_VOLUMES_JSON
 
-![FIN order books](imgs/FIN-order-books.png)
-
-2. `echo '*the multiline copied prices*' | tab2csv > $FIN_DIR/market.lsv`
-
-3. `cargo run $FIN_DIR/market.lsv`
+2. `cargo run $FIN_DIR/market.lsv`
 
 The generated report will look like the following:
 
