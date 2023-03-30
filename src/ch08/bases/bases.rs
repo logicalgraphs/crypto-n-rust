@@ -12,7 +12,7 @@ use book::{
 };
 
 use crypto::{
-   types::{marketplace::{prices,prices_usk},usd::USD},
+   types::{marketplace::prices,usd::USD},
    algos::orders::read_marketplace
 };
 
@@ -29,7 +29,7 @@ fn main() {
       print_prices("Prices", &prices(&markets));
 
       // bonus:
-      print_prices("USKs", &prices_usk(&markets));
+      // print_prices("USKs", &prices_usk(&markets));
    } else {
       usage();
    }
@@ -50,7 +50,13 @@ impl AsNum for f32 {
 fn print_prices<T: AsNum + Display>(header: &str, p: &HashMap<String, T>) {
    println!("\n{header}:\n");
    let mut v: Vec<_> = p.into_iter().filter(|p| p.1.as_num() > 0.0).collect();
+   let mut u = v.clone();
    v.sort_by(|x,y| y.1.as_num().partial_cmp(&x.1.as_num()).unwrap());
-   v.iter().for_each(|(k,v)| println!("{k}  {v}"));
-   println!("eliding untraded tokens.");
+   u.sort_by(|x,y| x.0.cmp(&y.0));
+   let w = v.iter().zip(u.iter());
+   fn blah<Q: Display>((a, b): &(&String, &Q)) -> String {
+      format!("{a:<10} {b:>10}")
+   }
+   w.for_each(|(x,y)| println!("{:<40} {}", blah(x), blah(y)));
+   println!("\neliding untraded tokens.");
 }
