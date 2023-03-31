@@ -4,7 +4,11 @@ use std::{
    hash::{Hash,Hasher}
 };
 
-use book::csv_utils::{CsvWriter,print_csv};
+use book::{
+   csv_utils::{CsvWriter,print_csv},
+   num_utils::parse_commaless
+};
+
 use crate::types::{
    liquidations::{Liquidation,mk_liquidation},
    percentage::Percentage,
@@ -73,10 +77,8 @@ pub fn mk_asset(token: String, amount: f32, quote: f32) -> Asset {
 
 pub fn parse_asset(tok: &str, amt: &str, quot: &str)
    -> Result<Asset, String> {
-   let amount: f32 = amt.parse()
-         .expect(&("not amount: ".to_owned() + &amt.to_owned()));
-   let quot1: USD = quot.parse()
-         .expect(&("not quote: ".to_owned() + &quot.to_owned()));
+   let amount: f32 = parse_commaless(amt)?;
+   let quot1: USD = quot.parse().expect(&format!("not quote: {quot}"));
    Ok(mk_asset(tok.to_string(), amount, quot1.amount))
 }
 
@@ -85,7 +87,7 @@ pub fn read_csv_asset(line: &String) -> Result<Asset, String> {
          line.split(',').collect::<Vec<&str>>().as_slice() {
       parse_asset(token, amount, quote)
    } else {
-      Err("Can't parse line: ".to_owned() + line)
+      Err(format!("Can't parse line: {line}"))
    }
 }
 
@@ -98,7 +100,7 @@ pub fn read_assets(lines: Vec<String>) -> HashSet<Asset> {
          Err(msg) => { println!("Error: {}", msg); }
       }
    }
-   println!("Parsed {} assets.", counter);
+   println!("Parsed {counter} assets.");
    bag
 }
 
@@ -106,7 +108,7 @@ pub fn print_assets(assets: &HashSet<Asset>) {
    println!("asset,amount,quote");
    let mut bassets: Vec<&Asset> = assets.into_iter().collect();
    bassets.sort();
-   bassets.iter().for_each(|ass| println!("{}", ass.as_csv()));
+   bassets.into_iter().for_each(print_csv);
 }
 
 pub fn print_asset_d(bag: &HashSet<Asset>, a: &Asset, debug: bool) {
