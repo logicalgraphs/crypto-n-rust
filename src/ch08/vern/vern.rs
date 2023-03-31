@@ -17,7 +17,7 @@
 use std::collections::HashSet;
 
 use book::{
-   string_utils::str_string,
+   string_utils::to_string,
    utils::get_args
 };
 
@@ -68,7 +68,7 @@ fn go(args: &Vec<String>) {
 }
 
 fn str_str_str(s: &&str) -> String {
-   str_string(*s)
+   to_string(*s)
 }
 
 fn paths(ntoks: f32, marketpl: &str, synth: &str,
