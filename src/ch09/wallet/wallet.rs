@@ -68,6 +68,8 @@ fn load_tokens(lines: &Vec<String>, toks: &mut Vec<Token>) {
    }
 }
 
+fn pair(t: &Token) -> (String, f32) { (t.token.clone(), t.amount) }
+
 fn main() {
    if let [market, wallet] = get_args().as_slice() {
       let markets = read_marketplace(market);
@@ -75,13 +77,14 @@ fn main() {
       let (date, body) = extract_date_and_body(wallet);
       let mut tokens: Vec<Token> = Vec::new();
       load_tokens(&body, &mut tokens);
-      let mut alphs: Vec<(String, USD)> =
-         tokens.iter().filter_map(value(&prices)).collect();
+      let mut alphs: Vec<(String, f32)> = tokens.iter().map(pair).collect();
       alphs.sort_by(|x,y| x.0.cmp(&y.0));
-      let mut chonks = alphs.clone();
+      let mut chonks: Vec<(String, USD)> = 
+         tokens.iter().filter_map(value(&prices)).collect();
       chonks.sort_by(|x,y| y.1.partial_cmp(&x.1).unwrap());
       let zs = alphs.iter().zip(chonks.iter());
-      println!("Wallet balances on\t\t\t{date}\n");
+      println!("Wallet balances on\t\t\t\t{date}\n");
+      println!("asset\tbalance\t\tasset\tvalue (USD)");
       zs.for_each(|((a,b),(c,d))| println!("{a}\t{b}\t\t{c}\t{d}"));
    } else {
       usage();
