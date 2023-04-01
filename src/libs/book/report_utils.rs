@@ -4,9 +4,8 @@ use strum_macros::EnumIter; // 0.17.1
 
 use crate::{
    csv_utils::CsvWriter,
-   html_utils::{a,h,ol,p},
-   string_utils::to_string,
-   utils::id
+   html_utils::{a,ol,p},
+   string_utils::to_string
 };
 
 #[derive(PartialEq, EnumIter)]
@@ -40,14 +39,6 @@ pub fn print_message(mode: &Mode, mesg: &str) {
    println!("{}\n", paragraph(mesg))
 }
 
-fn spacer() -> String {
-   p("&nbsp;")
-}
-
-fn h2(s: String) -> String {
-   format!("{}\n{}", h(2, &s), spacer())
-}
-
 pub fn print_top<T: CsvWriter + Clone>(n: usize, title: &str, date: &str, 
       lps: &Vec<T>, mode: &Mode) {
    let mut new_lps: Vec<T> = Vec::new();
@@ -70,10 +61,10 @@ pub fn print_top_by<T: CsvWriter + Clone>(f: impl FnMut(&T) -> bool,
 pub fn print_top_of<T: CsvWriter>(title: &str, date: &str, lps: &Vec<T>, 
       mode: &Mode) {
    let n = lps.len();
-   let headerf = if mode == &Mode::HTML { h2 } else { id };
+   let headerf = if mode == &Mode::HTML { p } else { to_string };
    let listerf = if mode == &Mode::HTML { ol } else { list };
    let header = format!("Top {n} {title}, {date}");
-   println!("{}\n", headerf(header));
+   println!("{}\n", headerf(&header));
    let stringy: Vec<String> = lps.iter().map(|a| a.as_csv()).take(n).collect();
    println!("{}\n", listerf(&stringy));
 }

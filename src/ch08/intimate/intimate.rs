@@ -18,14 +18,14 @@ use book::{
 };
 
 use crypto::{
-   types::marketplace::read_marketplace,
+   algos::orders::read_marketplace,
    algos::paths::{process_with_path,print_path}
 };
 
 fn usage() {
    let csv = "<comma-separated path>";
    println!("./intimate ntokens <marketplace file> {csv}");
-   println!("\n\tcomputes the number of tokens after trading a path.\n");
+   println!("\n\tcomputes the number of tokens after trading a {csv} path.\n");
 }
 
 fn main() {
@@ -36,7 +36,7 @@ fn main() {
          if cont {
             match toks.parse() {
                Ok(ntoks) => {
-                  let marketplace = read_marketplace(market);
+                  let marketplace = read_marketplace(&market);
                   for path in paths { // there should be one path?
                      let le_path: Vec<String> =
                         path.split(',').map(str_string).collect();

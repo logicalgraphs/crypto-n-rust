@@ -11,19 +11,20 @@ use book::{
 };
 
 use crypto::types::{
-   percentage::Percentage,
    usd::USD
 };
 
-mod numbers;
-use crate::numbers::{parse_usd,parse_percent,parse_percent_or_collecting};
+use nums::{
+   numbers::{parse_usd,parse_percent,parse_percent_or_collecting},
+   percs::Perc
+};
 
 #[derive(Debug,Clone)]
 struct LP {
    name: String,
    volume: USD,
-   apr_21_day: Percentage,
-   apr_combined: Percentage
+   apr_21_day: Perc,
+   apr_combined: Perc
 }
 
 impl fmt::Display for LP {

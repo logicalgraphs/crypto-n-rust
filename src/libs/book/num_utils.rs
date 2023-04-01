@@ -22,7 +22,7 @@ pub fn parse_commaless(str: &str) -> Result<f32, String> {
    no_comma.retain(no(','));
    match no_comma.parse() {
       Ok(x) => Ok(x),
-      Err(_) => Err(str.to_owned() + " is not a number")
+      Err(_) => Err(format!("{str} is not a number"))
    }
 }
 
@@ -53,7 +53,7 @@ pub fn parse_estimate(str: &str) -> Result<f32, String> {
             }
          }
          if err {
-           Err("Cannot derive estimate from ".to_owned() + &str.to_owned())
+           Err(format!("Cannot derive estimate from {str}"))
          } else {
            Ok(ans)
          }

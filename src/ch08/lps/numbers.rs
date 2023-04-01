@@ -11,13 +11,14 @@ use book::{
 };
 
 use crypto::types::{
-   percentage::{mk_percentage,Percentage},
    usd::{mk_usd,USD}
 };
 
+use crate::percs::{Perc,mk_perc};
+
 enum Measure {
    Dollar(USD),
-   Percent(Percentage)
+   Percent(Perc)
 }
 
 fn parse_measure(lines: Vec<String>) -> Result<Measure, String> {
@@ -26,7 +27,7 @@ fn parse_measure(lines: Vec<String>) -> Result<Measure, String> {
       if let Ok(bigly) = parse_commaless(&amount) {
          match typ.as_str() {
             "$" => Ok(Measure::Dollar(mk_usd(bigly))),
-            "%" => Ok(Measure::Percent(mk_percentage(bigly/100.0))),
+            "%" => Ok(Measure::Percent(mk_perc(bigly/100.0))),
             _   => Err(format!("Do not know the type: {typ}"))
          }
       } else {
@@ -47,7 +48,7 @@ pub fn parse_usd(lines: &Vec<String>) -> (Result<USD, String>, Vec<String>) {
 }
 
 pub fn parse_percent(lines: &Vec<String>)
-   -> (Result<Percentage, String>, Vec<String>) {
+   -> (Result<Perc, String>, Vec<String>) {
    let (parsley, sage) = lines.split_at(3);
    if let Ok(Measure::Percent(ans)) = parse_measure(parsley.to_vec()) {
       (Ok(ans), sage.to_vec())
@@ -57,10 +58,10 @@ pub fn parse_percent(lines: &Vec<String>)
 }
 
 pub fn parse_percent_or_collecting(lines: &Vec<String>)
-   -> (Percentage, Vec<String>) {
+   -> (Perc, Vec<String>) {
    let (val, rest) = parse_percent(lines);
    match val {
-     Err(_) => (mk_percentage(0.0), tail(rest)),
+     Err(_) => (mk_perc(0.0), tail(rest)),
      Ok(p) => (p, rest)
    }
 }

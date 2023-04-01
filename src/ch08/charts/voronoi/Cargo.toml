@@ -1,18 +1,14 @@
 [package]
-name = "lps"
+name = "voronoi"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[lib]
-name = "nums"
-path = "lib.rs"
-
 [[bin]]
-name = "lps"
-path = "lps.rs"
+name = "voronoi"
+path = "voronoi.rs"
 
 [dependencies]
-book = { path = "../../libs/book" }
-crypto = { path = "../../libs/crypto" }
+book = { path = "../../../libs/book" }
+crypto = { path = "../../../libs/crypto" }

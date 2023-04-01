@@ -14,29 +14,30 @@
 
 // ... also, I moved a lot of this stuff to the algos-library
 
+use std::collections::HashSet;
+
 use book::{
-   string_utils::str_string,
+   string_utils::to_string,
    utils::get_args
 };
 
 use crypto::{
    types::{
      books::load_books,
-     marketplace::{read_marketplace,prices,merge_synthetics},
+     marketplace::{prices,merge_synthetics},
      usd::mk_usd
    },
    algos::{
-      orders::active_order_books,
+      orders::{active_order_books,books_orderbooks},
       paths::{paths_processor,process_with_path,print_path}
    }
 };
 
 fn usage() {
-   let m = "<marketplace LSV file>";
+   let m = "<marketplace JSON file>";
    let s = "<synthetics TSV file>";
-   let j = "<book ticker json file>";
    let g = "<graph paths CSV file>";
-   println!("./vern ntokens start-token end-token {m} {j} {s} {g}");
+   println!("./vern ntokens start-token end-token {m} {s} {g}");
    println!("\n\tcomputes the number of tokens after trading a path.\n");
 }
 
@@ -47,14 +48,14 @@ fn main() {
 
 fn go(args: &Vec<String>) {
    let mut cont = false;
-   let (args1, files) = args.split_at(6);
-   if let [toks, stok, etok, marketplace, synt, order_books] = args1 {
+   let (args1, files) = args.split_at(5);
+   if let [toks, stok, etok, marketplace, synt] = args1 {
       cont = !files.is_empty();
       if cont {
          println!("./vern, my main man, ./vern!\n");
          match toks.parse() {
             Ok(ntoks) => {
-               paths(ntoks, marketplace, synt, order_books, etok, stok, &files);
+               paths(ntoks, marketplace, synt, etok, stok, &files);
             },
             Err(_) => { cont = false; }
          }
@@ -67,13 +68,13 @@ fn go(args: &Vec<String>) {
 }
 
 fn str_str_str(s: &&str) -> String {
-   str_string(*s)
+   to_string(*s)
 }
 
-fn paths(ntoks: f32, marketpl: &str, synth: &str, orders: &str, etok: &str,
-         stok: &str, files: &[String]) {
-   let books = load_books(orders);
-   let market = read_marketplace(marketpl);
+fn paths(ntoks: f32, marketpl: &str, synth: &str,
+         etok: &str, stok: &str, files: &[String]) {
+   let books = load_books(marketpl);
+   let market = books_orderbooks(&books);
    let quotes = prices(&market);
    let (vol, vol24) = if let Some(price) = quotes.get(stok) {
          let base = price.amount * ntoks;
@@ -82,7 +83,7 @@ fn paths(ntoks: f32, marketpl: &str, synth: &str, orders: &str, etok: &str,
    let mut lively = market.clone();
    active_order_books(&mut lively, &books, vol24);
    merge_synthetics(&mut lively, &quotes, synth);
-   let pathf = |line: &String| {
+   let pathf = |line: &String, processed: &mut HashSet<Vec<String>>| {
       let raw_path: Vec<&str> = line.split(',').collect();
       let lst: &str = etok;
       if raw_path.last() == Some(&lst) {
@@ -91,14 +92,20 @@ fn paths(ntoks: f32, marketpl: &str, synth: &str, orders: &str, etok: &str,
                .skip_while(|n| n != &&stok)
                .map(str_str_str)
                .collect();
-         process_with_path(ntoks, &lively, &path)
+         if !processed.contains(&path) {
+            processed.insert(path.clone());
+            process_with_path(ntoks, &lively, &path)
+         } else {
+            None
+         }
       } else {
          None
       }
    };
+   let mut processed_paths: HashSet<Vec<String>> = HashSet::new();
    for file in files {
       println!("For file {}:", &file);
-      let paths = paths_processor(&pathf, file);
+      let paths = paths_processor(&pathf, file, &mut processed_paths);
       paths.iter().for_each(print_path(ntoks));
    }
    let pre = "\nHey, Ray! 😊 Given the trade was ";
