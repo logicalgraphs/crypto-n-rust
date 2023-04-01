@@ -29,3 +29,5 @@ Make commands:
 * voronoi
 	portfolio asset allocation by protocol
 
+* wallet
+	from current $MARKET prices compute values on FIN wallet and sort
