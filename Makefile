@@ -19,6 +19,10 @@ process: encsvify
 filter: filterify
 	@echo "Can you? Can you trip like I do?"
 
+wallet:
+	cd src/ch09/wallet; \
+	cargo run $(MARKET) $(BLUE_DIR)/wallet.lsv
+
 bases: basic
 	@echo "Not FORTRAN. Ah! FORTRAN! The good ol' days!"
 
