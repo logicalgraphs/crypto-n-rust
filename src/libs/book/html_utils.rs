@@ -92,25 +92,17 @@ fn list_t<T: AsText>(v: &Vec<T>, numerate: bool) -> String {
    v1.join("\n")
 }
 
-/*
-pub fn exporter<T: AsText + AsHTML>(mode: &Mode)
-   -> impl Fn(T) -> String + '_ {
-   move |elt| {
-      match mode {
-         Mode::TEXT => elt.as_text(),
-         Mode::HTML => elt.as_html()
-      }
-   }
-}
-*/
-
-pub fn roff<T: AsText + AsHTML>(elt: &T, mode: &Mode) -> String {
+pub fn roff(elt: &HTML, mode: &Mode) -> String {
    let runoft = if mode == &Mode::HTML {
       elt.as_html()
    } else {
       elt.as_text()
    };
    runoft
+}
+
+pub fn proff(elt: &HTML, mode: &Mode) {
+   println!("{}", roff(elt, mode));
 }
 
 // ----- HTML-constructors --------------------------------------------------
@@ -141,12 +133,6 @@ pub fn nbsp() -> HTML {
 }
 
 // ----- Helper functions ---------------------------------------------
-
-/*
-fn li(s: &String) -> String {
-  elt("li", s)
-}
-*/
 
 fn elt(tag: &str, content: &str) -> String {
    format!("<{tag}>{content}</{tag}>")
