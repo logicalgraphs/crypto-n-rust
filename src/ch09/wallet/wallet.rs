@@ -1,8 +1,10 @@
-
 use std::collections::HashMap;
+
+use strum::IntoEnumIterator;
 
 use book::{
    file_utils::extract_date_and_body,
+   html_utils::{p,a,nbsp,h,body,Mode,proff,roff},
    num_utils::parse_commaless,
    utils::get_args
 };
@@ -86,7 +88,26 @@ fn main() {
       println!("Wallet balances on\t\t\t\t{date}\n");
       println!("asset\tbalance\t\tasset\tvalue (USD)");
       zs.for_each(|((a,b),(c,d))| println!("{a}\t{b}\t\t{c}\t{d}"));
+      infos(&date);
    } else {
       usage();
+   }
+}
+
+fn infos(date: &str) {
+   let lg = "https://github.com/logicalgraphs/crypto-n-rust/blob";
+   let src = "main/src/ch09/wallet/wallet.rs";
+   let wallet_src = a(&format!("{lg}/{src}"), "./wallet");
+   let kujira_wallet_url = a("https://blue.kujira.app/wallet",
+                           "Kujira BLUE wallet");
+   let msg = "computes and sorts balances from a scrap of";
+   let title = format!("Wallet balances on {date}");
+   for mode in Mode::iter() {
+      let w1 = roff(&wallet_src, &mode);
+      let w2 = roff(&kujira_wallet_url, &mode);
+      let webby = body(&vec![h(2, &title), nbsp(),
+                            p(&format!("{w1} {msg} {w2}"))]);
+      proff(&webby, &mode);
+      println!("");
    }
 }

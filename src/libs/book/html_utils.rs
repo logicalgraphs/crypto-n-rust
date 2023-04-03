@@ -10,7 +10,8 @@ pub enum HTML {
    H((usize,String)),
    OL(Vec<LI>),
    A((String, String)),
-   P(String)
+   P(String),
+   NBSP
 }
 
 #[derive(Debug,Clone)]
@@ -51,7 +52,8 @@ impl AsHTML for HTML {
             let a = vec![("href", url)];
             eattrs("a", &a, &content)
          },
-         HTML::P(content) => elt("p", content)
+         HTML::P(content) => elt("p", content),
+         HTML::NBSP => elt("p", "&nbsp;")
       }
    }
 }
@@ -76,7 +78,8 @@ impl AsText for HTML {
          HTML::H((_, title)) => div(&title),
          HTML::OL(lis) => list_t(&lis, true),
          HTML::A((url, content)) => format!("{content} ({url})"),
-         HTML::P(content) => div(&content)
+         HTML::P(content) => div(&content),
+         HTML::NBSP => "".to_string()
       }
    }
 }
@@ -129,7 +132,7 @@ pub fn p(content: &str) -> HTML {
 }
 
 pub fn nbsp() -> HTML {
-   HTML::P("&nbsp;".to_string())
+   HTML::NBSP
 }
 
 // ----- Helper functions ---------------------------------------------
