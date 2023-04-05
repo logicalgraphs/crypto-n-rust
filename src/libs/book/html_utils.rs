@@ -2,7 +2,10 @@
 
 use strum_macros::EnumIter; // 0.17.1
 
-use crate::string_utils::quot;
+use crate::{
+   csv_utils::CsvWriter,
+   string_utils::quot
+};
 
 #[derive(Debug,Clone)]
 pub enum HTML {
@@ -24,7 +27,7 @@ fn mk_li(l: &String) -> LI {
 // ----- MODES -------------------------------------------------------
 
 #[derive(PartialEq, EnumIter)]
-pub enum Mode { HTML, TEXT }
+pub enum Mode { HTML, TEXT, CSV }
 
 pub fn mk_mode(m: &str) -> Mode {
    match m.to_lowercase().as_str() {
@@ -33,6 +36,8 @@ pub fn mk_mode(m: &str) -> Mode {
       _      => panic!("Do not know the mode {}", m)
    }
 }
+
+// ----- HTML mode -------------------------------------------------------
 
 pub trait AsHTML {
    fn as_html(&self) -> String;
@@ -62,6 +67,8 @@ fn list_h<T: AsHTML>(v: &Vec<T>) -> String {
    let v1: Vec<String> = v.iter().map(|e| e.as_html()).collect();
    v1.join("\n")
 }
+
+// ----- TEXT mode -------------------------------------------------------
 
 pub trait AsText {
    fn as_text(&self) -> String;
@@ -94,6 +101,19 @@ fn list_t<T: AsText>(v: &Vec<T>, numerate: bool) -> String {
    }).collect();
    v1.join("\n")
 }
+
+// ----- CSV mode -------------------------------------------------------
+
+// not really a mode, but when you want to CSV the list elements you do this:
+
+pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
+   let v1: Vec<String> = v.iter().enumerate().map(|(x,e)| {
+      format!("{},{}", x + 1, e.as_csv())
+   }).collect();
+   v1.join("\n")
+}
+
+// ----- Run-off functions --------------------------------------------------
 
 pub fn roff(elt: &HTML, mode: &Mode) -> String {
    let runoft = if mode == &Mode::HTML {
