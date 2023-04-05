@@ -13,7 +13,7 @@
 
 use book::{
    list_utils::ht,
-   string_utils::str_string,
+   string_utils::to_string,
    utils::get_args
 };
 
@@ -39,7 +39,7 @@ fn main() {
                   let marketplace = read_marketplace(&market);
                   for path in paths { // there should be one path?
                      let le_path: Vec<String> =
-                        path.split(',').map(str_string).collect();
+                        path.split(',').map(to_string).collect();
                      match process_with_path(ntoks, &marketplace, &le_path) {
                         Some(thing) => print_path(ntoks)(&thing),
                         None => println!("Sure'n b'gorra, but I canna do this.")
