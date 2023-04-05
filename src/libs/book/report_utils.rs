@@ -2,7 +2,7 @@
 
 use crate::{
    csv_utils::CsvWriter,
-   html_utils::{a,ol,p,Mode,roff,proff}
+   html_utils::{a,ol,p,Mode,roff,proff,nbsp}
 };
 
 pub fn print_footer(mode: &Mode, src_dir: &str, program: &str) {
@@ -43,6 +43,7 @@ pub fn print_top_of<T: CsvWriter>(title: &str, date: &str, lps: &Vec<T>,
    let n = lps.len();
    let header = format!("Top {n} {title}, {date}");
    proff(&p(&header), mode);
+   proff(&nbsp(), mode);
    let stringy: Vec<String> = lps.iter().map(|a| a.as_csv()).take(n).collect();
    proff(&ol(&stringy), mode);
 }
