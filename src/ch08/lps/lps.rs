@@ -5,8 +5,9 @@ use std::fmt;
 use book::{
    csv_utils::CsvWriter,
    file_utils::extract_date_and_body,
+   html_utils::mk_mode,
    list_utils::ht,
-   report_utils::{mk_mode, print_footer, print_top, print_message},
+   report_utils::{print_footer, print_top, print_message},
    utils::get_args
 };
 
