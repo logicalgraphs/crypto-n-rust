@@ -9,14 +9,16 @@ use crypto::types::{
 
 pub struct BookShare { book: Book, perc: Percentage }
 
-fn to_book_share(tot: f32, book: &Book) -> BookShare {
-   let my_vol = book.vol_24h;
-   BookShare { book: book.clone(), perc: mk_percentage(my_vol / tot) }
+fn to_book_share(tot: f32) -> impl Fn(&Book) -> BookShare {
+   move |book: &Book| {
+      let my_vol = book.vol_24h;
+      BookShare { book: book.clone(), perc: mk_percentage(my_vol / tot) }
+   }
 }
 
 pub fn analyze(books: &Vec<Book>) -> Vec<BookShare> {
    let total = books.into_iter().map(|b| b.vol_24h).sum::<f32>();
-   books.into_iter().map(|b| to_book_share(total, b)).collect()
+   books.into_iter().map(to_book_share(total)).collect()
 }
 
 impl CsvWriter for BookShare {

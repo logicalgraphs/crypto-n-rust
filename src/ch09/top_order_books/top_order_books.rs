@@ -1,18 +1,18 @@
 use book::{
-   csv_utils::CsvWriter,
+   csv_utils::{CsvWriter,list_csv},
    file_utils::lines_from_file,
+   html_utils::Mode,
    list_utils::ht,
-   report_utils::{Mode, print_footer, print_top_of},
+   report_utils::{print_footer, print_top_of},
    utils::get_args
 };
 
 use crypto::types::books::{Book,parse_books,count};
 
-mod linked_books;
-use crate::linked_books::{LinkedBook,mk_linked};
-
-mod analyzed_books;
-use crate::analyzed_books::analyze;
+use tob::{
+   analyzed_books::analyze,
+   linked_books::{LinkedBook,mk_linked}
+};
 
 // The skeleton upon which this get-fetch example is based is:
 // https://stackoverflow.com/questions/43222429/how-do-you-make-a-get-request-in-rust#:~:text=Sending%20a%20GET%20request%20is,send().unwrap()%3B%20assert_eq!
@@ -73,7 +73,8 @@ fn print_txt<T: CsvWriter>(tops: &Vec<T>, date: &str) {
 }
 
 fn print_alles(alles: &Vec<Book>, date: &str) {
-   print_txt(&analyze(alles), date);
+   println!("FIN order books by volume, {date}\n");
+   println!("{}", list_csv(&analyze(alles)));
 }
 
 fn foot(mode: &Mode) {
