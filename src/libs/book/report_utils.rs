@@ -42,7 +42,7 @@ pub fn print_top_of<T: CsvWriter>(title: &str, date: &str, lps: &Vec<T>,
       mode: &Mode) {
    let n = lps.len();
    let header = format!("Top {n} {title}, {date}");
-   roff(&p(&header), mode);
+   proff(&p(&header), mode);
    let stringy: Vec<String> = lps.iter().map(|a| a.as_csv()).take(n).collect();
    proff(&ol(&stringy), mode);
 }
