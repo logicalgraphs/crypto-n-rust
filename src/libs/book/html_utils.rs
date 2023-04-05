@@ -2,10 +2,7 @@
 
 use strum_macros::EnumIter; // 0.17.1
 
-use crate::{
-   csv_utils::CsvWriter,
-   string_utils::quot
-};
+use crate::string_utils::quot;
 
 #[derive(Debug,Clone)]
 pub enum HTML {
@@ -98,17 +95,6 @@ fn list_t<T: AsText>(v: &Vec<T>, numerate: bool) -> String {
       let i = format!("{}. ", x + 1);
       let idx = if numerate { &i } else { "" };
       format!("{}{}", idx, e.as_text())
-   }).collect();
-   v1.join("\n")
-}
-
-// ----- CSV mode -------------------------------------------------------
-
-// not really a mode, but when you want to CSV the list elements you do this:
-
-pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
-   let v1: Vec<String> = v.iter().enumerate().map(|(x,e)| {
-      format!("{},{}", x + 1, e.as_csv())
    }).collect();
    v1.join("\n")
 }
