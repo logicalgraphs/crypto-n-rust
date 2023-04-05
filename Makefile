@@ -19,6 +19,10 @@ process: encsvify
 filter: filterify
 	@echo "Can you? Can you trip like I do?"
 
+wallet:
+	cd src/ch09/wallet; \
+	cargo run $(MARKET) $(BLUE_DIR)/wallet.lsv
+
 bases: basic
 	@echo "Not FORTRAN. Ah! FORTRAN! The good ol' days!"
 
@@ -40,6 +44,12 @@ bow: arrow
 vols: top
 	@true
 
+bar: pub
+	@true
+
+voronoi: vee
+	@true
+
 help: FORCE
 	@cat $(RUST_BOOK)/commands.txt
 
@@ -57,7 +67,9 @@ CURL_CMD=$(SCRIPTS_DIR)/curl.sh
 CMC_ENDPOINT=https://pro-api.coinmarketcap.com/v1
 
 RUN_RUST=cargo run
-MARKET=$(FIN_DIR)/market.lsv
+
+# $(CURL_CMD) $(FIN_TICKERS) $(FIN_VOLUMES_JSON); \
+
 
 clean: FORCE
 	rm $(JSON_LISTING); \
@@ -121,15 +133,24 @@ arrow: FORCE
 	cd $(CRYPTO_TOOLS)/lps/; \
 	$(RUN_RUST) $(LE_DATE) $(mode) $(BOW_DIR)/lps.lsv
 
-FIN_TICKERS=https://api.kujira.app/api/coingecko/tickers
-FIN_VOLUMES_JSON=$(FIN_DIR)/order_book_volumes.json
-
-# $(CURL_CMD) $(FIN_TICKERS) $(FIN_VOLUMES_JSON); \
-
 top: FORCE
 	@echo "Please be sure $(FIN_VOLUMES_JSON) is updated first!"; \
 	cd $(SRC_DIR)/ch09/top_order_books; \
 	$(RUN_RUST) -- --raw $(LE_DATE) $(FIN_VOLUMES_JSON)
+
+PORT_TSV=$(DATA_DIR)/portfolio/protocols.tsv
+
+define charting
+	@echo "Update $(PORT_TSV) FRIST! AHA!"; \
+	cd $(CRYPTO_TOOLS)/charts/$(1); \
+	$(RUN_RUST) $(PORT_TSV)
+endef
+
+pub: FORCE
+	$(call charting,bar)
+
+vee: FORCE
+	$(call charting,voronoi)
 
 # ----- ... and then we:
 

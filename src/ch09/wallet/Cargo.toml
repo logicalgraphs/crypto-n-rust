@@ -1,0 +1,17 @@
+[package]
+name = "wallet"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "wallet"
+path = "wallet.rs"
+
+[dependencies]
+book = { path = "../../libs/book" }
+crypto = { path = "../../libs/crypto" }
+
+strum = "0.17.1"
+strum_macros = "0.17.1"

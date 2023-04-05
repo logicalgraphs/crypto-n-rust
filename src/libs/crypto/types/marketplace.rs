@@ -19,8 +19,7 @@ use std::{
 use book::{
    csv_utils::{CsvWriter,print_csv},
    file_utils::lines_from_file,
-   list_utils::head,
-   num_utils::parse_commaless
+   list_utils::head
 };
 
 use crate::types::{
@@ -95,48 +94,7 @@ pub fn mk_orderbook(buy: &str, sell: &str, ratio: f32, pric: &USD)
    OrderBook { buy_side, sell_side, ratio, price }
 }
 
-// ----- scanners/parsers ---------------------------------------------------
-
-fn parse_orderbook(buy: &str, sell: &str, rat: &str, pric: &str)
-   -> Result<OrderBook, String> {
-   let ratio: f32 = parse_commaless(rat)?;
-   let pric1: f32 = parse_commaless(pric)?;
-   let price: USD = mk_usd(pric1);
-   Ok(mk_orderbook(buy, sell, ratio, &price))
-}
-
-pub fn scan_orderbook(lines: Vec<String>)
-   -> (Result<OrderBook, String>, Vec<String>) {
-   let (order, rest) = lines.split_at(7);
-   let mut remaining = rest.to_vec();
-   (if let [buy, sell, a, b, c, d, _e] = order {
-
-      // we now must consider margin-calls for order books
-
-      let (rat, pric) = if a == "2.5x" {
-
-         // in which case we adjust the input scan-stream
-
-         remaining.remove(0);
-         (b, d)
-      } else {
-         (a, c)
-      };
-      parse_orderbook(buy, sell, rat, pric)
-   } else {
-      match head(order.to_vec()) {
-         Some(buy) => Err("Can't parse pair starting with: ".to_owned() + &buy),
-         None      => Err("Panik at ze Disco!".to_string())
-      }
-   }, remaining)
-}
-
-
-pub fn read_marketplace(file: &str) -> HashSet<OrderBook> {
-   read_marketplace_d(file, false)
-}
-
-// Sythetic order books.
+// ----- Sythetic order books ---------------------------------------------
 
 /*
 Sythetic order books are order books, that are not order books.
@@ -179,34 +137,6 @@ pub fn merge_synthetics(markets: &mut HashSet<OrderBook>,
    let synths = read_synthetic_order_books(&synthetics, &quotes);
    for s in synths {
       markets.insert(s.clone());
-   }
-}
-
-pub fn read_marketplace_d(file: &str, debug: bool) -> HashSet<OrderBook> {
-   let lines = lines_from_file(file);
-   let (_header, rows) = lines.split_at(4);
-   let mut pairs = HashSet::new();
-   parse_lines_d(1, &mut pairs, rows.to_vec(), debug);
-   pairs
-}
-
-pub fn parse_lines(books: &mut HashSet<OrderBook>, lines: Vec<String>) {
-   parse_lines_d(1, books, lines, false);
-}
-
-pub fn parse_lines_d(n: u32, books: &mut HashSet<OrderBook>,
-                     lines: Vec<String>, debug: bool) {
-   if debug { println!("Processing order book {}", n); }
-   let (mb_order, rest) = scan_orderbook(lines);
-   match mb_order {
-      Ok(book) => {
-         if debug { println!("Processed {:?}", book); }
-         books.insert(book);
-      },
-      Err(msg) => println!("{}", msg)
-   };
-   if rest.len() > 0 {
-      parse_lines_d(n + 1, books, rest, debug);
    }
 }
 
@@ -254,8 +184,8 @@ fn fetch_buys(market: &HashSet<OrderBook>)
    -> HashMap<String, HashMap<String, USD>> {
    let mut ans = HashMap::<String, HashMap<String, USD>>::new();
    for o in market.iter() {
-      let key = o.buy_side.clone();
-      ans.insert(key.clone(), insert_then(ans.get(&key), &o));
+      let key = &o.buy_side;
+      ans.insert(key.clone(), insert_then(ans.get(key), &o));
    }
    ans
 }
@@ -277,7 +207,17 @@ fn insert_then(m: Option<&HashMap<String, USD>>, o: &OrderBook)
 
 // So, a workaround from the assumption, then? Joy.
 
-fn extract_price(sells: &HashMap<String, USD>) -> USD {
+fn extract_price(k: &str, sells: &HashMap<String, USD>) -> USD {
+   if k == "axlUSDC" {
+      if let Some(ans) = sells.values().collect::<Vec<_>>().first() {
+         mk_usd(1.0 / ans.amount)
+      } else { panic!("Cannot extract USK from axlUSDC order book!") }
+   } else {
+      extract_price1(sells)
+   }
+}
+
+fn extract_price1(sells: &HashMap<String, USD>) -> USD {
    let hashes = if sells.len() > 1 {
       let works_mostly = filter_vals(|key| key == "axlUSDC", sells);
       if works_mostly.len() == 0 {
@@ -308,7 +248,7 @@ pub fn prices(market: &HashSet<OrderBook>) -> HashMap<String, USD> {
    let buys = fetch_buys(market);
    let mut ans: HashMap<String, USD> = HashMap::new();
    for (k, v) in buys.iter() {
-      ans.insert(k.clone(), extract_price(v));
+      ans.insert(k.clone(), extract_price(&k, v));
    }
    ans
 }
