@@ -19,20 +19,14 @@ impl TsvWriter for Token {
    fn as_tsv(&self) -> String { format!("{}\t{}", self.token, self.amount) }
 }  
 
-fn scan_token(tok: &str, whole: f32, fract: f32) -> Token {
-   let num = format!("{whole}.{fract}");
-   let amt: Result<f32, _> = num.parse();
-   if let Ok(amount) = amt {
-      let token = tok.to_string();
-      Token { token, amount }
-   } else {
-      panic!("Cannot convert {num} for {tok}")
-   }
+fn mk_token(tok: &str, amount: f32) -> Token {
+   let token = tok.to_string();
+   Token { token, amount }
 }
    
 impl Default for Token {
    fn default() -> Self {
-      scan_token("", 0.0, 0.0)
+      mk_token("", 0.0)
    }
 }
 
@@ -51,8 +45,8 @@ pub fn token_value(m: &HashMap<String, USD>)
 pub fn find_token(lines: &Vec<String>) -> Option<(usize, Token)> {
    for (idx, window) in lines.windows(3).enumerate() {
       if let Ok(whole) = parse_commaless(&window[1]) {
-         if let Ok(fract) = parse_commaless(&window[2]) {
-            return Some((idx, scan_token(&window[0], whole, fract)))
+         if let Ok(fract) = parse_commaless(&format!("0.{}", &window[2])) {
+            return Some((idx, mk_token(&window[0], whole+fract)))
          }
       }
    }
