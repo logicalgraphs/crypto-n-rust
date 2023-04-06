@@ -1,7 +1,3 @@
-use std::{
-   slice::Iter
-};
-
 use strum::IntoEnumIterator;
 
 use book::{
@@ -19,6 +15,7 @@ use crypto::{
 };
 
 use wallet::{
+   inf_iter::mk_inf,
    pairs::Pair,
    tokens::{Token,find_token,token_pair,token_value},
    tsv::TsvWriter
@@ -34,35 +31,6 @@ fn load_tokens(lines: &Vec<String>, toks: &mut Vec<Token>) {
       toks.push(tok);
       let (_, new_lines) = lines.split_at(idx + 3);
       load_tokens(&new_lines.to_vec(), toks);
-   }
-}
-
-struct InfArr<T> {
-   basis: Vec<T>
-}
-
-fn mk_inf<T: Clone>(v: &Vec<T>) -> InfArr<T> {
-   InfArr { basis: v.clone() }
-}
-
-struct InfArrIter<'a, T> {
-   itr: Iter<'a, T>
-}
-
-impl<T> InfArr<T> {
-   fn iter(&self) -> InfArrIter<'_, T> {
-      InfArrIter { itr: self.basis.iter() }
-   }
-}
-
-impl<'a> Iterator for InfArrIter<'a, Pair<USD>> {
-   type Item = Pair<USD>;
-   fn next(&mut self) -> Option<Self::Item> {
-      let mut ans = Pair::default();
-      if let Some(a) = self.itr.next() {
-         ans = a.clone()
-      }
-      Some(ans)
    }
 }
 
