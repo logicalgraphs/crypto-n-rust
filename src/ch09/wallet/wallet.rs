@@ -1,5 +1,4 @@
 use std::{
-   collections::HashMap,
    slice::Iter
 };
 
@@ -8,76 +7,26 @@ use strum::IntoEnumIterator;
 use book::{
    file_utils::extract_date_and_body,
    html_utils::{p,a,nbsp,h,body,Mode,proff,roff},
-   num_utils::parse_commaless,
    utils::get_args
 };
 
 use crypto::{
    types::{
       marketplace::prices,
-      usd::{USD,mk_usd},
+      usd::USD,
    },
    algos::orders::read_marketplace
 };
 
 use wallet::{
-   pairs::{Pair,mk_pair},
+   pairs::Pair,
+   tokens::{Token,find_token,token_pair,token_value},
    tsv::TsvWriter
 };
-
-#[derive(Debug, Clone)]
-pub struct Token {
-   token: String,
-   amount: f32
-}
-
-impl TsvWriter for Token {
-   fn as_tsv(&self) -> String { format!("{}\t{}", self.token, self.amount) }
-}
-
-fn scan_token(tok: &str, whole: f32, fract: f32) -> Token {
-   let num = format!("{whole}.{fract}");
-   let amt: Result<f32, _> = num.parse();
-   if let Ok(amount) = amt {
-      let token = tok.to_string();
-      Token { token, amount }
-   } else {
-      panic!("Cannot convert {num} for {tok}")
-   }
-}
-
-impl Default for Token {
-   fn default() -> Self {
-      scan_token("", 0.0, 0.0)
-   }
-}
-
-fn value(m: &HashMap<String, USD>)
-    -> impl Fn(&Token) -> Option<Pair<USD>> + '_ {
-   |t| {
-      let namei = &t.token;
-      if let Some(price) = m.get(namei) {
-         Some(mk_pair(namei, mk_usd(price.amount * t.amount)))
-      } else {
-         None
-      }
-   }
-}
 
 fn usage() {
    println!("./wallet <market JSON> <wallet LSV>");
    println!("\nPrints your tokens and their USD-values.");
-}
-
-fn find_token(lines: &Vec<String>) -> Option<(usize, Token)> {
-   for (idx, window) in lines.windows(3).enumerate() {
-      if let Ok(whole) = parse_commaless(&window[1]) {
-         if let Ok(fract) = parse_commaless(&window[2]) {
-            return Some((idx, scan_token(&window[0], whole, fract)))
-         }
-      }
-   }
-   None
 }
 
 fn load_tokens(lines: &Vec<String>, toks: &mut Vec<Token>) {
@@ -87,8 +36,6 @@ fn load_tokens(lines: &Vec<String>, toks: &mut Vec<Token>) {
       load_tokens(&new_lines.to_vec(), toks);
    }
 }
-
-fn pair(t: &Token) -> Pair<f32> { mk_pair(&t.token, t.amount) }
 
 struct InfArr<T> {
    basis: Vec<T>
@@ -126,10 +73,10 @@ fn main() {
       let (date, body) = extract_date_and_body(wallet);
       let mut tokens: Vec<Token> = Vec::new();
       load_tokens(&body, &mut tokens);
-      let mut alphs: Vec<Pair<f32>> = tokens.iter().map(pair).collect();
+      let mut alphs: Vec<Pair<f32>> = tokens.iter().map(token_pair).collect();
       alphs.sort_by(|x,y| x.k.cmp(&y.k));
       let mut chonks: Vec<Pair<USD>> = 
-         tokens.iter().filter_map(value(&prices)).collect();
+         tokens.iter().filter_map(token_value(&prices)).collect();
       chonks.sort_by(|x,y| y.v.partial_cmp(&x.v).unwrap());
       let plonks = mk_inf(&chonks);
       let zs = alphs.iter().zip(plonks.iter());
