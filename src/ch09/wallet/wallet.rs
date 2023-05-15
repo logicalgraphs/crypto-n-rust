@@ -1,5 +1,3 @@
-use strum::IntoEnumIterator;
-
 use book::{
    file_utils::extract_date_and_body,
    html_utils::{p,a,nbsp,h,body,Mode,proff,roff},
@@ -47,14 +45,19 @@ fn main() {
          tokens.iter().filter_map(token_value(&prices)).collect();
       chonks.sort_by(|x,y| y.v.partial_cmp(&x.v).unwrap());
       let plonks = mk_inf(&chonks);
-      let zs = alphs.iter().zip(plonks.iter());
-      println!("Wallet balances on\t\t\t\t{date}\n");
-      println!("asset\tbalance\t\tasset\tvalue (USD)");
-      zs.for_each(|(a,b)| println!("{}\t\t{}", a.as_tsv(), b.as_tsv()));
+      let zs: Vec<(&Pair<f32>, Pair<USD>)> =
+         alphs.iter().zip(plonks.iter()).collect();
+      print_wallet_as_tsv(&date, &zs);
       infos(&date);
    } else {
       usage();
    }
+}
+
+fn print_wallet_as_tsv(date: &str, zs: &Vec<(&Pair<f32>, Pair<USD>)>) {
+   println!("Wallet balances on\t\t\t\t\t{date}\n");
+   println!("asset\tbalance\t\tasset\tvalue (USD)");
+   zs.iter().for_each(|(a,b)| println!("{}\t\t{}", a.as_tsv(), b.as_tsv()));
 }
 
 fn infos(date: &str) {
@@ -65,7 +68,7 @@ fn infos(date: &str) {
                            "Kujira BLUE wallet");
    let msg = "computes and sorts balances from a scrap of";
    let title = format!("Wallet balances on {date}");
-   for mode in Mode::iter() {
+   for mode in [Mode::TEXT, Mode::HTML] {
       let w1 = roff(&wallet_src, &mode);
       let w2 = roff(&kujira_wallet_url, &mode);
       let webby = body(&vec![h(2, &title), nbsp(),
