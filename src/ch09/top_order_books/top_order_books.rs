@@ -54,15 +54,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 fn reportage(date: &str, body: &str, raw: bool) {
    let books = parse_books(&body);
-   println!("I got {} books", books.len());
-   count(&books, "axlUSDC");
-   count(&books, "USK");
-   let mut alles: Vec<Book> = books.into_iter().collect();
+   let mut alles: Vec<Book> = books.clone().into_iter().collect();
    alles.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
    if raw { print_alles(&alles, date); }
    let topus: Vec<Book> =
       alles.into_iter().take_while(|b| b.vol_24h > 1000.0).collect();
    let v: Vec<Book> = topus.clone().into_iter().take(5).collect();
+   println!("I got {} books; {} have $1,000+ 24h-volume, {date}",
+            books.len(), topus.len());
+   count(&books, "axlUSDC");
+   count(&books, "USK");
    print_txt(&v, date);
    print_html(&topus, date);
 }

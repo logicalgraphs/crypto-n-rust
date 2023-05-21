@@ -5,7 +5,7 @@ use std::fmt;
 use book::{
    csv_utils::CsvWriter,
    file_utils::extract_date_and_body,
-   html_utils::mk_mode,
+   html_utils::{p,proff,mk_mode},
    list_utils::ht,
    report_utils::{print_footer, print_top, print_message},
    utils::get_args
@@ -70,7 +70,16 @@ fn main() {
             print_message(&mode, "Showing all LPs with 100%+ APR/APY");
             lps.sort_by(
                |a, b| b.apr_21_day.partial_cmp(&a.apr_21_day).unwrap());
-            print_top(5, &title("APR(21 Day Trading)"), &date, &lps, &mode);
+            if let Some(lp) = lps.first() {
+               if lp.apr_21_day == Default::default() {
+                  let msg1 = "No APR(21 day trading) report today";
+                  let msg2 = "@TeamKujira BOW has no data for that column.";
+                  proff(&p(&format!("{msg1}; {msg2}")), &mode);
+               } else {
+                  let titlr = title("APR(21 Day Trading)");
+                  print_top(5, &titlr, &date, &lps, &mode);
+               }
+            }
             print_footer(&mode, "src/ch08/lps", "lps");
          }
       }
