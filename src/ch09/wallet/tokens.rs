@@ -14,6 +14,10 @@ pub struct Token {
    token: String,
    amount: f32
 }
+
+pub fn is_xtoken(t: &Token) -> bool {
+   &t.token == "$"
+}
    
 impl TsvWriter for Token {
    fn as_tsv(&self) -> String { format!("{}\t{}", self.token, self.amount) }

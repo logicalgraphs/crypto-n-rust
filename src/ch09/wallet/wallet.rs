@@ -15,7 +15,7 @@ use crypto::{
 use wallet::{
    inf_iter::mk_inf,
    pairs::Pair,
-   tokens::{Token,find_token,token_pair,token_value},
+   tokens::{Token,find_token,token_pair,token_value,is_xtoken},
    tsv::TsvWriter
 };
 
@@ -26,7 +26,9 @@ fn usage() {
 
 fn load_tokens(lines: &Vec<String>, toks: &mut Vec<Token>) {
    if let Some((idx, tok)) = find_token(lines) {
-      toks.push(tok);
+      if !is_xtoken(&tok) {
+         toks.push(tok);
+      }
       let (_, new_lines) = lines.split_at(idx + 3);
       load_tokens(&new_lines.to_vec(), toks);
    }
