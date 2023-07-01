@@ -13,12 +13,16 @@ fn main() {
    let mut success = false;
    if let Some(filename) = args.first() {
       success = true;
-      let file = lines_from_file(&filename).join(" ");
+      let file = read_file(filename);
       reportage(&filename, &file);
    }
    if !success {
       usage();
    }
+}
+
+pub fn read_file(filename: &str) -> String {
+   lines_from_file(&filename).join(" ")
 }
 
 fn reportage(filename: &str, body: &str) {
