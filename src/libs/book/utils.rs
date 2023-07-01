@@ -5,7 +5,7 @@ use crate::list_utils::{tail,parse_nums};
 // command line arguments fetch functions
 
 pub fn get_args() -> Vec<String> {
-   tail::<String>(args().collect())
+   tail::<String>(&args().collect())
 }
 
 pub fn get_nums() -> Vec<f32> {
@@ -14,4 +14,4 @@ pub fn get_nums() -> Vec<f32> {
 
 // Category theory
 
-pub fn id<T>(t: T) -> T { t }
+pub fn id<T: Clone>(t: &T) -> T { t.clone() }

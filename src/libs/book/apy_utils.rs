@@ -36,6 +36,6 @@ pub fn fetch_spew_n_nums() -> (bool, Vec<f32>) {
    let args = get_args();
    let spew: bool = args.len() > 0 && args[0] == "--spew";
    let f = if spew { tail } else { id };
-   let nums = parse_nums(f(args));
+   let nums = parse_nums(f(&args));
    (spew, nums)
 }
