@@ -19,6 +19,10 @@ pub fn lines_from_file(filename: &str) -> Vec<String> {
       .collect()
 }
 
+pub fn read_file(filename: &str) -> String {
+   lines_from_file(&filename).join(" ")
+}
+
 pub fn extract_date_and_body(file: &str) -> (String, Vec<String>) {
    if let (Some(first_line), rest) =
       ht(&lines_from_file(file)) {

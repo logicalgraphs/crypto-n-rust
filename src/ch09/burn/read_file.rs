@@ -1,5 +1,5 @@
 use book::{
-   file_utils::lines_from_file,
+   file_utils::read_file,
    utils::get_args
 };
 
@@ -21,9 +21,14 @@ fn main() {
    }
 }
 
+/*
+ * moved to file_utils
+
 pub fn read_file(filename: &str) -> String {
    lines_from_file(&filename).join(" ")
 }
+
+ */
 
 fn reportage(filename: &str, body: &str) {
    println!("From {filename} I got {body}");
