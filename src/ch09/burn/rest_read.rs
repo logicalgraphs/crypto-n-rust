@@ -4,10 +4,8 @@ use std::io::Read;
 // https://stackoverflow.com/questions/43222429/how-do-you-make-a-get-request-in-rust#:~:text=Sending%20a%20GET%20request%20is,send().unwrap()%3B%20assert_eq!
 
 fn usage() {
-   println!("./burn ntoks book1 book2 ... bookn");
-   println!("\tTrades ntoks via the order books listed.");
-   println!("\tA synthetic order book can be 1 bid with lots of tokens at");
-   println!("\tthe ratio's quote.");
+   println!("./burn");
+   println!("\tReads data from a REST endpoint.");
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
