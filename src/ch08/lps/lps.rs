@@ -51,8 +51,8 @@ fn usage() {
 
 fn main() {
    let args = get_args();
-   if let (Some(date), args1) = ht(args) {
-      if let (Some(made), files) = ht(args1) {
+   if let (Some(date), args1) = ht(&args) {
+      if let (Some(made), files) = ht(&args1) {
          let mode = mk_mode(&made);
          fn title(kind: &str) -> String {
             format!("LPs on @TeamKujira BOW by {kind}")
@@ -99,7 +99,7 @@ fn process_lp(lines: Vec<String>, lps: &mut Vec<LP>) {
    let meat: Vec<String> =
       lines.into_iter().skip_while(|x| !x.contains('/')).collect();
    if !meat.is_empty() {
-      if let (Some(lp), rest) = ht(meat) {
+      if let (Some(lp), rest) = ht(&meat) {
          let (vol, rest1) = parse_usd(&rest);
          let (apr_21_day, rest2) = parse_percent_or_collecting(&rest1);
          let (aprr, rest3) = parse_percent(&rest2);

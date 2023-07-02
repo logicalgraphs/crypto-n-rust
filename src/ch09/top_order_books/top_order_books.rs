@@ -1,6 +1,6 @@
 use book::{
    csv_utils::{CsvWriter,list_csv},
-   file_utils::lines_from_file,
+   file_utils::read_file,
    html_utils::Mode,
    list_utils::ht,
    report_utils::{print_footer, print_top_of},
@@ -36,12 +36,12 @@ fn usage() {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
    let args = get_args();
    let mut success = false;
-   if let (Some(frist), r1) = ht(args) {
+   if let (Some(frist), r1) = ht(&args) {
       let raw = frist == "--raw";
-      if let (Some(date), r2) = if !raw { (Some(frist), r1) } else { ht(r1) } {
+      if let (Some(date), r2) = if !raw { (Some(frist), r1) } else { ht(&r1) } {
          for filename in r2 {
             success = true;
-            let file = lines_from_file(&filename).join(" ");
+            let file = read_file(&filename);
             reportage(&date, &file, raw);
          }
       }
