@@ -36,7 +36,7 @@ pub fn paths_processor(
       file: &String, processed: &mut Processed) -> Vec<Path> {
    let lines = lines_from_file(file);
    let mut paths: Vec<Path> = Vec::new();
-   for line in tail(lines) {
+   for line in tail(&lines) {
       if let Some(path) = f(&line, processed) {
          paths.push(path);
       }
@@ -68,8 +68,8 @@ fn nan_or_inf_or(a: Path) -> Option<Path> {
 fn process_books(ntoks: f32, market: &HashSet<OrderBook>,
                  interms: &mut Vec<f32>, path: &Vec<String>) -> f32 {
    let mut ans: f32 = ntoks;
-   if let (Some(from), tos) = ht(path.to_vec()) {
-      if let Some(to) = head(tos.clone()) {
+   if let (Some(from), tos) = ht(&path.to_vec()) {
+      if let Some(to) = head(&tos) {
          let tot: f32 = ans * ratio_for(market, &from, &to);
          interms.push(tot);
          ans = process_books(tot, market, interms, &tos);
