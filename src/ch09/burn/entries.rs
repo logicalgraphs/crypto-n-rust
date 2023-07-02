@@ -44,20 +44,18 @@ impl CsvWriter for OrderBook {
 
 pub fn parse_orderbook(jsn: &str) -> Result<OrderBook, String> {
    let raw: Raw = from_str(jsn).expect("RAW'd!");
-   let bids_p: Result<Vec<Entry>, String> =
-      raw.bids1.iter().map(|e| parse_v2e(e)).collect();
-   let asks_p: Result<Vec<Entry>, String> =
-      raw.asks1.iter().map(|e| parse_v2e(e)).collect();
+   fn scan(section: &Vec<Vec<String>>) -> Result<Vec<Entry>, String> {
+      section.iter().map(parse_v2e).collect()
+   }
+   let bids = scan(&raw.bids1)?;
+   let asks = scan(&raw.asks1)?;
    let (base, target) = parse_bnt(&raw.ticker_id1)?;
-   let bids = bids_p?;
-   let asks = asks_p?;
    Ok(OrderBook{ bids, asks, base, target })
 }
 
 // ----- Printing functions --------------------------------------------------
 
 fn thunk(title: &str, section: &Vec<Entry>) -> String {
-   
    let rows: Vec<String> = section.iter().map(|e| e.as_csv()).collect();
    let rs = rows.join("\n");
    format!("{title}\n\n{rs}")
