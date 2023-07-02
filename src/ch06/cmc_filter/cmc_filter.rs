@@ -24,12 +24,13 @@ fn main() {
 
 fn parse_then_filter(prices: &str, assets: &str) {
    let price_lines = lines_from_file(prices);
+   panic!("{}", format!("lines_from_file {prices} returns {price_lines:?}"));
    let assetss = lines_from_file(assets);
    let mut assets_set = HashSet::new();
    assetss.iter().for_each(|c| insert_if(&mut assets_set, c.to_string()));
    file_report("prices", &price_lines);
    file_report("assets", &assetss);
-   let mut mappo = process_csv_prices(price_lines);
+   let mut mappo = process_csv_prices(&price_lines);
    mappo.retain(|key, _| assets_set.contains(key));
    let mut coins: Vec<Coin> = mappo.into_values().collect();
    coins.sort();
@@ -47,8 +48,7 @@ fn file_report<T>(file: &str, lines: &[T]) {
    println!("{} has {} lines", file, lines.len());
 }
 
-fn process_csv_prices(lines: Vec<String>)
-      -> HashMap<String, Coin> {
+fn process_csv_prices(lines: &Vec<String>) -> HashMap<String, Coin> {
    let (_, rows) = lines.split_at(3);
    let mut mappus = HashMap::new();
    rows.iter().for_each(|line| process_price_line(&mut mappus, line));

@@ -12,7 +12,7 @@ use crypto::{
    json_utils::parse_coins
 };
 
-use std::fs;
+use std::fs::read_to_string;
 
 fn usage() {
    println!("\n./cmc_prices <filename>");
@@ -20,8 +20,8 @@ fn usage() {
 }
 
 fn main() {
-   if let Some(filename) = head(get_args()) {
-      let data = fs::read_to_string(filename).expect("Unable to read file");
+   if let Some(filename) = head(&get_args()) {
+      let data = read_to_string(filename).expect("Unable to read file");
       let coins = parse_coins(&data);
       print_all_coins(coins);
    } else {
