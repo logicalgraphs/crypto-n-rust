@@ -64,7 +64,8 @@ pub fn find_triple(body: &Vec<&String>) -> Option<(usize,Row)> {
 }
 
 fn is_num(line: &str) -> Option<f32> {
-   if let Some(position) = head(line.split(' ').collect()) {
+   let positions: Vec<&str> = line.split(' ').collect();
+   if let Some(position) = head(&positions) {
       match parse_commaless(&position.to_string()) {
          Ok(res) => Some(res),
          Err(_)  => None

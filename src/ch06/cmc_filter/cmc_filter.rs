@@ -24,7 +24,6 @@ fn main() {
 
 fn parse_then_filter(prices: &str, assets: &str) {
    let price_lines = lines_from_file(prices);
-   panic!("{}", format!("lines_from_file {prices} returns {price_lines:?}"));
    let assetss = lines_from_file(assets);
    let mut assets_set = HashSet::new();
    assetss.iter().for_each(|c| insert_if(&mut assets_set, c.to_string()));

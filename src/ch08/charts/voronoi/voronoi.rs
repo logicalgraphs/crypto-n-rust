@@ -23,7 +23,7 @@ fn main() {
       print_prelude();
       for file in files {
          let (_date, body) = extract_date_and_body(&file);
-         let protocols = tail(body);
+         let protocols = tail(&body);
          buidl_arr(&protocols);
          output_js();
       }
