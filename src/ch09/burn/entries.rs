@@ -120,8 +120,8 @@ fn buy1(tok: &str, asks: &Vec<Entry>, remaining: f32, amount: f32, mult: f32)
          let (quot, amt) = (entry.ratio, entry.amount);
          let bought = remaining.min(amt * quot);
          let new_rem = remaining - bought;
-         let this_amount = bought / quot;
-         buy1(tok, &rest, new_rem, amount + this_amount, mult + bought * quot)
+         let new_amount = amount + bought / quot;
+         buy1(tok, &rest, new_rem, new_amount, mult + bought)
       } else {
          panic!("Non-empty asks are empty!")
       }
