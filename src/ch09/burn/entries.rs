@@ -4,6 +4,7 @@ use serde::Deserialize;
 use serde_json::from_str;
 
 use book::{list_utils::ht, csv_utils::CsvWriter};
+use crypto::types::percentage::mk_percentage;
 
 /*
 An order book is:
@@ -33,10 +34,6 @@ pub struct Entry {
    amount: f32
 }
 
-impl CsvWriter for Entry {
-   fn as_csv(&self) -> String { format!("{},{}", self.ratio, self.amount) }
-}
-
 #[derive(Deserialize)]
 struct Raw {
    #[serde(rename(deserialize="asks"))]
@@ -52,16 +49,7 @@ pub struct OrderBook {
    bids: Vec<Entry>,
    asks: Vec<Entry>,
    base: String,
-   target: String
-}
-
-impl CsvWriter for OrderBook {
-   fn as_csv(&self) -> String {
-      let namei = format!("{}/{}", self.base, self.target);
-      let a = thunk("asks", &self.asks);
-      let b = thunk("bids", &self.bids);
-      format!("{namei}\n\n{a}\n\n{b}")
-   }
+   pub target: String
 }
 
 pub fn parse_orderbook(jsn: &str) -> Result<OrderBook, String> {
@@ -88,23 +76,6 @@ pub fn mk_purchase(tok: &str, amount: f32, m: f32, remaining: f32) -> Purchase {
    Purchase { token, quote, amount, remaining }
 }
 
-pub fn report_purchase(token: &str, amt: f32, purchase: &Purchase) -> String {
-   format!("From {amt} {token}, I bought {} {}, quote: {}{}",
-           purchase.amount, purchase.token, purchase.quote,
-           remainder(token, purchase.remaining))
-}
-
-fn remainder(token: &str, rem: f32) -> String {
-   if rem <= 0.0 { "".to_string()
-   } else { format!("; {rem} {token} remain") }
-}
-
-impl CsvWriter for Purchase {
-   fn as_csv(&self) -> String {
-      format!("{},{},{}", self.quote, self.amount, self.remaining)
-   }
-}
-
 pub fn buy(book: &OrderBook, amount: f32) -> Purchase {
    buy1(&book.base, &book.asks, amount, 0.0, 0.0)
 }
@@ -128,7 +99,44 @@ fn buy1(tok: &str, asks: &Vec<Entry>, remaining: f32, amount: f32, mult: f32)
    }
 }
 
-// ----- Printing functions --------------------------------------------------
+// ----- Printing functions/reportage -----------------------------------------
+
+impl CsvWriter for Entry {
+   fn as_csv(&self) -> String { format!("{},{}", self.ratio, self.amount) }
+}
+
+impl CsvWriter for OrderBook {
+   fn as_csv(&self) -> String {
+      let namei = format!("{}/{}", self.base, self.target);
+      let a = thunk("asks", &self.asks);
+      let b = thunk("bids", &self.bids);
+      format!("{namei}\n\n{a}\n\n{b}")
+   }
+}
+
+pub fn report_purchase(token: &str, amt: f32, purchase: &Purchase) -> String {
+   format!("From {amt} {token}, I bought {} {}, quote: {}{}",
+           purchase.amount, purchase.token, purchase.quote,
+           remainder(token, purchase.remaining))
+}
+
+pub fn report_roi(rate: f32, burn: f32, purchase: &Purchase) -> String {
+   let quot = purchase.quote;
+   let roi = (rate - quot) / quot;
+   let apr = mk_percentage(roi * 365.0 / burn);
+   format!("Burn ROI: {}, annualized to {apr}", mk_percentage(roi))
+}
+
+fn remainder(token: &str, rem: f32) -> String {
+   if rem <= 0.0 { "".to_string()
+   } else { format!("; {rem} {token} remain") }
+}
+
+impl CsvWriter for Purchase {
+   fn as_csv(&self) -> String {
+      format!("{},{},{}", self.quote, self.amount, self.remaining)
+   }
+}
 
 fn thunk(title: &str, section: &Vec<Entry>) -> String {
    let rows: Vec<String> = section.iter().map(|e| e.as_csv()).collect();
