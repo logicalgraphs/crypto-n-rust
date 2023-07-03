@@ -14,11 +14,12 @@ fn usage() {
 fn main() -> Result<(), String> {
    let args = get_args();
    let mut success = false;
-   if let Some(filename) = args.first() {
+   if let [amt, filename] = args.as_slice() {
       let file = read_file(&filename);
       let book = parse_orderbook(&file)?;
+      let amount: f32 = amt.parse().expect(&format!("{amt} is not a number"));
       success = true;
-      reportage(&book);
+      reportage(amount, &book);
    }
    if !success {
       usage();
@@ -26,9 +27,9 @@ fn main() -> Result<(), String> {
    Ok(())
 }
 
-fn reportage(book: &OrderBook) {
+fn reportage(amount: f32, book: &OrderBook) {
    print_csv(book);
 
-   let purchase = buy(book, 10.0);
+   let purchase = buy(book, amount);
    println!("\n{}", report_purchase("USK", 10.0, &purchase));
 }
