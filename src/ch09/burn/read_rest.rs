@@ -1,7 +1,16 @@
 use std::io::Read;
 
-// The skeleton upon which this get-fetch example is based is:
-// https://stackoverflow.com/questions/43222429/how-do-you-make-a-get-request-in-rust#:~:text=Sending%20a%20GET%20request%20is,send().unwrap()%3B%20assert_eq!
+/* 
+The skeleton upon which this get-fetch example is based is:
+
+https://stackoverflow.com/questions/43222429/how-do-you-make-a-get-request-in-rust#:~:text=Sending%20a%20GET%20request%20is,send().unwrap()%3B%20assert_eq!
+
+include:
+
+reqwest = "0.9.18"
+
+in the Cargo.toml-build-manifest
+*/
 
 fn usage() {
    println!("./burn");
