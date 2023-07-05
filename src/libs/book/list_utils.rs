@@ -33,28 +33,28 @@ pub fn parse_nums_res(strs: Vec<String>) -> Vec<Result<f32, String>> {
 
 // list functions
 
-pub fn ht<T: Clone>(list: Vec<T>) -> (Option<T>, Vec<T>) {
+pub fn ht<T: Clone>(list: &Vec<T>) -> (Option<T>, Vec<T>) {
    if list.is_empty() {
-      (None, list)
+      (None, list.clone())
    } else {
       let (f, t) = list.split_at(1);
       (f.to_vec().pop(), t.to_vec())
    }
 }
 
-pub fn tail<T: Clone>(list: Vec<T>) -> Vec<T> {
+pub fn tail<T: Clone>(list: &Vec<T>) -> Vec<T> {
    let (_, r) = ht(list);
    r
 }
 
-pub fn head<T: Clone>(list: Vec<T>) -> Option<T> {
+pub fn head<T: Clone>(list: &Vec<T>) -> Option<T> {
    let (h, _) = ht(list);
    h
 }
 
 pub fn last<T: Clone>(mut list: Vec<T>) -> Option<T> {
    list.reverse();
-   head(list)
+   head(&list)
 }
 
 // splits a list into lists along some element

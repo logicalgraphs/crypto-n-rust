@@ -61,7 +61,7 @@ pub fn parse_percent_or_collecting(lines: &Vec<String>)
    -> (Perc, Vec<String>) {
    let (val, rest) = parse_percent(lines);
    match val {
-     Err(_) => (mk_perc(0.0), tail(rest)),
+     Err(_) => (mk_perc(0.0), tail(&rest)),
      Ok(p) => (p, rest)
    }
 }

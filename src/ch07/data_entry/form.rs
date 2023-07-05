@@ -52,7 +52,7 @@ pub fn process() {
 }
 
 pub fn process1(preformatter: impl Fn(&Vec<String>) -> Vec<String>) {
-   if let Some(file) = head(get_args()) {
+   if let Some(file) = head(&get_args()) {
       let (date, body) = extract_date_and_body(&file);
       let new_bod = preformatter(&body);
       split(new_bod, "Borrowed".to_string()).iter()

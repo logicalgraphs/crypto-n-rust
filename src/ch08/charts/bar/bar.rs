@@ -5,7 +5,7 @@
 // That TVS-data.
 
 use book::{
-   file_utils::lines_from_file,
+   file_utils::extract_date_and_body,
    list_utils::tail,
    utils::get_args
 };
@@ -22,9 +22,10 @@ fn main() {
    if !files.is_empty() {
       print_prelude();
       for file in files {
-         let protocols = tail(lines_from_file(&file));
+         let (date, body) = extract_date_and_body(&file);
+         let protocols = tail(&body);
          buidl_arr(&protocols);
-         draw_bar_chart();
+         draw_bar_chart(&date);
       }
    } else {
       usage();
@@ -32,8 +33,9 @@ fn main() {
 }
 
 fn print_prelude() {
-   let url = "https://observablehq.com/@observablehq/plot-bar?collection=@observablehq/plot";
-   println!("goto:\n{url}\n");
+   let obs = "https://observablehq.com/@observablehq";
+   let bar = "plot-state-population-change?intent=fork";
+   println!("goto:\n{obs}/{bar}\n");
 }
 
 fn buidl_arr(protocols: &Vec<String>) {
@@ -60,25 +62,39 @@ fn buidl_obj(protocol: &String) {
    }
 }
 
-fn draw_bar_chart() {
-   let blok = quot("blockchain");
+fn draw_bar_chart(date: &str) {
    let sp = format!("+ {}",  quot(" "));
-
-   fn bloc_ix(x: u8) -> String {
-      format!(" + d.blockchain[{x}]")
-   }
-
-   println!("label = d => d.protocol{sp}{}{}\n", bloc_ix(0), bloc_ix(1));
+   println!("label = d => d.blockchain{sp} + d.protocol");
+   let top = quot("top");
+   let prot = quot(&format!("Protocol ROI, {date}"));
+   let ctr = quot("center");
+   let plus = quot("+");
+   let piggy = quot("PiYg");
+   let ordi = quot("ordinal");
+   let x = quot("x");
+   let whit = quot("white");
    println!("Plot.plot({{
+  label: null,
   x: {{
-    domain: d3.sort(protocols, d => -d.gain).map(label)
+    axis: {top},
+    label: {prot},
+    labelAnchor: {ctr},
+    tickFormat: {plus},
+    percent: true
   }},
-  y: {{
-    grid: true
+  color: {{
+    scheme: {piggy},
+    type: {ordi}
   }},
   marks: [
-    Plot.barY(protocols, {{x: label, y: d => d.gain * 100, fill: {blok}}}),
-    Plot.ruleY([0])
+    Plot.barX(protocols, {{
+       y: label, 
+       x: (d) => d.gain, 
+       fill: (d) => Math.sign(d.gain), 
+       sort: {{y: {x}}}}}),
+    Plot.gridX({{stroke: {whit}, strokeOpacity: 0.5}}),
+    Plot.axisY({{x: 0}}),
+    Plot.ruleX([0])
   ]
 }})");
 }

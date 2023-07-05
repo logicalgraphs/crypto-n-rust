@@ -2,8 +2,9 @@
 
 use book::utils::get_args;
 
-use crypto::types::marketplace::{
-   read_marketplace,print_marketplace,prices,merge_synthetics
+use crypto::{
+   algos::orders::read_marketplace,
+   types::marketplace::{print_marketplace,prices,merge_synthetics}
 };
 
 fn usage() {

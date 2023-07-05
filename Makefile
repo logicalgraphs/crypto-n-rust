@@ -2,6 +2,9 @@
 
 DATA_DIR=$(RUST_BOOK)/data-files
 SRC_DIR=$(RUST_BOOK)/src
+LIB_DIR=$(SRC_DIR)/libs
+BOOK_LIB=$(LIB_DIR)/book
+CRYPTO_LIB=$(LIB_DIR)/crypto
 
 SCRIPTS_DIR=$(SRC_DIR)/scripts
 
@@ -21,7 +24,7 @@ filter: filterify
 
 wallet:
 	cd src/ch09/wallet; \
-	cargo run $(MARKET) $(BLUE_DIR)/wallet.lsv
+	$(RUN_RUST) $(MARKET) $(BLUE_DIR)/wallet.lsv
 
 bases: basic
 	@echo "Not FORTRAN. Ah! FORTRAN! The good ol' days!"
@@ -67,6 +70,7 @@ CURL_CMD=$(SCRIPTS_DIR)/curl.sh
 CMC_ENDPOINT=https://pro-api.coinmarketcap.com/v1
 
 RUN_RUST=cargo run
+BUILD_RUST=cargo build
 
 # $(CURL_CMD) $(FIN_TICKERS) $(FIN_VOLUMES_JSON); \
 
@@ -91,7 +95,7 @@ $(JSON_LISTING): FORCE
 
 $(CSV_LISTING): $(JSON_LISTING)
 	@echo "enCVSing JSON quotes ..."; \
-	cd $(SRC_DIR)/ch05/cmc_prices/; \
+	cd $(SRC_DIR)/ch05/cmc_prices; \
 	$(RUN_RUST) $(JSON_LISTING) > $(CSV_LISTING)
 
 encsvify: $(CSV_LISTING)
@@ -99,18 +103,18 @@ encsvify: $(CSV_LISTING)
 
 filterify: $(CSV_LISTING)
 	@echo "filtering price-quotes to held assets..."; \
-	cd $(SRC_DIR)/ch06/cmc_filter/; \
+	cd $(SRC_DIR)/ch06/cmc_filter; \
 	$(RUN_RUST) $(CSV_LISTING) $(HOLDINGS) > $(PORT_LISTING); \
 	cat $(PORT_LISTING)
 
 basic: FORCE
 	@echo "Extracting market prices of assets on FIN..."; \
-	cd $(CRYPTO_TOOLS)/bases/; \
+	cd $(CRYPTO_TOOLS)/bases; \
 	$(RUN_RUST) $(MARKET)
 
 peenelles: FORCE
 	@echo "Running profit and lost report for FIN trades..."; \
-	cd $(CRYPTO_TOOLS)/pnl/; \
+	cd $(CRYPTO_TOOLS)/pnl; \
 	$(RUN_RUST) $(FIN_DIR)/assets.csv $(FIN_DIR)/trades.tsv
 
 benqs: FORCE
@@ -133,12 +137,16 @@ arrow: FORCE
 	cd $(CRYPTO_TOOLS)/lps/; \
 	$(RUN_RUST) $(LE_DATE) $(mode) $(BOW_DIR)/lps.lsv
 
+SPACE_DIR=$(SRC_DIR)/ch09
+TOP_DIR=$(SPACE_DIR)/top_order_books
+
 top: FORCE
 	@echo "Please be sure $(FIN_VOLUMES_JSON) is updated first!"; \
-	cd $(SRC_DIR)/ch09/top_order_books; \
+	cd $(TOP_DIR); \
 	$(RUN_RUST) -- --raw $(LE_DATE) $(FIN_VOLUMES_JSON)
 
 PORT_TSV=$(DATA_DIR)/portfolio/protocols.tsv
+CHART_DIR=$(CRYPTO_TOOLS)/charts
 
 define charting
 	@echo "Update $(PORT_TSV) FRIST! AHA!"; \
@@ -151,6 +159,57 @@ pub: FORCE
 
 vee: FORCE
 	$(call charting,voronoi)
+
+# ----- let's build stuff, ... 'n stuff!
+
+define build
+	cd $(1); $(BUILD_RUST); echo "$(2) built."
+endef
+
+buildCMC:
+	$(call build,$(SRC_DIR)/ch05/cmc_prices,cmc_prices); \
+	$(call build,$(SRC_DIR)/ch06/cmc_filter,cmc_filter)
+
+TOOLS=bases pnl lps
+
+buildTools:
+	for tool in $(TOOLS); do \
+		$(call build,$(CRYPTO_TOOLS)/$$tool,$$tool); \
+	done
+
+buildMoneyMarkets:
+	$(call build,$(CARGO_HOME)/ch07/data_entry/benqi,money markets)
+
+CHARTS=bar voronoi
+
+buildCharts:
+	for chart in $(CHARTS); do \
+		$(call build,$(CHART_DIR)/$$chart,$$chart); \
+	done
+
+buildTop5s:
+	$(call build,$(TOP_DIR),top5s)
+
+buildWallet:
+	$(call build,$(SPACE_DIR)/wallet,wallet)
+
+buildSpacey: buildTop5s buildWallet
+	@true
+
+buildApps: buildCharts buildSpacey buildTools buildMoneyMarkets buildCMC
+	@true
+
+buildBook:
+	$(call build,$(BOOK_LIB),book lib)
+
+buildCrypto:
+	$(call build,$(CRYPTO_LIB),crypt lib)
+
+buildLibs: buildBook buildCrypto
+	@true
+
+buildAll: buildLibs buildApps
+	@true
 
 # ----- ... and then we:
 

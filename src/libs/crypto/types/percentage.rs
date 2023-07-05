@@ -6,7 +6,7 @@ use std::{
    str::FromStr
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Percentage {
    pub percent: f32
 }

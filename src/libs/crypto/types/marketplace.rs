@@ -229,7 +229,7 @@ fn extract_price1(sells: &HashMap<String, USD>) -> USD {
       }
    } else { sells.clone() };
    let prices = hashes.values().collect();
-   match head(prices) {
+   match head(&prices) {
       None => mk_usd(0.0),
       Some(dollah) => dollah.clone()
    }

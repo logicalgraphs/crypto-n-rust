@@ -5,7 +5,7 @@
 // That TVS-data.
 
 use book::{
-   file_utils::lines_from_file,
+   file_utils::extract_date_and_body,
    list_utils::tail,
    utils::get_args
 };
@@ -22,7 +22,8 @@ fn main() {
    if !files.is_empty() {
       print_prelude();
       for file in files {
-         let protocols = tail(lines_from_file(&file));
+         let (_date, body) = extract_date_and_body(&file);
+         let protocols = tail(&body);
          buidl_arr(&protocols);
          output_js();
       }

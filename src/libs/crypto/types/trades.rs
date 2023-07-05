@@ -61,9 +61,9 @@ pub fn read_tsv_swap(line: &str) -> Result<Swap, String> {
 fn swap_reader(line: &str, separator: char) -> Result<Swap, String> {
    let mut swap_dater: Vec<&str> = line.split(separator).collect();
    swap_dater.pop();
-   let mut daters = tail(swap_dater);
+   let mut daters = tail(&swap_dater);
    let perc = gather_liquidation_info(&mut daters)?;
-   let t_daters = tail(daters);
+   let t_daters = tail(&daters);
    let (swap, _fees) = t_daters.split_at(7);
    if let [dat, sym1, amt1, sym2, amt2, qut1, qut2] = swap {
       parse_swap(dat, sym1, amt1, sym2, amt2, qut1, qut2, perc)

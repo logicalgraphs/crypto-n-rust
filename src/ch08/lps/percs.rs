@@ -4,7 +4,7 @@ use std::{fmt,cmp::Ordering};
 
 use crypto::types::percentage::{Percentage,mk_percentage};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Default)]
 pub struct Perc { p: Percentage }
 
 pub fn mk_perc(p: f32) -> Perc {
@@ -31,4 +31,3 @@ impl PartialOrd for Perc {
       self.p.partial_cmp(&other.p)
    }
 }
-
