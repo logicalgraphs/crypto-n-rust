@@ -31,15 +31,15 @@ fn main() {
 fn parse_n_print(p: &Portfolio, file: &str) {
    let mut lines = tail(lines_from_file(file));
    let trade_state = init_trade_state(lines.pop());
-   cont(&p, lines, trade_state);
+   cont(&p, &lines, &trade_state);
 }
 
 // mutually recursive functions, because what even are for-loops, anyway? :<
 
-fn cont(p: &Portfolio, lines: Vec<String>, state: TradeState) {
+fn cont(p: &Portfolio, lines: &Vec<String>, state: &TradeState) {
    if !lines.is_empty() {
       let (line, rest) = ht(lines);
-      parse_trade_cont(&cont, p, &line, rest, state);
+      parse_trade_cont(&cont, p, &line, &rest, state);
       // you like how I put call_cc in this code?
       // call_cc: call-with-current-continuation
    } else {
