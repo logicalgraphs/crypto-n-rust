@@ -85,9 +85,9 @@ pub fn report(state: &TradeState) {
    println!("pnl sources: {lg}/{dir}{src}\n\nAssets in play\n");
 }
 
-pub fn parse_trade_cont(cont: &dyn Fn(&Portfolio, Vec<String>, TradeState) -> (),
+pub fn parse_trade_cont(cont: &dyn Fn(&Portfolio, &Vec<String>, &TradeState) -> (),
                         p: &Portfolio, line_opt: &Option<String>,
-                        lines: Vec<String>, state: TradeState) {
+                        lines: &Vec<String>, state: &TradeState) {
    let mut new_trades = state.trades.clone();
    if let Some(line) = line_opt { 
       println!("\nParsing {line}");
@@ -107,6 +107,6 @@ pub fn parse_trade_cont(cont: &dyn Fn(&Portfolio, Vec<String>, TradeState) -> ()
       let new_loss   = loss + if sub_pnl < 0.0 { -1.0 * sub_pnl } else { 0.0 };
       let state1 =
           update_pnl(&state, dt, new_profit, new_loss, new_trades);
-      cont(&new_portfolio, lines, state1);
+      cont(&new_portfolio, lines, &state1);
    }
 }
