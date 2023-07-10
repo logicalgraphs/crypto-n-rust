@@ -62,8 +62,8 @@ pub fn execute(p: &Portfolio, trade: &Swap) -> (Portfolio, USD) {
 
 pub fn execute_d(p: &Portfolio, trade: &Swap, debug: bool) -> (Portfolio, USD) {
    let mut b = p.bag.clone();
-   let (b1, pnl) = swap_d(&mut b, &trade, debug);
-   (Portfolio { bag: b1 }, pnl)
+   let (bag, pnl) = swap_d(&mut b, &trade, debug);
+   (Portfolio { bag }, pnl)
 }
 
 pub fn print_portfolio(p: &Portfolio) {

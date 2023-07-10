@@ -3,12 +3,15 @@
 // IM SO PROUD! *sniff
 
 use crypto::types::{
-   portfolio::{Portfolio,execute},
-   trades::{Swap,read_tsv_swap,liquidations_count_and_premium},
+   portfolio::{Portfolio,execute_d},
+   trades::{Trade,mk_trade,read_tsv_swap,liquidations_count_and_premium},
    usd::{USD,mk_usd}
 };
 
-use book::string_utils::plural;
+use book::{
+   csv_utils::list_csv,
+   string_utils::plural
+};
 
 pub struct TradeState {
    date: String,
@@ -16,7 +19,7 @@ pub struct TradeState {
    loss: f32,
    fees: f32,
    commission: f32,
-   trades: Vec<Swap>
+   trades: Vec<Trade>
 }
 
 pub fn init_trade_state(last_line_p: Option<String>) -> TradeState {
@@ -33,7 +36,7 @@ pub fn init_trade_state(last_line_p: Option<String>) -> TradeState {
 
 fn init_trade_state_cont(last_line: &str, fc: Vec<&&str>) -> TradeState {
    if let [fee, comm] = fc.as_slice() {
-      let trades: Vec<Swap> = Vec::new();
+      let trades: Vec<Trade> = Vec::new();
       let fees: USD = fee.parse().expect(&format!("fee {fee}"));
       let comms: USD = comm.parse().expect(&format!("commission {comm}"));
       let date = String::new();
@@ -44,15 +47,17 @@ fn init_trade_state_cont(last_line: &str, fc: Vec<&&str>) -> TradeState {
 }
 
 pub fn mk_trade_state(date: String, profit: f32, loss: f32, fees: f32,
-                      commission: f32, trades: Vec<Swap>) -> TradeState {
+                      commission: f32, trades: Vec<Trade>) -> TradeState {
    TradeState { date, profit, loss, fees, commission, trades }
 }
 
 fn update_pnl(state: &TradeState, date: String, profit: f32, loss: f32,
-                      trades: Vec<Swap>) -> TradeState {
+              trades: Vec<Trade>) -> TradeState {
    let TradeState { fees, commission, .. } = state.clone();
    mk_trade_state(date, profit, loss, *fees, *commission, trades)
 }
+
+// ----- Reporting --------------------------------------------------
 
 pub fn report(state: &TradeState) {
    let TradeState { date, profit, loss, fees, commission, trades } = state;
@@ -85,6 +90,13 @@ pub fn report(state: &TradeState) {
    println!("pnl sources: {lg}/{dir}{src}\n\nAssets in play\n");
 }
 
+pub fn print_trades(ts: &TradeState) {
+   println!("row,date,sell,amt,quote,buy,amt,quote,premium,pnl\n");
+   println!("{}", list_csv(&ts.trades));
+}
+
+// ----- Parsing --------------------------------------------------
+
 type Continuation = dyn Fn(&Portfolio, &Vec<String>, &TradeState, bool) -> ();
 
 pub fn parse_trade_cont_d(cont: &Continuation, p: &Portfolio,
@@ -96,8 +108,8 @@ pub fn parse_trade_cont_d(cont: &Continuation, p: &Portfolio,
       let TradeState { profit, loss, .. } = state;
       let (new_portfolio, sub_pnl, dt) = match read_tsv_swap(line) {
          Ok(trde) => {
-            let (p1, u) = execute(p, &trde);
-            new_trades.push(trde.clone());
+            let (p1, u) = execute_d(p, &trde, debug);
+            new_trades.push(mk_trade(trde.clone(), u.clone()));
             (p1, u.amount, trde.date)
          },
          Err(msg) =>  {

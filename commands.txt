@@ -9,6 +9,7 @@ Make commands:
 
 * pnl:
         run the trading PnL ('profits-n-losses') report
+	pass 'debug=-v' for a (very) verbose output
 
 * benqi: or geist: or grain:
         extracts current positions on benqi/geist/granary marketplaces

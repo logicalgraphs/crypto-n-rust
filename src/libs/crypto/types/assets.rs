@@ -31,7 +31,10 @@ impl Asset {
 }
 
 impl CsvWriter for Asset {
-   fn as_csv(&self) -> String { csv(self) }
+   fn as_csv(&self) -> String { 
+      let quot = mk_usd(self.quote);
+      format!("{},{},{quot}", self.token, self.amount)
+   }
 }
 
 impl Hash for Asset {
@@ -62,16 +65,12 @@ impl PartialOrd for Asset {
 
 // ----- io -------------------------------------------------------
 
-fn csv(asset: &Asset) -> String {
-   let quot = mk_usd(asset.quote);
-   format_args!("{},{},{}",asset.token, asset.amount, quot).to_string()
-}
-
 pub fn proto(token: String) -> Asset {
    mk_asset(token, 0.0, 0.0)
 }
 
-pub fn mk_asset(token: String, amount: f32, quote: f32) -> Asset {
+pub fn mk_asset(token: String, amount: f32, quot: f32) -> Asset {
+   let quote = quot.max(0.0);
    Asset { token, amount, quote }
 }
 
@@ -117,7 +116,7 @@ pub fn print_asset_d(bag: &HashSet<Asset>, a: &Asset, debug: bool) {
          print_csv(a1);
       }
    }
-}        
+}
 
 // ----- monoid -------------------------------------------------------
 
@@ -139,7 +138,8 @@ pub fn split_asset(a1: &Asset, a2: Asset) -> Option<Asset> {
    }
 }
 
-pub fn diff_usd(a1: &Asset, a2: &Asset) -> USD {
+pub fn diff_usd(a1: &Asset, a2: &Asset, debug: bool) -> USD {
+   if debug { println!("For {a1:?} ({}) quote: {}", a2.token, a2.quote); }
    mk_usd(a2.amount * a2.quote - a2.amount * a1.quote)
 }
 

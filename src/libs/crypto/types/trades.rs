@@ -105,7 +105,7 @@ pub fn swap_d(p: &mut HashSet<Asset>, s: &Swap, debug: bool)
    add_asset(p, s.to.clone());
    print_asset_d(&p, &tom, debug);
    let fromm = s.from.clone();
-   let zuppa = pnl(p, &fromm);
+   let zuppa = pnl(p, &fromm, debug);
    let bag = remove_asset(p, s.from.clone());
    print_asset_d(&bag, &fromm, debug);
    if debug { println!("PnL: {}", zuppa); }
@@ -114,10 +114,10 @@ pub fn swap_d(p: &mut HashSet<Asset>, s: &Swap, debug: bool)
 
 // computes the profit (or loss) on an asset sold vice what I had it as
 
-pub fn pnl(bag: &HashSet<Asset>, sold: &Asset) -> USD {
+pub fn pnl(bag: &HashSet<Asset>, sold: &Asset, debug: bool) -> USD {
    match bag.get(sold) {
       None => { println!("Can't find {sold:?}"); no_monay() },
-      Some(orig) => diff_usd(orig, sold)
+      Some(orig) => diff_usd(orig, sold, debug)
    }
 }
 
