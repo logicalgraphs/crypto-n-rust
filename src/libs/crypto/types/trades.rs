@@ -54,6 +54,10 @@ pub fn mk_swap(date: String, from: Asset, to: Asset,
    Swap { date, from, to, liquidation }
 }
 
+pub fn mk_trade(swap: Swap, pnl: USD) -> Trade {
+   Trade { swap, pnl }
+}
+
 pub fn parse_swap(date: &str, sym1: &str, amt1: &str, sym2: &str, amt2: &str,
                   quot2: &str, quot1: &str, perc: Option<Percentage>)
                   -> Result<Swap, String> {
