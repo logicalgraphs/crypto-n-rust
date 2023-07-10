@@ -24,6 +24,7 @@ pub struct Swap {
    liquidation: Option<Liquidation>
 }
 
+#[derive(Debug, Clone)]
 pub struct Trade {
    swap: Swap,
    pnl:  PnL
