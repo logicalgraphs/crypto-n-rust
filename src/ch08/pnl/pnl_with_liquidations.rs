@@ -11,7 +11,7 @@ use crypto::types::{
 };
 
 mod trade_state;
-use crate::trade_state::{TradeState,init_trade_state,report,parse_trade_cont};
+use crate::trade_state::{TradeState,init_trade_state,report,parse_trade_cont_d};
 
 fn usage() {
    println!("\n./pnl <assets CSV file> <trades TSV file>");
@@ -37,9 +37,13 @@ fn parse_n_print(p: &Portfolio, file: &str) {
 // mutually recursive functions, because what even are for-loops, anyway? :<
 
 fn cont(p: &Portfolio, lines: &Vec<String>, state: &TradeState) {
+   cont_d(p, lines, state, false);
+}
+
+fn cont_d(p: &Portfolio, lines: &Vec<String>, state: &TradeState, debug: bool) {
    if !lines.is_empty() {
       let (line, rest) = ht(&lines);
-      parse_trade_cont(&cont, p, &line, &rest, state);
+      parse_trade_cont_d(&cont_d, p, &line, &rest, state, debug);
       // you like how I put call_cc in this code?
       // call_cc: call-with-current-continuation
    } else {

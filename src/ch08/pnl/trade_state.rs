@@ -3,7 +3,7 @@
 // IM SO PROUD! *sniff
 
 use crypto::types::{
-   portfolio::{Portfolio,execute_d},
+   portfolio::{Portfolio,execute},
    trades::{Swap,read_tsv_swap,liquidations_count_and_premium},
    usd::{USD,mk_usd}
 };
@@ -85,21 +85,23 @@ pub fn report(state: &TradeState) {
    println!("pnl sources: {lg}/{dir}{src}\n\nAssets in play\n");
 }
 
-pub fn parse_trade_cont(cont: &dyn Fn(&Portfolio, &Vec<String>, &TradeState) -> (),
-                        p: &Portfolio, line_opt: &Option<String>,
-                        lines: &Vec<String>, state: &TradeState) {
+type Continuation = dyn Fn(&Portfolio, &Vec<String>, &TradeState, bool) -> ();
+
+pub fn parse_trade_cont_d(cont: &Continuation, p: &Portfolio,
+                         line_opt: &Option<String>, lines: &Vec<String>,
+                         state: &TradeState, debug: bool) {
    let mut new_trades = state.trades.clone();
    if let Some(line) = line_opt { 
-      println!("\nParsing {line}");
+      if debug { println!("\nParsing {line}"); }
       let TradeState { profit, loss, .. } = state;
       let (new_portfolio, sub_pnl, dt) = match read_tsv_swap(line) {
          Ok(trde) => {
-            let (p1, u) = execute_d(p, &trde, true);
+            let (p1, u) = execute(p, &trde);
             new_trades.push(trde.clone());
             (p1, u.amount, trde.date)
          },
          Err(msg) =>  {
-            println!("ERROR: {}", msg);
+            println!("ERROR: {msg}");
             (p.clone(), 0.0, String::new())
          }
       };
@@ -107,6 +109,6 @@ pub fn parse_trade_cont(cont: &dyn Fn(&Portfolio, &Vec<String>, &TradeState) -> 
       let new_loss   = loss + if sub_pnl < 0.0 { -1.0 * sub_pnl } else { 0.0 };
       let state1 =
           update_pnl(&state, dt, new_profit, new_loss, new_trades);
-      cont(&new_portfolio, lines, &state1);
+      cont(&new_portfolio, lines, &state1, debug);
    }
 }
