@@ -14,6 +14,8 @@ use crate::types::{
    usd::{USD,no_monay}
 };
 
+pub type PnL = USD;
+
 #[derive(Debug, Clone)]
 pub struct Swap {
    pub date: String, // because date is relevant, how?
@@ -22,15 +24,25 @@ pub struct Swap {
    liquidation: Option<Liquidation>
 }
 
+pub struct Trade {
+   swap: Swap,
+   pnl:  PnL
+}
+
 // ----- impls -------------------------------------------------------
 
 impl CsvWriter for Swap {
    fn as_csv(&self) -> String {
-      format_args!("{},{},{},{}",self.date, 
+      format!("{},{},{},{}",self.date, 
                    self.from.as_csv(), self.to.as_csv(),
                    self.liquidation.as_ref()
                       .map_or(String::new(), |l| format!("{}", l.percentage)))
-         .to_string()
+   }
+}
+
+impl CsvWriter for Trade {
+   fn as_csv(&self) -> String {
+      format!("{},{}", self.swap.as_csv(), self.pnl)
    }
 }
 
@@ -106,10 +118,10 @@ pub fn pnl(bag: &HashSet<Asset>, sold: &Asset) -> USD {
 
 // Are we a liquidation?
 
-pub fn liquidations_count_and_premium(trades: &Vec<Swap>) -> (u8, Percentage) {
+pub fn liquidations_count_and_premium(trades: &Vec<Trade>) -> (u8, Percentage) {
    let (count, weight, sum) =
       trades.iter().fold((0, 0.0, 0.0), | (c, w, s), t | {
-      if let Some(liq) = &t.liquidation {
+      if let Some(liq) = &t.swap.liquidation {
          (c + 1, w + liq.weight(), s + liq.amount.amount)
       } else {
          (c, w, s)
