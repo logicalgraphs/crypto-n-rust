@@ -1,5 +1,5 @@
-Liquid stake tokens,,,,,,,,
-,,,,,,,,
+Liquid stake tokens,,,,,,,,,
+,,,,,,,,,
 date,blockchain,symbol,base,factor,price,url,exchange,burn,
 2023-07-04,StaFiHub,rATOM,$9.90,1.4006,$13.86,https://app.stafihub.io/rToken/rATOM/dashboard,1.4006,22,
 2023-07-04,Kujira,wstETH,$1959.97,0.8844,$2216.15,https://stake.lido.fi/wrap,1.1307,,
