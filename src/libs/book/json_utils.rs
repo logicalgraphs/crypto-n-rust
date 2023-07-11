@@ -19,7 +19,7 @@ pub fn unquot(val: &Value, idx: &str) -> String {
 pub fn val_num<T: std::str::FromStr>(val: &Value, idx: &str) -> T
       where <T as std::str::FromStr>::Err: std::fmt::Debug {
    let val_str: String = val_str(val, idx);
-   val_str.parse().expect(idx)
+   val_str.parse().expect(&format!("{idx} value is not numerical: {val_str}"))
 }
 
 pub fn val_date(val: &Value, idx: &str) -> String {
