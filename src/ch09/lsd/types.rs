@@ -38,6 +38,7 @@ impl CsvWriter for LSD {
 }
 
 pub fn print_lsds(date: &str, lsds: &Vec<LSD>) {
+   println!("date,zone,lsd,exchange,burn,halted");
    for lsd in lsds {
       if !lsd.halted {
          println!("{date},{}", lsd.as_csv());
