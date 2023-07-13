@@ -30,8 +30,8 @@ fn usage() {
 
 fn main() {
    let mut cont = false;
-   if let (Some(toks), market_and) = ht(get_args()) {
-      if let (Some(market), paths) = ht(market_and) {
+   if let (Some(toks), market_and) = ht(&get_args()) {
+      if let (Some(market), paths) = ht(&market_and) {
          cont = !paths.is_empty();
          if cont {
             match toks.parse() {
