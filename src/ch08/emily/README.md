@@ -45,7 +45,7 @@ to which ./emily replies:
 >
 > Slán go fóill, love.
 
-![./emily simulates a trade](02-trade.png)
+![./emily simulates a trade](imgs/02-trade.png)
 
 Of course, the ROI doesn't make sense for this trade. I usually trade in
 arbitrage in which case the ROI would provide useful information.
