@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-my $cd = "cd $ENV{CRYPTO_TOOLS}/intimate";
+my $cd = "cd $ENV{CRYPTO_TOOLS}/emily";
 my $run = "cargo run $ARGV[0] $ENV{MARKET} $ARGV[1]";
 my $ans = `$cd; $run`;
 
