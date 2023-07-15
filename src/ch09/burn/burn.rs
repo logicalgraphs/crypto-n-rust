@@ -9,10 +9,14 @@ use book::{
 };
 
 fn usage() {
+   let url = "https://api.kujira.app/api/coingecko/orderbook";
+   let tick = "ticker_id=LOCAL_USK&depth=10";
+
    println!("\n./burn <ntoks> <exchange rate> <burn period> <book>");
    println!("\tParses <book> into an order book, then buys base with <ntoks>");
    let msg = "from <exchange rate> and <burn period>";
    println!("\tWe compute burn ROI and APR {msg}.\n");
+   println!("\te.g.: {url}?{tick}\n");
 }
 
 fn main() -> Result<(), String> {
