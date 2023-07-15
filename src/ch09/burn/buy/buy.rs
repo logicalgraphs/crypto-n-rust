@@ -1,4 +1,4 @@
-use bunsen::entries::{OrderBook, parse_orderbook, buy, report_purchase};
+use bunsen::entries::{OrderBook, parse_orderbook, buy, report_buy};
 
 use book::{
    csv_utils::print_csv,
@@ -34,5 +34,5 @@ fn reportage(amount: f32, book: &OrderBook) {
    print_csv(book);
 
    let purchase = buy(book, amount);
-   println!("\n{}", report_purchase("USK", 10.0, &purchase));
+   println!("\n{}", report_buy(book, amount, &purchase));
 }
