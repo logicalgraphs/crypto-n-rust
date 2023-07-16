@@ -1,5 +1,5 @@
 use bunsen::entries::{
-   OrderBook, parse_orderbook, buy, report_purchase, report_roi
+   OrderBook, parse_orderbook, buy, report_buy, report_roi
 };
 
 use book::{
@@ -43,6 +43,6 @@ fn reportage(amount: f32, rate: f32, burn: f32, book: &OrderBook) {
    print_csv(book);
 
    let purchase = buy(book, amount);
-   println!("\n{}", report_purchase(&book.target, amount, &purchase));
+   println!("\n{}", report_buy(&book, amount, &purchase));
    println!("\n{}", report_roi(rate, burn, &purchase));
 }
