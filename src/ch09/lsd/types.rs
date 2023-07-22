@@ -42,12 +42,13 @@ pub fn token(lsd: &BurnlessLSD) -> String {
 }
 
 pub fn merge_burn_rates(burnlesses: &Vec<BurnlessLSD>,
-                        burns: HashMap<String, u8>) -> Vec<LSD> {
+                        burns: &HashMap<String, u8>) -> Vec<LSD> {
    merge_burn_rates_d(burnlesses, burns, false)
 }
 
 pub fn merge_burn_rates_d(burnlesses: &Vec<BurnlessLSD>,
-                          burns: HashMap<String, u8>, debug: bool) -> Vec<LSD> {
+                          burns: &HashMap<String, u8>, debug: bool)
+   -> Vec<LSD> {
    let mut lsds: Vec<LSD> = Vec::new();
    for b in burnlesses {
       let tok = token(&b);
@@ -76,7 +77,7 @@ impl CsvWriter for LSD {
 }
 
 pub fn print_lsds(date: &str, lsds: &Vec<LSD>) {
-   println!("date,zone,lsd,exchange,halted,unbond");
+   println!("date,zone,lsd,exchange rate,halted,unbond (days)");
    for lsd in lsds {
       if !lsd.burnless.halted {
          println!("{date},{}", lsd.as_csv());
