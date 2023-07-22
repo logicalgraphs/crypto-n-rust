@@ -1,3 +1,5 @@
+use std::fmt::{Result,Display,Formatter};
+
 use book::{
    csv_utils::CsvWriter,
    list_utils::ht
@@ -6,16 +8,27 @@ use book::{
 use crate::entries::{Entry,OrderBook};
 
 pub struct Purchase {
+   call: Call,
    pub token: String,
    pub quote: f32,
    pub amount: f32,
    pub remaining: f32
 }
 
-pub fn mk_purchase(tok: &str, amount: f32, m: f32, remaining: f32) -> Purchase {
+pub fn mk_purchase(call: Call, tok: &str, amount: f32, m: f32, remaining: f32)
+   -> Purchase {
    let quote = m / amount;
    let token = tok.to_string();
-   Purchase { token, quote, amount, remaining }
+   Purchase { call, token, quote, amount, remaining }
+}
+
+pub enum Call { BUY, SELL }
+
+pub fn trade(call: &Call, book: &OrderBook, amount: f32) -> Purchase {
+   match call {
+      Call::BUY => buy(book, amount),
+      Call::SELL => sell(book, amount)
+   }
 }
 
 pub fn buy(book: &OrderBook, amount: f32) -> Purchase {
@@ -32,7 +45,7 @@ pub fn sell(book: &OrderBook, amount: f32) -> Purchase {
 fn buy1(tok: &str, asks: &Vec<Entry>, remaining: f32, amount: f32, mult: f32)
    -> Purchase {
    if asks.is_empty() || remaining <= 0.0 {
-      mk_purchase(tok, amount, mult, remaining)
+      mk_purchase(Call::BUY, tok, amount, mult, remaining)
    } else {
       if let (Some(entry), rest) = ht(asks) {
          let (quot, amt) = (entry.ratio, entry.amount);
@@ -49,7 +62,7 @@ fn buy1(tok: &str, asks: &Vec<Entry>, remaining: f32, amount: f32, mult: f32)
 fn sell1(tok: &str, bids: &Vec<Entry>, remaining: f32, amount: f32, mult: f32)
    -> Purchase {
    if bids.is_empty() || remaining <= 0.0 {
-      mk_purchase(tok, amount, mult, remaining)
+      mk_purchase(Call::SELL, tok, amount, mult, remaining)
    } else {
       if let (Some(entry), rest) = ht(bids) {
          let (quot, amt) = (entry.ratio, entry.amount);
@@ -65,8 +78,21 @@ fn sell1(tok: &str, bids: &Vec<Entry>, remaining: f32, amount: f32, mult: f32)
 
 // ----- Printing functions/reportage -----------------------------------------
 
+impl Display for Call {
+   fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+      write!(f, "{}", match self { Call::BUY => "BUY", _ => "SELL" } )
+   }
+}
+
+impl CsvWriter for Call {
+   fn as_csv(&self) -> String {
+      format!("{}", self.to_string())
+   }
+}
+
 impl CsvWriter for Purchase {
    fn as_csv(&self) -> String {
-      format!("{},{},{}", self.quote, self.amount, self.remaining)
+      format!("{},{},{},{}",
+              self.call.as_csv(), self.quote, self.amount, self.remaining)
    }
 }
