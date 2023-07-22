@@ -1,5 +1,7 @@
-use bunsen::entries::{
-   OrderBook, parse_orderbook, buy, report_buy, report_roi
+use bunsen::{
+   entries::{OrderBook, parse_orderbook},
+   purchases::buy,
+   reports::{report_buy, report_roi}
 };
 
 use book::{

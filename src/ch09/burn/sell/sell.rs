@@ -1,6 +1,10 @@
 // instead of buying tokens, we sell them.
 
-use bunsen::entries::{OrderBook, parse_orderbook, sell, report_sale};
+use bunsen::{
+   entries::{OrderBook, parse_orderbook},
+   purchases::sell,
+   reports::report_sale
+};
 
 use book::{
    csv_utils::print_csv,
@@ -11,8 +15,8 @@ use book::{
 fn usage() {
    let url = "https://api.kujira.app/api/coingecko/orderbook";
    let tick = "ticker_id=LOCAL_USK&depth=10";
-   println!("\n./burn <ntoks> <book>");
-   println!("\tParses <book> into an order book, then buys target with <ntoks>");
+   println!("\n./sell <ntoks> <book>");
+   println!("\tParses <book> into an order book, then sells <ntoks>");
    println!("\n\te.g.: {url}?{tick}\n");
 }
 
