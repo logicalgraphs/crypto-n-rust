@@ -1,5 +1,7 @@
 // we make our types CSVy
 
+use std::str::Lines;
+
 pub trait CsvWriter {
    fn as_csv(&self) -> String;
 }
@@ -13,4 +15,23 @@ pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
       format!("{},{}", x + 1, e.as_csv())
    }).collect();
    v1.join("\n")
+}
+
+pub fn parse_csv<T>(skip_lines: usize,
+                    f: impl Fn(&Vec<&str>) -> Result<Option<T>, String>,
+                    lines: &mut Lines) -> Result<Vec<T>, String> {
+   let mut ans: Vec<T> = Vec::new();
+   let mut lines1 = lines.skip(skip_lines).peekable();
+   while lines1.peek().is_some() {
+      if let Some(line) = lines1.next() {
+         let row: Vec<&str> = line.split(",").collect();
+         let res = f(&row)?;
+         if let Some(tea) = res {
+            ans.push(tea);
+         }
+      } else {
+         panic!("No next() when is_some() is true!");
+      }
+   }
+   Ok(ans)
 }

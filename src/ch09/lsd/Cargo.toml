@@ -16,6 +16,7 @@ path = "lsd_wrong_burn.rs"
 [dependencies]
 book = { path = "../../libs/book" }
 crypto = { path = "../../libs/crypto" }
+# rest = { path = "../../libs/rest" }
 
 serde = { version = "1.0.104", features = ["derive"] }
 serde_json = "1.0.48"

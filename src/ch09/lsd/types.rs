@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use book::{
    csv_utils::CsvWriter,
    json_utils::unquot
@@ -38,6 +40,26 @@ pub fn token(lsd: &BurnlessLSD) -> String {
                 } else { format!("{frist}{sym}") }.to_uppercase();
    format!("st{up_sym}")
 }
+
+pub fn merge_burn_rates(burnlesses: &Vec<BurnlessLSD>,
+                        burns: HashMap<String, u8>) -> Vec<LSD> {
+   merge_burn_rates_d(burnlesses, burns, false)
+}
+
+pub fn merge_burn_rates_d(burnlesses: &Vec<BurnlessLSD>,
+                          burns: HashMap<String, u8>, debug: bool) -> Vec<LSD> {
+   let mut lsds: Vec<LSD> = Vec::new();
+   for b in burnlesses {
+      let tok = token(&b);
+      if let Some(u) = burns.get(&tok) {
+         lsds.push(LSD { burnless: b.clone(), unbond: *u });
+      } else {
+         if debug { println!("Could not find burn rate for {tok}"); }
+      }
+   }
+   lsds
+}  
+
 
 // ----- Printables ---------------------------------------------
 
