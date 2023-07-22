@@ -11,7 +11,7 @@ path = "lib.rs"
 
 [[bin]]
 name = "lsd"
-path = "lsd.rs"
+path = "lsd_wrong_burn.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }
