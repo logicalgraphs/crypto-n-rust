@@ -1,7 +1,7 @@
 use book::utils::get_args;
 
 use meth::{
-   read_rest::read_rest,
+   read_rest::read_rest_lsds,
    types::{parse_lsds_without_burn, LSD, print_lsds, mk_fake_lsd}
 };
 
@@ -14,7 +14,7 @@ fn main() {
    if let Some(date) = get_args().first() {
       let stroll = "Stride-Labs/stride/stakeibc/host_zone";
       let url = "https://stride-api.polkachu.com";
-      match read_rest(&format!("{url}/{stroll}")) {
+      match read_rest_lsds(&format!("{url}/{stroll}")) {
          Ok(body) => reportage(&body, date),
          err      => println!("ERROR! {err:?}")
       }
