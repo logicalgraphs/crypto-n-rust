@@ -32,3 +32,7 @@ Make commands:
 
 * wallet
 	from current $MARKET prices compute values on FIN wallet and sort
+
+* stride
+	reads the LSD ('liquid staking derivatives') exchange-rates then
+	archives those rates on github.

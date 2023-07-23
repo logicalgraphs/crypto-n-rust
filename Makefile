@@ -5,6 +5,9 @@ SRC_DIR=$(RUST_BOOK)/src
 LIB_DIR=$(SRC_DIR)/libs
 BOOK_LIB=$(LIB_DIR)/book
 CRYPTO_LIB=$(LIB_DIR)/crypto
+REST_LIB=$(LIB_DIR)/rest
+
+GIT_RAW="https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main"
 
 SCRIPTS_DIR=$(SRC_DIR)/scripts
 
@@ -53,6 +56,9 @@ bar: pub
 voronoi: vee
 	@true
 
+stride: lsd_report
+	@echo "She don' like; she don' like; she don' like... cocaine!"
+
 help: FORCE
 	@cat $(RUST_BOOK)/commands.txt
 
@@ -71,9 +77,6 @@ CMC_ENDPOINT=https://pro-api.coinmarketcap.com/v1
 
 RUN_RUST=cargo run
 BUILD_RUST=cargo build
-
-# $(CURL_CMD) $(FIN_TICKERS) $(FIN_VOLUMES_JSON); \
-
 
 clean: FORCE
 	rm $(JSON_LISTING); \
@@ -145,6 +148,25 @@ top: FORCE
 	cd $(TOP_DIR); \
 	$(RUN_RUST) -- --raw $(LE_DATE) $(FIN_VOLUMES_JSON)
 
+LSD_DIR=$(SPACE_DIR)/lsd
+LSD_CSV=$(LSD_DIR)/data/stride.csv
+
+lsd: FORCE
+	cd $(LSD_DIR); \
+	$(RUN_RUST) $(LE_DATE) > $(LSD_CSV); \
+	git co main; \
+	git add $(LSD_CSV); \
+	git commit -m "Today's LSD rates."; \
+	git push
+
+lsd_report: lsd
+	echo ""; \
+	echo "$(LE_DATE) Latest @stride_zone LSD exchange rates up."; \
+	echo ""; \
+	echo "Raw CSV of report available and archived at:"; \
+	echo "$(GIT_RAW)/src/ch09/lsd/data/stride.csv"; \
+	echo ""
+
 PORT_TSV=$(DATA_DIR)/portfolio/protocols.tsv
 CHART_DIR=$(CRYPTO_TOOLS)/charts
 
@@ -205,7 +227,10 @@ buildBook:
 buildCrypto:
 	$(call build,$(CRYPTO_LIB),crypt lib)
 
-buildLibs: buildBook buildCrypto
+buildRest:
+	$(call build,$(REST_LIB),rest lib)
+
+buildLibs: buildBook buildCrypto buildRest
 	@true
 
 buildAll: buildLibs buildApps
