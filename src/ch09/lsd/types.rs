@@ -1,4 +1,7 @@
-use std::collections::HashMap;
+use std::{
+   cmp::Ordering,
+   collections::HashMap
+};
 
 use book::{
    csv_utils::CsvWriter,
@@ -61,6 +64,47 @@ pub fn merge_burn_rates_d(burnlesses: &Vec<BurnlessLSD>,
    lsds
 }  
 
+// ----- Sorting ---------------------------------------------
+
+impl PartialOrd for BurnlessLSD {
+   fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+      Some(token(self).cmp(&token(other)))
+   }
+}
+
+impl PartialOrd for LSD {
+   fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+      Some(self.burnless.cmp(&other.burnless))
+   }
+}
+
+impl Ord for BurnlessLSD {
+   fn cmp(&self, other: &Self) -> Ordering {
+      token(self).cmp(&token(other))
+   }
+}
+
+impl Ord for LSD {
+   fn cmp(&self, other: &Self) -> Ordering {
+      self.burnless.cmp(&other.burnless)
+   }
+}
+
+impl PartialEq for BurnlessLSD {
+   fn eq(&self, other: &Self) -> bool {
+      token(self) == token(other)
+   }
+}
+
+impl Eq for BurnlessLSD {}
+
+impl PartialEq for LSD {
+   fn eq(&self, other: &Self) -> bool {
+      self.burnless == other.burnless
+   }
+}
+
+impl Eq for LSD {}
 
 // ----- Printables ---------------------------------------------
 
@@ -78,11 +122,11 @@ impl CsvWriter for LSD {
 
 pub fn print_lsds(date: &str, lsds: &Vec<LSD>) {
    println!("date,zone,lsd,exchange rate,halted,unbond (days)");
-   for lsd in lsds {
-      if !lsd.burnless.halted {
-         println!("{date},{}", lsd.as_csv());
-      }
-   }
+   let mut quarters: Vec<LSD> = lsds.clone();
+   quarters.sort();
+   quarters.into_iter().for_each(|lsd| {
+      println!("{date},{}", lsd.as_csv());
+   });
 }
 
 // ----- Parseables ---------------------------------------------
