@@ -149,22 +149,25 @@ top: FORCE
 	$(RUN_RUST) -- --raw $(LE_DATE) $(FIN_VOLUMES_JSON)
 
 LSD_DIR=$(SPACE_DIR)/lsd
-LSD_CSV=$(LSD_DIR)/data/stride.csv
+LSD_CSV=data/stride.csv
 
 lsd: FORCE
 	cd $(LSD_DIR); \
-	$(RUN_RUST) $(LE_DATE) > $(LSD_CSV); \
+	$(RUN_RUST) $(LE_DATE) > $(LSD_DIR)/$(LSD_CSV); \
 	git co main; \
 	git add $(LSD_CSV); \
 	git commit -m "Today's LSD rates."; \
 	git push
 
 lsd_report: lsd
+	echo "$(LE_DATE) Latest Stride LSD exchange rates"; \
 	echo ""; \
-	echo "$(LE_DATE) Latest @stride_zone LSD exchange rates up."; \
+	echo "<p>$(LE_DATE) Latest @stride_zone LSD exchange rates up.</p>"; \
 	echo ""; \
-	echo "Raw CSV of report available and archived at:"; \
-	echo "$(GIT_RAW)/src/ch09/lsd/data/stride.csv"; \
+	echo "<p><a href='$(GIT_RAW)/src/ch09/lsd/$(LSD_CSV)'>Raw CSV</a>"; \
+        echo "of report available and archived.</p>"; \
+	echo ""; \
+	echo "daily report,liquid staking token,Stride,cryptocurrency";
 	echo ""
 
 PORT_TSV=$(DATA_DIR)/portfolio/protocols.tsv
