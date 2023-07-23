@@ -48,7 +48,7 @@ bow: arrow
 	@echo "Rain man."
 
 vols: top
-	@true
+	@echo "daily report,Team Kujira,Top5s,FIN,Order Book,volume,"
 
 bar: pub
 	@true
