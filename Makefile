@@ -48,7 +48,8 @@ bow: arrow
 	@echo "Rain man."
 
 vols: top
-	@echo "daily report,Team Kujira,Top5s,FIN,Order Book,volume,"
+	echo ""; \
+	echo "daily report,Team Kujira,Top5s,FIN,Order Book,volume,"
 
 bar: pub
 	@true
