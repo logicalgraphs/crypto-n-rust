@@ -168,6 +168,8 @@ lsd_report: lsd
 	echo "<p><a href='$(GIT_RAW)/src/ch09/lsd/$(LSD_CSV)'>Raw CSV</a>"; \
         echo "of report available and archived.</p>"; \
 	echo ""; \
+        echo "<a href='https://github.com/logicalgraphs/crypto-n-rust/blob/main/src/ch09/lsd/lsd.rs'>./lsd source code</a>."; \
+	echo ""; \
 	echo "daily report,liquid staking token,Stride,cryptocurrency";
 	echo ""
 
