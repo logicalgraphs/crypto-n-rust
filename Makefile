@@ -171,6 +171,10 @@ lsd_report: lsd
         echo "<a href='https://github.com/logicalgraphs/crypto-n-rust/blob/main/src/ch09/lsd/lsd.rs'>./lsd source code</a>."; \
 	echo ""; \
 	echo "daily report,liquid staking token,Stride,cryptocurrency";
+	echo ""; \
+	echo "2023-07-27 Latest Stride LSD exchange rates archived on my blog at "; \
+	echo ""; \
+	echo "Extracted and transformed by ./lsd: https://github.com/logicalgraphs/crypto-n-rust/blob/main/src/ch09/lsd/lsd.rs"; \
 	echo ""
 
 PORT_TSV=$(DATA_DIR)/portfolio/protocols.tsv
