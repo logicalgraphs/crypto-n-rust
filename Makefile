@@ -174,7 +174,8 @@ lsd_report: lsd
 	echo ""; \
 	echo "2023-07-27 Latest Stride LSD exchange rates archived on my blog at "; \
 	echo ""; \
-	echo "Extracted and transformed by ./lsd: https://github.com/logicalgraphs/crypto-n-rust/blob/main/src/ch09/lsd/lsd.rs"; \
+	echo "Extracted from @stride_zone REST endpoint and transformed to CSV by ./lsd:"; \
+	echo "https://github.com/logicalgraphs/crypto-n-rust/blob/main/src/ch09/lsd/lsd.rs"; \
 	echo ""
 
 PORT_TSV=$(DATA_DIR)/portfolio/protocols.tsv
