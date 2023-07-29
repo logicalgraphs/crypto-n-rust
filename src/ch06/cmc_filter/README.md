@@ -30,10 +30,10 @@ e.g.: `/data-files/csv/portfolio_coins.lsv` for a list of held assets.
 
 ## Compilation
 
-Like the [previous project](../ch05/README.md), this is a Cargo project, so
-you follow the procedure as before, creating a new project, copying the Cargo
-file into the project directory, then linking in the assets (the Rust files
-in this directory and then the library files from `lib.rs` in prior 
-directories).
+Like the [previous project](../../ch05/cmc_prices/README.md), this is a 
+Cargo project, so you follow the procedure as before, creating a new project, 
+copying the Cargo file into the project directory, then linking in the assets 
+(the Rust files in this directory and then the library files from `lib.rs` in 
+prior directories).
 
 The. End.
