@@ -11,7 +11,7 @@ What I do is copy the Cargo template into the `cmc_prices`-project:
 Then you should be able to build and run your application:
 
 ```SHELL
-$ cd cmc_prices; cargo run ../cmc_listings_sample.json
+$ cargo run cmc_listings_sample.json
 ```
 
 ... and see the following output:
