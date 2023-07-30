@@ -2,11 +2,13 @@
 
 ... cmc_prices
 
-1. I've already created the project with `crate new cmc_prices`
+I've already created the project with `crate new cmc_prices`
 
 What I do is copy the Cargo template into the `cmc_prices`-project:
 
 ... then I use the book crate. The `Cargo.toml` is included in the repository.
+
+n.b.: make sure `COIN_MARKET_CAP_API_KEY` is set!
 
 Then you should be able to build and run your application:
 
