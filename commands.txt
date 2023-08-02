@@ -36,3 +36,6 @@ Make commands:
 * stride
 	reads the LSD ('liquid staking derivatives') exchange-rates then
 	archives those rates on github.
+
+* archive
+	Archives files in <dir> following pattern <namei>-*.csv to <target>

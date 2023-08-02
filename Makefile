@@ -108,29 +108,36 @@ fetchers: FORCE
 	echo "No longer Loading e-coin listing file for $(LE_DATE)"; \
 	echo "now reading from CoinMarketCap REST endpoint."
 
-# $(CURL_CMD) $(CMC_ENDPOINT)/cryptocurrency/$(LIST_CMD) $(JSON_LISTING)
+define git_no_push
+	git co main; \
+	git add $(1); \
+	git commit -m "$(2)"
+endef
+
+define gitofy
+	$(call gitofy,$(1),$(2)); \
+	git push
+endef
+
+archive: FORCE
+	for f in $(shell ls ${dir}/${namei}-*.csv); do \
+		mv $$f ${dir}/${target}; \
+		$(call git_no_push,${dir}/${target},Archiving $$f); \
+	done; \
+	git push
 
 $(CSV_LISTING): FORCE
 	echo "enCVSing JSON quotes ..."; \
 	cd $(SRC_DIR)/ch05/cmc_prices; \
 	$(RUN_RUST) > $(CSV_LISTING); \
-	git co main; \
-	git add $(CSV_LISTING); \
-	git commit -m "All listings for CoinMarketCap, ${LE_DATE}"; \
-	git push
-
-encsvify: $(CSV_LISTING)
-	@true
+	$(call gitofy,$(CSV_LISTING),All listings for CoinMarketCap: ${LE_DATE})
 
 filterify: $(CSV_LISTING)
 	echo "filtering price-quotes to held assets..."; \
 	cd $(SRC_DIR)/ch06/cmc_filter; \
 	$(RUN_RUST) $(CSV_LISTING) $(HOLDINGS) > $(PORT_LISTING); \
 	cat $(PORT_LISTING); \
-	git co main; \
-	git add $(PORT_LISTING); \
-	git commit -m "Portfolio price-quotes, $(LE_DATE)"; \
-	git push
+	$(call gitofy,$(PORT_LISTING),Portfolio price-quotes: $(LE_DATE))
 
 basic: FORCE
 	echo "Extracting market prices of assets on FIN..."; \
@@ -176,10 +183,7 @@ LSD_CSV=data/stride.csv
 lsd: FORCE
 	cd $(LSD_DIR); \
 	$(RUN_RUST) $(LE_DATE) > $(LSD_DIR)/$(LSD_CSV); \
-	git co main; \
-	git add $(LSD_CSV); \
-	git commit -m "Today's LSD rates."; \
-	git push; \
+	$(call gitofy,$(LSD_CSV),LSD rates for $(LE_DATE)); \
 	cat $(LSD_DIR)/$(LSD_CSV)
 
 lsd_report: lsd
