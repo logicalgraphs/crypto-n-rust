@@ -1,12 +1,12 @@
 prices has 5003 lines
 assets has 10 lines
-Could not process line 2022-09-20,4953,484,FCT,FCT2,FirmaChain,$0.06
+Could not process line 2022-09-21,4953,481,FCT,FCT2,FirmaChain,$0.06
 date,cmc_id,rank,symbol,name,price
-2022-09-20,5805,16,AVAX,Avalanche,$16.85
-2022-09-20,1,1,BTC,Bitcoin,$19137.00
-2022-09-20,4943,12,DAI,Dai,$1.00
-2022-09-20,1027,2,ETH,Ethereum,$1351.51
-2022-09-20,1975,23,LINK,Chainlink,$7.13
-2022-09-20,3945,119,ONE,Harmony,$0.02
-2022-09-20,3408,4,USDC,USD Coin,$1.00
-2022-09-20,825,3,USDT,Tether,$1.00
+2022-09-21,5805,16,AVAX,Avalanche,$17.03
+2022-09-21,1,1,BTC,Bitcoin,$19284.22
+2022-09-21,4943,12,DAI,Dai,$1.00
+2022-09-21,1027,2,ETH,Ethereum,$1354.92
+2022-09-21,1975,23,LINK,Chainlink,$7.04
+2022-09-21,3945,116,ONE,Harmony,$0.02
+2022-09-21,3408,4,USDC,USD Coin,$1.00
+2022-09-21,825,3,USDT,Tether,$1.00
