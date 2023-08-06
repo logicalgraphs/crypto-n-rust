@@ -1,10 +1,10 @@
 date,zone,lsd,exchange rate,halted,unbond (days)
-2023-08-02,cosmos,stATOM,1.1920,false,24
-2023-08-02,comdex,stCMDX,1.0420,false,24
-2023-08-02,evmos,stEVMOS,1.3092,false,17
-2023-08-02,inj,stINJ,1.0497,false,24
-2023-08-02,juno,stJUNO,1.3011,false,33
-2023-08-02,terra,stLUNA,1.0805,false,24
-2023-08-02,osmo,stOSMO,1.1412,false,17
-2023-08-02,stars,stSTARS,1.3153,false,17
-2023-08-02,umee,stUMEE,1.0370,false,17
+2023-08-05,cosmos,stATOM,1.1939,false,24
+2023-08-05,comdex,stCMDX,1.0446,false,24
+2023-08-05,evmos,stEVMOS,1.3126,false,17
+2023-08-05,inj,stINJ,1.0512,false,24
+2023-08-05,juno,stJUNO,1.3039,false,33
+2023-08-05,terra,stLUNA,1.0819,false,24
+2023-08-05,osmo,stOSMO,1.1421,false,17
+2023-08-05,stars,stSTARS,1.3174,false,17
+2023-08-05,umee,stUMEE,1.0386,false,17
