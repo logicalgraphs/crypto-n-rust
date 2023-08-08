@@ -30,7 +30,7 @@ pub struct BurnlessLSD {
 #[derive(Debug,Clone)]
 pub struct LSD {
    burnless: BurnlessLSD,
-   unbond: u8
+   pub unbond: u8
 }
 
 pub fn mk_fake_lsd(l: &BurnlessLSD) -> LSD {
@@ -42,6 +42,10 @@ pub fn token(lsd: &BurnlessLSD) -> String {
    let up_sym = if "au".contains(frist) { sym.to_string()
                 } else { format!("{frist}{sym}") }.to_uppercase();
    format!("st{up_sym}")
+}
+
+pub fn exchange_rae(lsd: &LSD) -> f32 {
+   lsd.burnless.rate
 }
 
 pub fn merge_burn_rates(burnlesses: &Vec<BurnlessLSD>,
