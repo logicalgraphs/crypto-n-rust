@@ -1,6 +1,8 @@
 use std::{
    clone::Clone,
-   cmp::PartialEq
+   cmp::PartialEq,
+   collections::HashMap,
+   hash::Hash
 };
 
 // parse_nums() Influenced by the following overflows:
@@ -69,4 +71,11 @@ pub fn split<T: PartialEq>(list: Vec<T>, splitter: T) -> Vec<Vec<T>> {
         acc.last_mut().unwrap().push(x);
         acc
     })
+}
+
+// makes a HashMap from a list, given a key-(extraction)-function
+
+pub fn assoc_list<K: Eq + Hash, T: Clone>(list: Vec<T>, f: impl Fn(T) -> K)
+ -> HashMap<K, T> {
+   list.into_iter().map(|t| (f(t.clone()), t)).collect()
 }
