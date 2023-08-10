@@ -203,7 +203,8 @@ fn parse_bnt(tickr: &str) -> Result<(String, String), String> {
    let parts: Vec<&str> = tickr.split('_').collect();
    if let (Some(b), rest) = ht(&parts) {
       if let Some(t) = rest.first() {
-         Ok((b.to_string(), t.to_string()))
+         let a = if b == "STINJ" { "stINJ" } else { b };
+         Ok((a.to_string(), t.to_string()))
       } else {
          Err(format!("bad split, ticker_id: {tickr}"))
       }
