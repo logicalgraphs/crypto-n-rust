@@ -37,12 +37,14 @@ pub fn mk_fake_lsd(l: &BurnlessLSD) -> LSD {
    LSD { burnless: l.clone(), unbond: 0 }
 }
 
-pub fn token(lsd: &BurnlessLSD) -> String {
+fn token1(lsd: &BurnlessLSD) -> String {
    let (frist, sym) = lsd.base.split_at(1);
    let up_sym = if "au".contains(frist) { sym.to_string()
                 } else { format!("{frist}{sym}") }.to_uppercase();
    format!("st{up_sym}")
 }
+
+pub fn token(lsd: &LSD) -> String { token1(&lsd.burnless) }
 
 pub fn exchange_rae(lsd: &LSD) -> f32 {
    lsd.burnless.rate
@@ -58,7 +60,7 @@ pub fn merge_burn_rates_d(burnlesses: &Vec<BurnlessLSD>,
    -> Vec<LSD> {
    let mut lsds: Vec<LSD> = Vec::new();
    for b in burnlesses {
-      let tok = token(&b);
+      let tok = token1(&b);
       if let Some(u) = burns.get(&tok) {
          lsds.push(LSD { burnless: b.clone(), unbond: *u });
       } else {
@@ -72,7 +74,7 @@ pub fn merge_burn_rates_d(burnlesses: &Vec<BurnlessLSD>,
 
 impl PartialOrd for BurnlessLSD {
    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-      Some(token(self).cmp(&token(other)))
+      Some(token1(self).cmp(&token1(other)))
    }
 }
 
@@ -84,7 +86,7 @@ impl PartialOrd for LSD {
 
 impl Ord for BurnlessLSD {
    fn cmp(&self, other: &Self) -> Ordering {
-      token(self).cmp(&token(other))
+      token1(self).cmp(&token1(other))
    }
 }
 
@@ -96,7 +98,7 @@ impl Ord for LSD {
 
 impl PartialEq for BurnlessLSD {
    fn eq(&self, other: &Self) -> bool {
-      token(self) == token(other)
+      token1(self) == token1(other)
    }
 }
 
@@ -114,7 +116,7 @@ impl Eq for LSD {}
 
 impl CsvWriter for BurnlessLSD {
    fn as_csv(&self) -> String {
-      format!("{},{},{:.4},{}", self.zone, token(self), self.rate, self.halted)
+      format!("{},{},{:.4},{}", self.zone, token1(self), self.rate, self.halted)
    }
 }
 
