@@ -75,7 +75,7 @@ pub fn split<T: PartialEq>(list: Vec<T>, splitter: T) -> Vec<Vec<T>> {
 
 // makes a HashMap from a list, given a key-(extraction)-function
 
-pub fn assoc_list<K: Eq + Hash, T: Clone>(list: Vec<T>, f: impl Fn(T) -> K)
+pub fn assoc_list<K: Eq + Hash, T: Clone>(list: Vec<T>, f: impl Fn(&T) -> K)
  -> HashMap<K, T> {
-   list.into_iter().map(|t| (f(t.clone()), t)).collect()
+   list.into_iter().map(|t| (f(&t), t)).collect()
 }
