@@ -46,7 +46,7 @@ fn token1(lsd: &BurnlessLSD) -> String {
 
 pub fn token(lsd: &LSD) -> String { token1(&lsd.burnless) }
 
-pub fn exchange_rae(lsd: &LSD) -> f32 {
+pub fn exchange_rate(lsd: &LSD) -> f32 {
    lsd.burnless.rate
 }
 
