@@ -28,6 +28,15 @@ pub struct BurnlessLSD {
 }
 
 #[derive(Debug,Clone)]
+pub struct ManualLSD {
+   zone: String,
+   lsd: String,
+   rate: f32,
+   halted: bool,
+   unbond: u8
+}
+
+#[derive(Debug,Clone)]
 pub struct LSD {
    burnless: BurnlessLSD,
    pub unbond: u8
@@ -51,7 +60,7 @@ pub fn exchange_rate(lsd: &LSD) -> f32 {
 }
 
 pub fn merge_burn_rates(burnlesses: &Vec<BurnlessLSD>,
-                        burns: &HashMap<String, u8>) -> Vec<LSD> {
+                        burns: &HashMap<String, ManualLSD>) -> Vec<LSD> {
    merge_burn_rates_d(burnlesses, burns, false)
 }
 
@@ -81,6 +90,12 @@ impl PartialOrd for BurnlessLSD {
 impl PartialOrd for LSD {
    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
       Some(self.burnless.cmp(&other.burnless))
+   }
+}
+
+impl PartialOrd for ManualLSD {
+   fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+      Some(self.lsd.cmp(&other.lsd))
    }
 }
 
