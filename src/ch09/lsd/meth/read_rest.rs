@@ -3,8 +3,7 @@ use std::{
    io::Read
 };
 
-
-use book::csv_utils::parse_csv;
+use book::csv_utils::{HashRow,CsvRowResult,HashedRowsResult,parse_csv};
 
 /* 
 The skeleton upon which this get-fetch example is based is:
@@ -20,13 +19,17 @@ pub fn read_rest(url: &str) -> Result<String, String> {
    Ok(body)
 }
 
-pub fn fetch_burns() -> Result<HashMap<String,u8>, String> {
+fn ubnd(c: &str) -> Result<u8, String> {
+   c.parse().expect(&format!("{c} is not a number"))
+}
+
+pub fn fetch_burns() -> HashedRowsResult<u8> {
    let lg_url = "https://raw.githubusercontent.com/logicalgraphs";
    let burn_dir = "crypto-n-rust/main/src/ch09/lsd/data/burn-rates.csv";
    let csv = read_rest(&format!("{lg_url}/{burn_dir}"))?;
-   fn burn_f(row: &Vec<&str>) -> Result<Option<(String, u8)>, String> {
+   fn burn_f(row: &Vec<&str>) -> CsvRowResult<HashRow<u8>> {
       if let [name, _, c, _] = row.as_slice() {
-         let count: u8 = c.parse().expect(&format!("{c} is not a number"));
+         let count = ubnd(c)?;
          Ok(Some((name.to_string(), count)))
       } else {
          Err(format!("{row:?} is not CSV-parseable!"))
@@ -38,8 +41,17 @@ pub fn fetch_burns() -> Result<HashMap<String,u8>, String> {
    Ok(burns)
 }
 
-
-
-pub fn fetch_new_burns(date: &str) -> Result<HashMap<String, ManualLSD>, String> {
-
+pub fn fetch_manual_lsds(date: &str) -> HashedRowsResult<ManualLSD> {
+   fn man_f(row: &Vec<&str>) -> CsvRowResult<HashRow<ManualLSD> {
+      if let [dt,lsd1,zne,rt,_url,burn] = row.as_slice() {
+         let halted = dt != dated;
+         let zone = zne.to_string();
+         let lsd = lsd1.to_string();
+         let rate: f32 = rt.parse.expect(&format!("{rt} is not a number"));
+         let unbond = ubnd(burn)?;
+         Ok(Some((lsd1.to_string(), ManualLSD { zone, lsd, rate, halted, unbond }))
+      } else {
+         Err(format!("{row:?} is not CSV-parseable!"))
+      }
+   }
 }
