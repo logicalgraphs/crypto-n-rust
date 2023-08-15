@@ -17,8 +17,10 @@ pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
    v1.join("\n")
 }
 
-pub fn parse_csv<T>(skip_lines: usize,
-                    f: impl Fn(&Vec<&str>) -> Result<Option<T>, String>,
+pub type HashRow<T> = (String, T);
+pub type CsvRowResult<T> = Result<Option<T>, String>;
+
+pub fn parse_csv<T>(skip_lines: usize, f: impl Fn(&Vec<&str>) -> CsvRowResult<T>,
                     lines: &mut Lines) -> Result<Vec<T>, String> {
    let mut ans: Vec<T> = Vec::new();
    let mut lines1 = lines.skip(skip_lines).peekable();
