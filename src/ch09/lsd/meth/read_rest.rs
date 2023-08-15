@@ -19,14 +19,8 @@ pub fn read_rest(url: &str) -> Result<String, String> {
    Ok(body)
 }
 
-fn ubnd(c: &str) -> Result<u8, String> {
-   c.parse().expect(&format!("{c} is not a number"))
-}
-
 pub fn fetch_burns() -> HashedRowsResult<u8> {
-   let lg_url = "https://raw.githubusercontent.com/logicalgraphs";
-   let burn_dir = "crypto-n-rust/main/src/ch09/lsd/data/burn-rates.csv";
-   let csv = read_rest(&format!("{lg_url}/{burn_dir}"))?;
+   let csv = read_rest(&burn_url("main"))?;
    fn burn_f(row: &Vec<&str>) -> CsvRowResult<HashRow<u8>> {
       if let [name, _, c, _] = row.as_slice() {
          let count = ubnd(c)?;
@@ -54,4 +48,14 @@ pub fn fetch_manual_lsds(date: &str) -> HashedRowsResult<ManualLSD> {
          Err(format!("{row:?} is not CSV-parseable!"))
       }
    }
+}
+
+fn ubnd(c: &str) -> Result<u8, String> {
+   c.parse().expect(&format!("{c} is not a number"))
+}
+
+fn burn_url(branch: &str) -> String {
+   let lg_url = "https://raw.githubusercontent.com/logicalgraphs";
+   let burn_dir = format!("crypto-n-rust/{branch}/src/ch09/lsd/data/burn-rates.csv");
+   format!("{lg_url}/{burn_dir}")
 }
