@@ -1,6 +1,9 @@
 // we make our types CSVy
 
-use std::str::Lines;
+use std::{
+   collections::HashMap,
+   str::Lines
+};
 
 pub trait CsvWriter {
    fn as_csv(&self) -> String;
@@ -19,6 +22,7 @@ pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
 
 pub type HashRow<T> = (String, T);
 pub type CsvRowResult<T> = Result<Option<T>, String>;
+pub type HashedRowsResult<T> = Result<HashMap<String,T>, String>;
 
 pub fn parse_csv<T>(skip_lines: usize, f: impl Fn(&Vec<&str>) -> CsvRowResult<T>,
                     lines: &mut Lines) -> Result<Vec<T>, String> {
