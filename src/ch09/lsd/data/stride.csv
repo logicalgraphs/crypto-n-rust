@@ -1,11 +1,11 @@
 Could not find burn rate for stSOMM
 date,zone,lsd,exchange rate,halted,unbond (days)
-2023-09-04,cosmos,stATOM,1.2128,false,24
-2023-09-04,comdex,stCMDX,1.0725,false,24
-2023-09-04,evmos,stEVMOS,1.3501,false,17
-2023-09-04,inj,stINJ,1.0667,false,24
-2023-09-04,juno,stJUNO,1.3328,false,33
-2023-09-04,terra,stLUNA,1.0969,false,24
-2023-09-04,osmo,stOSMO,1.1518,false,17
-2023-09-04,stars,stSTARS,1.3386,false,17
-2023-09-04,umee,stUMEE,1.0543,false,17
+2023-09-05,cosmos,stATOM,1.2131,false,24
+2023-09-05,comdex,stCMDX,1.0730,false,24
+2023-09-05,evmos,stEVMOS,1.3512,false,17
+2023-09-05,inj,stINJ,1.0670,false,24
+2023-09-05,juno,stJUNO,1.3333,false,33
+2023-09-05,terra,stLUNA,1.0971,false,24
+2023-09-05,osmo,stOSMO,1.1522,false,17
+2023-09-05,stars,stSTARS,1.3390,false,17
+2023-09-05,umee,stUMEE,1.0545,false,17
