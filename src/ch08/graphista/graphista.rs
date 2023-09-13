@@ -8,7 +8,7 @@ use crypto::{
 };
 
 fn usage() {
-   let m = "<market LSV file>";
+   let m = "<market JSON file>";
    let s = "<synthetics TSV file>";
    println!("./graphista {m} {s} > data/market-graph.csv");
    println!("\n\treads in the market data and outputs it as CSV TO GRAPH!");
