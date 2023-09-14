@@ -64,7 +64,13 @@ pub fn merge_burn_rates_d(burnlesses: &Vec<BurnlessLSD>,
       if let Some(u) = burns.get(&tok) {
          lsds.push(LSD { burnless: b.clone(), unbond: *u });
       } else {
-         if debug { println!("Could not find burn rate for {tok}"); }
+         if debug {
+            println!("Could not find burn rate for {tok}");
+            println!("for {b:?}");
+            println!("I have:");
+            for key in burns.keys() { println!("key: {key}"); }
+            println!("\n...reminder to push burn-rates.csv to main branch.");
+         }
       }
    }
    lsds

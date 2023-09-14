@@ -21,7 +21,7 @@ pub fn read_rest(url: &str) -> Result<String, String> {
 
 pub fn fetch_burns() -> Result<HashMap<String,u8>, String> {
    let lg_url = "https://raw.githubusercontent.com/logicalgraphs";
-   let burn_dir = "crypto-n-rust/assemblage/src/ch09/lsd/data/burn-rates.csv";
+   let burn_dir = "crypto-n-rust/main/src/ch09/lsd/data/burn-rates.csv";
    let csv = read_rest(&format!("{lg_url}/{burn_dir}"))?;
    fn burn_f(row: &Vec<&str>) -> Result<Option<(String, u8)>, String> {
       if let [name, _, c, _] = row.as_slice() {
