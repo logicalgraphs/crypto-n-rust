@@ -4,7 +4,6 @@ use std::{
    cmp::Ordering,
    fmt,
    hash::{Hash,Hasher},
-   num::ParseFloatError,
    str::FromStr
 };
 
@@ -37,17 +36,14 @@ impl fmt::Display for USD {
 }
 
 impl FromStr for USD {
-   type Err = ParseFloatError;
+   type Err = String;
 
    fn from_str(elt: &str) -> Result<Self, Self::Err> {
       if let Some(num) = last(elt.split('$').collect()) {
-         if let Ok(amount) = parse_commaless(&num.to_string()) {
-            Ok(mk_usd(amount))
-         } else {
-            panic!("{} isn't a number", num)
-         }
+         let amount = parse_commaless(&num.to_string())?;
+         Ok(mk_usd(amount))
       } else {
-        panic!("USD: empty string")
+         Err(format!("USD: empty string"))
       }
    }
 }
