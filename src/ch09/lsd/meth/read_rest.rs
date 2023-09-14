@@ -5,6 +5,8 @@ use std::{
 
 use book::csv_utils::{HashRow,CsvRowResult,HashedRowsResult,parse_csv};
 
+use crate::types::ManualLSD;
+
 /* 
 The skeleton upon which this get-fetch example is based is:
 
@@ -36,14 +38,14 @@ pub fn fetch_burns() -> HashedRowsResult<u8> {
 }
 
 pub fn fetch_manual_lsds(date: &str) -> HashedRowsResult<ManualLSD> {
-   fn man_f(row: &Vec<&str>) -> CsvRowResult<HashRow<ManualLSD> {
+   fn man_f(row: &Vec<&str>) -> CsvRowResult<HashRow<ManualLSD>> {
       if let [dt,lsd1,zne,rt,_url,burn] = row.as_slice() {
-         let halted = dt != dated;
+         let halted = dt != date;
          let zone = zne.to_string();
          let lsd = lsd1.to_string();
          let rate: f32 = rt.parse.expect(&format!("{rt} is not a number"));
          let unbond = ubnd(burn)?;
-         Ok(Some((lsd1.to_string(), ManualLSD { zone, lsd, rate, halted, unbond }))
+         Ok(Some((lsd1.to_string(), ManualLSD { zone, lsd, rate, halted, unbond })))
       } else {
          Err(format!("{row:?} is not CSV-parseable!"))
       }

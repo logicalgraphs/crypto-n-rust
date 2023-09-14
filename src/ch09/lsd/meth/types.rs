@@ -27,7 +27,7 @@ pub struct BurnlessLSD {
    halted: bool
 }
 
-#[derive(Debug,Clone)]
+#[derive(Debug,Clone,PartialEq)]
 pub struct ManualLSD {
    zone: String,
    lsd: String,
@@ -65,7 +65,7 @@ pub fn merge_burn_rates(burnlesses: &Vec<BurnlessLSD>,
 }
 
 pub fn merge_burn_rates_d(burnlesses: &Vec<BurnlessLSD>,
-                          burns: &HashMap<String, u8>, debug: bool)
+                          burns: &HashMap<String, ManualLSD>, debug: bool)
    -> Vec<LSD> {
    let mut lsds: Vec<LSD> = Vec::new();
    for b in burnlesses {
