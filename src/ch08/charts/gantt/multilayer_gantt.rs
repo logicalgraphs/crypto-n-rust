@@ -78,7 +78,7 @@ fn print_closer() {
 
 fn print_tasks(prev: &mut Vec<String>, indices: &mut Vec<char>, mein: &str,
                nodes: &Vec<&str>, day: u8, done: u8, beck: String) {
-   if let (Some(h), t) = ht(nodes.to_vec()) {
+   if let (Some(h), t) = ht(&nodes.to_vec()) {
       if h.starts_with('(') {
          let (_, tru) = h.split_at(1);
          indices.push('1');
