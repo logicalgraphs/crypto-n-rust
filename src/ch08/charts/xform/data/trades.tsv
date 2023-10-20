@@ -1,4 +1,4 @@
-symbol	reference	trade type	action	security	date sold	price sold	shares out	date bought	price bought	shares in	exit	portfolio	surcharge	fees	net δ	net δ $	ROI	APR
+symbol	reference	trade_type	action	security	date_sold	price sold	shares out	date bought	price bought	shares in	exit	portfolio	surcharge	fees	net δ	net_gain	ROI	APR
 wETH	https://www.mintscan.io/osmosis/tx/6535A41E912A5C713841F536AF40D4E6835C7C27799103B66DD040F0ED53C456	LONG	manual	token	2023-10-01	$1,686.50	1.0792	2023-09-29	$1,668.68	1.0000	$1,800.79	Levana	$0.02		0.08	$151.32	8.40%	1533.58%
 DOT	https://www.mintscan.io/osmosis/tx/28E6C6A05B9F77FED5E9046CA369AE3345381AE3B3D5E6E097A64D10391AB3C5	LONG	manual	token	2023-10-01	$4.20	5.4748	2023-09-29	$4.08	4.0000	$22.33	Levana	$0.01		1.47	$6.67	29.89%	5455.81%
 wETH	https://www.mintscan.io/osmosis/tx/17C1A9585284A0F92A2CD1FC660EF389F190CB948E79AC11EB454D5881B2A286	LONG	manual	token	2023-10-01	$1,727.02	1.2124	2023-10-01	$1,683.80	1.0	$2,041.39	Levana	$0.02		0.2124	$409.98	20.08%	n/a
