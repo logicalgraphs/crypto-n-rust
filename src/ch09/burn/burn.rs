@@ -1,5 +1,6 @@
-use bunsen::entries::{
-   OrderBook, parse_orderbook, buy, report_buy, report_roi
+use bunsen::{
+   entries::{OrderBook, parse_orderbook, buy, report_buy, report_roi},
+   read_rest::read_orders
 };
 
 use meth::{
@@ -9,7 +10,7 @@ use meth::{
 
 use book::{
    csv_utils::print_csv,
-   file_utils::read_file,
+   // file_utils::read_file,
    list_utils::assoc_list,
    utils::get_args
 };
@@ -28,9 +29,9 @@ fn usage() {
 fn main() -> Result<(), String> {
    let args = get_args();
    let mut success = false;
-   if let [amt, filename] = args.as_slice() {
+   if let [amt, order_book] = args.as_slice() {
       let amount: f32 = amt.parse().expect(&format!("{amt} is not a number"));
-      let file = read_file(&filename);
+      let file = read_orders(&order_book, 30)?; // read_file(&filename);
       let book = parse_orderbook(&file)?;
       let lsds1 = fetch_stride_lsds()?;
       let lsds = assoc_list(lsds1, token);
