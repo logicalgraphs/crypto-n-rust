@@ -135,8 +135,8 @@ impl CsvWriter for Entry {
 impl CsvWriter for OrderBook {
    fn as_csv(&self) -> String {
       let namei = format!("{}/{}", self.base, self.target);
-      let a = thunk("asks", &self.asks);
-      let b = thunk("bids", &self.bids);
+      let a = thunk("asks", &self.asks, true);
+      let b = thunk("bids", &self.bids, false);
       format!("{namei}\n\n{a}\n\n{b}")
    }
 }
@@ -175,8 +175,9 @@ impl CsvWriter for Purchase {
    }
 }
 
-fn thunk(title: &str, section: &Vec<Entry>) -> String {
-   let rows: Vec<String> = section.iter().map(|e| e.as_csv()).collect();
+fn thunk(title: &str, section: &Vec<Entry>, revd: bool) -> String {
+   let mut rows: Vec<String> = section.iter().map(|e| e.as_csv()).collect();
+   if revd { rows.reverse(); }
    let rs = rows.join("\n");
    format!("{title}\n\n{rs}")
 }

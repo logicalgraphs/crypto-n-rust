@@ -10,7 +10,6 @@ use meth::{
 
 use book::{
    csv_utils::print_csv,
-   // file_utils::read_file,
    list_utils::assoc_list,
    utils::get_args
 };
@@ -31,7 +30,7 @@ fn main() -> Result<(), String> {
    let mut success = false;
    if let [amt, order_book] = args.as_slice() {
       let amount: f32 = amt.parse().expect(&format!("{amt} is not a number"));
-      let file = read_orders(&order_book, 30)?; // read_file(&filename);
+      let file = read_orders(&order_book, 30)?;
       let book = parse_orderbook(&file)?;
       let lsds1 = fetch_stride_lsds()?;
       let lsds = assoc_list(lsds1, token);

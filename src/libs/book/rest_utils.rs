@@ -22,16 +22,6 @@ pub fn read_rest(endpoint: &str) -> Result<String, Box<dyn Error>> {
    Ok(body)
 }
 
-pub fn read_orders(order_book: &str, depth: i8)
-    -> Result<String, String> {
-   let url = "https://api.kujira.app/api/coingecko/orderbook";
-   let endpoint = format!("{url}?ticker_id={order_book}&depth={depth}");
-   match read_rest(&endpoint) {
-      Ok(ans) => Ok(ans),
-      Err(str) => Err(format!("Error: {str:?}"))
-   }
-}
-
 /* ----- test ---------------------------------------------------------------
 
 fn usage() {
