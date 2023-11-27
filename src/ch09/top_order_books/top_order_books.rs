@@ -58,9 +58,9 @@ fn reportage(date: &str, body: &str, raw: bool) {
    alles.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
    if raw { print_alles(&alles, date); }
    let topus: Vec<Book> =
-      alles.into_iter().take_while(|b| b.vol_24h > 1000.0).collect();
+      alles.into_iter().take_while(|b| b.vol_24h > 100000.0).collect();
    let v: Vec<Book> = topus.clone().into_iter().take(5).collect();
-   println!("I got {} books; {} have $1,000+ 24h-volume, {date}",
+   println!("I got {} books; {} have $100,000+ 24h-volume, {date}",
             books.len(), topus.len());
    count(&books, "axlUSDC");
    count(&books, "USK");
