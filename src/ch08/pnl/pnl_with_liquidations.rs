@@ -22,7 +22,7 @@ fn usage() {
 }
 
 fn main() {
-   let mut help = false;
+   let mut help = true;
    if let (Some(first_arg), rest) = ht(&get_args()) {
       let debug = first_arg == "-v";
       if let (Some(assets), Some(trades)) =
