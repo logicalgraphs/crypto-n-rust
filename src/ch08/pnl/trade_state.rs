@@ -53,7 +53,7 @@ pub fn mk_trade_state(date: String, profit: f32, loss: f32, fees: f32,
 
 fn update_pnl(state: &TradeState, date: String, profit: f32, loss: f32,
               trades: Vec<Trade>) -> TradeState {
-   let TradeState { fees, commission, .. } = state.clone();
+   let TradeState { fees, commission, .. } = state;
    mk_trade_state(date, profit, loss, *fees, *commission, trades)
 }
 
