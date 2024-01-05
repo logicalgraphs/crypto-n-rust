@@ -42,11 +42,12 @@ pub fn parse_estimate(str: &str) -> Result<f32, String> {
          if let Some(mult) = playah.pop() {
             let mb_num: Result<f32, _> = playah.parse();
             if let Ok(num) = mb_num {
-               if mult == 'k' {
+               let mult_up = mult.to_ascii_uppercase();
+               if mult_up == 'K' {
                   ans = num * 1000.0;
                   err = false;
                }
-               if mult == 'm' || mult == 'M' {
+               if mult_up == 'M' {
                   ans = num * 1000000.0;
                   err = false;
                }
