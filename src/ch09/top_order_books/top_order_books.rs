@@ -57,15 +57,16 @@ fn reportage(date: &str, body: &str, raw: bool) {
    let mut alles: Vec<Book> = books.clone().into_iter().collect();
    alles.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
    if raw { print_alles(&alles, date); }
+   let v: Vec<Book> = alles.clone().into_iter().take(5).collect();
+   let x: Vec<Book> = alles.clone().into_iter().take(10).collect();
    let topus: Vec<Book> =
       alles.into_iter().take_while(|b| b.vol_24h > 100000.0).collect();
-   let v: Vec<Book> = topus.clone().into_iter().take(5).collect();
    println!("I got {} books; {} have $100,000+ 24h-volume, {date}",
             books.len(), topus.len());
    count(&books, "axlUSDC");
    count(&books, "USK");
    print_txt(&v, date);
-   print_html(&topus, date);
+   print_html(&x, date);
 }
 
 fn print_txt<T: CsvWriter>(tops: &Vec<T>, date: &str) {
