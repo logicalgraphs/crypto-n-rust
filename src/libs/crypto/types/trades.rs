@@ -26,13 +26,13 @@ pub struct Swap {
 
 pub fn trade(t: &Trade) -> String {
    let swap = &t.swap;
-   format!("{}->{}", swap.from.as_csv(), swap.to.as_csv())
+   format!("{}->{}", swap.from.token, swap.to.token)
 }
 
 #[derive(Debug, Clone)]
 pub struct Trade {
    swap: Swap,
-   pnl:  PnL
+   pub pnl:  PnL
 }
 
 // ----- impls -------------------------------------------------------

@@ -12,7 +12,7 @@ use crypto::types::{
 
 mod trade_state;
 use crate::trade_state::{
-   TradeState,init_trade_state,report,parse_trade_cont_d,print_trades
+   TradeState,init_trade_state,report,parse_trade_cont_d,enumerate_trades
 };
 
 fn usage() {
@@ -59,7 +59,7 @@ fn cont_d(p: &Portfolio, lines: &Vec<String>, state: &TradeState, debug: bool) {
       // you like how I put call_cc in this code?
       // call_cc: call-with-current-continuation
    } else {
-      if debug { print_trades(state); }
+      if debug { enumerate_trades(state); }
       print_portfolio(p);
       report(&state);
    }
