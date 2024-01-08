@@ -63,7 +63,7 @@ fn update_pnl(state: &TradeState, date: String, profit: f32, loss: f32,
 
 pub fn report(state: &TradeState) {
    let TradeState { date, profit, loss, fees, commission, trades } = state;
-   println!("\nPnL\n\n@TeamKujira FIN order books: {date}");
+   println!("\n{date} @TeamKujira FIN order books: PnL");
 
    println!("\nProfit: {}", mk_usd(*profit));
    println!("Loss: {}", mk_usd(*loss));
