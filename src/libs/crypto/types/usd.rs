@@ -74,3 +74,8 @@ pub fn mk_usd(amount: f32) -> USD {
 }
 
 pub fn no_monay() -> USD { mk_usd(0.0) }
+
+// Monoid on Add
+pub fn sum_usd(a: &USD, b: &USD) -> USD {
+   mk_usd(a.amount + b.amount)
+}

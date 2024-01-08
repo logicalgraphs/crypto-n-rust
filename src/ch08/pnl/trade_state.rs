@@ -2,10 +2,12 @@
 
 // IM SO PROUD! *sniff
 
+use std::collections::HashMap;
+
 use crypto::types::{
    portfolio::{Portfolio,execute_d},
-   trades::{Trade,mk_trade,read_tsv_swap,liquidations_count_and_premium},
-   usd::{USD,mk_usd}
+   trades::{Trade,mk_trade,read_tsv_swap,liquidations_count_and_premium,trade},
+   usd::{USD,mk_usd,no_monay,sum_usd}
 };
 
 use book::{
@@ -84,15 +86,30 @@ pub fn report(state: &TradeState) {
       println!("{} at a {perc} premium (avg)\n", plural(n, "liquidation"));
    }
 
+   coalesce_trades(trades);
+
    let lg = "https://github.com/logicalgraphs";
    let dir = "crypto-n-rust/blob/main/src/ch08/pnl/";
    let src = "pnl_with_liquidations.rs";
    println!("pnl sources: {lg}/{dir}{src}\n\nAssets in play\n");
 }
 
-pub fn print_trades(ts: &TradeState) {
-   println!("row,date,sell,amt,quote,buy,amt,quote,premium,pnl\n");
+pub fn enumerate_trades(ts: &TradeState) {
+   println!("row,date,sell,amt,quote,buy,amt,quote,premium,pnl");
    println!("{}", list_csv(&ts.trades));
+}
+
+fn coalesce_trades(t: &Vec<Trade>) {
+   let mut trades = HashMap::new();
+   for tr in t {
+     let acc = trades.entry(trade(tr)).or_insert(no_monay());
+     *acc = sum_usd(acc, &tr.pnl);
+   }
+   println!("trade,pnl");
+   for (k,v) in &trades {
+      println!("{k},{v}");
+   }
+   println!("");
 }
 
 // ----- Parsing --------------------------------------------------
