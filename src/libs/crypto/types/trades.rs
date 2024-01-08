@@ -24,6 +24,11 @@ pub struct Swap {
    liquidation: Option<Liquidation>
 }
 
+pub fn trade(t: &Trade) -> String {
+   let swap = &t.swap;
+   format!("{}->{}", swap.from.as_csv(), swap.to.as_csv())
+}
+
 #[derive(Debug, Clone)]
 pub struct Trade {
    swap: Swap,
@@ -116,7 +121,7 @@ pub fn swap_d(p: &mut HashSet<Asset>, s: &Swap, debug: bool)
 
 pub fn pnl(bag: &HashSet<Asset>, sold: &Asset, debug: bool) -> USD {
    match bag.get(sold) {
-      None => { println!("Can't find {sold:?}"); no_monay() },
+      None => { println!("!!! Can't find {sold:?}"); no_monay() },
       Some(orig) => diff_usd(orig, sold, debug)
    }
 }
