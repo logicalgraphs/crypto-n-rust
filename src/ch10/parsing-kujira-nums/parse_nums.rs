@@ -23,15 +23,20 @@ fn main() {
 
 fn process_lines(lines: &Vec<String>) {
    if !lines.is_empty() {
-      let rest = if let Some(num) = parse_kujira_number(&lines) {
-         println!("Processed {num}");
-         let (_num, rest) = lines.split_at(2);
-         rest.to_vec()
-      } else {
-         if let (Some(line), rest) = ht(&lines) {
-            println!("\tDid not process line: {line}");
-            rest
-         } else { panic!("no more lines?!?") }
+      let rest = match parse_kujira_number(&lines) {
+         Ok(num) => {
+            println!("Processed {num}");
+            let (_num, rest) = lines.split_at(2);
+            rest.to_vec()
+         },
+         Err(str) => {
+            if let (Some(line), rest) = ht(&lines) {
+               println!("\tDid not process line: {line}\n\tReason: {str}");
+               rest
+            } else {
+               panic!("no more lines?!?")
+            }
+         }
       };
       process_lines(&rest);
    }
