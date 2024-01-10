@@ -1,10 +1,10 @@
-use parse_nums::parse_kujira_num::parse_kujira_number;
-
 use book::{
    file_utils::lines_from_file,
    list_utils::ht,
    utils::get_args
 };
+
+use crypto::parsers::kujira_nums::parse_kujira_number;
 
 fn usage() {
    println!("\n./parse_nums <file with kujira nums>");

@@ -5,15 +5,10 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[lib]
-path = "lib.rs"
-
 [[bin]]
 name = "parse_nums"
 path = "parse_nums.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }
-
-# strum = "0.17.1"
-# strum_macros = "0.17.1"
+crypto = { path = "../../libs/crypto" }
