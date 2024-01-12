@@ -227,7 +227,7 @@ fn print_top5s(date: &str, amts: &mut Top5s) {
    amts.sort();
    amts.reverse();
    for (x, (amt, mrkt)) in amts.into_iter().take(5).enumerate() {
-      println!("{},{},{amt}", x+1, market(mrkt));
+      println!("{}.,{},for,{amt}", x+1, market(mrkt));
    }
 }
 

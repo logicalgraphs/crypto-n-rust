@@ -55,17 +55,17 @@ USK,DOT,1,$0.000,USK->DOT
 
 Top 5 ORCA market liquidations by amount ($) for 7-days trailing 2024-01-11
 
-1,USK->gPAXG,$28981.855
-2,USK->stATOM,$15149.046
-3,USK->ATOM,$6944.165
-4,USK->LUNA,$5844.171
-5,xaxlUSDC->stATOM,$4480.838
+1.,USK->gPAXG,for,$28981.855
+2.,USK->stATOM,for,$15149.046
+3.,USK->ATOM,for,$6944.165
+4.,USK->LUNA,for,$5844.171
+5.,xaxlUSDC->stATOM,for,$4480.838
 
 ORCA liquidations by Bid
 
 date,bid,asset,n,amount ($),market
 2024-01-04,USK,---,6,$1320.788,USK
-2024-01-05,USK,---,10,$1150.017,USK
+2024-01-05,USK,---,10,$1150.018,USK
 2024-01-06,xUSK,---,8,$362.756,xUSK
 2024-01-06,USK,---,6,$2918.862,USK
 2024-01-07,USK,---,32,$27627.299,USK
@@ -84,10 +84,10 @@ xATOM,---,2,$771.840,xATOM
 
 Top 5 ORCA market liquidations by amount ($) for 7-days trailing 2024-01-11
 
-1,USK,$61254.430
-2,xaxlUSDC,$5868.198
-3,xUSK,$3298.733
-4,xATOM,$771.840
+1.,USK,for,$61254.430
+2.,xaxlUSDC,for,$5868.198
+3.,xUSK,for,$3298.733
+4.,xATOM,for,$771.840
 
 ORCA liquidations by Asset
 
@@ -123,7 +123,7 @@ date,bid,asset,n,amount ($),market
 
 bid,asset,n,amount ($),market
 ---,LUNA,18,$5844.171,LUNA
----,ATOM,16,$8331.524,ATOM
+---,ATOM,16,$8331.523,ATOM
 ---,KUJI,14,$4070.573,KUJI
 ---,gPAXG,7,$28981.855,gPAXG
 ---,wFTM,4,$2469.752,wFTM
@@ -139,8 +139,8 @@ bid,asset,n,amount ($),market
 
 Top 5 ORCA market liquidations by amount ($) for 7-days trailing 2024-01-11
 
-1,gPAXG,$28981.855
-2,stATOM,$19629.883
-3,ATOM,$8331.524
-4,LUNA,$5844.171
-5,KUJI,$4070.573
+1.,gPAXG,for,$28981.855
+2.,stATOM,for,$19629.883
+3.,ATOM,for,$8331.523
+4.,LUNA,for,$5844.171
+5.,KUJI,for,$4070.573
