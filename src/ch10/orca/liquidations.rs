@@ -17,6 +17,7 @@ The very next line is the next liquidation.
 // ----- Imports -------------------------------------------------------
 
 use std::collections::HashMap;
+use itertools::Itertools;
 
 use chrono::naive::NaiveDate;
 
@@ -193,7 +194,8 @@ fn header(prefix: &str) {
 
 fn print_by_days(jours: &LiquidationsByDate) {
    header("date,");
-   for (date,liq) in jours {
+   for date in jours.keys().sorted() {
+      let liq = &jours[date];
       print_liquidations(Some(&format!("{date}")), liq);
    }
 }
