@@ -203,7 +203,14 @@ fn print_by_days(jours: &LiquidationsByDate) {
 fn print_liquidations(prefix: Option<&str>, liq: &Liquidations) {
    let pre = if let Some(pre1) = prefix { format!("{pre1},")
    } else { "".to_string() };
+   let mut bag = Vec::new();
    for (mrket, (n,amt)) in liq {
+      bag.push((n,(mrket,amt)));
+   }
+   bag.sort();
+   bag.reverse();
+
+   for (n, (mrket, amt)) in bag {
       println!("{pre}{},{n},{amt},{}", pair(mrket), market(mrket));
    }
 }
