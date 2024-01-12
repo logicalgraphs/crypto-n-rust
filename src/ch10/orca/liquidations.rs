@@ -114,6 +114,7 @@ type Liquidations = HashMap<Market, Amount>;
 type LiquidationsByDate = HashMap<NaiveDate, Liquidations>;
 type Quotes = HashMap<String, USD>;
 type Lines = Vec<String>;
+type Top5s = Vec<(USD,Market)>;
 
 // ----- processors --------------------------------------------------
 
@@ -185,7 +186,8 @@ fn report_by(title: &str, f: impl Fn(&Market) -> Market,
    print_by_days(&rows);
    let markets = by_market(&rows);
    header("");
-   print_liquidations(None, &markets);
+   let mut top5s = print_liquidations(None, &markets);
+   print_top5s(&mut top5s);
 }
 
 fn header(prefix: &str) {
@@ -200,18 +202,31 @@ fn print_by_days(jours: &LiquidationsByDate) {
    }
 }
 
-fn print_liquidations(prefix: Option<&str>, liq: &Liquidations) {
+fn print_liquidations(prefix: Option<&str>, liq: &Liquidations) -> Top5s {
    let pre = if let Some(pre1) = prefix { format!("{pre1},")
    } else { "".to_string() };
+
    let mut bag = Vec::new();
+   let mut amts = Vec::new();
    for (mrket, (n,amt)) in liq {
       bag.push((n,(mrket,amt)));
+      amts.push((amt.clone(),mrket.clone()));
    }
    bag.sort();
    bag.reverse();
 
    for (n, (mrket, amt)) in bag {
       println!("{pre}{},{n},{amt},{}", pair(mrket), market(mrket));
+   }
+   amts
+}
+
+fn print_top5s(amts: &mut Top5s) {
+   println!("\nTop 5 ORCA market liquidations by amount ($)\n");
+   amts.sort();
+   amts.reverse();
+   for (x, (amt, mrkt)) in amts.into_iter().take(5).enumerate() {
+      println!("{},{},{amt}", x+1, market(mrkt));
    }
 }
 
