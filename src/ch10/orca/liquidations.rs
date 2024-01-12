@@ -127,10 +127,8 @@ fn process_liquidations_by_date(prices: &Quotes, lines: &Lines)
 
 fn process_liqs(prices: &Quotes, lyns: &Lines, ans: &mut LiquidationsByDate) {
    if let Some((n, date, market, amt)) = process_liquidation(prices, lyns) {
-      let day = ans.entry(date).or_insert(HashMap::new());
-      let amount = day.entry(market).or_insert((0, no_monay()));
-      let (i, m) = amount;
-      *amount = (*i+1, sum_usd(&m, &amt));
+      let mut day = ans.entry(date).or_insert(HashMap::new());
+      update_market(id_market, &market, &(1, amt), &mut day);
       process_liqs(prices, &skip(n, &lyns), ans);
    }
 }
@@ -222,12 +220,13 @@ fn print_liquidations(prefix: Option<&str>, liq: &Liquidations) -> Top5s {
 }
 
 fn print_top5s(date: &str, amts: &mut Top5s) {
-   let msg = "Top 5 ORCA market liquidations by amount ($) for 7-days trailing";
-   println!("\n{msg} {date}\n");
+   let msg = "Top 5 @TeamKujira ORCA liquidations";
+   let msg1 = "by amount ($) for 7-days trailing";
+   println!("\n{msg} {msg1} {date}\n");
    amts.sort();
    amts.reverse();
    for (x, (amt, mrkt)) in amts.into_iter().take(5).enumerate() {
-      println!("{}.,{},for,{amt}", x+1, market(mrkt));
+      println!("'{}.,{},for,{amt}", x+1, market(mrkt));
    }
    let url = "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/ORCA/report.csv";
    println!("\nRaw CSV of report archived at {url}");
@@ -267,7 +266,7 @@ fn xform1(f: impl Fn(&Market) -> Market, liqs: &Liquidations) -> Liquidations {
 fn update_market(f: impl Fn(&Market) -> Market, mkt: &Market,
                  a: &Amount, markets: &mut Liquidations) {
    let key = f(mkt);
-   let market = markets.entry(key.clone()).or_insert((0, no_monay()));
+   let market = markets.entry(key).or_insert((0, no_monay()));
    let (n1, amt1) = market;
    let (n, amt) = a;
    *market = (*n + *n1, sum_usd(amt, amt1));
