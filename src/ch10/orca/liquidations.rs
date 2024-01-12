@@ -38,18 +38,18 @@ use crypto::{
 // ----- Main -------------------------------------------------------
 
 fn usage() -> bool {
-   println!("./cillaz <prices CSV> <liquidations LSV>");
+   println!("./cillaz <date> <prices CSV> <liquidations LSV>");
    println!("\nSlices and dices liquidations on ORCA (by day and by market)");
    true
 }
 
 fn main() {
    let mut okay = false;
-   if let [prices, liquids] = get_args().as_slice() {
+   if let [date, prices, liquids] = get_args().as_slice() {
       let prces = read_prices(&prices);
       let lines = lines_from_file(&liquids);
       let jours = process_liquidations_by_date(&prces, &lines);
-      report(&jours);
+      report(&date, &jours);
       okay = true;
    }
 
@@ -173,13 +173,13 @@ fn find_next_date(idx: usize, lines: &Lines) -> Option<(usize, NaiveDate)> {
 
 // ----- Printers --------------------------------------------------
 
-fn report(jours: &LiquidationsByDate) {
-   report_by("Market", id_market, jours);
-   report_by("Bid", erase_asset, jours);
-   report_by("Asset", erase_bid, jours);
+fn report(date: &str, jours: &LiquidationsByDate) {
+   report_by(date, "Market", id_market, jours);
+   report_by(date, "Bid", erase_asset, jours);
+   report_by(date, "Asset", erase_bid, jours);
 }
 
-fn report_by(title: &str, f: impl Fn(&Market) -> Market,
+fn report_by(date: &str, title: &str, f: impl Fn(&Market) -> Market,
              jours: &LiquidationsByDate) {
    println!("\nORCA liquidations by {title}");
    let rows = xform(&f, jours);
@@ -187,7 +187,7 @@ fn report_by(title: &str, f: impl Fn(&Market) -> Market,
    let markets = by_market(&rows);
    header("");
    let mut top5s = print_liquidations(None, &markets);
-   print_top5s(&mut top5s);
+   print_top5s(date, &mut top5s);
 }
 
 fn header(prefix: &str) {
@@ -221,8 +221,9 @@ fn print_liquidations(prefix: Option<&str>, liq: &Liquidations) -> Top5s {
    amts
 }
 
-fn print_top5s(amts: &mut Top5s) {
-   println!("\nTop 5 ORCA market liquidations by amount ($)\n");
+fn print_top5s(date: &str, amts: &mut Top5s) {
+   let msg = "Top 5 ORCA market liquidations by amount ($) for 7-days trailing";
+   println!("\n{msg} {date}\n");
    amts.sort();
    amts.reverse();
    for (x, (amt, mrkt)) in amts.into_iter().take(5).enumerate() {
