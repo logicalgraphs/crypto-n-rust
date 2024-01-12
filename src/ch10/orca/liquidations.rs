@@ -19,8 +19,8 @@ use std::collections::HashMap;
 use chrono::naive::NaiveDate;
 
 use book::{
-   file_utils::lines_from_file,
-   list_utils::ht,
+   file_utils::{lines_from_file,extract_date_and_body},
+   list_utils::{ht,tail},
    utils::get_args
 };
 
@@ -29,23 +29,19 @@ use crypto::{
       find_date::find_date,
       kujira_nums::parse_kujira_number
    },
-   types::{
-      books::{prices,load_books},
-      usd::{USD,no_monay,mk_usd}
-   }
+   types::usd::{USD,no_monay,mk_usd,sum_usd}
 };
 
 fn usage() -> bool {
-   println!("./cillaz <market JSON> <liquidations LSV>");
+   println!("./cillaz <prices CSV> <liquidations LSV>");
    println!("\nSlices and dices liquidations on ORCA (by day and by market)");
    true
 }
 
 fn main() {
    let mut okay = false;
-   if let [market, liquids] = get_args().as_slice() {
-      let mrk = load_books(&market);
-      let prces = prices(&mrk);
+   if let [prices, liquids] = get_args().as_slice() {
+      let prces = read_prices(&prices);
       let lines = lines_from_file(&liquids);
       let jours = process_liquidations_by_date(&prces, &lines);
       print_by_days(&jours);
@@ -56,13 +52,27 @@ fn main() {
    !okay && usage();
 }
 
+fn read_prices(file: &str) -> HashMap<String, USD> {
+   let (_date, lines) = extract_date_and_body(file);
+   let mut ans = HashMap::new();
+
+   for line in tail(&lines) {
+      if let [asset, monay] = line.split(",").collect::<Vec<_>>().as_slice() {
+         let quot: USD = monay.parse()
+                  .expect(&format!("Could not parse {monay} to USD"));
+         ans.insert(asset.to_string(),quot);
+      } else { panic!("Unparseable line in prices: {line}") }
+   }
+   ans
+}
+
 // ----- Types --------------------------------------------------
 
 type Market = (String, String);
 
 fn market(m: &Market) -> String {
    let (asset, bid) = m;
-   format!("{bid}->{asset}")
+   format!("{bid},{asset}")
 }
 
 type Amount = (usize, USD);
@@ -73,7 +83,20 @@ type Liquidations = HashMap<Market, Amount>;
 fn process_liquidations_by_date(prices: &HashMap<String, USD>,
                                 lines: &Vec<String>)
    -> HashMap<NaiveDate, Liquidations> {
-   HashMap::new()
+   let mut ans = HashMap::new();
+   process_liqs(prices, lines, &mut ans);
+   ans
+}
+
+fn process_liqs(prices: &HashMap<String, USD>, lyns: &Vec<String>,
+                ans: &mut HashMap<NaiveDate, Liquidations>) {
+   if let Some((n, date, market, amt)) = process_liquidation(prices, lyns) {
+      let day = ans.entry(date).or_insert(HashMap::new());
+      let amount = day.entry(market).or_insert((0, no_monay()));
+      let (i, m) = amount;
+      *amount = (*i+1, sum_usd(&m, &amt));
+      process_liqs(prices, &skip(n, &lyns), ans);
+   }
 }
 
 fn process_liquidation(prices: &HashMap<String, USD>, lines: &Vec<String>)
@@ -116,6 +139,7 @@ fn find_next_date(idx: usize, lines: &Vec<String>)
 // ----- Printers --------------------------------------------------
 
 fn print_by_days(jours: &HashMap<NaiveDate, Liquidations>) {
+   println!("date,bid,asset,n,amount ($)");
    for (date,liq) in jours {
       print_liquidations(Some(&format!("{date}")), liq);
    }
