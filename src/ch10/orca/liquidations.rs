@@ -229,6 +229,8 @@ fn print_top5s(date: &str, amts: &mut Top5s) {
    for (x, (amt, mrkt)) in amts.into_iter().take(5).enumerate() {
       println!("{}.,{},for,{amt}", x+1, market(mrkt));
    }
+   let url = "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/ORCA/report.csv";
+   println!("\nRaw CSV of report archived at {url}");
 }
 
 // ----- Morphers --------------------------------------------------
