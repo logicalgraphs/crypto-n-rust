@@ -2,8 +2,58 @@ use std::{
    clone::Clone,
    cmp::PartialEq,
    collections::HashMap,
-   hash::Hash
+   fmt,
+   hash::Hash,
+   slice::Iter
 };
+
+// infinite lists
+
+pub struct InfiniteList<T> {
+   acid: T,
+   base: Vec<T>
+}
+
+pub fn mk_inf<T: Clone>(v: &Vec<T>, d: T) -> InfiniteList<T> {
+   InfiniteList { acid: d, base: v.clone() }
+}
+
+pub struct InfListItr<'a, T> {
+   itr: Iter<'a, T>,
+   def: T
+}
+
+impl <T:Clone> InfiniteList<T> {
+   pub fn iter(&self) -> InfListItr<'_, T> {
+      InfListItr { itr: self.base.iter(), def: self.acid.clone() }
+   }
+}
+
+impl<'a, T:Clone> Iterator for InfListItr<'a, T> {
+   type Item = T;
+   fn next(&mut self) -> Option<Self::Item> {
+      Some((if let Some(a) = self.itr.next() { a } else { &self.def }).clone())
+   }
+}
+
+impl<T:fmt::Debug> fmt::Debug for InfiniteList<T> {
+   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+      fn just_write(f: &mut fmt::Formatter<'_>, s: &str) {
+         fn ki() { }  // from combinatorics
+         match write!(f, "{}", s) {
+            Ok(_) => ki(),
+            Err(x) => panic!("Err'd on format {x:?}!!!")
+         };
+      }
+      just_write(f, &if !self.base.is_empty() {
+         let bits = init(&format!("{:?}", self.base).into_bytes());
+         let chonk = String::from_utf8(bits).unwrap();
+         format!("{chonk}, ")
+      } else { "[".to_string() });
+      let def: &T = &self.acid;
+      write!(f, "{def:?}, {def:?}, {def:?}, ...]")
+   }
+}
 
 // parse_nums() Influenced by the following overflows:
 
@@ -57,6 +107,15 @@ pub fn head<T: Clone>(list: &Vec<T>) -> Option<T> {
 pub fn last<T: Clone>(mut list: Vec<T>) -> Option<T> {
    list.reverse();
    head(&list)
+}
+
+pub fn init<T: Clone>(list: &Vec<T>) -> Vec<T> {
+   let v1: Vec<&T> = list.iter().rev().collect();
+   let mut ans: Vec<T> = Vec::new();
+   for t in tail(&v1).into_iter().rev() {
+      ans.push(t.clone());
+   }
+   ans
 }
 
 // splits a list into lists along some element
