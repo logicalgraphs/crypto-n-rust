@@ -18,6 +18,10 @@ pub fn mk_inf<T: Clone>(v: &Vec<T>, d: T) -> InfiniteList<T> {
    InfiniteList { acid: d, base: v.clone() }
 }
 
+pub fn mk_cycle<T: Clone>(a: &T) -> InfiniteList<T> {
+   InfiniteList { acid: a.clone(), base: [].to_vec() }
+}
+
 pub struct InfListItr<'a, T> {
    itr: Iter<'a, T>,
    def: T
