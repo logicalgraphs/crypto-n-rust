@@ -13,10 +13,9 @@ pub fn print_csv<T: CsvWriter>(line: &T) {
    println!("{}", line.as_csv());
 }
 
-pub fn print_tsv<T: CsvWriter>(line: &T) {
-   let row = line.as_csv();
+pub fn print_as_tsv(row: &String) {
    let cols: Vec<&str> = row.split(",").collect();
-   println!("{}", cols.join(","));
+   println!("{}", cols.join("\t"));
 }
 
 pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
@@ -51,7 +50,7 @@ pub fn parse_csv<T>(skip_lines: usize,
 
 // puts CSV side-by-side in columns with 1 skip-column between each type
 
-pub fn columns<T:CsvWriter + Clone>(csvs: &Vec<Vec<T>>) -> String {
+pub fn columns(csvs: &Vec<Vec<ToCsv>>) -> Vec<String> {
    let mut max = 0;
    for r in csvs.iter() {
       if r.len() > max { max = r.len(); }
@@ -63,12 +62,25 @@ pub fn columns<T:CsvWriter + Clone>(csvs: &Vec<Vec<T>>) -> String {
                                  .collect();
       rows.insert(i, row.join(", ,"));
    }
-   rows.join("\n")
+   rows
 }
 
 // ... and helper functions for columns
 
-struct Blank {
+pub struct ToCsv {  // we flatten our structure, T, into its CSV-representation
+   row: String,
+   ncols: usize
+}
+
+pub fn mk_csv<T: CsvWriter>(row: &T) -> ToCsv {
+   ToCsv { row: row.as_csv(), ncols: row.ncols() }
+}
+
+pub fn mk_csvs<T: CsvWriter>(rows: &Vec<T>) -> Vec<ToCsv> {
+   rows.iter().map(mk_csv).collect()
+}
+
+struct Blank {      // prints a blank row
    s: Vec<String>,
    n: usize
 }
@@ -86,14 +98,13 @@ impl CsvWriter for Blank {
    fn ncols(&self) -> usize { self.n }
 }
 
-fn as_csv_or_blank_at<T: CsvWriter>(i: usize)
-   -> impl Fn(&Vec<T>) -> String {
+fn as_csv_or_blank_at(i: usize) -> impl Fn(&Vec<ToCsv>) -> String {
    move | vec | {
       if let Some(row) = vec.get(i) {
-         row.as_csv()
+         row.row.clone()
       } else {
          if let Some(sample) = vec.first() {
-            mk_blank(sample.ncols()).as_csv()
+            mk_blank(sample.ncols).as_csv()
          } else {
             panic!("Column is empty!")
          }
