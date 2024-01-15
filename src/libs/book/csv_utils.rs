@@ -2,6 +2,8 @@
 
 use std::str::Lines;
 
+use chrono::naive::NaiveDate; 
+
 use crate::list_utils::mk_cycle;
 
 // ----- Types -------------------------------------------------------
@@ -12,11 +14,15 @@ pub trait CsvWriter {
 }
 
 pub struct Stamped<T> {
-   date: NaiveDate,
-   pack: T
+   pub date: NaiveDate,
+   pub pack: T
 }
 
-impl<T:CsvWriter> CsvWriter for Stamped {
+pub fn stamp<T: Clone>(date: &NaiveDate, pack: &T) -> Stamped<T> {
+   Stamped { date: date.clone(), pack: pack.clone() }
+}
+
+impl<T:CsvWriter> CsvWriter for Stamped<T> {
    fn as_csv(&self) -> String {
       format!("{},{}", self.date, self.pack.as_csv())
    }
@@ -24,11 +30,11 @@ impl<T:CsvWriter> CsvWriter for Stamped {
 }
 
 pub struct Indexed<T> {
-   idx: usize,
-   pack: T
+   pub idx: usize,
+   pub pack: T
 }
 
-impl<T:CsvWriter> CsvWriter for Indexed {
+impl<T:CsvWriter> CsvWriter for Indexed<T> {
    fn as_csv(&self) -> String {
       format!("{},{}", self.idx, self.pack.as_csv())
    }
@@ -37,8 +43,13 @@ impl<T:CsvWriter> CsvWriter for Indexed {
 
 // useful when enumerating over a Vec: map this fn to make an Indexed-value
 
-pub fn mk_idx<T: Clone>((idx: usize, pack: &T)) -> Indexed<T> {
-   Indexed { idx, pack }
+pub fn mk_idx<T: Clone>(i: usize, p: &T) -> Indexed<T> {
+   Indexed { idx: i, pack: p.clone() }
+}
+
+pub fn mk_idx_offset<T: Clone>(pear: (usize, &T)) -> Indexed<T> {
+   let (i, p) = pear;
+   Indexed { idx: i+1, pack: p.clone() }
 }
 
 // ----- Printers -------------------------------------------------------
@@ -110,12 +121,12 @@ pub struct ToCsv {  // we flatten our structure, T, into its CSV-representation
    ncols: usize
 }
 
-pub fn mk_csv<T: CsvWriter>(row: &T) -> ToCsv {
-   ToCsv { row: row.as_csv(), ncols: row.ncols() }
-}
-
 pub fn mk_csvs<T: CsvWriter>(rows: &Vec<T>) -> Vec<ToCsv> {
    rows.iter().map(mk_csv).collect()
+}
+
+fn mk_csv<T: CsvWriter>(row: &T) -> ToCsv {
+   ToCsv { row: row.as_csv(), ncols: row.ncols() }
 }
 
 struct Blank {      // prints a blank row
