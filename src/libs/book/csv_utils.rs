@@ -13,6 +13,12 @@ pub fn print_csv<T: CsvWriter>(line: &T) {
    println!("{}", line.as_csv());
 }
 
+pub fn print_tsv<T: CsvWriter>(line: &T) {
+   let row = line.as_csv();
+   let cols: Vec<&str> = row.split(",").collect();
+   println!("{}", cols.join(","));
+}
+
 pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
    let v1: Vec<String> = v.iter().enumerate().map(|(x,e)| {
       format!("{},{}", x + 1, e.as_csv())

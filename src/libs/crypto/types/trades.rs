@@ -44,12 +44,18 @@ impl CsvWriter for Swap {
                    self.liquidation.as_ref()
                       .map_or(String::new(), |l| format!("{}", l.percentage)))
    }
+
+   fn ncols(&self) -> usize {
+      1 + self.from.ncols() + self.to.ncols() + 1
+   }
 }
 
 impl CsvWriter for Trade {
    fn as_csv(&self) -> String {
       format!("{},{}", self.swap.as_csv(), self.pnl)
    }
+
+   fn ncols(&self) -> usize { self.swap.ncols() + 1 }
 }
 
 // ---- first task is to parse in orders ----------------------------

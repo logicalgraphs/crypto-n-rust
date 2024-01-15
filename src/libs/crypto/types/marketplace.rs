@@ -52,6 +52,7 @@ pub struct OrderBook {
 
 impl CsvWriter for OrderBook {
    fn as_csv(&self) -> String { csv(self) }
+   fn ncols(&self) -> usize { 5 }
 }
 
 impl fmt::Display for OrderBook {
@@ -307,8 +308,7 @@ fn fetch_books(f: &dyn Fn(&OrderBook) -> String, market: &HashSet<OrderBook>,
 
 fn csv(o: &OrderBook) -> String {
    let irat = inverse_ratio(o);
-   format_args!("{},{},{},{},{}",o.buy_side,o.sell_side,o.ratio,irat,o.price)
-      .to_string()
+   format!("{},{},{},{},{}",o.buy_side,o.sell_side,o.ratio,irat,o.price)
 }
 
 pub fn print_marketplace(market: &HashSet<OrderBook>) {

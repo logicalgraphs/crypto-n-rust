@@ -93,6 +93,7 @@ impl CsvWriter for Book {
    fn as_csv(&self) -> String {
       format!("{},{}", ticker(self), estimate(self))
    }
+   fn ncols(&self) -> usize { 2 }
 }
 
 pub fn fetch_books(fin: &HashSet<Book>, token: &str) -> HashSet<Book> {

@@ -35,6 +35,7 @@ impl CsvWriter for Asset {
       let quot = mk_usd(self.quote);
       format!("{},{},{quot}", self.token, self.amount)
    }
+   fn ncols(&self) -> usize { 3 }
 }
 
 impl Hash for Asset {
