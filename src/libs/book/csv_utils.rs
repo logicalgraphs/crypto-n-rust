@@ -4,10 +4,44 @@ use std::str::Lines;
 
 use crate::list_utils::mk_cycle;
 
+// ----- Types -------------------------------------------------------
+
 pub trait CsvWriter {
    fn as_csv(&self) -> String;
    fn ncols(&self) -> usize;
 }
+
+pub struct Stamped<T> {
+   date: NaiveDate,
+   pack: T
+}
+
+impl<T:CsvWriter> CsvWriter for Stamped {
+   fn as_csv(&self) -> String {
+      format!("{},{}", self.date, self.pack.as_csv())
+   }
+   fn ncols(&self) -> usize { 1 + self.pack.ncols() }
+}
+
+pub struct Indexed<T> {
+   idx: usize,
+   pack: T
+}
+
+impl<T:CsvWriter> CsvWriter for Indexed {
+   fn as_csv(&self) -> String {
+      format!("{},{}", self.idx, self.pack.as_csv())
+   }
+   fn ncols(&self) -> usize { 1 + self.pack.ncols() }
+}
+
+// useful when enumerating over a Vec: map this fn to make an Indexed-value
+
+pub fn mk_idx<T: Clone>((idx: usize, pack: &T)) -> Indexed<T> {
+   Indexed { idx, pack }
+}
+
+// ----- Printers -------------------------------------------------------
 
 pub fn print_csv<T: CsvWriter>(line: &T) {
    println!("{}", line.as_csv());
@@ -24,6 +58,8 @@ pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
    }).collect();
    v1.join("\n")
 }
+
+// ----- Parsers -------------------------------------------------------
 
 // fn cols<T: CsvWriter>(c: &T) -> usize { c.ncols() }
 
@@ -47,6 +83,8 @@ pub fn parse_csv<T>(skip_lines: usize,
    }
    Ok(ans)
 }
+
+// ----- Formatters -------------------------------------------------------
 
 // puts CSV side-by-side in columns with 1 skip-column between each type
 
