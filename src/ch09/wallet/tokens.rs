@@ -1,13 +1,13 @@
 use std::collections::HashMap;
 
-use book::num_utils::parse_commaless;
+use book::{
+   csv_utils::CsvWriter,
+   num_utils::parse_commaless
+};
 
 use crypto::types::usd::{USD,mk_usd};
 
-use crate::{
-   pairs::{Pair,mk_pair},
-   tsv::TsvWriter
-};
+use crate::pairs::{Pair,mk_pair};
 
 #[derive(Debug, Clone)]
 pub struct Token {
@@ -19,8 +19,9 @@ pub fn is_xtoken(t: &Token) -> bool {
    &t.token == "$"
 }
    
-impl TsvWriter for Token {
-   fn as_tsv(&self) -> String { format!("{}\t{}", self.token, self.amount) }
+impl CsvWriter for Token {
+   fn as_csv(&self) -> String { format!("{},{}", self.token, self.amount) }
+   fn ncols(&self) -> usize { 2 }
 }  
 
 fn mk_token(tok: &str, amount: f32) -> Token {

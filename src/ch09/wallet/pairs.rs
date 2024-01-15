@@ -1,8 +1,7 @@
 use std::fmt;
 
+use book::csv_utils::CsvWriter;
 use crypto::types::usd::{USD,no_monay};
-
-use crate::tsv::TsvWriter;
 
 #[derive(Debug, Clone)]
 pub struct Pair<T> {
@@ -20,7 +19,7 @@ impl Default for Pair<USD> {
    }
 }
 
-impl<T: fmt::Display> TsvWriter for Pair<T> {
-   fn as_tsv(&self) -> String { format!("{}\t{}", self.k, self.v) }
+impl<T: fmt::Display> CsvWriter for Pair<T> {
+   fn as_csv(&self) -> String { format!("{},{}", self.k, self.v) }
+   fn ncols(&self) -> usize { 2 }
 }
-
