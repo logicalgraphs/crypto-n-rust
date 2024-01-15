@@ -55,7 +55,7 @@ fn main() {
 fn print_wallet_as_tsv(date: &str, amts: &Vec<Pair<f32>>,
                        prices: &Vec<Pair<USD>>) {
    println!("Wallet balances on\t\t\t\t\t{date}\n");
-   println!("asset\tbalance\t\tasset\tvalue (USD)");
+   println!("asset\tbalance\t\t\tasset\tvalue (USD)");
    let mut cols: Vec<Vec<ToCsv>> = Vec::new();
    cols.push(mk_csvs(amts));
    cols.push(mk_csvs(prices));
