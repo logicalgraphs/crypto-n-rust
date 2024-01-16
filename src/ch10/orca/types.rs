@@ -60,9 +60,10 @@ pub fn mk_liquidation(pear: (&Market, &Amount)) -> Liquidation {
 impl CsvWriter for Liquidation {
    fn as_csv(&self) -> String {
       let (cnt,amt) = self.amount;
-      format!("{},{},{}", pair(&self.market), cnt, amt)
+      format!("{},{},{},{}",
+              pair(&self.market), cnt, amt, market(&self.market))
    }
-   fn ncols(&self) -> usize { 2 + 2 }
+   fn ncols(&self) -> usize { 2 + 2 + 1 }
 }
 
 pub type LiquidationsByDate = HashMap<NaiveDate, Liquidations>;

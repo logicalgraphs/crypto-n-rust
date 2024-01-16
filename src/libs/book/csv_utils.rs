@@ -55,12 +55,16 @@ pub fn mk_idx_offset<T: Clone>(pear: (usize, &T)) -> Indexed<T> {
 // ----- Printers -------------------------------------------------------
 
 pub fn print_csv<T: CsvWriter>(line: &T) {
-   println!("{}", line.as_csv());
+   print_line(&line.as_csv());
+}
+
+pub fn print_line(line: &String) {
+   println!("{line}");
 }
 
 pub fn print_as_tsv(row: &String) {
    let cols: Vec<&str> = row.split(",").collect();
-   println!("{}", cols.join("\t"));
+   print_line(&cols.join("\t"));
 }
 
 pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
@@ -99,9 +103,10 @@ pub fn parse_csv<T>(skip_lines: usize,
 
 // puts CSV side-by-side in columns with 1 skip-column between each type
 
-pub fn columns(csvs: &Vec<Vec<ToCsv>>) -> Vec<String> {
+pub fn columns(csvs: &Vec<Vec<ToCsv>>, sep: usize) -> Vec<String> {
+   let separator = format!(",{}", mk_blank(sep).as_csv());
    let mut max = 0;
-   for r in csvs.iter() {
+   for r in csvs {
       if r.len() > max { max = r.len(); }
    }
    let mut rows: Vec<String> = Vec::new();
@@ -109,7 +114,7 @@ pub fn columns(csvs: &Vec<Vec<ToCsv>>) -> Vec<String> {
       let row: Vec<String> = csvs.into_iter()
                                  .map(as_csv_or_blank_at(i))
                                  .collect();
-      rows.insert(i, row.join(", ,"));
+      rows.insert(i, row.join(&separator));
    }
    rows
 }
@@ -136,7 +141,7 @@ struct Blank {      // prints a blank row
 
 fn mk_blank(n: usize) -> Blank {
    let eh = mk_cycle(&" ".to_string());  // odd syntax to borrow Clone-trait
-   let s: Vec<String> = eh.iter().take(n-1).collect();
+   let s: Vec<String> = eh.iter().take(n).collect();
    Blank { s, n }
 }
 
