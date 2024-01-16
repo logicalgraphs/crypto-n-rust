@@ -35,6 +35,7 @@ fn report_by(date: &str, title: &str, f: impl Fn(&Market) -> Market,
    columns(&cols).iter().for_each(|line| println!("{}", line));
 
    footer();
+   separate();
 }
 
 fn header(prefix: &str) -> String {
@@ -45,4 +46,10 @@ fn footer() {
    let cr = "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/";
    let url = "main/data-files/ORCA/report.csv";
    println!("\nRaw CSV of report archived at {cr}{url}");
+}
+
+fn separate() {
+   for _i in 1..21 {
+      println!("");
+   }
 }
