@@ -14,7 +14,6 @@ path = "liquidations.rs"
 
 [dependencies]
 chrono = "0.4.31"
-itertools = "0.8"
 
 book = { path = "../../libs/book" }
 crypto = { path = "../../libs/crypto" }
