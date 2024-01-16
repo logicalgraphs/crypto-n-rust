@@ -130,7 +130,7 @@ pub fn top5s(liqs: &Vec<Indexed<Liquidation>>) -> Top5s {
       let (_, amt) = amount;
       tops.push(mk_top5(&amt, &market));
    }
-   tops.sort_by(|a, b| b.share.cmp(&a.share));
+   tops.sort_by(|a, b| (b.share.amount as i32).cmp(&(a.share.amount as i32)));
    tops.iter().take(5).enumerate().map(mk_idx_offset).collect()
 }
 
