@@ -15,7 +15,7 @@ pub fn report(date: &str, jours: &LiquidationsByDate) {
 
 fn report_by(date: &str, title: &str, f: impl Fn(&Market) -> Market,
              jours: &LiquidationsByDate) {
-   println!("\nORCA liquidations by {title}");
+   println!("\nORCA liquidations by {title}\n");
    let basis = xform(&f, jours);
    let days = big_generator(&basis);
    let markets = liquidations(&basis);
