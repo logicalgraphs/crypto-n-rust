@@ -11,7 +11,7 @@ use crate::types::{
    assets::{Asset,parse_asset,add_asset,remove_asset,print_asset_d,diff_usd},
    liquidations::{Liquidation,gather_liquidation_info},
    percentage::{Percentage,mk_percentage},
-   usd::{USD,no_monay}
+   usd::USD
 };
 
 pub type PnL = USD;
@@ -127,7 +127,7 @@ pub fn swap_d(p: &mut HashSet<Asset>, s: &Swap, debug: bool)
 
 pub fn pnl(bag: &HashSet<Asset>, sold: &Asset, debug: bool) -> USD {
    match bag.get(sold) {
-      None => { println!("!!! Can't find {sold:?}"); no_monay() },
+      None => { panic!("!!! Can't find {sold:?}") },
       Some(orig) => diff_usd(orig, sold, debug)
    }
 }
