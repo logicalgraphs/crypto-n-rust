@@ -1,11 +1,33 @@
+Could not find burn rate for stDYDX
+for BurnlessLSD { zone: "dydx", base: "adydx", rate: 1.0, halted: false }
+I have:
+key: ampWHALE
+key: stLUNA
+key: stSOMM
+key: stCMDX
+key: stUMEE
+key: LunaX
+key: ampLUNA
+key: stINJ
+key: sFTMX
+key: stATOM
+key: rATOM
+key: boneLUNA
+key: stOSMO
+key: sAVAX
+key: stEVMOS
+key: stJUNO
+key: stSTARS
+
+...reminder to push burn-rates.csv to main branch.
 date,zone,lsd,exchange rate,halted,unbond (days)
-2024-01-26,cosmos,stATOM,1.2997,false,24
-2024-01-26,comdex,stCMDX,1.2048,false,24
-2024-01-26,evmos,stEVMOS,1.4927,false,17
-2024-01-26,inj,stINJ,1.2159,false,24
-2024-01-26,juno,stJUNO,1.4186,false,33
-2024-01-26,terra,stLUNA,1.1785,false,24
-2024-01-26,osmo,stOSMO,1.2017,false,17
-2024-01-26,somm,stSOMM,1.0259,false,31
-2024-01-26,stars,stSTARS,1.4304,false,17
-2024-01-26,umee,stUMEE,1.1288,false,17
+2024-01-30,cosmos,stATOM,1.3016,false,24
+2024-01-30,comdex,stCMDX,1.2063,false,24
+2024-01-30,evmos,stEVMOS,1.4941,false,17
+2024-01-30,inj,stINJ,1.2180,false,24
+2024-01-30,juno,stJUNO,1.4205,false,33
+2024-01-30,terra,stLUNA,1.1802,false,24
+2024-01-30,osmo,stOSMO,1.2023,false,17
+2024-01-30,somm,stSOMM,1.0259,false,31
+2024-01-30,stars,stSTARS,1.4324,false,17
+2024-01-30,umee,stUMEE,1.1305,false,17
