@@ -1,28 +1,7 @@
-Could not find burn rate for stDYDX
-for BurnlessLSD { zone: "dydx", base: "adydx", rate: 1.0, halted: false }
-I have:
-key: stOSMO
-key: stUMEE
-key: boneLUNA
-key: stEVMOS
-key: stCMDX
-key: stSTARS
-key: stJUNO
-key: stSOMM
-key: stLUNA
-key: LunaX
-key: ampLUNA
-key: stINJ
-key: ampWHALE
-key: rATOM
-key: sFTMX
-key: sAVAX
-key: stATOM
-
-...reminder to push burn-rates.csv to main branch.
 date,zone,lsd,exchange rate,halted,unbond (days)
 2024-01-31,cosmos,stATOM,1.3021,false,24
 2024-01-31,comdex,stCMDX,1.2067,false,24
+2024-01-31,dydx,stDYDX,1.0000,false,35
 2024-01-31,evmos,stEVMOS,1.4944,false,17
 2024-01-31,inj,stINJ,1.2183,false,24
 2024-01-31,juno,stJUNO,1.4210,false,33
