@@ -16,4 +16,5 @@ impl CsvWriter for LinkedBook {
       let vol = estimate(book);
       format!("{lnk},{vol}")
    }
+   fn ncols(&self) -> usize { 2 }
 }

@@ -1,13 +1,15 @@
 use book::{
    csv_utils::{CsvWriter,list_csv},
-   file_utils::read_file,
    html_utils::Mode,
-   list_utils::ht,
+   list_utils::{head,ht},
    report_utils::{print_footer, print_top_of},
    utils::get_args
 };
 
-use crypto::types::books::{Book,parse_books,count};
+use crypto::{
+   rest_utils::read_markets,
+   types::books::{Book,parse_books,count}
+};
 
 use tob::{
    analyzed_books::analyze,
@@ -28,22 +30,20 @@ reportage(&date, &body);
 */
 
 fn usage() {
-   println!("./top_order_books [--raw] <date> <order-book volumes.json>\n");
+   println!("./top_order_books [--raw] <date>");
    println!("\tGives the top order books by volume");
    println!("\t--raw flag gives exact volumes and percent-analyses.");
 }
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
+fn main() -> Result<(), String> {
    let args = get_args();
    let mut success = false;
    if let (Some(frist), r1) = ht(&args) {
       let raw = frist == "--raw";
-      if let (Some(date), r2) = if !raw { (Some(frist), r1) } else { ht(&r1) } {
-         for filename in r2 {
-            success = true;
-            let file = read_file(&filename);
-            reportage(&date, &file, raw);
-         }
+      if let Some(date) = if !raw { Some(frist) } else { head(&r1) } {
+         success = true;
+         let json = read_markets()?;
+         reportage(&date, &json, raw);
       }
    }
    if !success {

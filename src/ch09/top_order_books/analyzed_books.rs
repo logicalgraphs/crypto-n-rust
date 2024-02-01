@@ -26,4 +26,5 @@ impl CsvWriter for BookShare {
       let b = &self.book;
       format!("{},${},{}", ticker(b), b.vol_24h, &self.perc)
    }
+   fn ncols(&self) -> usize { 3 }
 }
