@@ -5,21 +5,28 @@ use book::{
    list_utils::tail,
    utils::get_args
 };
-use crypto::types::books::{load_books,prices};
+
+use crypto::{
+   rest_utils::read_markets,
+   types::books::{parse_books,prices}
+};
 
 fn usage() {
-   println!("./prices <marketplace JSON> <asset aliases CSV>\n");
-   println!("Outputs assets and their price-quotes.");
+   println!("./prices <asset aliases CSV>\n");
+   println!("\tOutputs assets and their price-quotes.");
 }
 
-fn main() {
-   if let [market, aliases_file] = get_args().as_slice() {
+fn main() -> Result<(), String> {
+   if let Some(aliases_file) = get_args().first() {
       let aliases = load_aliases(&aliases_file);
       println!("asset,quote");
-      for (asset,price) in prices(&load_books(&market)) {
+      let market = read_markets()?;
+      let books = parse_books(&market);
+      for (asset,price) in prices(&books) {
          println!("{},{price}", alias(&aliases, &asset));
       }
    } else { usage(); }
+   Ok(())
 }
 
 fn alias(aliases: &HashMap<String, String>, i: &str) -> String {
