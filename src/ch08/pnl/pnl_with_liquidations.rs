@@ -3,7 +3,7 @@
 use book::{
    utils::get_args,
    file_utils::lines_from_file,
-   list_utils::{tail,ht}
+   list_utils::{tail,ht,first_last}
 };
 
 use crypto::types::portfolio::{Portfolio,assets_from_file,print_portfolio};
@@ -24,15 +24,12 @@ fn main() {
    let mut help = true;
    if let (Some(first_arg), rest) = ht(&get_args()) {
       let debug = first_arg == "-v";
-      fn first_last(v: &Vec<String>) -> (Option<&String>, Option<&String>) {
-         (v.first(), v.last())
-      }
       if let (Some(assets), Some(trades)) =
          if debug { first_last(&rest)
-         } else { (Some(&first_arg), rest.first()) } {
+         } else { (Some(first_arg), rest.first()) } {
          help = false;
-         let starboard = assets_from_file(assets);
-         parse_then_print(&starboard, trades, debug);
+         let starboard = assets_from_file(&assets);
+         parse_then_print(&starboard, &trades, debug);
          println!("Finito!");  // a little Italian flourish at the finito!
       }
    }

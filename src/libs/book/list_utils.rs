@@ -7,7 +7,7 @@ use std::{
    slice::Iter
 };
 
-// infinite lists
+// ----- infinite lists --------------------------------------------------
 
 pub struct InfiniteList<T> {
    acid: T,
@@ -87,7 +87,7 @@ pub fn parse_nums_res(strs: Vec<String>) -> Vec<Result<f32, String>> {
       }}).collect()
 }
 
-// list functions
+// ----- list functions --------------------------------------------------
 
 pub fn ht<T: Clone>(list: &Vec<T>) -> (Option<T>, Vec<T>) {
    if list.is_empty() {
@@ -108,9 +108,8 @@ pub fn head<T: Clone>(list: &Vec<T>) -> Option<T> {
    h
 }
 
-pub fn last<T: Clone>(mut list: Vec<T>) -> Option<T> {
-   list.reverse();
-   head(&list)
+pub fn first_last<T: Clone>(v: &Vec<T>) -> (Option<T>, Option<T>) {
+   (v.first().cloned(), v.last().cloned())
 }
 
 pub fn init<T: Clone>(list: &Vec<T>) -> Vec<T> {
