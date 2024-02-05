@@ -1,4 +1,7 @@
-use book::csv_utils::{Indexed,mk_csvs,columns,print_line,print_csv};
+use book::{
+   csv_utils::{Indexed,mk_csvs,columns,print_line,print_csv},
+   string_utils::plural
+};
 
 use crate::types::{
    LiquidationsByDate,Market,Top5,big_generator,top5s,
@@ -35,10 +38,12 @@ fn report_by(date: &str, title: &str, f: impl Fn(&Market) -> Market,
 }
 
 fn print_top5s(topel: &Vec<Indexed<Top5>>, title: &str, date: &str) {
-   let msg = "Top 5 @TeamKujira ORCA liquidations by";
-   let msg1 = "($) for 7-days trailing";
+   let n = topel.len();
+   let msg = "@TeamKujira ORCA";
+   let liqs = plural(n as u32, "liquidation");
+   let msg1 = "by ($) for 7-days trailing";
 
-   println!("\n{msg} {title} {msg1} {date}\n");
+   println!("\nTop {n} {msg} {liqs} {title} {msg1} {date}\n");
    topel.iter().for_each(print_csv);
 }
 
