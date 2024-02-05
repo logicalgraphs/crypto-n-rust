@@ -7,10 +7,7 @@ use std::{
    str::FromStr
 };
 
-use book::{
-   list_utils::last,
-   num_utils::{integer_decode,parse_commaless}
-};
+use book::num_utils::{integer_decode,parse_commaless};
 
 #[derive(Debug, Clone, Copy)]
 pub struct USD {
@@ -39,7 +36,7 @@ impl FromStr for USD {
    type Err = String;
 
    fn from_str(elt: &str) -> Result<Self, Self::Err> {
-      if let Some(num) = last(elt.split('$').collect()) {
+      if let Some(num) = elt.split('$').collect::<Vec<_>>().last() {
          let amount = parse_commaless(&num.to_string())?;
          Ok(mk_usd(amount))
       } else {
