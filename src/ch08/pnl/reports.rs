@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use book::{
    csv_utils::list_csv,
+   list_utils::first_last,
    string_utils::plural
 };
 
@@ -68,6 +69,15 @@ fn coalesce_trades(t: &Vec<Trade>) {
    println!("trade,pnl");
    for (k,v) in &trades {
       println!("{k},{v}");
+   }
+   println!("");
+
+   let (hi,lo) = first_last(&trades);
+   if let Some(prof) = hi {
+      println!("Most profitable asset traded: {} for {}", prof.0, prof.1);
+   }
+   if let Some(loss) = lo {
+      println!("Most lossy asset traded: {} for {}", loss.0, loss.1);
    }
    println!("");
 }
