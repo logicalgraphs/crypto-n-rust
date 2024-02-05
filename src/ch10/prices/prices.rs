@@ -22,7 +22,12 @@ fn main() -> Result<(), String> {
       println!("asset,quote");
       let market = read_markets()?;
       let books = parse_books(&market);
-      for (asset,price) in prices(&books) {
+      let mut all_prices: Vec<_> = prices(&books).into_iter().collect();
+      fn root(s: &str) -> String {
+         s.trim_matches(char::is_lowercase).to_string()
+      }
+      all_prices.sort_by(|(a, _), (b, _)| root(a).cmp(&root(b)));
+      for (asset,price) in all_prices {
          println!("{},{price}", alias(&aliases, &asset));
       }
    } else { usage(); }
