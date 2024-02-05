@@ -26,7 +26,7 @@ fn main() {
       let debug = first_arg == "-v";
       if let (Some(assets), Some(trades)) =
          if debug { first_last(&rest)
-         } else { (Some(first_arg), rest.first()) } {
+         } else { (Some(first_arg.to_string()), rest.first().cloned()) } {
          help = false;
          let starboard = assets_from_file(&assets);
          parse_then_print(&starboard, &trades, debug);
