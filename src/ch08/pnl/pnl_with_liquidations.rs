@@ -10,8 +10,7 @@ use crypto::types::{
    portfolio::{Portfolio,assets_from_file,print_portfolio}
 };
 
-mod trade_state;
-use crate::trade_state::{
+use pnl::trade_state::{
    TradeState,init_trade_state,report,parse_trade_cont_d,enumerate_trades
 };
 

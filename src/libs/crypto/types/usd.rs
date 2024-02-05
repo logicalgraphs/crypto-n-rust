@@ -56,7 +56,9 @@ impl Hash for USD {
 
 impl Ord for USD {
    fn cmp(&self, other: &Self) -> Ordering {
-      self.decode.cmp(&other.decode)
+      let a = (self.amount * 100.0) as i32;
+      let b = (other.amount * 100.0) as i32;
+      a.cmp(&b)
    }
 }
 
