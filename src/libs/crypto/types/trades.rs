@@ -29,6 +29,10 @@ pub fn trade(t: &Trade) -> String {
    format!("{}->{}", swap.from.token, swap.to.token)
 }
 
+pub fn trade_date(t: &Trade) -> String {
+   t.swap.date.clone()
+}
+
 #[derive(Debug, Clone)]
 pub struct Trade {
    swap: Swap,
