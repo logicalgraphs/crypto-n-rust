@@ -3,11 +3,12 @@ use std::collections::HashMap;
 use book::{
    csv_utils::list_csv,
    list_utils::first_last,
+   num_utils::mk_estimate,
    string_utils::plural
 };
 
 use crypto::types::{
-   trades::{Trade,trade,liquidations_count_and_premium},
+   trades::{Trade,trade,trade_date,liquidations_count_and_premium},
    usd::{USD,mk_usd,no_monay,sum_usd}
 };
 
@@ -51,6 +52,41 @@ pub fn report(state: &TradeState) {
 pub fn enumerate_trades(ts: &TradeState) {
    println!("row,date,sell,amt,quote,buy,amt,quote,premium,pnl");
    println!("{}", list_csv(&trades(&ts)));
+   trade_analysis(ts);
+}
+
+fn trade_analysis(ts: &TradeState) {
+   println!("\nAnalysis\n");
+   let mut all_days = HashMap::new();
+   let mut pnl = no_monay();
+   let trds = trades(&ts);
+   for trade in &trds {
+      let day = all_days.entry(trade_date(trade)).or_insert((0, no_monay()));
+      *day = (day.0 + 1, sum_usd(&day.1, &trade.pnl));
+      pnl = sum_usd(&pnl, &trade.pnl);
+   }
+
+   let ntrades = trds.len() as f32;
+   let ndays = all_days.len() as f32;
+   println!("Total number of days traded: {ndays}");
+   println!("Average number of trades/day: {}", mk_estimate(ntrades / ndays));
+   println!("Average PnL/day: {}\n", mk_usd(pnl.amount / ndays));
+
+   let mut days: Vec<(String, (i32, USD))> = all_days.into_iter().collect();
+   days.sort_by(|a, b| a.1.0.cmp(&b.1.0));
+   trading_day("Most active", days.last());
+
+   days.sort_by(|a, b| a.1.1.cmp(&b.1.1));
+   trading_day("Most profitable", days.last());
+   trading_day("Least profitable", days.first());
+}
+
+type DailyPnL = (String, (i32, USD));
+
+fn trading_day(kind: &str, day: Option<&DailyPnL>) {
+   if let Some((date, (n, pnl))) = day {
+      println!("{kind} trading day: {date} with {n} trades, pnl: {pnl}");
+   }
 }
 
 fn coalesce_trades(t: &Vec<Trade>) {
