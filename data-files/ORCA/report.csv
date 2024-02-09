@@ -3,13 +3,13 @@ ORCA liquidations by Market
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
 2024-02-08,USK,ATOM,1,$0.048,USK->ATOM, , , , , , , ,4,USK,ATOM,4,$11.403,USK->ATOM
+2024-02-07,USK,ATOM,2,$0.038,USK->ATOM, , , , , , , ,2,USK,wFTM,2,$5167.906,USK->wFTM
 2024-02-07,USK,stATOM,1,$0.694,USK->stATOM, , , , , , , ,2,USK,stOSMO,2,$79.448,USK->stOSMO
-2024-02-07,USK,stOSMO,2,$79.448,USK->stOSMO, , , , , , , ,2,USK,wFTM,2,$5167.906,USK->wFTM
-2024-02-07,USK,ATOM,2,$0.038,USK->ATOM, , , , , , , ,1,USK,stATOM,1,$0.694,USK->stATOM
-2024-02-02,USK,ATOM,1,$11.317,USK->ATOM, , , , , , , , , , , , , ,
+2024-02-07,USK,stOSMO,2,$79.448,USK->stOSMO, , , , , , , ,1,USK,stATOM,1,$0.694,USK->stATOM
 2024-02-02,USK,wFTM,2,$5167.906,USK->wFTM, , , , , , , , , , , , , ,
+2024-02-02,USK,ATOM,1,$11.317,USK->ATOM, , , , , , , , , , , , , ,
 
-Top 5 @TeamKujira ORCA liquidations by Market ($) for 7-days trailing 2024-02-08
+Top 4 @TeamKujira ORCA 4 liquidations Market by ($) for 7-days trailing 2024-02-08
 
 1,USK->wFTM,for,$5167.906
 2,USK->stOSMO,for,$79.448
@@ -25,7 +25,7 @@ date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
 2024-02-07,USK,---,5,$80.180,USK, , , , , , , , , , , , , ,
 2024-02-02,USK,---,3,$5179.223,USK, , , , , , , , , , , , , ,
 
-Top 5 @TeamKujira ORCA liquidations by Bid ($) for 7-days trailing 2024-02-08
+Top 1 @TeamKujira ORCA 1 liquidation Bid by ($) for 7-days trailing 2024-02-08
 
 1,USK,for,$5259.451
 
@@ -35,13 +35,13 @@ ORCA liquidations by Asset
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
 2024-02-08,---,ATOM,1,$0.048,ATOM, , , , , , , ,4,---,ATOM,4,$11.403,ATOM
-2024-02-07,---,stOSMO,2,$79.448,stOSMO, , , , , , , ,2,---,wFTM,2,$5167.906,wFTM
-2024-02-07,---,ATOM,2,$0.038,ATOM, , , , , , , ,2,---,stOSMO,2,$79.448,stOSMO
-2024-02-07,---,stATOM,1,$0.694,stATOM, , , , , , , ,1,---,stATOM,1,$0.694,stATOM
+2024-02-07,---,ATOM,2,$0.038,ATOM, , , , , , , ,2,---,wFTM,2,$5167.906,wFTM
+2024-02-07,---,stATOM,1,$0.694,stATOM, , , , , , , ,2,---,stOSMO,2,$79.448,stOSMO
+2024-02-07,---,stOSMO,2,$79.448,stOSMO, , , , , , , ,1,---,stATOM,1,$0.694,stATOM
 2024-02-02,---,wFTM,2,$5167.906,wFTM, , , , , , , , , , , , , ,
 2024-02-02,---,ATOM,1,$11.317,ATOM, , , , , , , , , , , , , ,
 
-Top 5 @TeamKujira ORCA liquidations by Asset ($) for 7-days trailing 2024-02-08
+Top 4 @TeamKujira ORCA 4 liquidations Asset by ($) for 7-days trailing 2024-02-08
 
 1,wFTM,for,$5167.906
 2,stOSMO,for,$79.448
