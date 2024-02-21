@@ -1,12 +1,11 @@
 // we make our types CSVy
 
-use std::str::Lines;
-
 use chrono::naive::NaiveDate; 
 
 use crate::{
-   list_utils::mk_cycle
-//   string_utils::to_string
+   compose,
+   list_utils::mk_cycle,
+   string_utils::{parse_lines,to_string}
 };
 
 // ----- Types -------------------------------------------------------
@@ -79,29 +78,15 @@ pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
 
 // ----- Parsers -------------------------------------------------------
 
-// fn cols<T: CsvWriter>(c: &T) -> usize { c.ncols() }
-
 // Got CSV? This fn will parse that CSV into Vec<T>
 
 pub fn parse_csv<T>(skip_lines: usize,
-                    f: impl Fn(&Vec<&str>) -> Result<T, String>,
-                    lines: &mut Lines) -> Result<Vec<T>, String> {
-/*
-   let linus: Vec<String> = lines.map(to_string).collect();
-   Ok(parse_csv(f, &linus, Some(skip_lines)))
-*/
-   let mut ans: Vec<T> = Vec::new();
-   let mut lines1 = lines.skip(skip_lines).peekable();
-   while lines1.peek().is_some() {
-      if let Some(line) = lines1.next() {
-         let row: Vec<&str> = line.split(",").collect();
-         let res = f(&row)?;
-         ans.push(res);
-      } else {
-         panic!("No next() when is_some() is true!");
-      }
+                    f: impl Fn(Vec<String>) -> Result<T, String>,
+                    lines: &Vec<String>) -> Result<Vec<T>, String> {
+   fn cols(line: String) -> Vec<String> {
+      line.split(",").map(to_string).collect()
    }
-   Ok(ans)
+   parse_lines(compose!(f)(cols), lines, Some(skip_lines))
 }
 
 // ----- Formatters -------------------------------------------------------

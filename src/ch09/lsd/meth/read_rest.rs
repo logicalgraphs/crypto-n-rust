@@ -3,7 +3,10 @@ use std::{
    io::Read
 };
 
-use book::csv_utils::parse_csv;
+use book::{
+   csv_utils::parse_csv,
+   string_utils::to_string
+};
 
 /* 
 The skeleton upon which this get-fetch example is based is:
@@ -23,7 +26,7 @@ pub fn fetch_burns() -> Result<HashMap<String,u8>, String> {
    let lg_url = "https://raw.githubusercontent.com/logicalgraphs";
    let burn_dir = "crypto-n-rust/main/src/ch09/lsd/data/burn-rates.csv";
    let csv = read_rest(&format!("{lg_url}/{burn_dir}"))?;
-   fn burn_f(row: &Vec<&str>) -> Result<(String, u8), String> {
+   fn burn_f(row: Vec<String>) -> Result<(String, u8), String> {
       if let [name, _, c, _] = row.as_slice() {
          let count: u8 = c.parse().expect(&format!("{c} is not a number"));
          Ok((name.to_string(), count))
@@ -31,8 +34,8 @@ pub fn fetch_burns() -> Result<HashMap<String,u8>, String> {
          Err(format!("{row:?} is not CSV-parseable!"))
       }
    }
-   let mut lines = csv.lines();
-   let rows = parse_csv(1, burn_f, &mut lines)?;
+   let lines: Vec<String> = csv.lines().map(to_string).collect();
+   let rows = parse_csv(1, burn_f, &lines)?;
    let burns: HashMap<String, u8> = rows.into_iter().collect();
    Ok(burns)
 }
