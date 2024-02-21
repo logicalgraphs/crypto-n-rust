@@ -5,11 +5,15 @@
 export LE_DATE=`date +%Y-%m-%d`
 DATA_DIR=$RUST_BOOK/data-files
 
+export CSV_DIR=$DATA_DIR/csv
+export ORCA_DIR=$DATA_DIR/ORCA
+export FIN_DIR=$DATA_DIR/FIN
+export PORT_DIR=$DATA_DIR/portfolio
+
+export COLORS=$CSV_DIR/supported_colors.tsv
 export CSV_LISTING=$DATA_DIR/csv/alles/cmc_listings.csv
 export PORT_LISTING=$DATA_DIR/csv/portfolio/my_portfolio.csv
 export HOLDINGS=$DATA_DIR/csv/portfolio_coins.lsv
-export ORCA_DIR=$DATA_DIR/ORCA
-export FIN_DIR=$DATA_DIR/FIN
 
 export FIN_TICKERS=https://api.kujira.app/api/coingecko/tickers
 
