@@ -4,7 +4,10 @@ use std::str::Lines;
 
 use chrono::naive::NaiveDate; 
 
-use crate::list_utils::mk_cycle;
+use crate::{
+   list_utils::mk_cycle
+//   string_utils::to_string
+};
 
 // ----- Types -------------------------------------------------------
 
@@ -81,17 +84,19 @@ pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
 // Got CSV? This fn will parse that CSV into Vec<T>
 
 pub fn parse_csv<T>(skip_lines: usize,
-                    f: impl Fn(&Vec<&str>) -> Result<Option<T>, String>,
+                    f: impl Fn(&Vec<&str>) -> Result<T, String>,
                     lines: &mut Lines) -> Result<Vec<T>, String> {
+/*
+   let linus: Vec<String> = lines.map(to_string).collect();
+   Ok(parse_csv(f, &linus, Some(skip_lines)))
+*/
    let mut ans: Vec<T> = Vec::new();
    let mut lines1 = lines.skip(skip_lines).peekable();
    while lines1.peek().is_some() {
       if let Some(line) = lines1.next() {
          let row: Vec<&str> = line.split(",").collect();
          let res = f(&row)?;
-         if let Some(tea) = res {
-            ans.push(tea);
-         }
+         ans.push(res);
       } else {
          panic!("No next() when is_some() is true!");
       }

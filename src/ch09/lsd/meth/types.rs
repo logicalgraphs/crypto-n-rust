@@ -124,12 +124,14 @@ impl CsvWriter for BurnlessLSD {
    fn as_csv(&self) -> String {
       format!("{},{},{:.4},{}", self.zone, token1(self), self.rate, self.halted)
    }
+   fn ncols(&self) -> usize { 4 }
 }
 
 impl CsvWriter for LSD {
    fn as_csv(&self) -> String {
       format!("{},{}", self.burnless.as_csv(), self.unbond)
    }
+   fn ncols(&self) -> usize { 2 }
 }
 
 pub fn print_lsds(date: &str, lsds: &Vec<LSD>) {

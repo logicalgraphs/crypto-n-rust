@@ -23,10 +23,10 @@ pub fn fetch_burns() -> Result<HashMap<String,u8>, String> {
    let lg_url = "https://raw.githubusercontent.com/logicalgraphs";
    let burn_dir = "crypto-n-rust/main/src/ch09/lsd/data/burn-rates.csv";
    let csv = read_rest(&format!("{lg_url}/{burn_dir}"))?;
-   fn burn_f(row: &Vec<&str>) -> Result<Option<(String, u8)>, String> {
+   fn burn_f(row: &Vec<&str>) -> Result<(String, u8), String> {
       if let [name, _, c, _] = row.as_slice() {
          let count: u8 = c.parse().expect(&format!("{c} is not a number"));
-         Ok(Some((name.to_string(), count)))
+         Ok((name.to_string(), count))
       } else {
          Err(format!("{row:?} is not CSV-parseable!"))
       }
