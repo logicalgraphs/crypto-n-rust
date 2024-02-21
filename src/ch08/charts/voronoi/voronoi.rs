@@ -21,9 +21,9 @@ fn usage() {
    println!("\n\trenders a voronoi-chart of protocol and ROI-data");
 }
 
-fn main() {
+fn main() -> Result<(), String> {
    if let (Some(colours), files) = ht(&get_args()) {
-      let mut palette = colors(&colours, 10);
+      let mut palette = colors(&colours, 10)?;
       print_prelude();
       for file in files {
          let lines = lines_from_file(&file);
@@ -36,6 +36,7 @@ fn main() {
    } else {
       usage();
    }
+   Ok(())
 }
 
 fn print_prelude() {

@@ -7,7 +7,10 @@ use std::{
     io::{prelude::*, BufReader},
 };
 
-use crate::list_utils::{ht,tail};
+use crate::{
+   list_utils::{ht,tail},
+   string_utils::parse_lines
+};
 
 pub fn lines_from_file(filename: &str) -> Vec<String> {
    let file = File::open(filename)
@@ -34,4 +37,10 @@ pub fn extract_date_and_body(file: &str) -> (String, Vec<String>) {
    } else {
       panic!("File empty");
    }
+}
+
+pub fn parse_data<T>(f: impl Fn(String) -> Result<T, String>, file: &str,
+                     skip_header: Option<usize>) -> Result<Vec<T>, String> {
+   let lines = lines_from_file(file);
+   parse_lines(f, &lines, skip_header)
 }

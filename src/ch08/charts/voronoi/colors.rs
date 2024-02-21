@@ -11,31 +11,22 @@ use std::{
 };
 
 use book::{
-   file_utils::lines_from_file,
+   compose,
+   file_utils::parse_data,
    string_utils::to_string
 };
 
-fn heador<T:Debug + Clone>(v: Vec<T>) -> Option<T> {
-   v.first().cloned()
-}
-
-// from Kirill A. Khalitov on Stack Overflow
-// https://stackoverflow.com/questions/45786955/how-to-compose-functions-in-rust
-
-macro_rules! compose {
-   ($f: expr) => {
-      move |g: fn(_) -> _| move |x: _| $f(g(x))
-   };
+fn heador<T:Debug + Clone>(v: Vec<T>) -> Result<T, String> {
+   v.first().ok_or(format!("No first element of {v:?}")).cloned()
 }
 
 fn tabs(s: String) -> Vec<String> {
    s.split("\t").map(to_string).collect()
 }
 
-pub fn colors(file: &str, n: usize) -> Vec<String> {
+pub fn colors(file: &str, n: usize) -> Result<Vec<String>, String> {
    let mut rng = thread_rng();
-   lines_from_file(file)
-      .into_iter()
-      .filter_map(compose!(heador)(tabs))
-      .choose_multiple(&mut rng, n)
+   let colours: Vec<String> =
+      parse_data(compose!(heador)(tabs), file, None)?;
+   Ok(colours.into_iter().choose_multiple(&mut rng, n))
 }
