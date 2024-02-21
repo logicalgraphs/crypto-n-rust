@@ -19,6 +19,9 @@ fn heador<T:Debug + Clone>(v: Vec<T>) -> Option<T> {
    v.first().cloned()
 }
 
+// from Kirill A. Khalitov on Stack Overflow
+// https://stackoverflow.com/questions/45786955/how-to-compose-functions-in-rust
+
 macro_rules! compose {
    ($f: expr) => {
       move |g: fn(_) -> _| move |x: _| $f(g(x))
