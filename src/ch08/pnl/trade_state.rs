@@ -24,6 +24,10 @@ pub fn destructure(s: &TradeState) -> (String, f32, f32, f32, f32, Vec<Trade>) {
    (date.clone(), *profit, *loss, *fees, *commission, trades.clone())
 }
 
+pub fn last_date(s: &TradeState) -> String {
+   s.date.clone()
+}
+
 pub fn trades(s: &TradeState) -> Vec<Trade> {
    s.trades.clone()
 }

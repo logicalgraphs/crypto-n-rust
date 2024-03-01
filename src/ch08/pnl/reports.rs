@@ -12,7 +12,7 @@ use crypto::types::{
    usd::{USD,mk_usd,no_monay,sum_usd}
 };
 
-use crate::trade_state::{TradeState,destructure,trades};
+use crate::trade_state::{TradeState,destructure,trades,last_date};
 
 // ----- Reporting --------------------------------------------------
 
@@ -41,12 +41,12 @@ pub fn report(state: &TradeState) {
       println!("{} at a {perc} premium (avg)\n", plural(n, "liquidation"));
    }
 
-   coalesce_trades(&trades);
+   coalesce_trades(&date, &trades);
 
    let lg = "https://github.com/logicalgraphs";
    let dir = "crypto-n-rust/blob/main/src/ch08/pnl/";
    let src = "pnl_with_liquidations.rs";
-   println!("pnl sources: {lg}/{dir}{src}\n\nAssets in play\n");
+   println!("pnl sources: {lg}/{dir}{src}\n");
 }
 
 pub fn enumerate_trades(ts: &TradeState) {
@@ -56,7 +56,7 @@ pub fn enumerate_trades(ts: &TradeState) {
 }
 
 fn trade_analysis(ts: &TradeState) {
-   println!("\nAnalysis\n");
+   println!("\n{} @TeamKujira PnL Analysis\n", last_date(ts));
    let mut all_days = HashMap::new();
    let mut pnl = no_monay();
    let trds = trades(&ts);
@@ -68,7 +68,7 @@ fn trade_analysis(ts: &TradeState) {
 
    let ntrades = trds.len() as f32;
    let ndays = all_days.len() as f32;
-   println!("Total number of days traded: {ndays}");
+   println!("Number of days traded: {ndays}");
    println!("Average number of trades/day: {}", mk_estimate(ntrades / ndays));
    println!("Average PnL/day: {}\n", mk_usd(pnl.amount / ndays));
 
@@ -89,7 +89,7 @@ fn trading_day(kind: &str, day: Option<&DailyPnL>) {
    }
 }
 
-fn coalesce_trades(t: &Vec<Trade>) {
+fn coalesce_trades(date: &String, t: &Vec<Trade>) {
    let mut all_trades = HashMap::new();
    for tr in t {
      let acc = all_trades.entry(trade(tr)).or_insert(no_monay());
@@ -109,6 +109,8 @@ fn coalesce_trades(t: &Vec<Trade>) {
    println!("");
 
    let (hi,lo) = first_last(&trades);
+   println!("{date} Kujira FIN pnl vs. trades\n");
+
    if let Some(prof) = hi {
       println!("Most profitable asset traded: {} for {}", prof.0, prof.1);
    }
