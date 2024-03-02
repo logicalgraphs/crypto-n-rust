@@ -3,7 +3,10 @@ use book::{
    utils::get_args
 };
 
-use crypto::rest_utils::read_markets;
+use crypto::{
+   rest_utils::read_market_json,
+   types::books::parse_books
+};
 
 use tob::reports::reportage;
 
@@ -22,8 +25,9 @@ fn main() -> Result<(), String> {
       let raw = frist == "--raw";
       if let Some(date) = if !raw { Some(frist) } else { head(&r1) } {
          success = true;
-         let json = read_markets()?;
-         reportage(&date, &json, get_minimum(raw, r1.last(), 50000.0));
+         let json = read_market_json()?;
+         let order_books = parse_books(&json);
+         reportage(&date, &order_books, get_minimum(raw, r1.last(), 50000.0));
       }
    }
    if !success {

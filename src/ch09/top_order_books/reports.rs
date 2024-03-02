@@ -1,18 +1,19 @@
+use std::collections::HashSet;
+
 use book::{
    csv_utils::{CsvWriter,list_csv},
    html_utils::Mode,
    report_utils::{print_footer, print_top_of}
 };
 
-use crypto::types::books::{Book,parse_books,count};
+use crypto::types::books::{Book,count};
 
 use crate::{
    analyzed_books::analyze,
    linked_books::{LinkedBook,mk_linked}
 };
 
-pub fn reportage(date: &str, body: &str, raw: Option<f32>) {
-   let books = parse_books(&body);
+pub fn reportage(date: &str, books: &HashSet<Book>, raw: Option<f32>) {
    let nbooks = books.len();
    let mut alles: Vec<Book> = books.clone().into_iter().collect();
    alles.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
@@ -23,9 +24,9 @@ pub fn reportage(date: &str, body: &str, raw: Option<f32>) {
    let ntop = alles.len();
 
    println!("I got {nbooks} books; {ntop} have $100,000+ 24h-volume, {date}");
-   count(&books, "axlUSDC");
-   count(&books, "USK");
-   count(&books, "USDC");
+   count(books, "axlUSDC");
+   count(books, "USK");
+   count(books, "USDC");
    print_txt(&v, date);
    print_html(&x, date);
 }
