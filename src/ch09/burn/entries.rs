@@ -130,6 +130,7 @@ fn sell1(tok: &str, bids: &Vec<Entry>, remaining: f32, amount: f32, mult: f32)
 
 impl CsvWriter for Entry {
    fn as_csv(&self) -> String { format!("{},{}", self.ratio, self.amount) }
+   fn ncols(&self) -> usize { 2 }
 }
 
 impl CsvWriter for OrderBook {
@@ -139,6 +140,7 @@ impl CsvWriter for OrderBook {
       let b = thunk("bids", &self.bids, false);
       format!("{namei}\n\n{a}\n\n{b}")
    }
+   fn ncols(&self) -> usize { 3 }
 }
 
 pub fn report_sale(book: &OrderBook, amt: f32, purchase: &Purchase) -> String {
@@ -173,6 +175,7 @@ impl CsvWriter for Purchase {
    fn as_csv(&self) -> String {
       format!("{},{},{}", self.quote, self.amount, self.remaining)
    }
+   fn ncols(&self) -> usize { 3 }
 }
 
 fn thunk(title: &str, section: &Vec<Entry>, revd: bool) -> String {

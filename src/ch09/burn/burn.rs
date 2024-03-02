@@ -1,7 +1,4 @@
-use bunsen::{
-   entries::{OrderBook, parse_orderbook, buy, report_buy, report_roi},
-   read_rest::read_orders
-};
+use bunsen::entries::{OrderBook, parse_orderbook, buy, report_buy, report_roi};
 
 use meth::{
    stride::fetch_stride_lsds,
@@ -10,9 +7,12 @@ use meth::{
 
 use book::{
    csv_utils::print_csv,
+   err_utils::ErrStr,
    list_utils::assoc_list,
    utils::get_args
 };
+
+use crypto::rest_utils::read_orders_json;
 
 fn usage() {
    let url = "https://api.kujira.app/api/coingecko/orderbook";
@@ -25,12 +25,12 @@ fn usage() {
    println!("\te.g.: {url}?{tick}\n");
 }
 
-fn main() -> Result<(), String> {
+fn main() -> ErrStr<()> {
    let args = get_args();
    let mut success = false;
    if let [amt, order_book] = args.as_slice() {
       let amount: f32 = amt.parse().expect(&format!("{amt} is not a number"));
-      let file = read_orders(&order_book, 30)?;
+      let file = read_orders_json(&order_book, 30)?;
       let book = parse_orderbook(&file)?;
       let lsds1 = fetch_stride_lsds()?;
       let lsds = assoc_list(lsds1, token);
