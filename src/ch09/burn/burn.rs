@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use bunsen::libs::{
    order_books::{OrderBook, parse_orderbook},
    purchases::buy,
@@ -6,13 +8,12 @@ use bunsen::libs::{
 
 use meth::{
    stride::fetch_stride_lsds,
-   types::{exchange_rate,token}
+   types::{LSD,exchange_rate,token}
 };
 
 use book::{
    csv_utils::print_csv,
    err_utils::ErrStr,
-   list_utils::assoc_list,
    utils::get_args
 };
 
@@ -37,7 +38,8 @@ fn main() -> ErrStr<()> {
       let file = read_orders_json(&order_book, 30)?;
       let book = parse_orderbook(&file)?;
       let lsds1 = fetch_stride_lsds()?;
-      let lsds = assoc_list(lsds1, token);
+      let lsds: HashMap<String, LSD> =
+         lsds1.into_iter().map(|l| (token(&l), l)).collect();
       if let Some(lsd) = lsds.get(&book.base) {
          let rate = exchange_rate(lsd);
          let burn = lsd.unbond;
