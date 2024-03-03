@@ -1,4 +1,8 @@
-use bunsen::entries::{OrderBook, parse_orderbook, buy, report_buy, report_roi};
+use bunsen::libs::{
+   order_books::{OrderBook, parse_orderbook},
+   purchases::buy,
+   reports::{report_buy, report_roi}
+};
 
 use meth::{
    stride::fetch_stride_lsds,
