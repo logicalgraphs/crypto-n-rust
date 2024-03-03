@@ -27,54 +27,36 @@ pub fn explode_purchase(p: &Purchase) -> (String, f32, f32, f32) {
 }
 
 pub fn buy(book: &OrderBook, amount: f32) -> Purchase {
-   buy1(&book.base, &book.asks, amount, 0.0, 0.0)
+   purchase(&book.base, &book.asks, amount, 0.0, 0.0, true)
 }
 
 pub fn sell(book: &OrderBook, amount: f32) -> Purchase {
-   sell1(&book.target, &book.bids, amount, 0.0, 0.0)
+   purchase(&book.target, &book.bids, amount, 0.0, 0.0, false)
    // a sell is the dual of a buy, ... right? ;)
 }
 
 // ------ Purchase functions --------------------------------------------------
 
-fn buy1(tok: &str, asks: &Vec<Entry>, remaining: f32, amount: f32, mult: f32)
-   -> Purchase {
-   if asks.is_empty() || remaining <= 0.0 {
+fn purchase(tok: &str, entries: &Vec<Entry>, remaining: f32, amount: f32,
+            mult: f32, buy: bool) -> Purchase {
+   if entries.is_empty() || remaining <= 0.0 {
       mk_purchase(tok, amount, mult, remaining)
    } else {
-      if let (Some(entry), rest) = ht(asks) {
+      if let (Some(entry), rest) = ht(entries) {
          let (quot, amt) = (entry.ratio, entry.amount);
-         let bought = remaining.min(amt * quot);
+         let bought = remaining.min(if buy { amt * quot } else { amt / quot });
          let new_rem = remaining - bought;
-         let new_amount = amount + bought / quot;
-         buy1(tok, &rest, new_rem, new_amount, mult + bought)
+         let new_amount = amount
+               + if buy { bought / quot } else { bought * quot };
+         purchase(tok, &rest, new_rem, new_amount, mult + bought, buy)
       } else {
-         panic!("Non-empty asks are empty!")
+         let err = format!("Non-empty {} are empty!",
+                           if buy { "asks" } else { "bids" });
+         panic!("{err}")
       }
    }
-}
 
-fn sell1(tok: &str, bids: &Vec<Entry>, remaining: f32, amount: f32, mult: f32)
-   -> Purchase {
-   if bids.is_empty() || remaining <= 0.0 {
-      mk_purchase(tok, amount, mult, remaining)
-   } else {
-      if let (Some(entry), rest) = ht(bids) {
-         let (quot, amt) = (entry.ratio, entry.amount);
-         let bought = remaining.min(amt / quot);
-         let new_rem = remaining - bought;
-         let new_amount = amount + bought * quot;
-         sell1(tok, &rest, new_rem, new_amount, mult + bought)
-      } else {
-         panic!("Non-empty bids are empty!")
-      }
-   }
 }
-
-/*
-fn purchase_fn(tok: &str, entries: &Vec<Entry>, remaining: f32, amount: f32,
-               mult: f32, 
-*/
 
 // ----- Printing functions -----------------------------------------
 
