@@ -1,6 +1,5 @@
 use std::{
    clone::Clone,
-   cmp::PartialEq,
    fmt::{Debug,Formatter, Result as Fresult},  // y'all can thank the Dylan
                                                // programming language for
                                                // item-renaming.
@@ -119,18 +118,4 @@ pub fn init<T: Clone>(list: &Vec<T>) -> Vec<T> {
       ans.push(t.clone());
    }
    ans
-}
-
-// splits a list into lists along some element
-
-// source: https://www.reddit.com/r/rust/comments/hgcpds/how_to_split_a_vector_by_an_entry_and_collect_all/
-
-pub fn split<T: PartialEq>(list: Vec<T>, splitter: T) -> Vec<Vec<T>> {
-   list.into_iter().fold(Vec::new(), |mut acc, x| {
-        if x == splitter || acc.is_empty() {
-            acc.push(Vec::new());
-        }
-        acc.last_mut().unwrap().push(x);
-        acc
-    })
 }

@@ -11,9 +11,11 @@ marketplace.
 
 ![Benqi Overview](imgs/benqi-marketplace.png)
 
+[Here](benqi/2024-03-02.lsv) is a sample of the copypasta'd Benqi assets.
+
 ## Run
 
-1. `$ cargo run data/benqi_overview.lsv`
+1. `$ cargo run benqi/2024-03-02.lsv`
 
 You should see a report looking something like this:
 

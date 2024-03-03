@@ -1,6 +1,6 @@
 use book::{
    file_utils::lines_from_file,
-   list_utils::{head,split},
+   list_utils::head,
    utils::get_args
 };
 
@@ -12,7 +12,7 @@ fn usage() {
 fn main() {
    if let Some(file) = head(get_args()) {
       if let [supplied, borrowed] =
-           split(lines_from_file(file),"BORROWED".to_string()).as_slice() {
+            lines_from_file(file).split(|l| l == "BORROWED") {
          preprocess_with_title("SUPPLIED", supplied.to_vec());
          preprocess_with_title("BORROWED", borrowed.to_vec());
       }
