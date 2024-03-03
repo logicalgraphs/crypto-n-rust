@@ -1,9 +1,9 @@
 use std::{
    clone::Clone,
    cmp::PartialEq,
-   collections::HashMap,
-   fmt,
-   hash::Hash,
+   fmt::{Debug,Formatter, Result as Fresult},  // y'all can thank the Dylan
+                                               // programming language for
+                                               // item-renaming.
    slice::Iter
 };
 
@@ -40,9 +40,9 @@ impl<'a, T:Clone> Iterator for InfListItr<'a, T> {
    }
 }
 
-impl<T:fmt::Debug> fmt::Debug for InfiniteList<T> {
-   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-      fn just_write(f: &mut fmt::Formatter<'_>, s: &str) {
+impl<T:Debug> Debug for InfiniteList<T> {
+   fn fmt(&self, f: &mut Formatter<'_>) -> Fresult {
+      fn just_write(f: &mut Formatter<'_>, s: &str) {
          fn ki() { }  // from combinatorics
          match write!(f, "{}", s) {
             Ok(_) => ki(),

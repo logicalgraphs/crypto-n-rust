@@ -15,6 +15,7 @@ use book::{
    file_utils::lines_from_file,
    json_utils::unquot,
    num_utils::mk_estimate
+   // utils::pred
 };
 
 use crate::types::{
@@ -175,6 +176,28 @@ pub fn prices(books: &HashSet<Book>) -> HashMap<String, USD> {
    }
    prices
 }
+
+// a new take on prices
+
+// FRIST! I load all axlUSDC prices (where prices are over $0.00)
+// then I overlay with USDC-prices and USK-prices (after converting USK
+// to axlUSDC-equivalent).
+
+// THEN I take the remaining order books and ratio their prices from base
+// price. Maybe I could just oracle everything, instead?
+
+/*
+pub fn prices_2(books: &HashSet<Book>) -> HashMap<String, USD> {
+   let b1: Vec<Book> = books.into_iter().collect();
+   let (axls, b2) = b1.split(|b| b.target == "axlUSDC"); // use partition
+   fn mb_book(b: &Book) -> Option<(String, USD)> {
+      pred(b.last > 0.0, (b.base, mk_usd(b.last)))
+   }
+   let prices: HashMap<String, USD> =
+      axls.into_iter().map(mb_book).collect();
+   prices
+}
+*/
 
 fn usk_price(usdcs: &HashSet<Book>) -> USD {
    let usks = usdcs.into_iter().find(|b| b.target == "USK");

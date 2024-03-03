@@ -25,3 +25,7 @@ macro_rules! compose {
       move |g: fn(_) -> _| move |x: _| $f(g(x))
    };
 }
+
+pub fn pred<T>(head: bool, consequence: T) -> Option<T> {
+   if head { Some(consequence) } else { None }
+}
