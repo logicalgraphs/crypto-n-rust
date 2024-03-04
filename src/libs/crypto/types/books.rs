@@ -186,67 +186,138 @@ pub fn prices(books: &HashSet<Book>) -> HashMap<String, USD> {
 // THEN I take the remaining order books and ratio their prices from base
 // price. Maybe I could just oracle everything, instead?
 
-type VPair<T> = (Vec<T>, Vec<T>);
-type BookItr = dyn IntoIterator<Item = Book, IntoIter = HashSet<Book>>;
-
+/*
 pub fn prices_2(books: &HashSet<Book>) -> HashMap<String, USD> {
-   fn part<'a, T>(v: &'a T, p: &'a str) -> VPair<&'a Book>
-      where T: IntoIterator<Item = &'a Book> {
-      let a = v.into_iter().partition(|b| b.target == p);
-      a
+   let (axls, b1) = part(&books, "axlUSDC");
+   let stables1: HashSet<&Book> =
+      books.iter().filter(|b| b.base == "axlUSDC").collect();
+
+   let mut stables2: HashSet<Book> = HashSet::new();
+      // books.into_iter().filter(|b| b.base == "axlUSDC").map(Clone::clone).collect();  ... why is this infinite loop?
+
+   for b in books {
+      if b.base == "axlUSDC" { stables2.insert(b.clone()); }
    }
-   let (axls, _b1) = part(&books, "axlUSDC");
 
    // okay, now I have the axlUSDC order books. That means I can get the
    // USK and USDC prices, relative to axlUSDC, which I am using as peg,
    // until I am convinced otherwise.
 
-   let _usk = stable_price(&axls.iter(), "USK");
-   let _usdc = stable_price(&axls.iter(), "USDC");
-
    // now let's add the prices, layer-by-layer, starting with axlUSDC-prices.
 
-   fn mb_book(factor: &USD) -> impl Fn(&&Book) -> Option<(String, USD)> + '_ {
+   fn mb_book(factor: &USD) -> impl Fn(&Book) -> Option<(String, USD)> + '_ {
       | b | {
          pred(b.last > 0.0 && b.vol_24h > 0.0,
               (b.base.clone(), mk_usd(b.last * factor.amount)))
       }
    }
-   fn mk_books(dollah: &USD, src: &Vec<&Book>) -> HashMap<String, USD> {
+   fn mk_books(dollah: &USD, src: &HashSet<Book>) -> HashMap<String, USD> {
       src.into_iter().filter_map(mb_book(dollah)).collect()
    }
-   let axlUSDC = mk_usd(1.0);
-   let paxl = mk_books(&axlUSDC, &axls);
-   print_books("axlUSDC", &paxl);
-/*
+   let axl_usdc = mk_usd(1.0);
+   let paxl = mk_books(&axl_usdc, &axls);
+
+   print_books("axlUSDC", &paxl);      // FIXME! remove
+   let stables = mk_books(&axl_usdc, &stables2);
+   print_books("stables", &stables);
+
+   let usk = stable_price(&stables1, "USK");
+   let usdc = stable_price(&stables1, "USDC");
+
+// we must add usk, usdc, and axlUSDC to the HashMap, ... OR ELSE! :<
+
+   fn print_stable(n: &str, s: &USD) {
+      println!("{n}: {s}");
+   }
+   print_stable("USK", &usk);
+   print_stable("USDC", &usdc);
+
    let (usdcs, _b2) = part(&b1, "USDC");
-   let qusdc = paxl.into_iter().chain(mk_books(&usdc, &usdcs)).collect();
-   print_books("USDC", &qusdc);
-   qusdc
+   let qusdc = mk_books(&usdc, &usdcs).into_iter().chain(paxl).collect();
+   // print_books("USDC", &qusdc);
+}
 */
-   paxl
+
+pub fn prices_3(books: &HashSet<Book>) -> HashMap<String, USD> {
+   let (stables, unstables) = stable_books(books);
+   let (axls, others) = books_for("axlUSDC", (&stables, &unstables));
+   let (usdcs, tail) = books_for("USDC", (&stables, &others));
+   let (usks, _rest) = books_for("USK", (&stables, &tail));
+   let prices =
+      usdcs.into_iter().chain(usks).chain(axls).chain(stables).collect();
+
+   // now the _rest's are fun!!! These are the order books that don't have a
+   // stable target, SO! we need to use the prices HashMap to find the price
+   // of the target to compute the price of the base.
+   prices
 }
 
-fn print_books(title: &str, books: &HashMap<String, USD>) {
-   println!("{title} books");
-   books.into_iter().for_each(|(a,b)| println!("{a}: {b}"));
+type VPair<T> = (HashSet<T>, HashSet<T>);
+type BookBooks = (HashMap<String, USD>, HashSet<Book>);
+type BookBooksRef<'a> = (&'a HashMap<String, USD>, &'a HashSet<Book>);
+
+fn part(f: impl Fn(&Book) -> &str, v: &HashSet<Book>, p: &str) -> VPair<Book> {
+   // why am I writing:
+   // v.into_iter().partition(|b| b.target == p)
+   // f'n copy-semantics and Rust, stg.
+   let mut left = HashSet::new();
+   let mut right = HashSet::new();
+   for b in v {
+      (if f(b) == p { &mut left } else { &mut right }).insert(b.clone());
+   }
+   (left, right)
 }
+
+fn books_for(stable: &str, (stables, books): BookBooksRef) -> BookBooks {
+   let (mines, yourses) = part(move |b: &Book| &b.target, books, stable);
+
+   fn mb_book(factor: &USD) -> impl Fn(&Book) -> Option<(String, USD)> + '_ {
+      | b | {
+         pred(b.last > 0.0 && b.vol_24h > 0.0,
+              (b.base.clone(), mk_usd(b.last * factor.amount)))
+      }
+   }
+   fn mk_books(dollah: &USD, src: &HashSet<Book>) -> HashMap<String, USD> {
+      src.into_iter().filter_map(mb_book(dollah)).collect()
+   }
+   let quote = stables.get(stable).unwrap();
+   (mk_books(quote, &mines), yourses)
+}
+
+fn stable_books(books: &HashSet<Book>) -> BookBooks {
+   let (stables, unstables) = part(|b: &Book| &b.base, books, "axlUSDC");
+   let mut books = HashMap::new();
+   for s in stables {
+      books.insert(s.target.clone(), compute_stable_price(&s));
+   }
+   books.insert("axlUSDC".to_string(), mk_usd(1.0));  // just how I rollz, yo!
+   (books, unstables)
+}
+
+/*
+fn print_books(title: &str, books: &HashMap<String, USD>) {
+   println!("\n{title} books");
+   books.into_iter().for_each(|(a,b)| println!("{a}: {b}"));
+   println!("");
+}
+*/
 
 fn usk_price(usdcs: &HashSet<Book>) -> USD {
-   let prim: Vec<&Book> = usdcs.into_iter().collect();
-   stable_price(&prim, "USK")
-   // stable_price(usdcs, "USK")
+   // let prim: HashSet<&Book> = usdcs.into_iter().collect();
+   // stable_price(&prim, "USK")
+   stable_price(usdcs, "USK")
 }
 
-fn stable_price<'a, T>(axlusdcs: &'a T, stable: &'a str) -> USD
-   where T: Iterator<Item = Book> {
+fn stable_price(axlusdcs: &HashSet<Book>, stable: &str) -> USD {
    let stables = axlusdcs.iter().find(|b| b.target == stable);
    if let Some(s) = stables {
-      mk_usd(1.0 / s.last)
+      compute_stable_price(&s)
    } else {
       panic!("Could not find {stable} price in order books!")
    }
 }
+
+fn compute_stable_price(b: &Book) -> USD { mk_usd(1.0 / b.last) }
 
 fn mb_insert(hm: &mut HashMap<String, USD>, b: &Book) {
    mb_insert_f(hm, b, |x| mk_usd(x.last))
