@@ -1,4 +1,5 @@
-// extracts current market data from https://api.kujira.app/api/coingecko/tickers
+// extracts current market data from 
+// https://api.kujira.app/api/coingecko/tickers
 
 extern crate serde;
 
@@ -186,58 +187,6 @@ pub fn prices(books: &HashSet<Book>) -> HashMap<String, USD> {
 // THEN I take the remaining order books and ratio their prices from base
 // price. Maybe I could just oracle everything, instead?
 
-/*
-pub fn prices_2(books: &HashSet<Book>) -> HashMap<String, USD> {
-   let (axls, b1) = part(&books, "axlUSDC");
-   let stables1: HashSet<&Book> =
-      books.iter().filter(|b| b.base == "axlUSDC").collect();
-
-   let mut stables2: HashSet<Book> = HashSet::new();
-      // books.into_iter().filter(|b| b.base == "axlUSDC").map(Clone::clone).collect();  ... why is this infinite loop?
-
-   for b in books {
-      if b.base == "axlUSDC" { stables2.insert(b.clone()); }
-   }
-
-   // okay, now I have the axlUSDC order books. That means I can get the
-   // USK and USDC prices, relative to axlUSDC, which I am using as peg,
-   // until I am convinced otherwise.
-
-   // now let's add the prices, layer-by-layer, starting with axlUSDC-prices.
-
-   fn mb_book(factor: &USD) -> impl Fn(&Book) -> Option<(String, USD)> + '_ {
-      | b | {
-         pred(b.last > 0.0 && b.vol_24h > 0.0,
-              (b.base.clone(), mk_usd(b.last * factor.amount)))
-      }
-   }
-   fn mk_books(dollah: &USD, src: &HashSet<Book>) -> HashMap<String, USD> {
-      src.into_iter().filter_map(mb_book(dollah)).collect()
-   }
-   let axl_usdc = mk_usd(1.0);
-   let paxl = mk_books(&axl_usdc, &axls);
-
-   print_books("axlUSDC", &paxl);      // FIXME! remove
-   let stables = mk_books(&axl_usdc, &stables2);
-   print_books("stables", &stables);
-
-   let usk = stable_price(&stables1, "USK");
-   let usdc = stable_price(&stables1, "USDC");
-
-// we must add usk, usdc, and axlUSDC to the HashMap, ... OR ELSE! :<
-
-   fn print_stable(n: &str, s: &USD) {
-      println!("{n}: {s}");
-   }
-   print_stable("USK", &usk);
-   print_stable("USDC", &usdc);
-
-   let (usdcs, _b2) = part(&b1, "USDC");
-   let qusdc = mk_books(&usdc, &usdcs).into_iter().chain(paxl).collect();
-   // print_books("USDC", &qusdc);
-}
-*/
-
 pub fn prices_3(books: &HashSet<Book>) -> HashMap<String, USD> {
    let (stables, unstables) = stable_books(books);
    let (axls, others) = books_for("axlUSDC", (&stables, &unstables));
@@ -246,9 +195,13 @@ pub fn prices_3(books: &HashSet<Book>) -> HashMap<String, USD> {
    let prices =
       usdcs.into_iter().chain(usks).chain(axls).chain(stables).collect();
 
+   // TODO:
    // now the _rest's are fun!!! These are the order books that don't have a
    // stable target, SO! we need to use the prices HashMap to find the price
    // of the target to compute the price of the base.
+
+   // TODO: somehow_compute_nonstable_order_book_token_prices()
+
    prices
 }
 
@@ -294,19 +247,7 @@ fn stable_books(books: &HashSet<Book>) -> BookBooks {
    (books, unstables)
 }
 
-/*
-fn print_books(title: &str, books: &HashMap<String, USD>) {
-   println!("\n{title} books");
-   books.into_iter().for_each(|(a,b)| println!("{a}: {b}"));
-   println!("");
-}
-*/
-
-fn usk_price(usdcs: &HashSet<Book>) -> USD {
-   // let prim: HashSet<&Book> = usdcs.into_iter().collect();
-   // stable_price(&prim, "USK")
-   stable_price(usdcs, "USK")
-}
+fn usk_price(usdcs: &HashSet<Book>) -> USD { stable_price(usdcs, "USK") }
 
 fn stable_price(axlusdcs: &HashSet<Book>, stable: &str) -> USD {
    let stables = axlusdcs.iter().find(|b| b.target == stable);
