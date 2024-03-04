@@ -191,18 +191,22 @@ pub fn prices_3(books: &HashSet<Book>) -> HashMap<String, USD> {
    let (stables, unstables) = stable_books(books);
    let (axls, others) = books_for("axlUSDC", (&stables, &unstables));
    let (usdcs, tail) = books_for("USDC", (&stables, &others));
-   let (usks, _rest) = books_for("USK", (&stables, &tail));
-   let prices =
-      usdcs.into_iter().chain(usks).chain(axls).chain(stables).collect();
+   let (usks, rest) = books_for("USK", (&stables, &tail));
+   let prices = usdcs.into_iter()
+                     .chain(usks)
+                     .chain(axls)
+                     .chain(stables)
+                     .collect();  // please note:
+                                  // for HashMap, chain() is not associative
 
-   // TODO:
-   // now the _rest's are fun!!! These are the order books that don't have a
+   // now the rest are fun!!! These are the order books that don't have a
    // stable target, SO! we need to use the prices HashMap to find the price
    // of the target to compute the price of the base.
 
-   // TODO: somehow_compute_nonstable_order_book_token_prices()
-
-   prices
+   let baros: HashMap<String, USD> = rest.iter()
+       .filter_map(barometric_board(&prices))
+       .collect();
+   baros.into_iter().chain(prices).collect()
 }
 
 type VPair<T> = (HashSet<T>, HashSet<T>);
@@ -221,15 +225,16 @@ fn part(f: impl Fn(&Book) -> &str, v: &HashSet<Book>, p: &str) -> VPair<Book> {
    (left, right)
 }
 
+fn mb_book(factor: &USD) -> impl Fn(&Book) -> Option<(String, USD)> + '_ {
+   | b | {
+      pred(b.last > 0.0 && b.vol_24h > 0.0,
+           (b.base.clone(), mk_usd(b.last * factor.amount)))
+   }
+}
+
 fn books_for(stable: &str, (stables, books): BookBooksRef) -> BookBooks {
    let (mines, yourses) = part(move |b: &Book| &b.target, books, stable);
 
-   fn mb_book(factor: &USD) -> impl Fn(&Book) -> Option<(String, USD)> + '_ {
-      | b | {
-         pred(b.last > 0.0 && b.vol_24h > 0.0,
-              (b.base.clone(), mk_usd(b.last * factor.amount)))
-      }
-   }
    fn mk_books(dollah: &USD, src: &HashSet<Book>) -> HashMap<String, USD> {
       src.into_iter().filter_map(mb_book(dollah)).collect()
    }
@@ -245,6 +250,17 @@ fn stable_books(books: &HashSet<Book>) -> BookBooks {
    }
    books.insert("axlUSDC".to_string(), mk_usd(1.0));  // just how I rollz, yo!
    (books, unstables)
+}
+
+// Here, we take the books that don't have a stable target, or so I think, then
+// compute the prices for the bases to round out the token-prices-list.
+
+fn barometric_board(prices: &HashMap<String, USD>) -> impl Fn(&Book)
+   -> Option<(String, USD)> + '_ {
+   fn mb_book_f(b: &Book) -> impl Fn(&USD) -> Option<(String, USD)> + '_ {
+      |price| { mb_book(price)(b) }
+   }
+   |book| prices.get(&book.target).map(mb_book_f(book)).flatten()
 }
 
 fn usk_price(usdcs: &HashSet<Book>) -> USD { stable_price(usdcs, "USK") }
