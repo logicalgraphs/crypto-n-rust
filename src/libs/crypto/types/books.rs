@@ -14,8 +14,8 @@ use book::{
    csv_utils::CsvWriter,
    file_utils::lines_from_file,
    json_utils::unquot,
-   num_utils::mk_estimate
-   // utils::pred
+   num_utils::mk_estimate,
+   utils::pred
 };
 
 use crate::types::{
@@ -186,25 +186,65 @@ pub fn prices(books: &HashSet<Book>) -> HashMap<String, USD> {
 // THEN I take the remaining order books and ratio their prices from base
 // price. Maybe I could just oracle everything, instead?
 
-/*
+type VPair<T> = (Vec<T>, Vec<T>);
+type BookItr = dyn IntoIterator<Item = Book, IntoIter = HashSet<Book>>;
+
 pub fn prices_2(books: &HashSet<Book>) -> HashMap<String, USD> {
-   let b1: Vec<Book> = books.into_iter().collect();
-   let (axls, b2) = b1.split(|b| b.target == "axlUSDC"); // use partition
-   fn mb_book(b: &Book) -> Option<(String, USD)> {
-      pred(b.last > 0.0, (b.base, mk_usd(b.last)))
+   fn part<'a, T>(v: &'a T, p: &'a str) -> VPair<&'a Book>
+      where T: IntoIterator<Item = &'a Book> {
+      let a = v.into_iter().partition(|b| b.target == p);
+      a
    }
-   let prices: HashMap<String, USD> =
-      axls.into_iter().map(mb_book).collect();
-   prices
-}
+   let (axls, _b1) = part(&books, "axlUSDC");
+
+   // okay, now I have the axlUSDC order books. That means I can get the
+   // USK and USDC prices, relative to axlUSDC, which I am using as peg,
+   // until I am convinced otherwise.
+
+   let _usk = stable_price(&axls.iter(), "USK");
+   let _usdc = stable_price(&axls.iter(), "USDC");
+
+   // now let's add the prices, layer-by-layer, starting with axlUSDC-prices.
+
+   fn mb_book(factor: &USD) -> impl Fn(&&Book) -> Option<(String, USD)> + '_ {
+      | b | {
+         pred(b.last > 0.0 && b.vol_24h > 0.0,
+              (b.base.clone(), mk_usd(b.last * factor.amount)))
+      }
+   }
+   fn mk_books(dollah: &USD, src: &Vec<&Book>) -> HashMap<String, USD> {
+      src.into_iter().filter_map(mb_book(dollah)).collect()
+   }
+   let axlUSDC = mk_usd(1.0);
+   let paxl = mk_books(&axlUSDC, &axls);
+   print_books("axlUSDC", &paxl);
+/*
+   let (usdcs, _b2) = part(&b1, "USDC");
+   let qusdc = paxl.into_iter().chain(mk_books(&usdc, &usdcs)).collect();
+   print_books("USDC", &qusdc);
+   qusdc
 */
+   paxl
+}
+
+fn print_books(title: &str, books: &HashMap<String, USD>) {
+   println!("{title} books");
+   books.into_iter().for_each(|(a,b)| println!("{a}: {b}"));
+}
 
 fn usk_price(usdcs: &HashSet<Book>) -> USD {
-   let usks = usdcs.into_iter().find(|b| b.target == "USK");
-   if let Some(u) = usks {
-      mk_usd(1.0 / u.last)
+   let prim: Vec<&Book> = usdcs.into_iter().collect();
+   stable_price(&prim, "USK")
+   // stable_price(usdcs, "USK")
+}
+
+fn stable_price<'a, T>(axlusdcs: &'a T, stable: &'a str) -> USD
+   where T: Iterator<Item = Book> {
+   let stables = axlusdcs.iter().find(|b| b.target == stable);
+   if let Some(s) = stables {
+      mk_usd(1.0 / s.last)
    } else {
-      panic!("Could not find USK price in order books!")
+      panic!("Could not find {stable} price in order books!")
    }
 }
 
