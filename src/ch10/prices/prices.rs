@@ -44,8 +44,8 @@ fn main() -> Result<(), String> {
    Ok(())
 }
 
-fn alias(aliases: &HashMap<String, String>, i: &str) -> String {
-   (if let Some(ali) = aliases.get(i) { ali } else { i }).to_string()
+fn alias(aliases: &HashMap<String, String>, i: &String) -> String {
+   aliases.get(i).or(Some(i)).unwrap().clone()
 }
 
 fn load_aliases(file: &str) -> HashMap<String, String> {
