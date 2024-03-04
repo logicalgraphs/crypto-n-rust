@@ -21,7 +21,7 @@ use book::{
 
 use crate::types::{
    marketplace::{OrderBook,mk_orderbook},
-   usd::{USD,mk_usd,no_monay}
+   usd::{USD,mk_usd}
 };
 
 #[derive(Debug, Clone)]
@@ -144,40 +144,6 @@ pub fn book_orderbook(prices: &HashMap<String, USD>)
    }
 }
 
-pub fn prices(books: &HashSet<Book>) -> HashMap<String, USD> {
-   let mut prices: HashMap<String, USD> = HashMap::new();
-   let usdcs = fetch_books(books, "axlUSDC");
-   let usk = usk_price(&usdcs);
-   prices.insert("USK".to_string(), usk);
-   prices.insert("axlUSDC".to_string(), mk_usd(1.0));
-   let mut other_books: HashSet<Book> = books.clone();
-
-   // we insert the USDC order book prices, because last_price==ratio==quote
-   // for the USDC order books, at any rate.
-
-   for b in usdcs {
-      mb_insert(&mut prices, &b);
-      other_books.remove(&b);
-   }
-
-   // we insert the USK order books for those tokens that have only an USK
-   // counterpart.
-
-   let usks = fetch_books(&other_books, "USK");
-
-   for b in usks {
-      mb_insert_usk(&mut prices, &b, &usk);
-      other_books.remove(&b);
-   }
-
-   // then we load all the remaining prices. Now, last_price === ratio
-
-   for b in other_books {
-      mb_insert_price(&mut prices, &b);
-   }
-   prices
-}
-
 // a new take on prices
 
 // FRIST! I load all axlUSDC prices (where prices are over $0.00)
@@ -187,7 +153,7 @@ pub fn prices(books: &HashSet<Book>) -> HashMap<String, USD> {
 // THEN I take the remaining order books and ratio their prices from base
 // price. Maybe I could just oracle everything, instead?
 
-pub fn prices_3(books: &HashSet<Book>) -> HashMap<String, USD> {
+pub fn prices(books: &HashSet<Book>) -> HashMap<String, USD> {
    let (stables, unstables) = stable_books(books);
    let (axls, others) = books_for("axlUSDC", (&stables, &unstables));
    let (usdcs, tail) = books_for("USDC", (&stables, &others));
@@ -197,10 +163,12 @@ pub fn prices_3(books: &HashSet<Book>) -> HashMap<String, USD> {
                      .chain(axls)
                      .chain(stables)
                      .collect();  // please note:
-                                  // for HashMap, chain() is not associative
+                                  // for HashMap, chain() is not associative.
+                                  // This means the LAST map I chain is the
+                                  // MOST IMPORTANT for prices.
 
    // now the rest are fun!!! These are the order books that don't have a
-   // stable target, SO! we need to use the prices HashMap to find the price
+   // stable target, SO! we need to use the prices-HashMap to find the price
    // of the target to compute the price of the base.
 
    let baros: HashMap<String, USD> = rest.iter()
@@ -214,9 +182,10 @@ type BookBooks = (HashMap<String, USD>, HashSet<Book>);
 type BookBooksRef<'a> = (&'a HashMap<String, USD>, &'a HashSet<Book>);
 
 fn part(f: impl Fn(&Book) -> &str, v: &HashSet<Book>, p: &str) -> VPair<Book> {
-   // why am I writing:
-   // v.into_iter().partition(|b| b.target == p)
-   // f'n copy-semantics and Rust, stg.
+
+   // why am I writing: v.into_iter().partition(|b| b.target == p)
+   // in long-form? f'n copy-semantics and Rust, stg.
+
    let mut left = HashSet::new();
    let mut right = HashSet::new();
    for b in v {
@@ -224,6 +193,8 @@ fn part(f: impl Fn(&Book) -> &str, v: &HashSet<Book>, p: &str) -> VPair<Book> {
    }
    (left, right)
 }
+
+// only consider prices from books that have had trades today ... functionally!
 
 fn mb_book(factor: &USD) -> impl Fn(&Book) -> Option<(String, USD)> + '_ {
    | b | {
@@ -255,53 +226,12 @@ fn stable_books(books: &HashSet<Book>) -> BookBooks {
 // Here, we take the books that don't have a stable target, or so I think, then
 // compute the prices for the bases to round out the token-prices-list.
 
-fn barometric_board(prices: &HashMap<String, USD>) -> impl Fn(&Book)
-   -> Option<(String, USD)> + '_ {
-   fn mb_book_f(b: &Book) -> impl Fn(&USD) -> Option<(String, USD)> + '_ {
+fn barometric_board(prices: &HashMap<String, USD>)
+         -> impl Fn(&Book) -> Option<(String, USD)> + '_ {
+   fn mb_price(b: &Book) -> impl Fn(&USD) -> Option<(String, USD)> + '_ {
       |price| { mb_book(price)(b) }
    }
-   |book| prices.get(&book.target).map(mb_book_f(book)).flatten()
-}
-
-fn usk_price(usdcs: &HashSet<Book>) -> USD { stable_price(usdcs, "USK") }
-
-fn stable_price(axlusdcs: &HashSet<Book>, stable: &str) -> USD {
-   let stables = axlusdcs.iter().find(|b| b.target == stable);
-   if let Some(s) = stables {
-      compute_stable_price(&s)
-   } else {
-      panic!("Could not find {stable} price in order books!")
-   }
+   |book| prices.get(&book.target).and_then(mb_price(book))
 }
 
 fn compute_stable_price(b: &Book) -> USD { mk_usd(1.0 / b.last) }
-
-fn mb_insert(hm: &mut HashMap<String, USD>, b: &Book) {
-   mb_insert_f(hm, b, |x| mk_usd(x.last))
-}
-
-fn mb_insert_usk(hm: &mut HashMap<String, USD>, b: &Book, usk: &USD) {
-   mb_insert_f(hm, b, |x| mk_usd(x.last * usk.amount))
-}
-
-fn mb_insert_price(hm: &mut HashMap<String, USD>, b: &Book) {
-   let h2 = hm.clone();
-   mb_insert_f(hm, b, |x| price(x, &h2))
-}
-
-fn mb_insert_f(hm: &mut HashMap<String, USD>, b: &Book,
-               f: impl Fn(&Book) -> USD) {
-   let key = &b.base;
-   if !hm.contains_key(key) {
-      let zot = if b.vol_24h > 100.0 { f(b) } else { no_monay() };
-      hm.insert(key.clone(), zot);
-   }
-}
-
-fn price(b: &Book, hm: &HashMap<String, USD>) -> USD {
-   if let Some(targe) = hm.get(&b.target) {
-      mk_usd(targe.amount * b.last)
-   } else {
-      panic!("Could not find {} price!", b.target)
-   }
-}

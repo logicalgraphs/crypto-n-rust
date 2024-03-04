@@ -8,7 +8,7 @@ use book::{
 
 use crypto::{
    rest_utils::read_market_json,
-   types::books::{parse_books,prices_3}
+   types::books::{parse_books,prices}
 };
 
 fn usage() {
@@ -22,7 +22,7 @@ fn main() -> Result<(), String> {
       println!("asset,quote");
       let market = read_market_json()?;
       let books = parse_books(&market);
-      let mut all_prices: Vec<_> = prices_3(&books).into_iter().collect();
+      let mut all_prices: Vec<_> = prices(&books).into_iter().collect();
       fn root(s: &str) -> String {
          s.trim_matches(char::is_lowercase).to_string()
       }
