@@ -4,6 +4,7 @@ use std::{
    cmp::Ordering,
    fmt,
    hash::{Hash,Hasher},
+   ops::Add,
    str::FromStr
 };
 
@@ -65,6 +66,13 @@ impl PartialOrd for USD {
    }
 }
 
+impl Add for USD {
+   type Output = Self;
+   fn add(self, rhs: USD) -> Self {
+      mk_usd(self.amount + rhs.amount)
+   }
+}
+
 // ----- ... and our methods -------------------------------------------------
 
 pub fn mk_usd(amount: f32) -> USD {
@@ -74,7 +82,3 @@ pub fn mk_usd(amount: f32) -> USD {
 
 pub fn no_monay() -> USD { mk_usd(0.0) }
 
-// Monoid on Add
-pub fn sum_usd(a: &USD, b: &USD) -> USD {
-   mk_usd(a.amount + b.amount)
-}

@@ -9,10 +9,7 @@ use book::{
    utils::get_args
 };
 
-use crypto::{
-   rest_utils::read_market_json,
-   types::books::{parse_books,prices}
-};
+use crypto::types::books::prices;
 
 fn usage() {
    println!("./prices <asset aliases CSV>\n");
@@ -23,9 +20,7 @@ fn main() -> Result<(), String> {
    if let Some(aliases_file) = get_args().first() {
       let aliases = load_aliases(&aliases_file);
       println!("asset,quote");
-      let market = read_market_json()?;
-      let books = parse_books(&market);
-      let all_prices1 = prices(&books);
+      let all_prices1 = prices();
       let mut all_prices: Vec<_> =
          all_prices1.into_iter()
                     .map(|(k,v)| (alias(&aliases, &k), v))
