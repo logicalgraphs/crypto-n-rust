@@ -1,29 +1,28 @@
-use std::collections::HashSet;
-
 use book::{
    csv_utils::{CsvWriter,list_csv},
    html_utils::Mode,
    report_utils::{print_footer, print_top_of}
 };
 
-use crypto::types::books::{Book,count};
+use crypto::types::books::{Book,Books,count,vol_24h};
 
 use crate::{
    analyzed_books::analyze,
    linked_books::{LinkedBook,mk_linked}
 };
 
-pub fn reportage(date: &str, books: &HashSet<Book>, raw: Option<f32>) {
+pub fn reportage(date: &str, books: &Books, raw: Option<f32>) {
    let nbooks = books.len();
    let mut alles: Vec<Book> = books.clone().into_iter().collect();
-   alles.sort_by(|a, b| b.vol_24h.partial_cmp(&a.vol_24h).unwrap());
+   alles.sort_by(|a, b| vol_24h(b).partial_cmp(&vol_24h(a)).unwrap());
    let x: Vec<Book> = alles.clone().into_iter().take(10).collect();
    let v: Vec<Book> = x.clone().into_iter().take(5).collect();
    if let Some(min) = raw { print_alles(&alles, date, min); }
-   alles.retain(|b| b.vol_24h > 100000.0);
+   alles.retain(|b| vol_24h(b).amount > 100000.0);
    let ntop = alles.len();
 
-   println!("I got {nbooks} books; {ntop} have $100,000+ 24h-volume, {date}");
+   println!("I got {} active books; {} have $100,000+ 24h-volume, {}",
+            nbooks, ntop, date);
    count(books, "axlUSDC");
    count(books, "USK");
    count(books, "USDC");
@@ -38,7 +37,7 @@ fn print_txt<T: CsvWriter>(tops: &Vec<T>, date: &str) {
 
 fn print_alles(alles: &Vec<Book>, date: &str, min: f32) {
    let mut ballz = alles.clone();
-   ballz.retain(|b| b.vol_24h > min);
+   ballz.retain(|b| vol_24h(b).amount > min);
    println!("FIN order books by volume, {date}\n");
    println!("{}\n", list_csv(&analyze(&ballz)));
 }
