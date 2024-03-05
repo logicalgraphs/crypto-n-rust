@@ -7,7 +7,6 @@ use serde::{Deserialize,Deserializer};
 use serde_json::{Value, from_str};
 
 use std::{
-   clone::Clone,
    collections::{HashMap,HashSet},
    hash::{Hash,Hasher}
 };
@@ -56,6 +55,12 @@ pub struct Book {
 }
 
 pub fn vol_24h(b: &Book) -> USD { b.base_vol + b.target_vol }
+
+type VPair = (String, USD);
+pub fn vols(b: &Book) -> (VPair, VPair) {
+   ((b.base.clone(), b.base_vol.clone()),
+    (b.target.clone(), b.target_vol.clone()))
+}
 
 #[derive(Deserialize)]
 struct BooksVec {
@@ -157,9 +162,7 @@ impl Eq for Book {}
 
 impl CsvWriter for Book {
    fn as_csv(&self) -> String {
-      format!("{},{},{},{},{},{}",
-              ticker(self), estimate(self),
-              self.base, self.base_vol, self.target, self.target_vol)
+      format!("{},{}", ticker(self), estimate(self))
    }
    fn ncols(&self) -> usize { 6 }
 }
@@ -246,11 +249,11 @@ fn prices_from_books(books: &Books1) -> Prices {
    baros.into_iter().chain(prices).collect()
 }
 
-type VPair<T> = (HashSet<T>, HashSet<T>);
+type VHashes<T> = (HashSet<T>, HashSet<T>);
 type Book1Books = (Prices, HashSet<Book1>);
 type Book1BooksRef<'a> = (&'a Prices, &'a Books1);
 
-fn part(f: impl Fn(&Book1) -> &str, v: &Books1, p: &str) -> VPair<Book1> {
+fn part(f: impl Fn(&Book1) -> &str, v: &Books1, p: &str) -> VHashes<Book1> {
 
    // why am I writing: v.into_iter().partition(|b| b.target == p)
    // in long-form? f'n copy-semantics and Rust, stg.
