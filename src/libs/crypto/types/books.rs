@@ -37,6 +37,8 @@ pub struct Book {
    base: String,
    target: String,
    pool_id: String,
+   base_vol: f32,
+   target_vol: f32,
    pub vol_24h: f32,
    pub last: f32
 }
@@ -67,9 +69,11 @@ impl<'de> Deserialize<'de> for Book {
       let lask1 = unquot(&json, "last_price");
       let last: f32 = lask1.parse().expect("last_price");
       let vol_raw2 = unquot(&json, "base_volume");
-      let vol_raw: f32 = vol_raw2.parse().expect("24h vol");
-      let vol_24h = vol_raw * last;
-      Ok(Book { base, target, pool_id, vol_24h, last })
+      let base_vol: f32 = vol_raw2.parse().expect("base vol");
+      let vol_24h = 2.0 * base_vol * last;
+      let vol_raw1 = unquot(&json, "target_volume");
+      let target_vol: f32 = vol_raw1.parse().expect("target vol");
+      Ok(Book { base, target, pool_id, base_vol, target_vol, vol_24h, last })
    }
 }
 
@@ -93,9 +97,11 @@ impl Eq for Book {}
 
 impl CsvWriter for Book {
    fn as_csv(&self) -> String {
-      format!("{},{}", ticker(self), estimate(self))
+      format!("{},{},{},{},{},{}",
+              ticker(self), estimate(self),
+              self.base, self.base_vol, self.target, self.target_vol)
    }
-   fn ncols(&self) -> usize { 2 }
+   fn ncols(&self) -> usize { 6 }
 }
 
 pub fn fetch_books(fin: &HashSet<Book>, token: &str) -> HashSet<Book> {
