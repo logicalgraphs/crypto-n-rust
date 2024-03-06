@@ -2,55 +2,100 @@
 ORCA liquidations by Market
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
-2024-02-26,USK,LUNA,1,$0.000,USK->LUNA, , , , , , , ,5,USK,stATOM,5,$1231.313,USK->stATOM
-2024-02-24,xaxlUSDC,MNTA,1,$239.437,xaxlUSDC->MNTA, , , , , , , ,3,USK,LUNA,3,$1727.882,USK->LUNA
-2024-02-23,USK,stATOM,2,$1188.222,USK->stATOM, , , , , , , ,2,USK,LINK,2,$2677.485,USK->LINK
-2024-02-23,USK,LINK,2,$2677.485,USK->LINK, , , , , , , ,1,xaxlUSDC,MNTA,1,$239.437,xaxlUSDC->MNTA
-2024-02-20,USK,stATOM,2,$0.308,USK->stATOM, , , , , , , , , , , , , ,
-2024-02-19,USK,LUNA,2,$1727.882,USK->LUNA, , , , , , , , , , , , , ,
-2024-02-19,USK,stATOM,1,$42.783,USK->stATOM, , , , , , , , , , , , , ,
+2024-03-05,xLUNA,USK,2,$0.741,xLUNA->USK, , , , , , , ,12,USK,LUNA,12,$4733.267,USK->LUNA
+2024-03-05,xaxlUSDC,ARB,1,$58.553,xaxlUSDC->ARB, , , , , , , ,8,xLUNA,KUJI,8,$7268.556,xLUNA->KUJI
+2024-03-05,USK,LUNA,6,$874.558,USK->LUNA, , , , , , , ,7,USK,stATOM,7,$3477.075,USK->stATOM
+2024-03-05,xaxlUSDC,KUJI,2,$3772.648,xaxlUSDC->KUJI, , , , , , , ,5,USK,INJ,5,$24782.773,USK->INJ
+2024-03-05,xLUNA,KUJI,6,$7225.622,xLUNA->KUJI, , , , , , , ,4,xUSK,KUJI,4,$5977.860,xUSK->KUJI
+2024-03-05,USK,whSOL,2,$993.296,USK->whSOL, , , , , , , ,3,USK,ATOM,3,$818.628,USK->ATOM
+2024-03-05,USK,INJ,2,$3945.584,USK->INJ, , , , , , , ,3,xaxlUSDC,MNTA,3,$708.126,xaxlUSDC->MNTA
+2024-03-04,xATOM,axlUSDC,1,$1.287,xATOM->axlUSDC, , , , , , , ,2,xaxlUSDC,AKT,2,$827.904,xaxlUSDC->AKT
+2024-03-04,xaxlUSDC,MNTA,2,$431.449,xaxlUSDC->MNTA, , , , , , , ,2,USK,whSOL,2,$993.296,USK->whSOL
+2024-03-04,xUSK,KUJI,2,$1371.202,xUSK->KUJI, , , , , , , ,2,USK,ARB,2,$7.752,USK->ARB
+2024-03-03,xaxlUSDC,AKT,2,$827.904,xaxlUSDC->AKT, , , , , , , ,2,xaxlUSDC,KUJI,2,$3772.648,xaxlUSDC->KUJI
+2024-03-03,xUSK,KUJI,2,$4606.658,xUSK->KUJI, , , , , , , ,2,xLUNA,USK,2,$0.741,xLUNA->USK
+2024-03-03,USK,stATOM,5,$3374.375,USK->stATOM, , , , , , , ,2,USK,STARS,2,$0.001,USK->STARS
+2024-03-03,USK,ATOM,2,$818.508,USK->ATOM, , , , , , , ,1,xATOM,axlUSDC,1,$1.287,xATOM->axlUSDC
+2024-03-02,USK,stATOM,2,$102.700,USK->stATOM, , , , , , , ,1,xaxlUSDC,ARB,1,$58.553,xaxlUSDC->ARB
+2024-03-02,USK,INJ,1,$99.442,USK->INJ, , , , , , , , , , , , , ,
+2024-03-02,xLUNA,KUJI,2,$42.935,xLUNA->KUJI, , , , , , , , , , , , , ,
+2024-03-01,USK,STARS,2,$0.001,USK->STARS, , , , , , , , , , , , , ,
+2024-02-29,xaxlUSDC,MNTA,1,$276.677,xaxlUSDC->MNTA, , , , , , , , , , , , , ,
+2024-02-28,USK,ATOM,1,$0.119,USK->ATOM, , , , , , , , , , , , , ,
+2024-02-28,USK,ARB,2,$7.752,USK->ARB, , , , , , , , , , , , , ,
+2024-02-28,USK,LUNA,6,$3858.708,USK->LUNA, , , , , , , , , , , , , ,
+2024-02-28,USK,INJ,2,$20737.748,USK->INJ, , , , , , , , , , , , , ,
 
-Top 4 @TeamKujira ORCA 4 liquidations Market by ($) for 7-days trailing 2024-02-26
+Top 5 @TeamKujira ORCA 5 liquidations Market by ($) for 7-days trailing 2024-03-05
 
-1,USK->LINK,for,$2677.485
-2,USK->LUNA,for,$1727.882
-3,USK->stATOM,for,$1231.313
-4,xaxlUSDC->MNTA,for,$239.437
+1,USK->INJ,for,$24782.773
+2,xLUNA->KUJI,for,$7268.556
+3,xUSK->KUJI,for,$5977.860
+4,USK->LUNA,for,$4733.267
+5,xaxlUSDC->KUJI,for,$3772.648
 
 Raw CSV of report archived at https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/ORCA/report.csv
 
 ORCA liquidations by Bid
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
-2024-02-26,USK,---,1,$0.000,USK, , , , , , , ,10,USK,---,10,$5636.680,USK
-2024-02-24,xaxlUSDC,---,1,$239.437,xaxlUSDC, , , , , , , ,1,xaxlUSDC,---,1,$239.437,xaxlUSDC
-2024-02-23,USK,---,4,$3865.707,USK, , , , , , , , , , , , , ,
-2024-02-20,USK,---,2,$0.308,USK, , , , , , , , , , , , , ,
-2024-02-19,USK,---,3,$1770.665,USK, , , , , , , , , , , , , ,
+2024-03-05,xaxlUSDC,---,3,$3831.201,xaxlUSDC, , , , , , , ,33,USK,---,33,$34812.793,USK
+2024-03-05,xLUNA,---,8,$7226.363,xLUNA, , , , , , , ,10,xLUNA,---,10,$7269.297,xLUNA
+2024-03-05,USK,---,10,$5813.438,USK, , , , , , , ,8,xaxlUSDC,---,8,$5367.230,xaxlUSDC
+2024-03-04,xATOM,---,1,$1.287,xATOM, , , , , , , ,4,xUSK,---,4,$5977.860,xUSK
+2024-03-04,xaxlUSDC,---,2,$431.449,xaxlUSDC, , , , , , , ,1,xATOM,---,1,$1.287,xATOM
+2024-03-04,xUSK,---,2,$1371.202,xUSK, , , , , , , , , , , , , ,
+2024-03-03,xUSK,---,2,$4606.658,xUSK, , , , , , , , , , , , , ,
+2024-03-03,USK,---,7,$4192.884,USK, , , , , , , , , , , , , ,
+2024-03-03,xaxlUSDC,---,2,$827.904,xaxlUSDC, , , , , , , , , , , , , ,
+2024-03-02,xLUNA,---,2,$42.935,xLUNA, , , , , , , , , , , , , ,
+2024-03-02,USK,---,3,$202.142,USK, , , , , , , , , , , , , ,
+2024-03-01,USK,---,2,$0.001,USK, , , , , , , , , , , , , ,
+2024-02-29,xaxlUSDC,---,1,$276.677,xaxlUSDC, , , , , , , , , , , , , ,
+2024-02-28,USK,---,11,$24604.328,USK, , , , , , , , , , , , , ,
 
-Top 2 @TeamKujira ORCA 2 liquidations Bid by ($) for 7-days trailing 2024-02-26
+Top 5 @TeamKujira ORCA 5 liquidations Bid by ($) for 7-days trailing 2024-03-05
 
-1,USK,for,$5636.680
-2,xaxlUSDC,for,$239.437
+1,USK,for,$34812.793
+2,xLUNA,for,$7269.297
+3,xUSK,for,$5977.860
+4,xaxlUSDC,for,$5367.230
+5,xATOM,for,$1.287
 
 Raw CSV of report archived at https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/ORCA/report.csv
 
 ORCA liquidations by Asset
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
-2024-02-26,---,LUNA,1,$0.000,LUNA, , , , , , , ,5,---,stATOM,5,$1231.313,stATOM
-2024-02-24,---,MNTA,1,$239.437,MNTA, , , , , , , ,3,---,LUNA,3,$1727.882,LUNA
-2024-02-23,---,stATOM,2,$1188.222,stATOM, , , , , , , ,2,---,LINK,2,$2677.485,LINK
-2024-02-23,---,LINK,2,$2677.485,LINK, , , , , , , ,1,---,MNTA,1,$239.437,MNTA
-2024-02-20,---,stATOM,2,$0.308,stATOM, , , , , , , , , , , , , ,
-2024-02-19,---,stATOM,1,$42.783,stATOM, , , , , , , , , , , , , ,
-2024-02-19,---,LUNA,2,$1727.882,LUNA, , , , , , , , , , , , , ,
+2024-03-05,---,ARB,1,$58.553,ARB, , , , , , , ,14,---,KUJI,14,$17019.064,KUJI
+2024-03-05,---,USK,2,$0.741,USK, , , , , , , ,12,---,LUNA,12,$4733.267,LUNA
+2024-03-05,---,whSOL,2,$993.296,whSOL, , , , , , , ,7,---,stATOM,7,$3477.075,stATOM
+2024-03-05,---,LUNA,6,$874.558,LUNA, , , , , , , ,5,---,INJ,5,$24782.773,INJ
+2024-03-05,---,INJ,2,$3945.584,INJ, , , , , , , ,3,---,ATOM,3,$818.628,ATOM
+2024-03-05,---,KUJI,8,$10998.270,KUJI, , , , , , , ,3,---,MNTA,3,$708.126,MNTA
+2024-03-04,---,KUJI,2,$1371.202,KUJI, , , , , , , ,3,---,ARB,3,$66.305,ARB
+2024-03-04,---,MNTA,2,$431.449,MNTA, , , , , , , ,2,---,STARS,2,$0.001,STARS
+2024-03-04,---,axlUSDC,1,$1.287,axlUSDC, , , , , , , ,2,---,whSOL,2,$993.296,whSOL
+2024-03-03,---,ATOM,2,$818.508,ATOM, , , , , , , ,2,---,AKT,2,$827.904,AKT
+2024-03-03,---,AKT,2,$827.904,AKT, , , , , , , ,2,---,USK,2,$0.741,USK
+2024-03-03,---,KUJI,2,$4606.658,KUJI, , , , , , , ,1,---,axlUSDC,1,$1.287,axlUSDC
+2024-03-03,---,stATOM,5,$3374.375,stATOM, , , , , , , , , , , , , ,
+2024-03-02,---,KUJI,2,$42.935,KUJI, , , , , , , , , , , , , ,
+2024-03-02,---,stATOM,2,$102.700,stATOM, , , , , , , , , , , , , ,
+2024-03-02,---,INJ,1,$99.442,INJ, , , , , , , , , , , , , ,
+2024-03-01,---,STARS,2,$0.001,STARS, , , , , , , , , , , , , ,
+2024-02-29,---,MNTA,1,$276.677,MNTA, , , , , , , , , , , , , ,
+2024-02-28,---,ARB,2,$7.752,ARB, , , , , , , , , , , , , ,
+2024-02-28,---,ATOM,1,$0.119,ATOM, , , , , , , , , , , , , ,
+2024-02-28,---,INJ,2,$20737.748,INJ, , , , , , , , , , , , , ,
+2024-02-28,---,LUNA,6,$3858.708,LUNA, , , , , , , , , , , , , ,
 
-Top 4 @TeamKujira ORCA 4 liquidations Asset by ($) for 7-days trailing 2024-02-26
+Top 5 @TeamKujira ORCA 5 liquidations Asset by ($) for 7-days trailing 2024-03-05
 
-1,LINK,for,$2677.485
-2,LUNA,for,$1727.882
-3,stATOM,for,$1231.313
-4,MNTA,for,$239.437
+1,INJ,for,$24782.773
+2,KUJI,for,$17019.064
+3,LUNA,for,$4733.267
+4,stATOM,for,$3477.075
+5,whSOL,for,$993.296
 
 Raw CSV of report archived at https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/ORCA/report.csv
