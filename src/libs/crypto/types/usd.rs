@@ -4,6 +4,7 @@ use std::{
    cmp::Ordering,
    fmt,
    hash::{Hash,Hasher},
+   iter::Sum,
    ops::Add,
    str::FromStr
 };
@@ -73,6 +74,18 @@ impl Add for USD {
    }
 }
 
+// https://users.rust-lang.org/t/implementing-the-sum-trait/23332/3
+// vitalyd answer, modified to value-impl by moiself (that is French).
+
+impl Sum<Self> for USD {
+    fn sum<I>(iter: I) -> Self
+    where
+        I: Iterator<Item = Self>,
+    {
+        iter.fold(no_monay(), |a, b| mk_usd(a.amount + b.amount))
+    }
+}
+
 // ----- ... and our methods -------------------------------------------------
 
 pub fn mk_usd(amount: f32) -> USD {
@@ -81,4 +94,3 @@ pub fn mk_usd(amount: f32) -> USD {
 }
 
 pub fn no_monay() -> USD { mk_usd(0.0) }
-
