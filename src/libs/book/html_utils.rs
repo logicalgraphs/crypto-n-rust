@@ -46,7 +46,6 @@ pub fn mk_table(matrix: &Vec<Vec<String>>) -> HTML {
    let head = header.iter().map(th).collect();
    fn align_num(s: &String) -> Vec<Attrib> {
       attrib("align", s.strip_prefix("$").or(Some(s)).and_then(|s1| {
-         println!("processing '{s1}'");
          let n: Result<f32, _> = parse_commaless(s1);
          Some(match n { Ok(_) => "right", _ => "left" })
       }).unwrap())
