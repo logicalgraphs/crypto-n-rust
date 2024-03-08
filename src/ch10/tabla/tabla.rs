@@ -60,7 +60,6 @@ fn pars(s: &String) -> Option<USD> { s.parse().ok() }
 
 fn add_totals(last: usize, totals: &Vec<usize>, lines: &Matrix<String>,
               left: usize, acc: &mut Vec<COL>) {
-   println!("Calling add_totals with {last} {totals:?} {left}");
    if let (Some(col), rest) = ht(totals) {
       let skip = col - last;
       acc.append(&mut blank_cols(skip));
