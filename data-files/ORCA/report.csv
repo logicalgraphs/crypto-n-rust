@@ -2,100 +2,101 @@
 ORCA liquidations by Market
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
-2024-03-05,xLUNA,USK,2,$0.741,xLUNA->USK, , , , , , , ,12,USK,LUNA,12,$4733.267,USK->LUNA
-2024-03-05,xaxlUSDC,ARB,1,$58.553,xaxlUSDC->ARB, , , , , , , ,8,xLUNA,KUJI,8,$7268.556,xLUNA->KUJI
-2024-03-05,USK,LUNA,6,$874.558,USK->LUNA, , , , , , , ,7,USK,stATOM,7,$3477.075,USK->stATOM
-2024-03-05,xaxlUSDC,KUJI,2,$3772.648,xaxlUSDC->KUJI, , , , , , , ,5,USK,INJ,5,$24782.773,USK->INJ
-2024-03-05,xLUNA,KUJI,6,$7225.622,xLUNA->KUJI, , , , , , , ,4,xUSK,KUJI,4,$5977.860,xUSK->KUJI
-2024-03-05,USK,whSOL,2,$993.296,USK->whSOL, , , , , , , ,3,USK,ATOM,3,$818.628,USK->ATOM
-2024-03-05,USK,INJ,2,$3945.584,USK->INJ, , , , , , , ,3,xaxlUSDC,MNTA,3,$708.126,xaxlUSDC->MNTA
-2024-03-04,xATOM,axlUSDC,1,$1.287,xATOM->axlUSDC, , , , , , , ,2,xaxlUSDC,AKT,2,$827.904,xaxlUSDC->AKT
-2024-03-04,xaxlUSDC,MNTA,2,$431.449,xaxlUSDC->MNTA, , , , , , , ,2,USK,whSOL,2,$993.296,USK->whSOL
-2024-03-04,xUSK,KUJI,2,$1371.202,xUSK->KUJI, , , , , , , ,2,USK,ARB,2,$7.752,USK->ARB
-2024-03-03,xaxlUSDC,AKT,2,$827.904,xaxlUSDC->AKT, , , , , , , ,2,xaxlUSDC,KUJI,2,$3772.648,xaxlUSDC->KUJI
-2024-03-03,xUSK,KUJI,2,$4606.658,xUSK->KUJI, , , , , , , ,2,xLUNA,USK,2,$0.741,xLUNA->USK
-2024-03-03,USK,stATOM,5,$3374.375,USK->stATOM, , , , , , , ,2,USK,STARS,2,$0.001,USK->STARS
-2024-03-03,USK,ATOM,2,$818.508,USK->ATOM, , , , , , , ,1,xATOM,axlUSDC,1,$1.287,xATOM->axlUSDC
-2024-03-02,USK,stATOM,2,$102.700,USK->stATOM, , , , , , , ,1,xaxlUSDC,ARB,1,$58.553,xaxlUSDC->ARB
-2024-03-02,USK,INJ,1,$99.442,USK->INJ, , , , , , , , , , , , , ,
-2024-03-02,xLUNA,KUJI,2,$42.935,xLUNA->KUJI, , , , , , , , , , , , , ,
-2024-03-01,USK,STARS,2,$0.001,USK->STARS, , , , , , , , , , , , , ,
-2024-02-29,xaxlUSDC,MNTA,1,$276.677,xaxlUSDC->MNTA, , , , , , , , , , , , , ,
-2024-02-28,USK,ATOM,1,$0.119,USK->ATOM, , , , , , , , , , , , , ,
-2024-02-28,USK,ARB,2,$7.752,USK->ARB, , , , , , , , , , , , , ,
-2024-02-28,USK,LUNA,6,$3858.708,USK->LUNA, , , , , , , , , , , , , ,
-2024-02-28,USK,INJ,2,$20737.748,USK->INJ, , , , , , , , , , , , , ,
+2024-03-07,xOSMO,KUJI,1,$180.172,xOSMO->KUJI, , , , , , , ,10,xUSK,KUJI,10,$47805.711,xUSK->KUJI
+2024-03-07,USK,DOT,1,$219.597,USK->DOT, , , , , , , ,10,USK,stATOM,10,$4493.146,USK->stATOM
+2024-03-06,xUSK,KUJI,6,$40807.059,xUSK->KUJI, , , , , , , ,9,USK,LUNA,9,$1147.545,USK->LUNA
+2024-03-06,USK,stATOM,3,$533.878,USK->stATOM, , , , , , , ,8,xLUNA,KUJI,8,$11472.779,xLUNA->KUJI
+2024-03-06,xOSMO,KUJI,1,$537.117,xOSMO->KUJI, , , , , , , ,4,USK,INJ,4,$4592.307,USK->INJ
+2024-03-06,xATOM,KUJI,2,$1.868,xATOM->KUJI, , , , , , , ,2,xOSMO,KUJI,2,$717.289,xOSMO->KUJI
+2024-03-05,xaxlUSDC,ARB,1,$58.100,xaxlUSDC->ARB, , , , , , , ,2,xaxlUSDC,AKT,2,$1259.664,xaxlUSDC->AKT
+2024-03-05,xLUNA,KUJI,7,$11447.646,xLUNA->KUJI, , , , , , , ,2,xATOM,KUJI,2,$1.868,xATOM->KUJI
+2024-03-05,xLUNA,USK,1,$0.372,xLUNA->USK, , , , , , , ,2,xaxlUSDC,KUJI,2,$4416.874,xaxlUSDC->KUJI
+2024-03-05,USK,LUNA,9,$1147.545,USK->LUNA, , , , , , , ,2,xATOM,axlUSDC,2,$2.574,xATOM->axlUSDC
+2024-03-05,USK,whSOL,2,$1172.328,USK->whSOL, , , , , , , ,2,USK,whSOL,2,$1172.328,USK->whSOL
+2024-03-05,USK,INJ,2,$4371.932,USK->INJ, , , , , , , ,2,xaxlUSDC,MNTA,2,$455.502,xaxlUSDC->MNTA
+2024-03-05,xaxlUSDC,KUJI,2,$4416.874,xaxlUSDC->KUJI, , , , , , , ,1,USK,DOT,1,$219.597,USK->DOT
+2024-03-04,xATOM,axlUSDC,2,$2.574,xATOM->axlUSDC, , , , , , , ,1,xaxlUSDC,ARB,1,$58.100,xaxlUSDC->ARB
+2024-03-04,xaxlUSDC,MNTA,2,$455.502,xaxlUSDC->MNTA, , , , , , , ,1,USK,ATOM,1,$453.565,USK->ATOM
+2024-03-04,xUSK,KUJI,2,$1605.352,xUSK->KUJI, , , , , , , ,1,xLUNA,USK,1,$0.372,xLUNA->USK
+2024-03-03,xUSK,KUJI,2,$5393.302,xUSK->KUJI, , , , , , , , , , , , , ,
+2024-03-03,USK,stATOM,5,$3842.327,USK->stATOM, , , , , , , , , , , , , ,
+2024-03-03,xaxlUSDC,AKT,2,$1259.664,xaxlUSDC->AKT, , , , , , , , , , , , , ,
+2024-03-03,USK,ATOM,1,$453.565,USK->ATOM, , , , , , , , , , , , , ,
+2024-03-02,USK,stATOM,2,$116.942,USK->stATOM, , , , , , , , , , , , , ,
+2024-03-02,USK,INJ,2,$220.375,USK->INJ, , , , , , , , , , , , , ,
+2024-03-02,xLUNA,KUJI,1,$25.133,xLUNA->KUJI, , , , , , , , , , , , , ,
 
-Top 5 @TeamKujira ORCA 5 liquidations Market by ($) for 7-days trailing 2024-03-05
+Top 5 @TeamKujira ORCA 5 liquidations Market by ($) for 7-days trailing 2024-03-08
 
-1,USK->INJ,for,$24782.773
-2,xLUNA->KUJI,for,$7268.556
-3,xUSK->KUJI,for,$5977.860
-4,USK->LUNA,for,$4733.267
-5,xaxlUSDC->KUJI,for,$3772.648
+1,xUSK->KUJI,for,$47805.711
+2,xLUNA->KUJI,for,$11472.779
+3,USK->INJ,for,$4592.307
+4,USK->stATOM,for,$4493.146
+5,xaxlUSDC->KUJI,for,$4416.874
 
 Raw CSV of report archived at https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/ORCA/report.csv
 
 ORCA liquidations by Bid
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
-2024-03-05,xaxlUSDC,---,3,$3831.201,xaxlUSDC, , , , , , , ,33,USK,---,33,$34812.793,USK
-2024-03-05,xLUNA,---,8,$7226.363,xLUNA, , , , , , , ,10,xLUNA,---,10,$7269.297,xLUNA
-2024-03-05,USK,---,10,$5813.438,USK, , , , , , , ,8,xaxlUSDC,---,8,$5367.230,xaxlUSDC
-2024-03-04,xATOM,---,1,$1.287,xATOM, , , , , , , ,4,xUSK,---,4,$5977.860,xUSK
-2024-03-04,xaxlUSDC,---,2,$431.449,xaxlUSDC, , , , , , , ,1,xATOM,---,1,$1.287,xATOM
-2024-03-04,xUSK,---,2,$1371.202,xUSK, , , , , , , , , , , , , ,
-2024-03-03,xUSK,---,2,$4606.658,xUSK, , , , , , , , , , , , , ,
-2024-03-03,USK,---,7,$4192.884,USK, , , , , , , , , , , , , ,
-2024-03-03,xaxlUSDC,---,2,$827.904,xaxlUSDC, , , , , , , , , , , , , ,
-2024-03-02,xLUNA,---,2,$42.935,xLUNA, , , , , , , , , , , , , ,
-2024-03-02,USK,---,3,$202.142,USK, , , , , , , , , , , , , ,
-2024-03-01,USK,---,2,$0.001,USK, , , , , , , , , , , , , ,
-2024-02-29,xaxlUSDC,---,1,$276.677,xaxlUSDC, , , , , , , , , , , , , ,
-2024-02-28,USK,---,11,$24604.328,USK, , , , , , , , , , , , , ,
+2024-03-07,USK,---,1,$219.597,USK, , , , , , , ,27,USK,---,27,$12078.488,USK
+2024-03-07,xOSMO,---,1,$180.172,xOSMO, , , , , , , ,10,xUSK,---,10,$47805.711,xUSK
+2024-03-06,xOSMO,---,1,$537.117,xOSMO, , , , , , , ,9,xLUNA,---,9,$11473.151,xLUNA
+2024-03-06,USK,---,3,$533.878,USK, , , , , , , ,7,xaxlUSDC,---,7,$6190.140,xaxlUSDC
+2024-03-06,xATOM,---,2,$1.868,xATOM, , , , , , , ,4,xATOM,---,4,$4.442,xATOM
+2024-03-06,xUSK,---,6,$40807.059,xUSK, , , , , , , ,2,xOSMO,---,2,$717.289,xOSMO
+2024-03-05,USK,---,13,$6691.805,USK, , , , , , , , , , , , , ,
+2024-03-05,xLUNA,---,8,$11448.019,xLUNA, , , , , , , , , , , , , ,
+2024-03-05,xaxlUSDC,---,3,$4474.974,xaxlUSDC, , , , , , , , , , , , , ,
+2024-03-04,xATOM,---,2,$2.574,xATOM, , , , , , , , , , , , , ,
+2024-03-04,xUSK,---,2,$1605.352,xUSK, , , , , , , , , , , , , ,
+2024-03-04,xaxlUSDC,---,2,$455.502,xaxlUSDC, , , , , , , , , , , , , ,
+2024-03-03,xUSK,---,2,$5393.302,xUSK, , , , , , , , , , , , , ,
+2024-03-03,xaxlUSDC,---,2,$1259.664,xaxlUSDC, , , , , , , , , , , , , ,
+2024-03-03,USK,---,6,$4295.891,USK, , , , , , , , , , , , , ,
+2024-03-02,USK,---,4,$337.317,USK, , , , , , , , , , , , , ,
+2024-03-02,xLUNA,---,1,$25.133,xLUNA, , , , , , , , , , , , , ,
 
-Top 5 @TeamKujira ORCA 5 liquidations Bid by ($) for 7-days trailing 2024-03-05
+Top 5 @TeamKujira ORCA 5 liquidations Bid by ($) for 7-days trailing 2024-03-08
 
-1,USK,for,$34812.793
-2,xLUNA,for,$7269.297
-3,xUSK,for,$5977.860
-4,xaxlUSDC,for,$5367.230
-5,xATOM,for,$1.287
+1,xUSK,for,$47805.711
+2,USK,for,$12078.488
+3,xLUNA,for,$11473.151
+4,xaxlUSDC,for,$6190.140
+5,xOSMO,for,$717.289
 
 Raw CSV of report archived at https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/ORCA/report.csv
 
 ORCA liquidations by Asset
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
-2024-03-05,---,ARB,1,$58.553,ARB, , , , , , , ,14,---,KUJI,14,$17019.064,KUJI
-2024-03-05,---,USK,2,$0.741,USK, , , , , , , ,12,---,LUNA,12,$4733.267,LUNA
-2024-03-05,---,whSOL,2,$993.296,whSOL, , , , , , , ,7,---,stATOM,7,$3477.075,stATOM
-2024-03-05,---,LUNA,6,$874.558,LUNA, , , , , , , ,5,---,INJ,5,$24782.773,INJ
-2024-03-05,---,INJ,2,$3945.584,INJ, , , , , , , ,3,---,ATOM,3,$818.628,ATOM
-2024-03-05,---,KUJI,8,$10998.270,KUJI, , , , , , , ,3,---,MNTA,3,$708.126,MNTA
-2024-03-04,---,KUJI,2,$1371.202,KUJI, , , , , , , ,3,---,ARB,3,$66.305,ARB
-2024-03-04,---,MNTA,2,$431.449,MNTA, , , , , , , ,2,---,STARS,2,$0.001,STARS
-2024-03-04,---,axlUSDC,1,$1.287,axlUSDC, , , , , , , ,2,---,whSOL,2,$993.296,whSOL
-2024-03-03,---,ATOM,2,$818.508,ATOM, , , , , , , ,2,---,AKT,2,$827.904,AKT
-2024-03-03,---,AKT,2,$827.904,AKT, , , , , , , ,2,---,USK,2,$0.741,USK
-2024-03-03,---,KUJI,2,$4606.658,KUJI, , , , , , , ,1,---,axlUSDC,1,$1.287,axlUSDC
-2024-03-03,---,stATOM,5,$3374.375,stATOM, , , , , , , , , , , , , ,
-2024-03-02,---,KUJI,2,$42.935,KUJI, , , , , , , , , , , , , ,
-2024-03-02,---,stATOM,2,$102.700,stATOM, , , , , , , , , , , , , ,
-2024-03-02,---,INJ,1,$99.442,INJ, , , , , , , , , , , , , ,
-2024-03-01,---,STARS,2,$0.001,STARS, , , , , , , , , , , , , ,
-2024-02-29,---,MNTA,1,$276.677,MNTA, , , , , , , , , , , , , ,
-2024-02-28,---,ARB,2,$7.752,ARB, , , , , , , , , , , , , ,
-2024-02-28,---,ATOM,1,$0.119,ATOM, , , , , , , , , , , , , ,
-2024-02-28,---,INJ,2,$20737.748,INJ, , , , , , , , , , , , , ,
-2024-02-28,---,LUNA,6,$3858.708,LUNA, , , , , , , , , , , , , ,
+2024-03-07,---,KUJI,1,$180.172,KUJI, , , , , , , ,24,---,KUJI,24,$64414.523,KUJI
+2024-03-07,---,DOT,1,$219.597,DOT, , , , , , , ,10,---,stATOM,10,$4493.146,stATOM
+2024-03-06,---,KUJI,9,$41346.043,KUJI, , , , , , , ,9,---,LUNA,9,$1147.545,LUNA
+2024-03-06,---,stATOM,3,$533.878,stATOM, , , , , , , ,4,---,INJ,4,$4592.307,INJ
+2024-03-05,---,whSOL,2,$1172.328,whSOL, , , , , , , ,2,---,AKT,2,$1259.664,AKT
+2024-03-05,---,INJ,2,$4371.932,INJ, , , , , , , ,2,---,axlUSDC,2,$2.574,axlUSDC
+2024-03-05,---,USK,1,$0.372,USK, , , , , , , ,2,---,MNTA,2,$455.502,MNTA
+2024-03-05,---,LUNA,9,$1147.545,LUNA, , , , , , , ,2,---,whSOL,2,$1172.328,whSOL
+2024-03-05,---,KUJI,9,$15864.521,KUJI, , , , , , , ,1,---,DOT,1,$219.597,DOT
+2024-03-05,---,ARB,1,$58.100,ARB, , , , , , , ,1,---,USK,1,$0.372,USK
+2024-03-04,---,axlUSDC,2,$2.574,axlUSDC, , , , , , , ,1,---,ARB,1,$58.100,ARB
+2024-03-04,---,KUJI,2,$1605.352,KUJI, , , , , , , ,1,---,ATOM,1,$453.565,ATOM
+2024-03-04,---,MNTA,2,$455.502,MNTA, , , , , , , , , , , , , ,
+2024-03-03,---,KUJI,2,$5393.302,KUJI, , , , , , , , , , , , , ,
+2024-03-03,---,AKT,2,$1259.664,AKT, , , , , , , , , , , , , ,
+2024-03-03,---,ATOM,1,$453.565,ATOM, , , , , , , , , , , , , ,
+2024-03-03,---,stATOM,5,$3842.327,stATOM, , , , , , , , , , , , , ,
+2024-03-02,---,stATOM,2,$116.942,stATOM, , , , , , , , , , , , , ,
+2024-03-02,---,INJ,2,$220.375,INJ, , , , , , , , , , , , , ,
+2024-03-02,---,KUJI,1,$25.133,KUJI, , , , , , , , , , , , , ,
 
-Top 5 @TeamKujira ORCA 5 liquidations Asset by ($) for 7-days trailing 2024-03-05
+Top 5 @TeamKujira ORCA 5 liquidations Asset by ($) for 7-days trailing 2024-03-08
 
-1,INJ,for,$24782.773
-2,KUJI,for,$17019.064
-3,LUNA,for,$4733.267
-4,stATOM,for,$3477.075
-5,whSOL,for,$993.296
+1,KUJI,for,$64414.523
+2,INJ,for,$4592.307
+3,stATOM,for,$4493.146
+4,AKT,for,$1259.664
+5,whSOL,for,$1172.328
 
 Raw CSV of report archived at https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/ORCA/report.csv
