@@ -17,7 +17,8 @@ The output from the above would look like this:
 ![Table with a total-row](imgs/table-total.png)
 
 n.b.: the `--totals`-parameter (with following arguments) is optional.
+
 n.b.b.: The `--totals`-columns are zero-indexed-based, e.g. `2` indicates the
-third row; /capice?/
+third row; _capice?_
 
 The. End.
