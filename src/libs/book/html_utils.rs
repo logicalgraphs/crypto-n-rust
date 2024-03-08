@@ -4,6 +4,7 @@ use strum_macros::EnumIter; // 0.17.1
 
 use crate::{
    list_utils::ht,
+   matrix_utils::Matrix,
    num_utils::parse_commaless,
    string_utils::quot
 };
@@ -33,15 +34,20 @@ type Attrib = (String, String);
 #[derive(Debug,Clone)]
 pub struct TR { attribs: Vec<Attrib>, row: Vec<COL> }
 
+pub fn mk_tr(attribs: Vec<Attrib>, row: Vec<COL>) -> TR {
+   TR { attribs, row }
+}
+
 #[derive(Debug,Clone)]
 pub enum COL {
    TD((Vec<Attrib>, HTML)),
    TH(HTML)     // TH((Vec<Attrib>, HTML)),
 }
 
-pub fn mk_table(matrix: &Vec<Vec<String>>) -> HTML {
+pub fn mk_table(matrix: &Matrix<String>, footer: Option<TR>) -> HTML {
    let (some_header, rows) = ht(matrix);
    let header = some_header.unwrap();
+   let ncols = header.len();
    fn th(s: &String) -> COL { COL::TH(p(s)) }
    let head = header.iter().map(th).collect();
    fn align_num(s: &String) -> Vec<Attrib> {
@@ -58,7 +64,29 @@ pub fn mk_table(matrix: &Vec<Vec<String>>) -> HTML {
    ans.push(TR { attribs: attrib("bgcolor", "cyan"), row: head });
    let mut trs: Vec<TR> = rows.iter().map(tr).collect();
    ans.append(&mut trs);
+   if let Some(foot) = footer {
+      let mut rows = vec![blank_row(ncols), foot];
+      ans.append(&mut rows);
+   }
    HTML::TABLE(ans)
+}
+
+pub fn no_attribs() -> Vec<Attrib> { Vec::new() }
+
+fn blank_row(cols: usize) -> TR {
+   TR { attribs: no_attribs(), row: vec![colspan(cols, nbsp())] }
+}
+
+pub fn blank_cols(n: usize) -> Vec<COL> {
+   let mut cols = Vec::new();
+   for _i in 0 .. n { cols.push(blank_col()) }
+   cols
+}
+
+fn blank_col() -> COL { COL::TD((no_attribs(), nbsp())) }
+
+pub fn colspan(cols: usize, content: HTML) -> COL {
+   COL::TD ((attrib("colspan", &format!("{cols}")), content))
 }
 
 // ----- MODES -------------------------------------------------------
