@@ -4,7 +4,7 @@ What are the top-traded tokens on Kujira FIN?
 
 A Venn data-visualization.
 
-`$ ./top_traded [min volume]`
+`$ ./top_traded <date> [min volume]`
 
 gets you (something like) this:
 
@@ -12,7 +12,7 @@ gets you (something like) this:
 
 `./top_traded` takes the 
 [json from the tickers REST API endpoint](https://api.kujira.app/api/coingecko/tickers)
-and spits out the Venn diagram spec consumable by 
+and spits out the Venn diagram spec, consumable by 
 [venn.js](https://github.com/benfred/venn.js)
 
 The Venn diagram output spec is as per:

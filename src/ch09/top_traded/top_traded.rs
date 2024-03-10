@@ -48,16 +48,29 @@ fn do_it(date: &str, min_opt: Option<String>) -> ErrStr<()> {
 }
 
 fn report(date: &str, toks: &HashSet<String>, tok_vols: &Volumes) -> ErrStr<()> {
-   println!("Top Tokens traded on @TeamKujira FIN, {date}\n");
+   let topos = format!("Top 10 Tokens traded on @TeamKujira FIN, {date}");
+   println!("{topos}\n");
    let mut vols: Vec<(String, USD)> = tok_vols.clone().into_iter().collect();
    vols.sort_by(|a,b| b.1.cmp(&a.1));
    let mut i: i32 = 0;
-   for (tok, vol) in vols {
-      if toks.contains(&tok) {
+   for (tok, vol) in &vols {
+      if toks.contains(tok) {
          i += 1;
+         if i > 10 { break; }
          println!("{i}. {tok}: {vol}");
       }
    }
+
+   i = 0;
+   println!("\n<h3>{topos}</h3>\n<ol>");
+   for (tok, vol) in vols {
+      if toks.contains(&tok) {
+         i += 1;
+         if i > 10 { break; }
+         println!("<li>{tok}: {vol}</li>");
+      }
+   }
+   println!("</ol>");
    Ok(())
 }
 
