@@ -15,7 +15,7 @@ use crypto::{
 };
 
 fn usage() -> ErrStr<()> {
-   println!("\n./top_traded <date> [min volume]\n");
+   println!("\n./top_traded <date> [min volume=10000]\n");
    println!("Prints the top-traded tokens by 24h-volumes.\n");
    println!("The set of sets can be represented as a Venn diagram using, i.e.");
    println!("https://github.com/benfred/venn.js");
@@ -33,10 +33,11 @@ fn main() -> ErrStr<()> {
 fn do_it(date: &str, min_opt: Option<String>) -> ErrStr<()> {
    let (_, books) = parse_books(Some(graphs_fin_res("aliases.csv")));
    let tok_vols = volumes_by_token(&books);
+   let default_min: f32 = 10000.0;
    let min: f32 =
       if let Some(mini) = min_opt {
-         mini.parse().ok().or(Some(0.0)).unwrap()
-      } else { 0.0 };
+         mini.parse().ok().or(Some(default_min)).unwrap()
+      } else { default_min };
 
    println!("var sets = [");
 
@@ -62,7 +63,7 @@ fn report(date: &str, toks: &HashSet<String>, tok_vols: &Volumes) -> ErrStr<()> 
    }
 
    i = 0;
-   println!("\n<h3>{topos}</h3>\n<ol>");
+   println!("\n<h3>{topos}</h3>\n<p>&nbsp;</p>\n<ol>");
    for (tok, vol) in vols {
       if toks.contains(&tok) {
          i += 1;

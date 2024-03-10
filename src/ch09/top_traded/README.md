@@ -4,7 +4,7 @@ What are the top-traded tokens on Kujira FIN?
 
 A Venn data-visualization.
 
-`$ ./top_traded <date> [min volume]`
+`$ ./top_traded <date> [min volume=10000]`
 
 gets you (something like) this:
 
