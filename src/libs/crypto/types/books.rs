@@ -19,10 +19,10 @@ use book::{
 };
 
 use crate::{
-   rest_utils::read_market_json,
+   rest_utils::{read_market_json,read_aliases},
    types::{
       marketplace::{OrderBook,mk_orderbook},
-      usd::{USD,mk_usd}
+      usd::{USD,mk_usd,no_monay}
    }
 };
 
@@ -54,13 +54,43 @@ pub struct Book {
    last: f32
 }
 
-pub fn vol_24h(b: &Book) -> USD { b.base_vol + b.target_vol }
+// ----- Volumes -------------------------------------------------------
 
-type VPair = (String, USD);
+pub fn vol_24h(b: &Book) -> USD { vol_24h_pair(b).1 }
+
+pub fn vol_24h_pair(b: &Book) -> ((String, String), USD) {
+   let ((bk, bv), (tg, tv)) = vols(b);
+   ((bk, tg), mk_usd((bv.amount + tv.amount) / 2.0))
+}
+
+pub type Volumes = HashMap<String, USD>;
+pub type Books = HashSet<Book>;
+
+pub fn volumes_by_token(bs: &Books) -> Volumes {
+   let mut ans: Volumes = HashMap::new();
+   for b in bs {
+      let ((bk, bv), _) = vols(b);
+      let bas = ans.entry(bk).or_insert(no_monay());
+      *bas += bv;
+   }
+   for b in bs {
+      let (_, (tg, tv)) = vols(b);
+      let tar = ans.entry(tg).or_insert(no_monay());
+      *tar += tv;
+   }
+   ans
+}
+
+// ----- Prices -------------------------------------------------------
+
+type VPair = (String, USD);  // a token-price-pair
+
 pub fn vols(b: &Book) -> (VPair, VPair) {
    ((b.base.clone(), b.base_vol.clone()),
     (b.target.clone(), b.target_vol.clone()))
 }
+
+// ----- Parsing -------------------------------------------------------
 
 #[derive(Deserialize)]
 struct BooksVec {
@@ -69,7 +99,6 @@ struct BooksVec {
 }
 
 pub type Prices = HashMap<String, USD>;
-pub type Books = HashSet<Book>;
 type Books1 = HashSet<Book1>;
 pub type BookBooks = (Prices, Books);
 
@@ -79,16 +108,43 @@ fn raw_books() -> Books1 {
    books.books.into_iter().collect()
 }
 
+// ----- Aliases -------------------------------------------------------
+
+type Aliases = HashMap<String, String>;
+
+fn alias(aliases: &Aliases, i: &String) -> String {
+   aliases.get(i).or(Some(i)).unwrap().clone()
+}
+
+fn load_aliases(opt_url: &Option<String>) -> Aliases {
+   let mut ans = HashMap::new();
+   if let Some(url) = opt_url {
+      let file = read_aliases(url).expect("Cannot read aliases file.");
+      let all_lines: Vec<_> = file.split("\n").collect();
+      let (_date, lines) = all_lines.split_at(3);
+
+      for alias in lines {
+         if let [id,name] = alias.split(",").collect::<Vec<_>>().as_slice() {
+           ans.insert(id.to_string(), name.to_string());
+         } else { println!("Unable to parse alias: '{alias}'") }
+      }
+   }
+   ans
+}
+
 // a ... 'little' function that transforms books of token-counts to books
 // of USD-volumes. It's actually just a simple monadic-chain, at base.
 
-fn books2books(p: &Prices, bs: &Books1) -> Books {
-   fn price_tokens(p: &Prices) -> impl Fn(&Book1) -> Option<Book> + '_ {
+fn books2books(p: &Prices, bs: &Books1, aliases: &Aliases) -> Books {
+   fn price_tokens<'a>(p: &'a Prices, a: &'a Aliases)
+         -> impl Fn(&Book1) -> Option<Book> + 'a {
       | b0 | {
-         p.get(&b0.base).and_then(|b_price| {
-            p.get(&b0.target).and_then(|t_price| {
-               Some(Book { base: b0.base.clone(),
-                           target: b0.target.clone(),
+         let bas = alias(a, &b0.base);
+         p.get(&bas).and_then(|b_price| {
+            let tar = alias(a, &b0.target);
+            p.get(&tar).and_then(|t_price| {
+               Some(Book { base: bas,
+                           target: tar,
                            pool_id: b0.pool_id.clone(),
                            base_vol: mk_usd(b_price.amount * b0.base_vol),
                            target_vol: mk_usd(t_price.amount * b0.target_vol),
@@ -98,13 +154,14 @@ fn books2books(p: &Prices, bs: &Books1) -> Books {
          })
       }
    }
-   bs.into_iter().filter_map(price_tokens(p)).collect()
+   bs.into_iter().filter_map(price_tokens(p, aliases)).collect()
 }
 
-pub fn parse_books() -> BookBooks {
+pub fn parse_books(opt_aliases: Option<String>) -> BookBooks {
    let b0 = raw_books();
-   let p = prices_from_books(&b0);
-   let b = books2books(&p, &b0);
+   let aliases = load_aliases(&opt_aliases);
+   let p = prices_from_books(&b0, &aliases);
+   let b = books2books(&p, &b0, &aliases);
    (p, b)
 }
 
@@ -220,16 +277,18 @@ pub fn book_orderbook(prices: &Prices) -> impl Fn(&Book) -> OrderBook + '_ {
 // THEN I take the remaining order books and ratio their prices from base
 // price. Maybe I could just oracle everything, instead?
 
-pub fn prices() -> Prices {
+pub fn prices(opt_aliases: Option<String>) -> Prices {
    let b0 = raw_books();
-   prices_from_books(&b0)
+   let aliases = load_aliases(&opt_aliases);
+   prices_from_books(&b0, &aliases)
 }
 
-fn prices_from_books(books: &Books1) -> Prices {
-   let (stables, unstables) = stable_books(books);
-   let (axls, others) = books_for("axlUSDC", (&stables, &unstables));
-   let (usdcs, tail) = books_for("USDC", (&stables, &others));
-   let (usks, rest) = books_for("USK", (&stables, &tail));
+fn prices_from_books(books: &Books1, aliases: &Aliases) -> Prices {
+   let (stables, unstables) = stable_books(books, aliases);
+   let (axls, others) =
+       books_for("axlUSDC", (&stables, &unstables), aliases);
+   let (usdcs, tail) = books_for("USDC", (&stables, &others), aliases);
+   let (usks, rest) = books_for("USK", (&stables, &tail), aliases);
    let prices = usdcs.into_iter()
                      .chain(usks)
                      .chain(axls)
@@ -243,8 +302,8 @@ fn prices_from_books(books: &Books1) -> Prices {
    // stable target, SO! we need to use the prices-HashMap to find the price
    // of the target to compute the price of the base.
 
-   let baros: HashMap<String, USD> = rest.iter()
-       .filter_map(barometric_board(&prices))
+   let baros: Prices = rest.iter()
+       .filter_map(barometric_board(&prices, aliases))
        .collect();
    baros.into_iter().chain(prices).collect()
 }
@@ -253,7 +312,7 @@ type VHashes<T> = (HashSet<T>, HashSet<T>);
 type Book1Books = (Prices, HashSet<Book1>);
 type Book1BooksRef<'a> = (&'a Prices, &'a Books1);
 
-fn part(f: impl Fn(&Book1) -> &str, v: &Books1, p: &str) -> VHashes<Book1> {
+fn part(f: impl Fn(&Book1) -> String, v: &Books1, p: &str) -> VHashes<Book1> {
 
    // why am I writing: v.into_iter().partition(|b| b.target == p)
    // in long-form? f'n copy-semantics and Rust, stg.
@@ -261,35 +320,39 @@ fn part(f: impl Fn(&Book1) -> &str, v: &Books1, p: &str) -> VHashes<Book1> {
    let mut left = HashSet::new();
    let mut right = HashSet::new();
    for b in v {
-      (if f(b) == p { &mut left } else { &mut right }).insert(b.clone());
+      (if &f(b) == p { &mut left } else { &mut right }).insert(b.clone());
    }
    (left, right)
 }
 
 // only consider prices from books that have had trades today ... functionally!
 
-fn mb_book(factor: &USD) -> impl Fn(&Book1) -> Option<(String, USD)> + '_ {
+fn mb_book<'a>(factor: &'a USD, a: &'a Aliases)
+      -> impl Fn(&Book1) -> Option<(String, USD)> + 'a {
    | b | {
       pred(b.last > 0.0 && b.target_vol + b.base_vol > 0.0,
-           (b.base.clone(), mk_usd(b.last * factor.amount)))
+           (alias(a, &b.base), mk_usd(b.last * factor.amount)))
    }
 }
 
-fn books_for(stable: &str, (stables, books): Book1BooksRef) -> Book1Books {
-   let (mines, yourses) = part(move |b: &Book1| &b.target, books, stable);
+fn books_for(stable: &str, (stables, books): Book1BooksRef, aliases: &Aliases)
+      -> Book1Books {
+   let (mines, yourses) =
+      part(move |b: &Book1| alias(aliases, &b.target), books, stable);
 
-   fn mk_books(dollah: &USD, src: &Books1) -> Prices {
-      src.into_iter().filter_map(mb_book(dollah)).collect()
+   fn mk_books(dollah: &USD, src: &Books1, a: &Aliases) -> Prices {
+      src.into_iter().filter_map(mb_book(dollah, a)).collect()
    }
    let quote = stables.get(stable).unwrap();
-   (mk_books(quote, &mines), yourses)
+   (mk_books(quote, &mines, aliases), yourses)
 }
 
-fn stable_books(books: &Books1) -> Book1Books {
-   let (stables, unstables) = part(|b: &Book1| &b.base, books, "axlUSDC");
+fn stable_books(books: &Books1, a: &Aliases) -> Book1Books {
+   let (stables, unstables) =
+      part(|b: &Book1| alias(a, &b.base), books, "axlUSDC");
    let mut books = HashMap::new();
    for s in stables {
-      books.insert(s.target.clone(), compute_stable_price(&s));
+      books.insert(alias(a, &s.target), compute_stable_price(&s));
    }
    books.insert("axlUSDC".to_string(), mk_usd(1.0));  // just how I rollz, yo!
    (books, unstables)
@@ -298,12 +361,13 @@ fn stable_books(books: &Books1) -> Book1Books {
 // Here, we take the books that don't have a stable target, or so I think, then
 // compute the prices for the bases to round out the token-prices-list.
 
-fn barometric_board(prices: &Prices)
-         -> impl Fn(&Book1) -> Option<(String, USD)> + '_ {
-   fn mb_price(b: &Book1) -> impl Fn(&USD) -> Option<(String, USD)> + '_ {
-      |price| { mb_book(price)(b) }
+fn barometric_board<'a>(prices: &'a Prices, a: &'a Aliases)
+         -> impl Fn(&Book1) -> Option<(String, USD)> + 'a {
+   fn mb_price<'b>(b: &'b Book1, a: &'b Aliases)
+          -> impl Fn(&USD) -> Option<(String, USD)> + 'b {
+      move |price| { mb_book(price, a)(b) }
    }
-   |book| prices.get(&book.target).and_then(mb_price(book))
+   |book| prices.get(&alias(a, &book.target)).and_then(mb_price(book, a))
 }
 
 fn compute_stable_price(b: &Book1) -> USD { mk_usd(1.0 / b.last) }
@@ -311,5 +375,3 @@ fn compute_stable_price(b: &Book1) -> USD { mk_usd(1.0 / b.last) }
 // Now that we have order-book-volumes-by-token and token-prices, we can
 // compute order-book-volumes(-by-price) on the active order books, returning
 // the active order books, only.
-
-

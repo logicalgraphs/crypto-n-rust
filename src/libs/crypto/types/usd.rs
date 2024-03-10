@@ -5,7 +5,7 @@ use std::{
    fmt,
    hash::{Hash,Hasher},
    iter::Sum,
-   ops::Add,
+   ops::{Add,AddAssign},
    str::FromStr
 };
 
@@ -71,6 +71,12 @@ impl Add for USD {
    type Output = Self;
    fn add(self, rhs: USD) -> Self {
       mk_usd(self.amount + rhs.amount)
+   }
+}
+
+impl AddAssign for USD {
+   fn add_assign(&mut self, other: Self) {
+      *self = mk_usd(self.amount + other.amount);
    }
 }
 

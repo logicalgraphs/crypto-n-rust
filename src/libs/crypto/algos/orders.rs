@@ -2,12 +2,15 @@
 
 use std::collections::HashSet;
 
-use crate::types::{
-   assets::Asset,
-   books::{Books,BookBooks,Prices,
-           fetch_books_by_vol,ticker,book_orderbook,parse_books},
-   marketplace::{OrderBook,dual_asset,orderbook},
-   usd::USD
+use crate::{
+   rest_utils::graphs_fin_res,
+   types::{
+      assets::Asset,
+      books::{Books,BookBooks,Prices,
+              fetch_books_by_vol,ticker,book_orderbook,parse_books},
+      marketplace::{OrderBook,dual_asset,orderbook},
+      usd::USD
+   }
 };
 
 pub fn target_sell_ratio(prices: &Prices, a: &Asset,
@@ -33,5 +36,5 @@ pub fn books_orderbooks((prices, books): &BookBooks) -> HashSet<OrderBook> {
 
 pub fn read_marketplace() -> HashSet<OrderBook> {
    println!("Reading order books from FIN REST endpoint");
-   books_orderbooks(&parse_books())
+   books_orderbooks(&parse_books(Some(graphs_fin_res("aliases.csv"))))
 }
