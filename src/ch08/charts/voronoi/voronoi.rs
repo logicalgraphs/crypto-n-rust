@@ -23,7 +23,7 @@ fn usage() {
 
 fn main() -> Result<(), String> {
    if let (Some(colours), files) = ht(&get_args()) {
-      let mut palette = colors(&colours, 10)?;
+      let mut palette = colors(&colours, 50)?;
       print_prelude();
       for file in files {
          let lines = lines_from_file(&file);
@@ -49,7 +49,12 @@ fn buidl_arr(protocols: &Vec<String>, palette: &mut Vec<String>)
    let mut wheel = HashMap::new();
    println!("protocols = [");
    for line in protocols {
-      wheel.entry(buidl_obj(line)).or_insert_with(|| { palette.pop().unwrap() });
+      wheel.entry(buidl_obj(line)).or_insert_with(|| {
+         match palette.pop() {
+            Some(c) => c,
+            _ => panic!("Ran out of colours to color Voronoi-tiles!")
+         }
+      });
    }
    println!("]");
    wheel
