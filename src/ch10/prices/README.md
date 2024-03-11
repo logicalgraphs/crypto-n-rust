@@ -11,7 +11,7 @@ token-price, it is $axlUSDC-biased.
 
 Usage:
 
-`$ ./prices <aliases CSV file>`
+`$ ./prices`
 
 renders something like this:
 
