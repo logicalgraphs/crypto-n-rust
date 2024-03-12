@@ -37,9 +37,9 @@ fn deuceage(lines: &Matrix<String>) -> ErrStr<()> {
       fn n(c: &String) -> Option<usize> {
          err_or(c.parse(), &format!("Cannot parse number {c}")).ok()
       }
-      let mut totals: Vec<usize> = cols.iter().filter_map(n).collect();
-      totals.sort();
-      Some(totals_of(&totals, lines)?)
+      let mut to_total: Vec<usize> = cols.iter().filter_map(n).collect();
+      to_total.sort();
+      Some(totals_of(&to_total, lines)?)
    } else { None };
    println!("{}", mk_table(&lines, footer).as_html());
    Ok(())
@@ -49,7 +49,7 @@ fn totals_of(cols_to_sum: &Vec<usize>, matrix: &Matrix<String>) -> ErrStr<TR> {
    let ncols = matrix.first().ok_or("No first row in matrix!")?.len();
    if let (Some(frist), _rest) = ht(cols_to_sum) {
       let mut ans: Vec<COL> = vec![colspan(frist, p("Total:"))];
-      add_totals(frist, &cols_to_sum, matrix, ncols - frist, &mut ans);
+      add_totals(frist - 1, &cols_to_sum, matrix, ncols - frist, &mut ans);
       Ok(mk_tr(attrib("bgcolor", "cyan"), ans))
    } else {
       Err(format!("Cannot total given {cols_to_sum:?}"))
@@ -61,7 +61,7 @@ fn pars(s: &String) -> Option<USD> { s.parse().ok() }
 fn add_totals(last: usize, totals: &Vec<usize>, lines: &Matrix<String>,
               left: usize, acc: &mut Vec<COL>) {
    if let (Some(col), rest) = ht(totals) {
-      let skip = col - last;
+      let skip = col - last - 1;
       acc.append(&mut blank_cols(skip));
       let col_with_header = column_view(&lines, col);
       let sum: USD = col_with_header.iter().filter_map(pars).sum();
