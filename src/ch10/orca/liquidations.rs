@@ -17,15 +17,12 @@ fn usage() -> bool {
 }
 
 fn main() {
-   let mut okay = false;
    if let [date, prices, liquids] = get_args().as_slice() {
       let prces = read_prices(&prices);
       let lines = lines_from_file(&liquids);
       let jours = process_liquidations_by_date(&prces, &lines);
       report(&date, &jours);
-      okay = true;
+   } else {
+      usage();
    }
-
-   // #[allow(unused_must_use)]
-   !okay && usage();
 }

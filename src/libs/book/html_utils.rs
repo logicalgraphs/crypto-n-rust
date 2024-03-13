@@ -23,7 +23,7 @@ pub enum HTML {
 #[derive(Debug,Clone)]
 pub struct LI { line: String }
 
-fn mk_li(l: &String) -> LI {
+pub fn mk_li(l: &String) -> LI {
    LI { line: l.to_string() }
 }
 
@@ -201,19 +201,28 @@ fn list_t<T: AsText>(v: &Vec<T>, numerate: bool) -> String {
    v1.join("\n")
 }
 
+// ----- CSV mode -------------------------------------------------------
+
+pub trait AsCSV {
+   fn as_csv(&self) -> String;
+}
+
+impl AsCSV for HTML {
+   fn as_csv(&self) -> String { "".to_string() }
+}
+
 // ----- Run-off functions --------------------------------------------------
 
-pub fn roff(elt: &HTML, mode: &Mode) -> String {
-   let runoft = if mode == &Mode::HTML {
-      elt.as_html()
-   } else {
-      elt.as_text()
-   };
-   runoft
+pub fn roff(mode: &Mode, content: &HTML) -> String {
+   match mode {
+      Mode::HTML => content.as_html(),
+      Mode::TEXT => content.as_text(),
+      Mode::CSV  => content.as_csv()
+   }
 }
 
 pub fn proff(elt: &HTML, mode: &Mode) {
-   println!("{}", roff(elt, mode));
+   println!("{}", roff(mode, elt));
 }
 
 // ----- HTML-constructors --------------------------------------------------

@@ -2,8 +2,11 @@ use std::collections::HashMap;
 
 use chrono::naive::NaiveDate;
 
-use book::csv_utils::{CsvWriter,Stamped,stamp,Indexed,mk_idx,mk_idx_offset};
-use crypto::types::usd::{USD,no_monay,sum_usd};
+use book::{
+   csv_utils::{CsvWriter,Stamped,stamp,Indexed,mk_idx},
+   html_utils::AsText
+};
+use crypto::types::usd::{USD,no_monay};
 
 // ----- Types -------------------------------------------------------
 
@@ -87,7 +90,13 @@ impl CsvWriter for Top5 {
    fn ncols(&self) -> usize { 1 + 2 }
 }
 
-pub type Top5s = Vec<Indexed<Top5>>;
+impl AsText for Top5 {
+   fn as_text(&self) -> String {
+      format!("{} for {}", market(&self.market), self.share)
+   }
+}
+
+pub type Top5s = Vec<Top5>;
 
 // ----- Transformers -------------------------------------------------------
 
@@ -131,7 +140,7 @@ pub fn top5s(liqs: &Vec<Indexed<Liquidation>>) -> Top5s {
       tops.push(mk_top5(&amt, &market));
    }
    tops.sort_by(|a, b| (b.share.amount as i32).cmp(&(a.share.amount as i32)));
-   tops.iter().take(5).enumerate().map(mk_idx_offset).collect()
+   tops.into_iter().take(5).collect()
 }
 
 // ----- Helpers -------------------------------------------------------
@@ -154,11 +163,11 @@ fn xform1(f: impl Fn(&Market) -> Market, liqs: &Liquidations) -> Liquidations {
 }
 
 pub fn update_market(f: impl Fn(&Market) -> Market, mkt: &Market,
-                 a: &Amount, markets: &mut Liquidations) {
+                     a: &Amount, markets: &mut Liquidations) {
    let key = f(mkt);
    let market = markets.entry(key).or_insert((0, no_monay()));
    let (n1, amt1) = market;
    let (n, amt) = a;
-   *market = (*n + *n1, sum_usd(amt, amt1));
+   *market = (*n + *n1, *amt + *amt1);
 }
 
