@@ -7,7 +7,7 @@ use book::{
    list_utils::ht,
    matrix_utils::{Matrix,column_view},
    string_utils::to_string,
-   utils::get_args
+   utils::{get_args,pred}
 };
 
 use crypto::types::usd::USD;
@@ -26,21 +26,22 @@ fn main() -> ErrStr<()> {
 fn usage() -> ErrStr<()> {
    println!("./tabla: enHTMLTableifies rows of data.\n");
    println!("usage:\n");
-   println!("$ echo <TSV data> | ./tabla [--totals [col1 [col2] [col3...]]]\n");
+   println!("$ echo <TSV data> | ./tabla [col1 [col2] [col3...]]\n");
    println!("Spits out an HTML table of the <TSV data> with an optional");
-   println!("footer row of the totals.");
+   println!("footer row of the totals, columns zero-indexed-based.");
    Ok(())
 }
 
 fn deuceage(lines: &Matrix<String>) -> ErrStr<()> {
-   let footer = if let (Some(_totals), cols) = ht(&get_args()) {
-      fn n(c: &String) -> Option<usize> {
-         err_or(c.parse(), &format!("Cannot parse number {c}")).ok()
-      }
-      let mut to_total: Vec<usize> = cols.iter().filter_map(n).collect();
+   let cols = get_args();
+   fn n(c: &String) -> Option<usize> {
+      err_or(c.parse(), &format!("Cannot parse number {c}")).ok()
+   }
+   let mut to_total: Vec<usize> = cols.iter().filter_map(n).collect();
+   let footer = pred(!to_total.is_empty(), {
       to_total.sort();
-      Some(totals_of(&to_total, lines)?)
-   } else { None };
+      totals_of(&to_total, lines)?
+   });
    println!("{}", mk_table(&lines, footer).as_html());
    Ok(())
 }
