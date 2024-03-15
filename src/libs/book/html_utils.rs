@@ -136,7 +136,8 @@ impl AsHTML for HTML {
                    &attribs(&[("border", "1"),("width","75%"),
                               ("align", "center")]),
                    &list_h(&rows)),
-         HTML::H((n, title)) => elt(&format!("h{n}"), title),
+         HTML::H((n, title)) =>
+            format!("{}\n{}", elt(&format!("h{n}"), title), nbsp().as_html()),
          HTML::OL(lis) => elt("ol", &list_h(&lis)),
          HTML::A((url, content)) => eattrs("a", &attrib("href", url), &content),
          HTML::P(content) => elt("p", content),

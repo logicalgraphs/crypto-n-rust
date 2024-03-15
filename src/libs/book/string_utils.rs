@@ -10,7 +10,7 @@ pub fn quot(s: &str) -> String {
    format!("\"{s}\"")
 }
 
-pub fn plural(n: u32, noun: &str) -> String {
+pub fn plural(n: usize, noun: &str) -> String {
    let s = if n == 1 { "" } else { "s" };
    format!("{n} {noun}{s}")
 }
