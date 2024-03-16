@@ -8,11 +8,13 @@ protocol/token,blockchain,_invested,value $,other stuff,...
 
 e.g.:
    
+```
 Blockaverse     portfolio       2024-03-15
                           
 Token   Blockchain      invested        value   gain/loss       ROI     real token name rôle
 GMX     Arbitrum        $933.00 $682.45 -$250.55        -26.85% GMX
 BTC     Cardano $409.29 $867.55 $458.26 111.97% iBTC    blue-chip
+```
 
 when you call `./venn` with the above like so:
 
