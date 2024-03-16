@@ -12,6 +12,7 @@ use crypto::{
    rest_utils::graphs_fin_res,
    types::{
       books::{Book,Volumes,vol_24h_pair,volumes_by_token,parse_books},
+      pairs::unpair,
       usd::USD
    }
 };
@@ -59,7 +60,7 @@ fn print_token(min: f32, toks: &HashSet<String>)
 fn print_book(min: f32, toks: &mut HashSet<String>)
       -> impl FnMut(&Book) -> () + '_ {
    move | b: &Book | {
-      let ((bk, tg), vol) = vol_24h_pair(b);
+      let ((bk, tg), vol) = unpair(&vol_24h_pair(b));
       if vol.amount > min {
          println!("   {{sets: ['{bk}', '{tg}'], size: {}}},", vol.amount);
          toks.insert(bk);

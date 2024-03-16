@@ -25,6 +25,7 @@ use crate::{
    rest_utils::{read_market_json,read_aliases},
    types::{
       marketplace::{OrderBook,mk_orderbook},
+      pairs::{Dyad,mk_dyad,unpair},
       usd::{USD,mk_usd,no_monay}
    }
 };
@@ -128,11 +129,11 @@ pub fn load_books_from_file(filename: &str) -> ErrStr<Books> {
 
 // ----- Volumes -------------------------------------------------------
 
-pub fn vol_24h(b: &Book) -> USD { vol_24h_pair(b).1 }
+pub fn vol_24h(b: &Book) -> USD { unpair(&vol_24h_pair(b)).1 }
 
-pub fn vol_24h_pair(b: &Book) -> ((String, String), USD) {
+pub fn vol_24h_pair(b: &Book) -> Dyad<USD> {
    let ((bk, bv), (tg, tv)) = vols(b);
-   ((bk, tg), mk_usd((bv.amount + tv.amount) / 2.0))
+   mk_dyad((bk, tg), mk_usd((bv.amount + tv.amount) / 2.0))
 }
 
 pub type Volumes = HashMap<String, USD>;
