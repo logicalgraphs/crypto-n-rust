@@ -14,10 +14,10 @@ use std::{
 use book::{
    csv_utils::CsvWriter,
    err_utils::ErrStr,
-   file_utils::lines_from_file,
    json_utils::unquot,
    num_utils::mk_estimate,
    string_utils::parse_lines,
+   stream_utils::lines_from_stream,
    utils::pred
 };
 
@@ -106,8 +106,8 @@ GMX	Arbitrum	$933.00	$682.45	-$250.55	-26.85%	GMX
 BTC	Cardano	$409.29	$867.55	$458.26	111.97%	iBTC	blue-chip
 */
 
-pub fn load_books_from_file(filename: &str) -> ErrStr<Books> {
-   let file = lines_from_file(filename);
+pub fn load_books_from_stream() -> ErrStr<Books> {
+   let lines = lines_from_stream();
    fn parser(line: String) -> ErrStr<Book> {
       let cols0: Vec<&str> = line.split("\t").collect();
       let cols: Vec<&str> = cols0.into_iter().take(4).collect();
@@ -123,7 +123,7 @@ pub fn load_books_from_file(filename: &str) -> ErrStr<Books> {
       }
    }
    let books: HashSet<Book> =
-      parse_lines(parser, &file, Some(3))?.into_iter().collect();
+      parse_lines(parser, &lines, Some(3))?.into_iter().collect();
    Ok(books)
 }
 
