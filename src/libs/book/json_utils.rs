@@ -1,4 +1,4 @@
-// common utils for deserializing JSON
+// common utils for (de)serializing JSON
 
 // serde_json was recommended via https://stackoverflow.com/questions/30292752/how-do-i-parse-a-json-file
 
@@ -27,3 +27,15 @@ pub fn val_date(val: &Value, idx: &str) -> String {
    date.truncate(10);
    date
 }
+
+pub trait AsJSON {
+   fn as_json(&self) -> String;
+}
+
+/*
+impl AsJSON for Vec<T: AsJSON> {
+   fn as_json(&self) -> String {
+      format!("[{}]", self.into_iter().map(|j| j.as_json()).join(",\n"))
+   }
+}
+*/

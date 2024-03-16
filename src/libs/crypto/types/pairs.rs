@@ -12,10 +12,16 @@ pub fn unpair<T: Clone>(d: &Dyad<T>) -> ((String, String), T) {
    (d.pair.clone(), d.value.clone())
 }
 
-/*
 #[derive(Debug, Clone)] 
 pub struct Tag<T>{
    tag: String,
    value: T
 }
-*/
+
+pub fn mk_tag<T>((tag, value): (String, T)) -> Tag<T> {
+   Tag { tag, value }
+}
+
+pub fn untag<T: Clone>(t: &Tag<T>) -> (String, T) {
+   (t.tag.clone(), t.value.clone())
+}

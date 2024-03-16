@@ -1,18 +1,20 @@
-use std::collections::HashSet;
+// use std::collections::HashSet;
 
 use book::{
    html_utils::{Mode,HTML,HTML::OL,LI,mk_li,proff,h},
+   json_utils::AsJSON,
    list_utils::first_last,
    num_utils::mk_estimate,
    string_utils::plural,
-   utils::{get_args,pred}
+   utils::get_args
 };
 
 use crypto::{
    rest_utils::graphs_fin_res,
+   algos::orders::working_set,
    types::{
-      books::{Book,Volumes,vol_24h_pair,volumes_by_token,parse_books},
-      pairs::unpair,
+      books::{Volumes,vol_24h_pair,parse_books},
+      pairs::{unpair,Dyad,untag,Tag,mk_tag},
       usd::USD
    }
 };
@@ -34,52 +36,51 @@ fn main() {
 
 fn do_it(date: &str, min_opt: Option<String>) {
    let (_, books) = parse_books(Some(graphs_fin_res("aliases.csv")));
-   let tok_vols = volumes_by_token(&books);
    let default_min: f32 = 30000.0;
    let min: f32 =
       (min_opt.and_then(|mini| mini.parse().ok())).unwrap_or(default_min);
 
+   let (vols, toks) = working_set(min, &books);
    println!("var sets = [");
 
-   let mut toks = HashSet::new();
-   books.iter().for_each(print_book(min, &mut toks));
-   tok_vols.iter().for_each(print_token(min, &toks));
-   println!("];");
-   report(date, &toks, tok_vols);
+   let j: Vec<String> =
+      toks.into_iter().map(|b| mk_d(vol_24h_pair(&b)).as_json()).collect();
+   let k: Vec<String> =
+      vols.clone().into_iter().map(|p| mk_m(mk_tag(p)).as_json()).collect();
+   println!("{},\n{}];", j.join(",\n"), k.join(",\n"));
+   report(date, vols);
 }
 
-fn print_token(min: f32, toks: &HashSet<String>)
-      -> impl Fn((&String, &USD)) -> () + '_ {
-   move |(tok, val): (&String, &USD)| {
-      if val.amount > min && toks.contains(tok) {
-         println!("   {{sets: ['{tok}'], size: {}}},", val.amount);
-      }
+struct DyadUSD { d: Dyad<USD> }
+
+fn mk_d(d: Dyad<USD>) -> DyadUSD { DyadUSD { d } }
+
+impl AsJSON for DyadUSD {
+   fn as_json(&self) -> String {
+      let ((bk, tg), vol) = unpair(&self.d);
+      format!("   {{sets: ['{bk}', '{tg}'], size: {}}}", vol.amount)
    }
 }
 
-fn print_book(min: f32, toks: &mut HashSet<String>)
-      -> impl FnMut(&Book) -> () + '_ {
-   move | b: &Book | {
-      let ((bk, tg), vol) = unpair(&vol_24h_pair(b));
-      if vol.amount > min {
-         println!("   {{sets: ['{bk}', '{tg}'], size: {}}},", vol.amount);
-         toks.insert(bk);
-         toks.insert(tg);
-      }
+struct MonadUSD { m: Tag<USD> }
+
+fn mk_m(m: Tag<USD>) -> MonadUSD { MonadUSD { m } }
+
+impl AsJSON for MonadUSD {
+   fn as_json(&self) -> String {
+      let (tok, val) = untag(&self.m);
+      format!("   {{sets: ['{tok}'], size: {}}}", val.amount)
    }
 }
 
-fn report(date: &str, toks: &HashSet<String>, tok_vols: Volumes) {
+fn report(date: &str, tok_vols: Volumes) {
    let mut vols: Vec<(String, USD)> = tok_vols.into_iter().collect();
    vols.sort_by(|a,b| b.1.cmp(&a.1));
 
-   fn contfor(toks: &HashSet<String>)
-         -> impl Fn((String, USD)) -> Option<LI> + '_ {
-      | (tok, vol): (String, USD) |
-         pred(toks.contains(&tok),
-              mk_li(&format!("{tok}: ${}", mk_estimate(vol.amount))))
+   fn contfor((tok, vol): (String, USD)) -> LI {
+      mk_li(&format!("{tok}: ${}", mk_estimate(vol.amount)))
    }
-   let toppers0: Vec<LI> = vols.into_iter().filter_map(contfor(toks)).collect();
+   let toppers0: Vec<LI> = vols.into_iter().map(contfor).collect();
    let toppers: Vec<LI> = toppers0.into_iter().take(10).collect();
    let sz = &toppers.len();
    let tops = OL(toppers);
