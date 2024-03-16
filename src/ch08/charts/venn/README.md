@@ -20,6 +20,6 @@ when you call `./venn` with the above like so:
 
 You get a resulting Venn Diagram that looks something like this:
 
-![Protocols by blockchain](imgs/protocol-by-blockchain.png)
+![Protocols by blockchain](imgs/protocols-by-blockchain.png)
 
 when run through [venn.js](https://github.com/benfred/venn.js).
