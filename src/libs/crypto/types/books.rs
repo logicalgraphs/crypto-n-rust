@@ -13,8 +13,11 @@ use std::{
 
 use book::{
    csv_utils::CsvWriter,
+   err_utils::ErrStr,
+   file_utils::lines_from_file,
    json_utils::unquot,
    num_utils::mk_estimate,
+   string_utils::parse_lines,
    utils::pred
 };
 
@@ -54,6 +57,75 @@ pub struct Book {
    last: f32
 }
 
+pub type Books = HashSet<Book>;
+
+// ----- Parsing -------------------------------------------------------
+
+#[derive(Deserialize)]
+struct BooksVec {
+   #[serde(rename(deserialize="tickers"))]
+   books: Vec<Book1>
+}
+
+pub type Prices = HashMap<String, USD>;
+type Books1 = HashSet<Book1>;
+pub type BookBooks = (Prices, Books);
+
+fn raw_books() -> Books1 {
+   let str = read_market_json().expect("Could not read FIN market data");
+   let books: BooksVec = from_str(&str).expect("booked!");
+   books.books.into_iter().collect()
+}
+
+/* 
+A special case treating protocols-blockchains or tokens-blockchains
+as 'order books' because they have the same structure: the end-game is
+to structure these data as a Venn Diagram, or a graph, ... or both.
+
+Or Voronoi? That will clean up some code.
+
+Will I get burned by this semantic overloading?
+
+Probably? Maybe?
+
+But let's go with this for now and adapt as the end-game clarifies.
+
+The structure of these 'books' are as follows, a TSV-file of the form:
+
+blah-di-blah,some other stuff,date
+
+protocol/token,blockchain,_invested,value $,other stuff,...
+
+e.g.:
+
+Blockaverse	portfolio	2024-03-15					
+							
+Token	Blockchain	invested	value	gain/loss	ROI	real token name	rôle
+GMX	Arbitrum	$933.00	$682.45	-$250.55	-26.85%	GMX	
+BTC	Cardano	$409.29	$867.55	$458.26	111.97%	iBTC	blue-chip
+*/
+
+pub fn load_books_from_file(filename: &str) -> ErrStr<Books> {
+   let file = lines_from_file(filename);
+   fn parser(line: String) -> ErrStr<Book> {
+      let cols0: Vec<&str> = line.split("\t").collect();
+      let cols: Vec<&str> = cols0.into_iter().take(4).collect();
+      if let [tok, block, _, val] = cols.as_slice() {
+         let u: USD =
+            val.parse()
+               .expect(&format!("Could not parse dollar value: '{val}'"));
+         Ok(Book { base: tok.to_string(), target: block.to_string(),
+                   base_vol: u.clone(), target_vol: u,
+                   pool_id: "".to_string(), last: 0.0 })
+      } else {
+         Err(format!("Could not parse line: '{line}'"))
+      }
+   }
+   let books: HashSet<Book> =
+      parse_lines(parser, &file, Some(3))?.into_iter().collect();
+   Ok(books)
+}
+
 // ----- Volumes -------------------------------------------------------
 
 pub fn vol_24h(b: &Book) -> USD { vol_24h_pair(b).1 }
@@ -64,7 +136,6 @@ pub fn vol_24h_pair(b: &Book) -> ((String, String), USD) {
 }
 
 pub type Volumes = HashMap<String, USD>;
-pub type Books = HashSet<Book>;
 
 pub fn volumes_by_token(bs: &Books) -> Volumes {
    let mut ans: Volumes = HashMap::new();
@@ -90,30 +161,12 @@ pub fn vols(b: &Book) -> (VPair, VPair) {
     (b.target.clone(), b.target_vol.clone()))
 }
 
-// ----- Parsing -------------------------------------------------------
-
-#[derive(Deserialize)]
-struct BooksVec {
-   #[serde(rename(deserialize="tickers"))]
-   books: Vec<Book1>
-}
-
-pub type Prices = HashMap<String, USD>;
-type Books1 = HashSet<Book1>;
-pub type BookBooks = (Prices, Books);
-
-fn raw_books() -> Books1 {
-   let str = read_market_json().expect("Could not read FIN market data");
-   let books: BooksVec = from_str(&str).expect("booked!");
-   books.books.into_iter().collect()
-}
-
 // ----- Aliases -------------------------------------------------------
 
 type Aliases = HashMap<String, String>;
 
 fn alias(aliases: &Aliases, i: &String) -> String {
-   aliases.get(i).or(Some(i)).unwrap().clone()
+   aliases.get(i).unwrap_or(i).clone()
 }
 
 fn load_aliases(opt_url: &Option<String>) -> Aliases {

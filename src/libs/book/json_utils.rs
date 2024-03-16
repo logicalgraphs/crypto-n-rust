@@ -13,7 +13,7 @@ pub fn val_str(val: &Value, idx: &str) -> String {
 }
 
 pub fn unquot(val: &Value, idx: &str) -> String {
-   dequote(val_str(val, idx))
+   dequote(&val_str(val, idx))
 }
 
 pub fn val_num<T: std::str::FromStr>(val: &Value, idx: &str) -> T

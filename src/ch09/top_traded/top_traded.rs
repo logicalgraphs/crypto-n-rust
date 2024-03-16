@@ -36,9 +36,7 @@ fn do_it(date: &str, min_opt: Option<String>) {
    let tok_vols = volumes_by_token(&books);
    let default_min: f32 = 30000.0;
    let min: f32 =
-      if let Some(mini) = min_opt {
-         mini.parse().ok().or(Some(default_min)).unwrap()
-      } else { default_min };
+      (min_opt.and_then(|mini| mini.parse().ok())).unwrap_or(default_min);
 
    println!("var sets = [");
 
