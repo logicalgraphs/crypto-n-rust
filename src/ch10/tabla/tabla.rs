@@ -1,5 +1,3 @@
-use std::io::stdin;
-
 use book::{
    err_utils::{ErrStr,err_or},
    html_utils::{AsHTML,mk_table,attrib,TR,colspan,blank_cols,
@@ -7,20 +5,26 @@ use book::{
    list_utils::ht,
    matrix_utils::{Matrix,column_view},
    string_utils::to_string,
+   stream_utils::lines_from_stream,
    utils::{get_args,pred}
 };
 
 use crypto::types::usd::USD;
 
 fn main() -> ErrStr<()> {
-   let mut lines: Matrix<String> = Vec::new();
-   loop {
-      let mut butter = String::new();
-      stdin().read_line(&mut butter).expect("EOF");
-      if butter == "" { break; }
-      lines.push(butter.trim().split("\t").map(to_string).collect());
+   let args = get_args();
+   if let Some(help) = args.first() {
+      if help == "--help" { return usage() }
    }
-   if lines.is_empty() { usage() } else { deuceage(&lines) }
+   restage(args)
+}
+
+fn restage(args: Vec<String>) -> ErrStr<()> {
+   let lines: Matrix<String> =
+      lines_from_stream().into_iter()
+                         .map(|l| l.split("\t").map(to_string).collect())
+                         .collect();
+   deuceage(&lines, args)
 }
 
 fn usage() -> ErrStr<()> {
@@ -32,8 +36,7 @@ fn usage() -> ErrStr<()> {
    Ok(())
 }
 
-fn deuceage(lines: &Matrix<String>) -> ErrStr<()> {
-   let cols = get_args();
+fn deuceage(lines: &Matrix<String>, cols: Vec<String>) -> ErrStr<()> {
    fn n(c: &String) -> Option<usize> {
       err_or(c.parse(), &format!("Cannot parse number {c}")).ok()
    }
