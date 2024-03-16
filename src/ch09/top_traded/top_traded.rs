@@ -1,8 +1,5 @@
-// use std::collections::HashSet;
-
 use book::{
    html_utils::{Mode,HTML,HTML::OL,LI,mk_li,proff,h},
-   json_utils::AsJSON,
    list_utils::first_last,
    num_utils::mk_estimate,
    string_utils::plural,
@@ -12,9 +9,9 @@ use book::{
 use crypto::{
    rest_utils::graphs_fin_res,
    algos::orders::working_set,
+   charts::venn::venn_diagram,
    types::{
-      books::{Volumes,vol_24h_pair,parse_books},
-      pairs::{unpair,Dyad,untag,Tag,mk_tag},
+      books::{Volumes,parse_books},
       usd::USD
    }
 };
@@ -41,36 +38,8 @@ fn do_it(date: &str, min_opt: Option<String>) {
       (min_opt.and_then(|mini| mini.parse().ok())).unwrap_or(default_min);
 
    let (vols, toks) = working_set(min, &books);
-   println!("var sets = [");
-
-   let j: Vec<String> =
-      toks.into_iter().map(|b| mk_d(vol_24h_pair(&b)).as_json()).collect();
-   let k: Vec<String> =
-      vols.clone().into_iter().map(|p| mk_m(mk_tag(p)).as_json()).collect();
-   println!("{},\n{}];", j.join(",\n"), k.join(",\n"));
+   println!("{}", venn_diagram((&vols, &toks)));
    report(date, vols);
-}
-
-struct DyadUSD { d: Dyad<USD> }
-
-fn mk_d(d: Dyad<USD>) -> DyadUSD { DyadUSD { d } }
-
-impl AsJSON for DyadUSD {
-   fn as_json(&self) -> String {
-      let ((bk, tg), vol) = unpair(&self.d);
-      format!("   {{sets: ['{bk}', '{tg}'], size: {}}}", vol.amount)
-   }
-}
-
-struct MonadUSD { m: Tag<USD> }
-
-fn mk_m(m: Tag<USD>) -> MonadUSD { MonadUSD { m } }
-
-impl AsJSON for MonadUSD {
-   fn as_json(&self) -> String {
-      let (tok, val) = untag(&self.m);
-      format!("   {{sets: ['{tok}'], size: {}}}", val.amount)
-   }
 }
 
 fn report(date: &str, tok_vols: Volumes) {
