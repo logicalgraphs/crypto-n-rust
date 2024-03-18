@@ -1,23 +1,22 @@
 use book::{
    html_utils::{Mode,HTML,HTML::OL,LI,mk_li,proff,h},
    list_utils::first_last,
-   num_utils::mk_estimate,
+   num_utils::{mk_estimate,parse_or},
    string_utils::plural,
    utils::get_args
 };
 
 use crypto::{
-   rest_utils::graphs_fin_res,
    algos::orders::working_set,
    charts::venn::venn_diagram,
    types::{
-      books::{Volumes,parse_books},
+      books::{Volumes,parse_books_with_aliases},
       usd::USD
    }
 };
 
 fn usage() {
-   println!("\n./top_traded <date> [min volume=30000]\n");
+   println!("\n./top_traded <date> [min volume=50000]\n");
    println!("Prints the top-traded tokens by 24h-volumes.\n");
    println!("The set of sets can be represented as a Venn diagram using, i.e.");
    println!("https://github.com/benfred/venn.js");
@@ -25,18 +24,16 @@ fn usage() {
 
 fn main() {
    if let (Some(date), min) = first_last(&get_args()) {
-      do_it(&date, min);
+      do_it(&date, min.as_ref());
    } else {
       usage();
    }
 }
 
-fn do_it(date: &str, min_opt: Option<String>) {
-   let (_, books) = parse_books(Some(graphs_fin_res("aliases.csv")));
-   let default_min: f32 = 30000.0;
-   let min: f32 =
-      (min_opt.and_then(|mini| mini.parse().ok())).unwrap_or(default_min);
-
+fn do_it(date: &str, min_opt: Option<&String>) {
+   let (_, books) = parse_books_with_aliases();
+   let default_min: f32 = 50000.0;
+   let min = parse_or(min_opt, default_min);
    let (vols, toks) = working_set(min, &books);
    println!("{}", venn_diagram((&vols, &toks)));
    report(date, vols);

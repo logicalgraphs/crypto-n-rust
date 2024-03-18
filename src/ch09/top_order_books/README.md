@@ -8,9 +8,9 @@ data obtained from the
 
 `$ ./top_order_books [--raw] <date> [minumum volume=50000]`
 
-The <code>--raw</code>-option shows all the order books and their 24h-volumes.
+The `--raw`-option lists the top order books with their 24h-volumes.
 
 ## revisions
 
-* version 1.2: dust() eliminates books from the report below 5% daily volume.
+* version 1.2: `dust()` eliminates books from the report below 5% daily volume.
 * version 1.1: corrected volumes to be based off of the target price.
