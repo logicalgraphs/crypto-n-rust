@@ -58,32 +58,8 @@ impl<T:Debug> Debug for InfiniteList<T> {
    }
 }
 
-// parse_nums() Influenced by the following overflows:
-
-// https://stackoverflow.com/questions/27043268/convert-a-string-to-int
-// https://stackoverflow.com/questions/23100534/how-to-sum-the-values-in-an-array-slice-or-vec-in-rust
-
 pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
-   parse_nums_res(strs).iter().map(|n| n.clone().expect("what?")).collect()
-}
-
-pub fn parse_nums_opt(strs: Vec<String>) -> Vec<f32> {
-   let mut ans: Vec<f32> = Vec::new();
-   for x in parse_nums_res(strs) {
-      if let Ok(n) = x {
-         ans.push(n);
-      }
-   }
-   ans
-}
-
-pub fn parse_nums_res(strs: Vec<String>) -> Vec<Result<f32, String>> {
-   strs.iter().map(|n| match n.parse() {
-      Ok(x) => Ok (x),
-      Err(_) => {
-        let msg = String::from(&(n.to_owned() + " isn't a number"));
-        Err(msg)
-      }}).collect()
+   strs.into_iter().map(|n| n.parse().expect(&format!("'{n}' NaN"))).collect()
 }
 
 // ----- list functions --------------------------------------------------

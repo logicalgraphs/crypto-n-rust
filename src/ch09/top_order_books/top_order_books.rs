@@ -1,9 +1,10 @@
 use book::{
-   list_utils::{head,ht},
-   utils::get_args
+   list_utils::ht,
+   num_utils::parse_or,
+   utils::{get_args,pred}
 };
 
-use crypto::types::books::parse_books;
+use crypto::types::books::parse_books_with_aliases;
 
 use tob::reports::reportage;
 
@@ -15,33 +16,19 @@ fn usage() {
    println!("\tas there are many order books on FIN now.\n");
 }
 
-fn main() -> Result<(), String> {
+fn main() {
    let args = get_args();
    let mut success = false;
    if let (Some(frist), r1) = ht(&args) {
       let raw = frist == "--raw";
-      if let Some(date) = if !raw { Some(frist) } else { head(&r1) } {
+      if let Some(date) = if !raw { Some(frist) } else { r1.first().cloned() } {
          success = true;
-         let (_, order_books) = parse_books();
-         let min = get_minimum(raw, r1.last(), 50000.0);
-         reportage(&date, &order_books, min);
+         let (_, books) = parse_books_with_aliases();
+         let min_opt = pred(raw, parse_or(r1.last(), 50000.0));
+         reportage(&date, &books, min_opt);
       }
    }
    if !success {
       usage();
    }
-   Ok(())
-}
-
-fn get_minimum(raw: bool, min: Option<&String>, default: f32) -> Option<f32> {
-   let mut ans = None;
-   if raw {
-      ans = Some(default);
-      if let Some(str) = min {
-         if let Ok(num) = str.parse() {
-            ans = Some(num);
-         }
-      }
-   }
-   ans
 }

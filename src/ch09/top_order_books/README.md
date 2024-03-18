@@ -6,15 +6,11 @@ Computes the top order books by 24-hour volume from @TeamKujira FIN order book
 data obtained from the 
 [tickers REST endpoint](https://api.kujira.app/api/coingecko/tickers).
 
-<code>$ ./top_order_books [--raw] <date></code>
+`$ ./top_order_books [--raw] <date> [minumum volume=50000]`
 
 The <code>--raw</code>-option shows all the order books and their 24h-volumes.
 
-## TODO
+## revisions
 
-The volumes are messed up, mang! I had assumed all volumes were in USD. That
-is not the case for some order books: the volumes are in
-<code>target_currency</code>, so, when <code>target_currency</code> is
-<code>$axlUSDC</code> or another similar stable (*cough* <code>$USK</code>),
-then the volumes are accurate. When the volumes are in, say
-<code>$wETH</code>, I'm hella-off!
+* version 1.2: dust() eliminates books from the report below 5% daily volume.
+* version 1.1: corrected volumes to be based off of the target price.

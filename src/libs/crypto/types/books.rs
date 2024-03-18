@@ -22,7 +22,7 @@ use book::{
 };
 
 use crate::{
-   rest_utils::{read_market_json,read_aliases},
+   rest_utils::{graphs_fin_res,read_market_json,read_aliases},
    types::{
       marketplace::{OrderBook,mk_orderbook},
       pairs::{Dyad,mk_dyad,unpair},
@@ -217,6 +217,10 @@ pub fn parse_books(opt_aliases: Option<String>) -> BookBooks {
    let p = prices_from_books(&b0, &aliases);
    let b = books2books(&p, &b0, &aliases);
    (p, b)
+}
+
+pub fn parse_books_with_aliases() -> BookBooks {
+   parse_books(Some(graphs_fin_res("aliases.csv")))
 }
 
 impl<'de> Deserialize<'de> for Book1 {
