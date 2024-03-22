@@ -18,10 +18,12 @@ BTC     Cardano $409.29 $867.55 $458.26 111.97% iBTC    blue-chip
 
 when you call `./venn` with the above like so:
 
-`$ echo "<TSV data>" | venn`
+`$ echo "<TSV data>" | venn [min]`
 
 You get a resulting Venn Diagram that looks something like this:
 
 ![Protocols by blockchain](imgs/protocols-by-blockchain.png)
 
 when run through [venn.js](https://github.com/benfred/venn.js).
+
+... [min] is the minimum value to be included into the Venn Diagram.
