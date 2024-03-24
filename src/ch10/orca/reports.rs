@@ -42,9 +42,9 @@ fn top5_header(topel: &Top5s, title: &str, date: &str) -> String {
    let n = topel.len();
    let msg = "@TeamKujira ORCA";
    let liqs = plural(n as usize, "liquidation");
-   let msg1 = "by ($) for 7-days trailing";
+   let msg1 = "($) for 7-days trailing";
 
-   format!("Top {liqs} on {msg} {title} {msg1} {date}")
+   format!("Top {liqs} on {msg} by {title} {msg1} {date}")
 }
 
 fn print_top5s_csv(topel: &Top5s, title: &str, date: &str, footer: bool) {
