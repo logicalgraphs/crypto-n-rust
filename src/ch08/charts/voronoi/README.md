@@ -14,7 +14,7 @@ is in [commands.sh](../../../scripts/commands.sh).
 
 You run the ./voronoi program thusly:
 
-<code>$ voronoi $COLORS terra_tokens.tsv</code>
+`$ echo '<TSV file>' | voronoi $COLORS`
 
 The program outputs Javascript that you can paste into the [Voronoi-site on
 d3js.org](https://observablehq.com/@will-r-chase/voronoi-treemap).
