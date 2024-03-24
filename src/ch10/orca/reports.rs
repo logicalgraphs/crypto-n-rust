@@ -41,10 +41,10 @@ fn report_by(date: &str, title: &str, f: impl Fn(&Market) -> Market,
 fn top5_header(topel: &Top5s, title: &str, date: &str) -> String {
    let n = topel.len();
    let msg = "@TeamKujira ORCA";
-   let liqs = plural(n as u32, "liquidation");
+   let liqs = plural(n as usize, "liquidation");
    let msg1 = "by ($) for 7-days trailing";
 
-   format!("Top {n} {msg} {liqs} {title} {msg1} {date}")
+   format!("Top {liqs} on {msg} {title} {msg1} {date}")
 }
 
 fn print_top5s_csv(topel: &Top5s, title: &str, date: &str, footer: bool) {
