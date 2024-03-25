@@ -1,12 +1,9 @@
 use std::cmp::Ordering;
 
-use crypto::{
-   rest_utils::graphs_fin_res,
-   types::books::prices
-};
+use crypto::types::books::prices_with_aliases;
 
 fn main() {
-   let all_prices1 = prices(Some(graphs_fin_res("aliases.csv")));
+   let all_prices1 = prices_with_aliases();
    let mut all_prices: Vec<_> = all_prices1.into_iter().collect();
    fn root(s: &str) -> String {
       s.trim_matches(char::is_lowercase).to_string()

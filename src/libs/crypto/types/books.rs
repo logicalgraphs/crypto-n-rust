@@ -335,6 +335,10 @@ pub fn book_orderbook(prices: &Prices) -> impl Fn(&Book) -> OrderBook + '_ {
 // THEN I take the remaining order books and ratio their prices from base
 // price. Maybe I could just oracle everything, instead?
 
+pub fn prices_with_aliases() -> Prices {
+   prices(Some(graphs_fin_res("aliases.csv")))
+}
+
 pub fn prices(opt_aliases: Option<String>) -> Prices {
    let b0 = raw_books();
    let aliases = load_aliases(&opt_aliases);
