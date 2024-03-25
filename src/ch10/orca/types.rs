@@ -70,7 +70,6 @@ impl CsvWriter for Liquidation {
 }
 
 pub type LiquidationsByDate = HashMap<NaiveDate, Liquidations>;
-pub type Quotes = HashMap<String, USD>;
 pub type Lines = Vec<String>;
 
 #[derive(Debug, Clone)]

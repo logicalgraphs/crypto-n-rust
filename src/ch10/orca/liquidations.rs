@@ -3,8 +3,10 @@ use book::{
    utils::get_args
 };
 
+use crypto::parsers::token_prices::read_prices;
+
 use cillaz::{
-   parsers::{process_liquidations_by_date,read_prices},
+   parsers::{process_liquidations_by_date},
    reports::report
 };
 
