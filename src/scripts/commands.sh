@@ -22,4 +22,5 @@ export FIN_TICKERS=https://api.kujira.app/api/coingecko/tickers
 alias rusty="cd $RUST_BOOK"
 alias cocaine="cd $RUST_BOOK/src/ch09/lsd; lsd $LE_DATE > data/stride.csv; cat data/stride.csv; git add data/stride.csv; cd -"
 alias cmc="rusty; cmc_prices > $CSV_LISTING; cmc_filter $CSV_LISTING $HOLDINGS > $PORT_LISTING; git add $CSV_LISTING $PORT_LISTING; cat $PORT_LISTING; cd -"
-alias orca="rusty; prices | stamp > $FIN_DIR/prices.csv; cillaz $LE_DATE $FIN_DIR/prices.csv $ORCA_DIR/liquidations.lsv > $ORCA_DIR/report.csv; git add $FIN_DIR/prices.csv $ORCA_DIR/liquidations.lsv $ORCA_DIR/report.csv; git commit -m 'ORCA liquidations report'"
+alias kfc="rusty; kfin $FIN_DIR/prices.tsv | stamp > /tmp/prices.tsv; mv /tmp/prices.tsv $FIN_DIR/prices.tsv; cat $FIN_DIR/prices.tsv; git add $FIN_DIR/prices.tsv; cd -"
+alias orca="rusty; kfc; cillaz $LE_DATE $FIN_DIR/prices.tsv $ORCA_DIR/liquidations.lsv > $ORCA_DIR/report.csv; git add $ORCA_DIR/liquidations.lsv $ORCA_DIR/report.csv; git commit -m 'ORCA liquidations report'; cd -"

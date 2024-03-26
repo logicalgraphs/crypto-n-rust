@@ -180,7 +180,11 @@ fn load_aliases(opt_url: &Option<String>) -> Aliases {
       for alias in lines {
          if let [id,name] = alias.split(",").collect::<Vec<_>>().as_slice() {
            ans.insert(id.to_string(), name.to_string());
-         } else { println!("Unable to parse alias: '{alias}'") }
+         } else {
+            if !alias.is_empty() {
+               println!("Unable to parse alias: '{alias}'");
+            }
+         }
       }
    }
    ans

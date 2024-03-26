@@ -10,7 +10,7 @@ type PairRef<'a> = (&'a String, &'a USD);
 
 pub fn merge_prices(new_prices: &Prices, portfolio: &Prices) -> Prices {
    fn merge_price<'a>(news: &'a Prices) -> impl Fn(PairRef<'a>) -> Pair + 'a {
-      |(tok,pric)| (tok.clone(),news.get(tok).or(Some(pric)).unwrap().clone())
+      |(tok,pric)| (tok.clone(),news.get(tok).unwrap_or(pric).clone())
    }
    portfolio.into_iter().map(merge_price(new_prices)).collect()
 }
@@ -24,5 +24,6 @@ pub fn print_sorted_prices(prices: &Prices) {
       root(a).cmp(&root(b)).then(a.len().cmp(&b.len()))
    }
    all_prices.sort_by(|(a, _), (b, _)| cmp(a, b));
-   all_prices.into_iter().for_each(|(asset,price)| println!("{asset},{price}"));
+   println!("token\tprice");
+   all_prices.into_iter().for_each(|(asst,pric)| println!("{asst}\t{pric}"));
 }

@@ -15,7 +15,7 @@ pub fn read_prices(file: &str) -> Prices {
    let mut ans = HashMap::new();
 
    for line in tail(&lines) {
-      if let [asset, monay] = line.split(",").collect::<Vec<_>>().as_slice() {
+      if let [asset, monay] = line.split("\t").collect::<Vec<_>>().as_slice() {
          let quot: USD = monay.parse()
                   .expect(&format!("Could not parse {monay} to USD"));
          ans.insert(asset.to_string(),quot);
