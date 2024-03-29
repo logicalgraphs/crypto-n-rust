@@ -4,12 +4,12 @@ use std::collections::HashSet;
 
 use crate::types::{
    assets::Asset,
-   books::{fetch_books_by_vol,ticker,book_orderbook,parse_books_with_aliases},
-   interfaces::{Books,BookBooks,Prices},
+   books::{fetch_books_by_vol,parse_books_with_aliases},
+   interfaces::{Books,BookBooks,Prices,ticker,book_orderbook,vol_24h},
    marketplace::{OrderBook,dual_asset,orderbook},
    pairs::untag,
    usd::USD,
-   volumes::{Volumes,volumes_by_token,vol_24h}
+   volumes::{Volumes,volumes_by_token}
 };
 
 pub fn target_sell_ratio(prices: &Prices, a: &Asset,

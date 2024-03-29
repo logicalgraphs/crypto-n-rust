@@ -27,7 +27,7 @@ pub struct Book1 {
 
    pub base: String,
    pub target: String,
-   pool_id: String,
+   pub pool_id: String,
    pub base_vol: f32,
    pub target_vol: f32,
    pub last: f32

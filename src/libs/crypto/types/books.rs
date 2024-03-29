@@ -13,13 +13,13 @@ use crate::{
    rest_utils::graphs_fin_res,
    types::{
       aliases::load_aliases,
-      interfaces::{Books,Book,BookBooks,trades_token},
+      interfaces::{Books,Book,BookBooks,mk_book,trades_token,vol_24h},
       internal::{
-         books::raw_books,
-         prices::prices_from_books
+         books::books2books,
+         prices::prices_from_books,
+         types::raw_books
       },
-      usd::USD,
-      volumes::vol_24h
+      usd::USD
    }
 };
 
@@ -72,9 +72,8 @@ pub fn load_books_from_stream() -> ErrStr<Books> {
          let u: USD =
             val.parse()
                .expect(&format!("Could not parse dollar value: '{val}'"));
-         Ok(Book { base: tok.to_string(), target: block.to_string(),
-                   base_vol: u.clone(), target_vol: u,
-                   pool_id: "".to_string(), last: 0.0 })
+         Ok(mk_book(tok.to_string(), block.to_string(), "".to_string(), 
+                    u.clone(), u, 0.0))
       } else {
          Err(format!("Could not parse line: '{line}'"))
       }

@@ -3,10 +3,15 @@ use std::{
    hash::{Hash,Hasher}
 };
 
-use book::csv_utils::CsvWriter;
+use book::{
+   csv_utils::CsvWriter,
+   num_utils::mk_estimate
+};
 
 use crate::types::{
-   pairs::{Dyad,mk_dyan,Tag,mk_tag,untag},
+   books::fetch_books,
+   marketplace::{OrderBook,mk_orderbook},
+   pairs::{Dyad,mk_dyad,unpair,Tag,mk_tag,untag},
    usd::{USD,mk_usd}
 };
 
@@ -20,11 +25,18 @@ pub struct Book {
    last: f32
 }
 
+pub fn mk_book(b: String, t: String, p: String, bv: USD, tv: USD, l: f32)
+      -> Book {
+   Book { base: b, target: t, pool_id: p, base_vol: bv, target_vol: tv,
+          last: l }
+}
+
 // -- ick
 pub type VPair = Tag<USD>;  // a token-price-pair
    
 pub fn vols(b: &Book) -> (VPair, VPair) {
-   (mk_tag((b.base, b.base_vol)), mk_tag((b.target, b.target_vol)))
+   fn makus(a: &str, b: &USD) -> Tag<USD> { mk_tag((a.to_string(), b.clone())) }
+   (makus(&b.base, &b.base_vol), makus(&b.target, &b.target_vol))
 }
    
 pub fn vol_24h(b: &Book) -> USD { unpair(&vol_24h_pair(b)).1 }
@@ -32,15 +44,15 @@ pub fn vol_24h(b: &Book) -> USD { unpair(&vol_24h_pair(b)).1 }
 pub fn vol_24h_pair(book: &Book) -> Dyad<USD> {
    let (b, t) = vols(book);
    let (bk, bv) = untag(&b);
-   let (tg, tv) = untag(&b);
+   let (tg, tv) = untag(&t);
    mk_dyad((bk, tg), mk_usd((bv.amount + tv.amount) / 2.0))
 }
 
 // -- unick
 
 pub fn ticker(b: &Book) -> String { format!("{}/{}", b.base, b.target) }
-pub fn trades_token(t: &str) -> impl Fn(&Book) -> bool {
-   |b: &Book| b.target == t || b.base == t
+pub fn trades_token(t: &str) -> impl Fn(&Book) -> bool + '_ {
+   move |b: &Book| b.target == t || b.base == t
 }
 
 pub fn estimate(b: &Book) -> String {
@@ -48,10 +60,10 @@ pub fn estimate(b: &Book) -> String {
 } 
 
 pub fn book_orderbook(prices: &Prices) -> impl Fn(&Book) -> OrderBook + '_ {
-   |b| {
+   |b: &Book| {
       let base = &b.base;
       let err_msg = format!("Calamity! No price for {base}!");
-      let price = prices.get(base).expect(&err_msg);
+      let price = untag(prices.get(base).expect(&err_msg)).1;
       let ratio = b.last;
       mk_orderbook(base, &b.target, ratio, &price)
    }

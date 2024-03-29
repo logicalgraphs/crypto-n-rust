@@ -2,8 +2,7 @@ use std::cmp::Ordering;
 
 use crate::types::{
    interfaces::{Prices,Price},
-   pairs::untag,
-   usd::USD
+   pairs::untag
 };
 
 type Pair = (String, Price);
@@ -26,8 +25,8 @@ pub fn print_sorted_prices(prices: &Prices) {
    }
    all_prices.sort_by(|(a, _), (b, _)| cmp(a, b));
    println!("date\ttoken\tprice");
-   fn prtr((asst,tagged_price)) {
-      let (date,pric) = untag(tagged_price);
+   fn prtr((asst,tagged_price): (&String, &Price)) {
+      let (date,pric) = untag(&tagged_price);
       println!("{date}\t{asst}\t{pric}");
    }
    all_prices.into_iter().for_each(prtr);

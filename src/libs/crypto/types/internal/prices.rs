@@ -8,7 +8,8 @@ use book::utils::pred;
 use crate::types::{
    internal::types::{Book1,Books1},
    aliases::{Aliases,alias},
-   interfaces::Prices,
+   interfaces::{Prices,Price,mk_price},
+   pairs::untag,
    usd::{USD,mk_usd}
 };
 
@@ -70,7 +71,7 @@ fn d(d1: &str, u: USD) -> Price { mk_price(d1, u) }
 
 fn mb_book<'a>(date: &'a str, factor: &'a USD, a: &'a Aliases)
       -> impl Fn(&Book1) -> Option<(String, Price)> + 'a {
-   | b | {
+   move | b: &Book1 | {
       pred(b.last > 0.0 && b.target_vol + b.base_vol > 0.0,
            (alias(a, &b.base), d(&date, mk_usd(b.last * factor.amount))))
    }
@@ -85,7 +86,7 @@ fn books_for(date: &str, stable: &str, (stables, books): Book1BooksRef,
       src.into_iter().filter_map(mb_book(&d, dollah, a)).collect()
    }
    let quote = untag(stables.get(stable).unwrap()).1;
-   (mk_books(date, quote, &mines, aliases), yourses)
+   (mk_books(date, &quote, &mines, aliases), yourses)
 }
 
 fn stable_books(date: &str, books: &Books1, a: &Aliases) -> Book1Books {
@@ -103,13 +104,18 @@ fn stable_books(date: &str, books: &Books1, a: &Aliases) -> Book1Books {
 // Here, we take the books that don't have a stable target, or so I think, then
 // compute the prices for the bases to round out the token-prices-list.
 
-fn barometric_board<'a>(date: &str, prices: &'a Prices, a: &'a Aliases)
+fn barometric_board<'a>(date: &'a str, prices: &'a Prices, a: &'a Aliases)
          -> impl Fn(&Book1) -> Option<(String, Price)> + 'a {
    fn mb_price<'b>(d: &'b str, b: &'b Book1, a: &'b Aliases)
-          -> impl Fn(&USD) -> Option<(String, Price)> + 'b {
-      move |price| { mb_book(d, price, a)(b) }
+          -> impl Fn(&Price) -> Option<(String, Price)> + 'b {
+      move |price| { 
+         let p = untag(price).1;
+         let x = mb_book(d, &p, a)(b);
+         x   // <-- so to live on through the borrow
+      }
    }
-   |book| prices.get(&alias(a, &book.target)).and_then(mb_price(date, book, a))
+   |book: &Book1|
+      prices.get(&alias(a, &book.target)).and_then(mb_price(date, book, a))
 }
 
 fn compute_stable_price(b: &Book1) -> USD { mk_usd(1.0 / b.last) }

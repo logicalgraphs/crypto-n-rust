@@ -11,7 +11,7 @@ token-price, it is $axlUSDC-biased.
 
 Usage:
 
-`$ ./prices`
+`$ ./prices <date>`
 
 renders something like this:
 
@@ -30,3 +30,8 @@ for my Book-type had me rewriting `partition()` by hand. Ick.
 On the plus-side, I did some neat compositions with higher-order functions,
 particularly with `mb_book()` and `mb_price()`. And I found chaining HashMaps
 together to be an elegant approach to solving the prices-problem.
+
+## Revisions
+
+2024-03-29: refactored crypto::types::books into 17 files 😱😱😱 `./prices`
+now provides the date that the token-price was recorded.

@@ -3,7 +3,7 @@
 
 use crate::types::{
    aliases::{Aliases,alias},
-   interfaces::{Books,Book,Prices,Price,get_price},
+   interfaces::{Books,Book,mk_book,Prices,Price,get_price},
    internal::types::{Books1,Book1},
    usd::{USD,mk_usd}
 };
@@ -21,13 +21,9 @@ pub fn books2books(p: &Prices, bs: &Books1, aliases: &Aliases) -> Books {
                fn vol(p: &Price, t: f32) -> USD {
                   mk_usd(get_price(&p).amount * t)
                }
-               Some(Book { base: bas,
-                           target: tar,
-                           pool_id: b0.pool_id.clone(),
-                           base_vol: vol(b_price, b0.base_vol),
-                           target_vol: vol(t_price, b0.target_vol),
-                           last: b0.last
-                         })
+               Some(mk_book(bas,tar, b0.pool_id.clone(),
+                            vol(b_price, b0.base_vol),
+                            vol(t_price, b0.target_vol), b0.last))
             })
          })
       }

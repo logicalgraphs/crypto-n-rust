@@ -4,10 +4,10 @@ use book::json_utils::AsJSON;
 
 use crate::{
    types::{
-      interfaces::Books,
+      interfaces::{Books,vol_24h_pair},
       pairs::{Dyad,unpair,Tag,mk_tag,untag},
       usd::USD,
-      volumes::{Volumes,vol_24h_pair}
+      volumes::Volumes
    }
 };
 

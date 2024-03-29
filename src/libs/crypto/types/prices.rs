@@ -6,8 +6,8 @@ use crate::{
    types::{
       aliases::load_aliases,
       internal::{
-         books::raw_books,
-         prices::prices_from_books
+         prices::prices_from_books,
+         types::raw_books
       },
       interfaces::Prices
    }
