@@ -6,7 +6,7 @@ use book::{
 };
 
 use crate::types::{
-   books::Prices,
+   interfaces::{Prices,mk_price},
    usd::USD
 };
 
@@ -15,10 +15,11 @@ pub fn read_prices(file: &str) -> Prices {
    let mut ans = HashMap::new();
 
    for line in tail(&lines) {
-      if let [asset, monay] = line.split("\t").collect::<Vec<_>>().as_slice() {
+      if let [date, asset, monay] =
+            line.split("\t").collect::<Vec<_>>().as_slice() {
          let quot: USD = monay.parse()
                   .expect(&format!("Could not parse {monay} to USD"));
-         ans.insert(asset.to_string(),quot);
+         ans.insert(asset.to_string(),mk_price(date,quot));
       } else { panic!("Unparseable line in prices: {line}") }
    }
    ans
