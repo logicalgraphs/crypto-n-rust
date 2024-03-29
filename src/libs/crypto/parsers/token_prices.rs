@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use book::{
-   file_utils::extract_date_and_body,
+   file_utils::lines_from_file,
    list_utils::tail
 };
 
@@ -11,7 +11,7 @@ use crate::types::{
 };
 
 pub fn read_prices(file: &str) -> Prices {
-   let (_date, lines) = extract_date_and_body(file);
+   let lines = lines_from_file(file);
    let mut ans = HashMap::new();
 
    for line in tail(&lines) {

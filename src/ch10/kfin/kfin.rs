@@ -3,13 +3,13 @@ use book::utils::get_args;
 use crypto::{
    algos::prices::{merge_prices,print_sorted_prices},
    parsers::token_prices::read_prices,
-   types::books::prices_with_aliases
+   types::prices::prices_with_aliases
 };
 
 fn main() {
-   if let Some(portfolio) = get_args().first() {
+   if let [date, portfolio] = get_args().as_slice() {
       let port = read_prices(&portfolio);
-      let news = prices_with_aliases();
+      let news = prices_with_aliases(&date);
       print_sorted_prices(&merge_prices(&news,&port));
    } else {
       usage();
@@ -17,7 +17,7 @@ fn main() {
 }
 
 fn usage() {
-   println!("./kfin <prices.csv>\n");
+   println!("./kfin <date> <prices.tsv>\n");
    println!("\tComputes the actively traded token prices on Kujira FIN,");
-   println!("\tusing <prices.csv> as the schema on which tokens to report.");
+   println!("\tusing <prices.tsv> as the schema on which tokens to report.");
 }
