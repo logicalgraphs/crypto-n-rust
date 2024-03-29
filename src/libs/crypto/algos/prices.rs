@@ -1,12 +1,12 @@
 use std::cmp::Ordering;
 
 use crate::types::{
-   books::Prices,
-   usd::USD
+   interfaces::{Prices,Price},
+   pairs::untag
 };
 
-type Pair = (String, USD);
-type PairRef<'a> = (&'a String, &'a USD);
+type Pair = (String, Price);
+type PairRef<'a> = (&'a String, &'a Price);
 
 pub fn merge_prices(new_prices: &Prices, portfolio: &Prices) -> Prices {
    fn merge_price<'a>(news: &'a Prices) -> impl Fn(PairRef<'a>) -> Pair + 'a {
@@ -24,6 +24,10 @@ pub fn print_sorted_prices(prices: &Prices) {
       root(a).cmp(&root(b)).then(a.len().cmp(&b.len()))
    }
    all_prices.sort_by(|(a, _), (b, _)| cmp(a, b));
-   println!("token\tprice");
-   all_prices.into_iter().for_each(|(asst,pric)| println!("{asst}\t{pric}"));
+   println!("date\ttoken\tprice");
+   fn prtr((asst,tagged_price): (&String, &Price)) {
+      let (date,pric) = untag(&tagged_price);
+      println!("{date}\t{asst}\t{pric}");
+   }
+   all_prices.into_iter().for_each(prtr);
 }

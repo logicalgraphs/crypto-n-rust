@@ -12,3 +12,4 @@ pub mod report_utils;
 pub mod rest_utils;
 pub mod stream_utils;
 pub mod string_utils;
+pub mod tuple_utils;
