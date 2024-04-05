@@ -14,9 +14,25 @@ use crypto::{
 };
 
 fn main() -> ErrStr<()> {
+   let args = get_args();
+   let mb_arg = args.first();
+   let f = if let Some(n) = mb_arg.clone() {
+      if n == "--help" { usage } else { thunk }
+   } else { thunk };
+   f(mb_arg)
+}
+
+fn thunk(mb_n: Option<&String>) -> ErrStr<()> {
    let books = load_books_from_stream()?;
-   let min = parse_or(get_args().first(), 500.0);
+   let default = 500.0;
+   let min = parse_or(mb_n, default);
    let set = working_set(min, &books);
    println!("{}", venn_diagram(set.as_ref()));
+   Ok(())
+}
+
+fn usage(_help: Option<&String>) -> ErrStr<()> {
+   println!("echo <TSV file> | ./venn [min=500.0]\n");
+   println!("\tOutputs a Venn diagram set, only allowing values above [min].");
    Ok(())
 }
