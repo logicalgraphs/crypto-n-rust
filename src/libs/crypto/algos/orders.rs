@@ -5,7 +5,7 @@ use std::collections::HashSet;
 use crate::types::{
    assets::Asset,
    books::{fetch_books_by_vol,parse_books_with_aliases},
-   interfaces::{Books,BookBooks,Prices,ticker,book_orderbook,vol_24h},
+   interfaces::{Books,BookBooks,tokens,Prices,ticker,book_orderbook,vol_24h},
    marketplace::{OrderBook,dual_asset,orderbook},
    pairs::untag,
    usd::USD,
@@ -31,10 +31,11 @@ pub fn active_order_books(market: &mut HashSet<OrderBook>,
 }
 
 pub fn working_set(min: f32, b: &Books) -> (Volumes, Books) {
-   let mut tok_vols = volumes_by_token(&b);
-   tok_vols.retain(|_, v| v.amount > min);
    let mut books = b.clone();
    books.retain(|b| vol_24h(b).amount > min);
+   let mut tok_vols = volumes_by_token(&b);
+   let toks = tokens(&books);
+   tok_vols.retain(|t, _| toks.contains(t));
    (tok_vols, books)
 }
 

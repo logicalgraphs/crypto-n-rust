@@ -10,8 +10,9 @@ use crypto::{
    algos::orders::working_set,
    charts::venn::venn_diagram,
    types::{
-      books::{Volumes,parse_books_with_aliases},
-      usd::USD
+      books::parse_books_with_aliases,
+      usd::USD,
+      volumes::Volumes
    }
 };
 
@@ -31,7 +32,7 @@ fn main() {
 }
 
 fn do_it(date: &str, min_opt: Option<&String>) {
-   let (_, books) = parse_books_with_aliases();
+   let (_, books) = parse_books_with_aliases(&date);
    let default_min: f32 = 50000.0;
    let min = parse_or(min_opt, default_min);
    let (vols, toks) = working_set(min, &books);

@@ -75,8 +75,20 @@ pub fn count(books: &Books, token: &str) -> usize {
    ans
 }
 
-
 pub type Books = HashSet<Book>;
+
+pub fn tokens(books: &Books) -> HashSet<String> {
+   let mut ans = HashSet::new();
+   fn insert_both(a: &mut HashSet<String>) -> impl FnMut(&Book) -> () + '_ {
+      |b| {
+         a.insert(b.target.to_string());
+         a.insert(b.base.to_string());
+      }
+   }
+   books.into_iter().for_each(insert_both(&mut ans));
+   ans
+}
+
 pub type BookBooks = (Prices, Books);
 
 pub type Price = Tag<USD>;
