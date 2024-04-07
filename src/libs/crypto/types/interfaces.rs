@@ -31,6 +31,11 @@ pub fn mk_book(b: String, t: String, p: String, bv: USD, tv: USD, l: f32)
           last: l }
 }
 
+pub fn url(b: &Book) -> String {
+   let urn = "https://fin.kujira.app/trade";
+   format!("{urn}/{}", b.pool_id)
+}
+
 // -- ick
 pub type VPair = Tag<USD>;  // a token-price-pair
    

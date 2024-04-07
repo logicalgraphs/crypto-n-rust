@@ -23,7 +23,7 @@ fn main() {
       let raw = frist == "--raw";
       if let Some(date) = if !raw { Some(frist) } else { r1.first().cloned() } {
          success = true;
-         let (_, books) = parse_books_with_aliases();
+         let (_, books) = parse_books_with_aliases(&date);
          let min_opt = pred(raw, parse_or(r1.last(), 50000.0));
          reportage(&date, &books, min_opt);
       }

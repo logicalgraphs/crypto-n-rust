@@ -4,7 +4,7 @@ use book::{
    report_utils::{print_footer, print_top_of}
 };
 
-use crypto::types::books::{Book,Books,count,vol_24h};
+use crypto::types::interfaces::{Book,Books,count,vol_24h};
 
 use crate::{
    analyzed_books::analyze,
@@ -32,7 +32,6 @@ pub fn reportage(date: &str, books: &Books, raw: Option<f32>) {
 
 fn print_txt<T: CsvWriter>(tops: &Vec<T>, date: &str) {
    printer(tops, date, &Mode::TEXT);
-   println!("\nfull report archived at \n");
 }
 
 fn print_alles(alles: &Vec<Book>, date: &str, min: f32) {

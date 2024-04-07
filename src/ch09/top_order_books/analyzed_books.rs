@@ -4,7 +4,7 @@ use book::{
 };
 
 use crypto::types::{
-   books::{Book,ticker,vol_24h},
+   interfaces::{Book,vol_24h,ticker},
    percentage::{Percentage,mk_percentage}
 };
 
