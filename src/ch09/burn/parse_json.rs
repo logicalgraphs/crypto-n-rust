@@ -1,4 +1,4 @@
-use bunsen::entries::{OrderBook, parse_orderbook};
+use bunsen::order_books::{OrderBook, parse_orderbook};
 
 use book::{
    csv_utils::print_csv,

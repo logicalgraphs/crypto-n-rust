@@ -11,7 +11,8 @@ use crate::rows::{Row,find_triple};
 use book::{
    csv_utils::print_csv,
    file_utils::extract_date_and_body,
-   list_utils::{head,split},
+   // list_utils::{head,split},
+   list_utils::head,
    utils::get_args
 };
 
@@ -55,26 +56,27 @@ pub fn process1(preformatter: impl Fn(&Vec<String>) -> Vec<String>) {
    if let Some(file) = head(&get_args()) {
       let (date, body) = extract_date_and_body(&file);
       let new_bod = preformatter(&body);
-      split(new_bod, "Borrowed".to_string()).iter()
-          .fold(1.0, preprocess_with_sign(&date));
+      new_bod.split(|l| l == "Borrowed")
+             .into_iter()
+             .fold(1.0, preprocess_with_sign(&date));
    } else {
       usage();
    }
 }
 
 // a function that 'folds over' the (negative) sign
-fn preprocess_with_sign(date: &str) -> impl Fn(f32, &Vec<String>) -> f32 + '_ {
-   |sign: f32, lines: &Vec<String>| {
-      let lines1: Vec<&String> =
-         lines.iter().filter(|x| !x.is_empty()).collect();
+fn preprocess_with_sign(date: &str) -> impl Fn(f32, &[String]) -> f32 + '_ {
+   |sign: f32, lines: &[String]| {
+      // let lines1: Vec<&String> =
+         // lines.iter().filter(|x| !x.is_empty()).collect();
       let mut assets: HashSet<Row> = HashSet::new();
-      then_process(date, sign, &lines1, &mut assets);
+      then_process(date, sign, lines, &mut assets);
       assets.iter().for_each(print_csv);
       sign * -1.0
    }
 }
 
-fn then_process(date: &str, sign: f32, lines: &Vec<&String>, 
+fn then_process(date: &str, sign: f32, lines: &[String], 
                 assets: &mut HashSet<Row>) {
    if let Some((idx, row)) = find_triple(lines) {
       println!("{}", sign * row.amount);

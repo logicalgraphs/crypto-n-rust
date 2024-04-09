@@ -4,13 +4,12 @@ use std::{
    cmp::Ordering,
    fmt,
    hash::{Hash,Hasher},
+   iter::Sum,
+   ops::{Add,AddAssign},
    str::FromStr
 };
 
-use book::{
-   list_utils::last,
-   num_utils::{integer_decode,parse_commaless}
-};
+use book::num_utils::{integer_decode,parse_commaless};
 
 #[derive(Debug, Clone, Copy)]
 pub struct USD {
@@ -39,7 +38,7 @@ impl FromStr for USD {
    type Err = String;
 
    fn from_str(elt: &str) -> Result<Self, Self::Err> {
-      if let Some(num) = last(elt.split('$').collect()) {
+      if let Some(num) = elt.split('$').collect::<Vec<_>>().last() {
          let amount = parse_commaless(&num.to_string())?;
          Ok(mk_usd(amount))
       } else {
@@ -56,7 +55,9 @@ impl Hash for USD {
 
 impl Ord for USD {
    fn cmp(&self, other: &Self) -> Ordering {
-      self.decode.cmp(&other.decode)
+      let a = (self.amount * 100.0) as i32;
+      let b = (other.amount * 100.0) as i32;
+      a.cmp(&b)
    }
 }
 
@@ -64,6 +65,31 @@ impl PartialOrd for USD {
    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
       self.amount.partial_cmp(&other.amount)
    }
+}
+
+impl Add for USD {
+   type Output = Self;
+   fn add(self, rhs: USD) -> Self {
+      mk_usd(self.amount + rhs.amount)
+   }
+}
+
+impl AddAssign for USD {
+   fn add_assign(&mut self, other: Self) {
+      *self = mk_usd(self.amount + other.amount);
+   }
+}
+
+// https://users.rust-lang.org/t/implementing-the-sum-trait/23332/3
+// vitalyd answer, modified to value-impl by moiself (that is French).
+
+impl Sum<Self> for USD {
+    fn sum<I>(iter: I) -> Self
+    where
+        I: Iterator<Item = Self>,
+    {
+        iter.fold(no_monay(), |a, b| mk_usd(a.amount + b.amount))
+    }
 }
 
 // ----- ... and our methods -------------------------------------------------

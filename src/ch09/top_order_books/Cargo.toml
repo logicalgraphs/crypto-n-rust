@@ -16,6 +16,3 @@ path = "top_order_books.rs"
 [dependencies]
 book = { path = "../../libs/book" }
 crypto = { path = "../../libs/crypto" }
-
-# serde = { version = "1.0.104", features = ["derive"] }
-# serde_json = "1.0.48"

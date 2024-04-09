@@ -19,6 +19,7 @@ pub struct Coin {
 
 impl CsvWriter for Coin {
    fn as_csv(&self) -> String { csv(self) }
+   fn ncols(&self) -> usize { 6 }
 }
 
 impl Ord for Coin {
@@ -56,9 +57,8 @@ fn parse_coin(dat: &str, id: &str, rnk: &str, sym: &str,
 }
 
 pub fn csv(coin: &Coin) -> String {
-   format_args!("{},{},{},{},{},{}",
+   format!("{},{},{},{},{},{}",
       coin.date, coin.cmc_id, coin.rank, coin.symbol, coin.name, coin.price)
-      .to_string()
 }
 
 pub fn print_all_coins<T: CsvWriter>(coins: Vec<T>) {

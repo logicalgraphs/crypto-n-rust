@@ -10,7 +10,9 @@ name = "book"
 path = "lib.rs"
 
 [dependencies]
+chrono = "0.4.31"
 serde = { version = "1.0.104", features = ["derive"] }
 serde_json = "1.0.48"
 strum = "0.17.1"
 strum_macros = "0.17.1"
+reqwest = "0.9.18"

@@ -4,23 +4,21 @@ use bunsen::entries::{OrderBook, parse_orderbook, sell, report_sale};
 
 use book::{
    csv_utils::print_csv,
-   file_utils::read_file,
    utils::get_args
 };
 
+use crypto::rest_utils::read_orders;
+
 fn usage() {
-   let url = "https://api.kujira.app/api/coingecko/orderbook";
-   let tick = "ticker_id=LOCAL_USK&depth=10";
-   println!("\n./burn <ntoks> <book>");
-   println!("\tParses <book> into an order book, then buys target with <ntoks>");
-   println!("\n\te.g.: {url}?{tick}\n");
+   println!("\n./sell <ntoks> <book>");
+   println!("\tParses <book> into an order book, then sells base with <ntoks>");
 }
 
 fn main() -> Result<(), String> {
    let args = get_args();
    let mut success = false;
-   if let [amt, filename] = args.as_slice() {
-      let file = read_file(&filename);
+   if let [amt, order_book] = args.as_slice() {
+      let file = read_orders(&order_book, 30)?;
       let book = parse_orderbook(&file)?;
       let amount: f32 = amt.parse().expect(&format!("{amt} is not a number"));
       success = true;

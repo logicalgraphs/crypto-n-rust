@@ -11,7 +11,7 @@ use crate::types::{
    assets::{Asset,parse_asset,add_asset,remove_asset,print_asset_d,diff_usd},
    liquidations::{Liquidation,gather_liquidation_info},
    percentage::{Percentage,mk_percentage},
-   usd::{USD,no_monay}
+   usd::USD
 };
 
 pub type PnL = USD;
@@ -24,10 +24,19 @@ pub struct Swap {
    liquidation: Option<Liquidation>
 }
 
+pub fn trade(t: &Trade) -> String {
+   let swap = &t.swap;
+   format!("{}->{}", swap.from.token, swap.to.token)
+}
+
+pub fn trade_date(t: &Trade) -> String {
+   t.swap.date.clone()
+}
+
 #[derive(Debug, Clone)]
 pub struct Trade {
    swap: Swap,
-   pnl:  PnL
+   pub pnl:  PnL
 }
 
 // ----- impls -------------------------------------------------------
@@ -39,12 +48,18 @@ impl CsvWriter for Swap {
                    self.liquidation.as_ref()
                       .map_or(String::new(), |l| format!("{}", l.percentage)))
    }
+
+   fn ncols(&self) -> usize {
+      1 + self.from.ncols() + self.to.ncols() + 1
+   }
 }
 
 impl CsvWriter for Trade {
    fn as_csv(&self) -> String {
       format!("{},{}", self.swap.as_csv(), self.pnl)
    }
+
+   fn ncols(&self) -> usize { self.swap.ncols() + 1 }
 }
 
 // ---- first task is to parse in orders ----------------------------
@@ -116,7 +131,7 @@ pub fn swap_d(p: &mut HashSet<Asset>, s: &Swap, debug: bool)
 
 pub fn pnl(bag: &HashSet<Asset>, sold: &Asset, debug: bool) -> USD {
    match bag.get(sold) {
-      None => { println!("Can't find {sold:?}"); no_monay() },
+      None => { panic!("!!! Can't find {sold:?}") },
       Some(orig) => diff_usd(orig, sold, debug)
    }
 }

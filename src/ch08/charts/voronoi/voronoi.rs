@@ -4,32 +4,37 @@
 // currently, I'm charting protocols and ROI.
 // That TVS-data.
 
+use std::collections::HashMap;
+
 use book::{
-   file_utils::extract_date_and_body,
-   list_utils::tail,
+   err_utils::ErrStr,
+   string_utils::quot,
    utils::get_args
 };
 
-use crypto::types::usd::USD;
+use crypto::types::{
+   books::{Book,Books,load_books_from_stream,vol_24h_pair},
+   pairs::unpair
+};
+
+use voronoi::colors::colors;
 
 fn usage() {
-   println!("./voronoi <tsv-file>");
+   println!("$ echo '<tsv file>' | ./voronoi <color-palette>");
    println!("\n\trenders a voronoi-chart of protocol and ROI-data");
 }
 
-fn main() {
-   let files = get_args();
-   if !files.is_empty() {
+fn main() -> ErrStr<()> {
+   if let Some(colours) = get_args().first() {
+      let mut palette = colors(&colours, 50)?;
       print_prelude();
-      for file in files {
-         let (_date, body) = extract_date_and_body(&file);
-         let protocols = tail(&body);
-         buidl_arr(&protocols);
-         output_js();
-      }
+      let protocols = load_books_from_stream()?;
+      let wheel = buidl_arr(&protocols, &mut palette);
+      output_js(&wheel);
    } else {
       usage();
    }
+   Ok(())
 }
 
 fn print_prelude() {
@@ -37,31 +42,33 @@ fn print_prelude() {
    println!("goto:\n{url}\n");
 }
 
-fn buidl_arr(protocols: &Vec<String>) {
+fn buidl_arr(protocols: &Books, palette: &mut Vec<String>)
+      -> HashMap<String, String> {
+   let mut wheel = HashMap::new();
    println!("protocols = [");
-   protocols.iter().for_each(buidl_obj);
-   println!("]");
-}
-
-fn quot(s: &str) -> String {
-   format!("\"{s}\"")
-}
-
-fn buidl_obj(protocol: &String) {
-   let things: Vec<&str> = protocol.split('\t').collect();
-   if let [prot, blok, _, val, _gan] = things.as_slice() {
-      let valu: USD =
-         val.parse().expect(&format!("Not an amount: {val}"));
-      let v = valu.amount;
-      let (protocol, block) = (quot(prot), quot(blok));
-      let f2 = format!("protocol: {protocol}, blockchain: {block}");
-      println!("\t{{ {f2}, value: {v} }},");
-   } else {
-      println!("Could not parse line: {protocol}");
+   for prot in protocols {
+      wheel.entry(buidl_obj(prot)).or_insert_with(|| {
+         match palette.pop() {
+            Some(c) => c,
+            _ => panic!("Ran out of colours to color Voronoi-tiles!")
+         }
+      });
    }
+   println!("]");
+   wheel
 }
 
-fn output_js() {
+fn buidl_obj(protocol: &Book) -> String {
+   let dyad = vol_24h_pair(&protocol);
+   let ((prot, blok), valu) = unpair(&dyad);
+   let v = valu.amount;
+   let (protocol, block) = (quot(&prot), quot(&blok));
+   let f2 = format!("protocol: {protocol}, blockchain: {block}");
+   println!("\t{{ {f2}, value: {v} }},");
+   block
+}
+
+fn output_js(colors: &HashMap<String, String>) {
    let frn = quot("freedom_nest");
    println!("protocols_nested = {{
    let freedom_nest = d3.nest()
@@ -75,7 +82,7 @@ protocol_hierarchy = d3.hierarchy(protocols_nested, d => d.values)
 
    println!("*** Remember to replace all d.population with d.value!");
    println!("*** REPLACE population_hierarchy with protocol_hierarchy!");
-   println!("*** REPLACE d.data.country with d.data.protocol!");
+   println!("*** REPLACE d.data.countries with d.data.protocol!");
    println!("*** REPLACE population opacity with 250!");
    println!("*** ADD '$'+ in front of bigFormat(");
 
@@ -83,15 +90,8 @@ protocol_hierarchy = d3.hierarchy(protocols_nested, d => d.values)
 
 regionColor = function(region) {{
   var colors = {{");
-    let colors = vec![
-       ("FANTOM", "Fuchsia"),
-       ("Avalanche", "Tomato"),
-       ("Arbitrum", "Pink"),
-       ("COSMOS", "SteelBlue"),
-       ("HARMONY", "PaleGreen"),
-       ("Optimism", "Gold")];
    for (b,c) in colors {
-      println!("   {}: {},", quot(b), quot(c));
+      println!("   {}: {},", b, quot(c));
    }
   println!("  }};
   return colors[region];

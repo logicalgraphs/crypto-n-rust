@@ -1,41 +1,49 @@
 // algorithms for orders go here
 
-use std::collections::{HashMap,HashSet};
+use std::collections::HashSet;
 
 use crate::types::{
    assets::Asset,
-   books::{Book,fetch_books_by_vol,ticker,book_orderbook,prices,load_books},
+   books::{fetch_books_by_vol,parse_books_with_aliases},
+   interfaces::{Books,BookBooks,tokens,Prices,ticker,book_orderbook,vol_24h},
    marketplace::{OrderBook,dual_asset,orderbook},
-   usd::USD
+   pairs::untag,
+   usd::USD,
+   volumes::{Volumes,volumes_by_token}
 };
 
-pub fn target_sell_ratio(prices: &HashMap<String, USD>, a: &Asset,
+pub fn target_sell_ratio(prices: &Prices, a: &Asset,
                          on: &OrderBook, perc: f32) -> Option<(String, f32)> {
-   let mut ans: Option<(String, f32)> = None;
-
    if on.ratio > 0.0 {
       let buy = dual_asset(on, a);
-      if let Some(buy_quote) = prices.get(&buy) {
-         ans = Some((buy.clone(), buy_quote.amount / a.quote * perc));
-      }
-   }
-   ans
+      prices.get(&buy).and_then(|buy_quote| {
+         let quot = untag(&buy_quote).1;
+         Some((buy.clone(), quot.amount / a.quote * perc))
+      })
+   } else { None }
 }
 
 pub fn active_order_books(market: &mut HashSet<OrderBook>,
-                          tickers: &HashSet<Book>,
-                          vol: f32) {
+                          tickers: &Books, vol: USD) {
    let winnow: HashSet<String> =
       fetch_books_by_vol(tickers, vol).iter().map(ticker).collect();
    market.retain(|b| winnow.contains(&orderbook(&b)));
 }
 
-pub fn books_orderbooks(books: &HashSet<Book>) -> HashSet<OrderBook> {
-   let ps = prices(books);
-   books.into_iter().map(book_orderbook(&ps)).collect()
+pub fn working_set(min: f32, b: &Books) -> (Volumes, Books) {
+   let mut books = b.clone();
+   books.retain(|b| vol_24h(b).amount > min);
+   let mut tok_vols = volumes_by_token(&b);
+   let toks = tokens(&books);
+   tok_vols.retain(|t, _| toks.contains(t));
+   (tok_vols, books)
 }
 
-pub fn read_marketplace(file: &str) -> HashSet<OrderBook> {
-   println!("Reading order books from {file}");
-   books_orderbooks(&load_books(file))
+pub fn books_orderbooks((prices, books): &BookBooks) -> HashSet<OrderBook> {
+   books.into_iter().map(book_orderbook(&prices)).collect()
+}
+
+pub fn read_marketplace(date: &str) -> HashSet<OrderBook> {
+   println!("Reading order books from FIN REST endpoint");
+   books_orderbooks(&parse_books_with_aliases(&date))
 }

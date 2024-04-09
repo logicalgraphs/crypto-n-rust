@@ -3,6 +3,8 @@ use std::{
    mem
 };
 
+use crate::err_utils::{ErrStr,err_or};
+
 // for when we need to serialize or to hash an f64 value
 
 pub fn integer_decode(val: f64) -> (u64, i16, i8) {
@@ -17,13 +19,14 @@ pub fn integer_decode(val: f64) -> (u64, i16, i8) {
    (mantissa, exponent - (1023 + 52), sign)
 }
 
-pub fn parse_commaless(str: &str) -> Result<f32, String> {
+pub fn parse_or(n_opt: Option<&String>, default: f32) -> f32 {
+   n_opt.and_then(|n| n.parse().ok()).unwrap_or(default)
+}
+
+pub fn parse_commaless(str: &str) -> ErrStr<f32> {
    let mut no_comma = str.to_string();
    no_comma.retain(no(','));
-   match no_comma.parse() {
-      Ok(x) => Ok(x),
-      Err(_) => Err(format!("{str} is not a number"))
-   }
+   err_or(no_comma.parse(), &format!("{no_comma} is not a number"))
 }
 
 fn no(ch: char) -> impl Fn(char) -> bool {
@@ -42,11 +45,12 @@ pub fn parse_estimate(str: &str) -> Result<f32, String> {
          if let Some(mult) = playah.pop() {
             let mb_num: Result<f32, _> = playah.parse();
             if let Ok(num) = mb_num {
-               if mult == 'k' {
+               let mult_up = mult.to_ascii_uppercase();
+               if mult_up == 'K' {
                   ans = num * 1000.0;
                   err = false;
                }
-               if mult == 'm' || mult == 'M' {
+               if mult_up == 'M' {
                   ans = num * 1000000.0;
                   err = false;
                }

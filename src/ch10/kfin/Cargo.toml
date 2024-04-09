@@ -1,0 +1,16 @@
+[package]
+name = "kfin"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "kfin"
+path = "kfin.rs"
+
+[dependencies]
+chrono = "0.4.31"
+
+book = { path = "../../libs/book" }
+crypto = { path = "../../libs/crypto" }

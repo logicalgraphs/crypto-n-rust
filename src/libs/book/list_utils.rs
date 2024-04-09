@@ -1,39 +1,68 @@
 use std::{
    clone::Clone,
-   cmp::PartialEq,
-   collections::HashMap,
-   hash::Hash
+   fmt::{Debug,Formatter, Result as Fresult},  // y'all can thank the Dylan
+                                               // programming language for
+                                               // item-renaming.
+   slice::Iter
 };
 
-// parse_nums() Influenced by the following overflows:
+// ----- infinite lists --------------------------------------------------
 
-// https://stackoverflow.com/questions/27043268/convert-a-string-to-int
-// https://stackoverflow.com/questions/23100534/how-to-sum-the-values-in-an-array-slice-or-vec-in-rust
+pub struct InfiniteList<T> {
+   acid: T,
+   base: Vec<T>
+}
+
+pub fn mk_inf<T: Clone>(v: &Vec<T>, d: T) -> InfiniteList<T> {
+   InfiniteList { acid: d, base: v.clone() }
+}
+
+pub fn mk_cycle<T: Clone>(a: &T) -> InfiniteList<T> {
+   InfiniteList { acid: a.clone(), base: [].to_vec() }
+}
+
+pub struct InfListItr<'a, T> {
+   itr: Iter<'a, T>,
+   def: T
+}
+
+impl <T:Clone> InfiniteList<T> {
+   pub fn iter(&self) -> InfListItr<'_, T> {
+      InfListItr { itr: self.base.iter(), def: self.acid.clone() }
+   }
+}
+
+impl<'a, T:Clone> Iterator for InfListItr<'a, T> {
+   type Item = T;
+   fn next(&mut self) -> Option<Self::Item> {
+      Some((if let Some(a) = self.itr.next() { a } else { &self.def }).clone())
+   }
+}
+
+impl<T:Debug> Debug for InfiniteList<T> {
+   fn fmt(&self, f: &mut Formatter<'_>) -> Fresult {
+      fn just_write(f: &mut Formatter<'_>, s: &str) {
+         fn ki() { }  // from combinatorics
+         match write!(f, "{}", s) {
+            Ok(_) => ki(),
+            Err(x) => panic!("Err'd on format {x:?}!!!")
+         };
+      }
+      just_write(f, &if !self.base.is_empty() {
+         let bits = init(&format!("{:?}", self.base).into_bytes());
+         let chonk = String::from_utf8(bits).unwrap();
+         format!("{chonk}, ")
+      } else { "[".to_string() });
+      let def: &T = &self.acid;
+      write!(f, "{def:?}, {def:?}, {def:?}, ...]")
+   }
+}
 
 pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
-   parse_nums_res(strs).iter().map(|n| n.clone().expect("what?")).collect()
+   strs.into_iter().map(|n| n.parse().expect(&format!("'{n}' NaN"))).collect()
 }
 
-pub fn parse_nums_opt(strs: Vec<String>) -> Vec<f32> {
-   let mut ans: Vec<f32> = Vec::new();
-   for x in parse_nums_res(strs) {
-      if let Ok(n) = x {
-         ans.push(n);
-      }
-   }
-   ans
-}
-
-pub fn parse_nums_res(strs: Vec<String>) -> Vec<Result<f32, String>> {
-   strs.iter().map(|n| match n.parse() {
-      Ok(x) => Ok (x),
-      Err(_) => {
-        let msg = String::from(&(n.to_owned() + " isn't a number"));
-        Err(msg)
-      }}).collect()
-}
-
-// list functions
+// ----- list functions --------------------------------------------------
 
 pub fn ht<T: Clone>(list: &Vec<T>) -> (Option<T>, Vec<T>) {
    if list.is_empty() {
@@ -54,28 +83,15 @@ pub fn head<T: Clone>(list: &Vec<T>) -> Option<T> {
    h
 }
 
-pub fn last<T: Clone>(mut list: Vec<T>) -> Option<T> {
-   list.reverse();
-   head(&list)
+pub fn first_last<T: Clone>(v: &Vec<T>) -> (Option<T>, Option<T>) {
+   (v.first().cloned(), v.last().cloned())
 }
 
-// splits a list into lists along some element
-
-// source: https://www.reddit.com/r/rust/comments/hgcpds/how_to_split_a_vector_by_an_entry_and_collect_all/
-
-pub fn split<T: PartialEq>(list: Vec<T>, splitter: T) -> Vec<Vec<T>> {
-   list.into_iter().fold(Vec::new(), |mut acc, x| {
-        if x == splitter || acc.is_empty() {
-            acc.push(Vec::new());
-        }
-        acc.last_mut().unwrap().push(x);
-        acc
-    })
-}
-
-// makes a HashMap from a list, given a key-(extraction)-function
-
-pub fn assoc_list<K: Eq + Hash, T: Clone>(list: Vec<T>, f: impl Fn(&T) -> K)
- -> HashMap<K, T> {
-   list.into_iter().map(|t| (f(&t), t)).collect()
+pub fn init<T: Clone>(list: &Vec<T>) -> Vec<T> {
+   let v1: Vec<&T> = list.iter().rev().collect();
+   let mut ans: Vec<T> = Vec::new();
+   for t in tail(&v1).into_iter().rev() {
+      ans.push(t.clone());
+   }
+   ans
 }

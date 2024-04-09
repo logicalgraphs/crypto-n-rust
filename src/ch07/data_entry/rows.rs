@@ -50,13 +50,14 @@ impl CsvWriter for Row {
    fn as_csv(&self) -> String {
       format!("{},{},{}", self.token, self.amount, self.value)
    }
+   fn ncols(&self) -> usize { 3 }
 }
 
-pub fn find_triple(body: &Vec<&String>) -> Option<(usize,Row)> {
+pub fn find_triple(body: &[String]) -> Option<(usize,Row)> {
    for (idx,window) in body.windows(3).enumerate() {
-      if let Some(amount) = is_num(window[1]) {
-         if let Some(value) = is_monay(window[2]) {
-            return Some((idx, mk_row(window[0], amount, value)))
+      if let Some(amount) = is_num(&window[1]) {
+         if let Some(value) = is_monay(&window[2]) {
+            return Some((idx, mk_row(&window[0], amount, value)))
          }
       }
    }

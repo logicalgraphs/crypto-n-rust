@@ -3,16 +3,15 @@
 use book::{
    utils::get_args,
    file_utils::lines_from_file,
-   list_utils::{tail,ht}
+   list_utils::{tail,ht,first_last}
 };
 
-use crypto::types::{
-   portfolio::{Portfolio,assets_from_file,print_portfolio}
-};
+use crypto::types::portfolio::{Portfolio,assets_from_file,print_portfolio};
 
-mod trade_state;
-use crate::trade_state::{
-   TradeState,init_trade_state,report,parse_trade_cont_d,print_trades
+use pnl::{
+   parsing::parse_trades_d,
+   reports::{report,enumerate_trades},
+   trade_state::init_trade_state
 };
 
 fn usage() {
@@ -22,15 +21,15 @@ fn usage() {
 }
 
 fn main() {
-   let mut help = false;
+   let mut help = true;
    if let (Some(first_arg), rest) = ht(&get_args()) {
       let debug = first_arg == "-v";
       if let (Some(assets), Some(trades)) =
          if debug { first_last(&rest)
-         } else { (Some(&first_arg), rest.first()) } {
+         } else { (Some(first_arg.to_string()), rest.first().cloned()) } {
          help = false;
-         let starboard = assets_from_file(assets);
-         parse_n_print(&starboard, trades, debug);
+         let starboard = assets_from_file(&assets);
+         parse_then_print(&starboard, &trades, debug);
          println!("Finito!");  // a little Italian flourish at the finito!
       }
    }
@@ -40,27 +39,11 @@ fn main() {
    }
 }
 
-fn first_last(v: &Vec<String>) -> (Option<&String>, Option<&String>) {
-   (v.first(), v.last())
-}
-
-fn parse_n_print(p: &Portfolio, file: &str, debug: bool) {
+fn parse_then_print(p: &Portfolio, file: &str, debug: bool) {
    let mut lines = tail(&lines_from_file(file));
-   let trade_state = init_trade_state(lines.pop());
-   cont_d(&p, &lines, &trade_state, debug);
-}
-
-// mutually recursive functions, because what even are for-loops, anyway? :<
-
-fn cont_d(p: &Portfolio, lines: &Vec<String>, state: &TradeState, debug: bool) {
-   if !lines.is_empty() {
-      let (line, rest) = ht(&lines);
-      parse_trade_cont_d(&cont_d, p, &line, &rest, state, debug);
-      // you like how I put call_cc in this code?
-      // call_cc: call-with-current-continuation
-   } else {
-      if debug { print_trades(state); }
-      print_portfolio(p);
-      report(&state);
-   }
+   let state0 = init_trade_state(lines.pop());
+   let state = parse_trades_d(&p, &lines, &state0, debug);
+   if debug { enumerate_trades(&state); }
+   print_portfolio(p);
+   report(&state);
 }

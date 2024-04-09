@@ -60,12 +60,12 @@ pub fn exchange_rate(lsd: &LSD) -> f32 {
 }
 
 pub fn merge_burn_rates(burnlesses: &Vec<BurnlessLSD>,
-                        burns: &HashMap<String, ManualLSD>) -> Vec<LSD> {
+                        burns: &HashMap<String, u8>) -> Vec<LSD> {
    merge_burn_rates_d(burnlesses, burns, false)
 }
 
 pub fn merge_burn_rates_d(burnlesses: &Vec<BurnlessLSD>,
-                          burns: &HashMap<String, ManualLSD>, debug: bool)
+                          burns: &HashMap<String, u8>, debug: bool)
    -> Vec<LSD> {
    let mut lsds: Vec<LSD> = Vec::new();
    for b in burnlesses {
@@ -73,7 +73,13 @@ pub fn merge_burn_rates_d(burnlesses: &Vec<BurnlessLSD>,
       if let Some(u) = burns.get(&tok) {
          lsds.push(LSD { burnless: b.clone(), unbond: *u });
       } else {
-         if debug { println!("Could not find burn rate for {tok}"); }
+         if debug {
+            println!("Could not find burn rate for {tok}");
+            println!("for {b:?}");
+            println!("I have:");
+            for key in burns.keys() { println!("key: {key}"); }
+            println!("\n...reminder to push burn-rates.csv to main branch.");
+         }
       }
    }
    lsds
@@ -133,12 +139,14 @@ impl CsvWriter for BurnlessLSD {
    fn as_csv(&self) -> String {
       format!("{},{},{:.4},{}", self.zone, token1(self), self.rate, self.halted)
    }
+   fn ncols(&self) -> usize { 4 }
 }
 
 impl CsvWriter for LSD {
    fn as_csv(&self) -> String {
       format!("{},{}", self.burnless.as_csv(), self.unbond)
    }
+   fn ncols(&self) -> usize { 2 }
 }
 
 pub fn print_lsds(date: &str, lsds: &Vec<LSD>) {

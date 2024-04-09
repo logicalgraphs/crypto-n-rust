@@ -15,7 +15,7 @@ fn usage() {
 }
 
 fn main() {
-   if let Some(dt) = head(get_args()) {
+   if let Some(dt) = head(&get_args()) {
       if dt == "--help" || dt == "-h" {
          usage();
       } else {

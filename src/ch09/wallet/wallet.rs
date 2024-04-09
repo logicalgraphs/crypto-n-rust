@@ -1,4 +1,5 @@
 use book::{
+   csv_utils::{columns,print_as_tsv,mk_csvs,ToCsv},
    file_utils::extract_date_and_body,
    html_utils::{p,a,nbsp,h,body,Mode,proff,roff},
    utils::get_args
@@ -13,10 +14,8 @@ use crypto::{
 };
 
 use wallet::{
-   inf_iter::mk_inf,
    pairs::Pair,
-   tokens::{Token,find_token,token_pair,token_value,is_xtoken},
-   tsv::TsvWriter
+   tokens::{Token,find_token,token_pair,token_value,is_xtoken}
 };
 
 fn usage() {
@@ -46,20 +45,21 @@ fn main() {
       let mut chonks: Vec<Pair<USD>> = 
          tokens.iter().filter_map(token_value(&prices)).collect();
       chonks.sort_by(|x,y| y.v.partial_cmp(&x.v).unwrap());
-      let plonks = mk_inf(&chonks);
-      let zs: Vec<(&Pair<f32>, Pair<USD>)> =
-         alphs.iter().zip(plonks.iter()).collect();
-      print_wallet_as_tsv(&date, &zs);
+      print_wallet_as_tsv(&date, &alphs, &chonks);
       infos(&date);
    } else {
       usage();
    }
 }
 
-fn print_wallet_as_tsv(date: &str, zs: &Vec<(&Pair<f32>, Pair<USD>)>) {
+fn print_wallet_as_tsv(date: &str, amts: &Vec<Pair<f32>>,
+                       prices: &Vec<Pair<USD>>) {
    println!("Wallet balances on\t\t\t\t\t{date}\n");
-   println!("asset\tbalance\t\tasset\tvalue (USD)");
-   zs.iter().for_each(|(a,b)| println!("{}\t\t{}", a.as_tsv(), b.as_tsv()));
+   println!("asset\tbalance\t\t\tasset\tvalue (USD)");
+   let mut cols: Vec<Vec<ToCsv>> = Vec::new();
+   cols.push(mk_csvs(amts));
+   cols.push(mk_csvs(prices));
+   columns(&cols).iter().for_each(print_as_tsv);
 }
 
 fn infos(date: &str) {
