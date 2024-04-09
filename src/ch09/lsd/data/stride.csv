@@ -7,6 +7,7 @@ date,zone,lsd,exchange rate,halted,unbond (days)
 2024-04-09,juno,stJUNO,1.4552,false,33
 2024-04-09,terra,stLUNA,1.2122,false,24
 2024-04-09,osmo,stOSMO,1.2268,false,17
+2024-04-09,saga,stSAGA,1.0000,false,24
 2024-04-09,somm,stSOMM,1.0409,false,31
 2024-04-09,stars,stSTARS,1.4731,false,17
 2024-04-09,umee,stUMEE,1.1583,false,17
