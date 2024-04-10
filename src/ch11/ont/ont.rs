@@ -2,9 +2,8 @@ use std::collections::{HashSet,HashMap};
 
 use book::{
    compose,
-   matrix_utils::Matrix,
-   stream_utils::lines_from_stream,
-   string_utils::to_string
+   matrix_utils::{Matrix,from_lines},
+   stream_utils::lines_from_stream
 };
 
 use crypto::types::usd::USD;
@@ -86,14 +85,10 @@ fn map_protocols(matrix: &Matrix<String>) {
 
 fn main() {
    let lines = lines_from_stream();
+   let matrix: Matrix<String> = from_lines(&lines, "\t");
+
    print_str(step_0_clear());
    print_str(step_1_create_portfolio());
-
-   let matrix: Matrix<String>
-      = lines.into_iter().map(|l| {
-           let line = l.split("\t").map(to_string);
-           line.collect()
-      }).collect();
 
    create_blockchains(&matrix);
    map_protocols(&matrix);
