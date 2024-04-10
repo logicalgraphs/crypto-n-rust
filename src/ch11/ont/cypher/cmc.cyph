@@ -1,0 +1,17 @@
+-- loads the CMC ('Coin Market Cap') tokens
+
+create (c:CMC { name: "CMC"});
+
+load csv
+from 'https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/csv/portfolio_coins.lsv' as row
+with row skip 1
+where size(row) > 0
+match (c:CMC)
+merge (t:Token { name: row[0]})
+merge (t)-[:RECORD]->(c);
+
+-- query to see which tokens are record that I don't have (anymore)
+
+match (t:Token)--(:CMC) 
+where not (t)--(:Protocol)
+return t.name
