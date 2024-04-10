@@ -7,11 +7,12 @@ FROM 'https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-fi
 FIELDTERMINATOR '\t'
 merge (t:Token { name: row[0] })
 merge (b:Blockchain { name: row[1] })
-merge (t)-[:ON { invested: row[2], value: row[3] }]->(b) 
+merge (p:Protocol { name: row[6] })
+merge (t)-[:ON { value: row[3] }]->(p)-[:IN]->(b)
 
--- invested has nulls
+-- invested has nulls, so I'm not using that rn
 
-create (p:Portfolio { name: "tokens })
+create (p:Portfolio { name: "Portfolio" })
 
 match (p:Portfolio)
 match (b:Blockchain)
