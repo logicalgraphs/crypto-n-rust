@@ -37,3 +37,8 @@ For example, 'purpose' or 'strategy' can be an aspect of investing. Am I
 investing into this token (on this protocol) to HODL? arb? leverage? loan?
 
 O! the possibilities!
+
+## Video
+
+I do a walkthrough of using `./ont` and navigating a knowledge-graph in my video
+[Portfolio as Ontology](https://www.youtube.com/watch?v=Hw6o-pJ-EsE).
