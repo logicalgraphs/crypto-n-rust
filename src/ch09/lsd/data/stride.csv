@@ -1,13 +1,13 @@
 date,zone,lsd,exchange rate,halted,unbond (days)
-2024-04-29,cosmos,stATOM,1.3481,false,24
-2024-04-29,comdex,stCMDX,1.2407,false,24
-2024-04-29,dydx,stDYDX,1.0372,false,35
-2024-04-29,evmos,stEVMOS,1.5248,false,17
-2024-04-29,inj,stINJ,1.2591,false,24
-2024-04-29,juno,stJUNO,1.4645,false,33
-2024-04-29,terra,stLUNA,1.2220,false,24
-2024-04-29,osmo,stOSMO,1.2337,false,17
-2024-04-29,saga,stSAGA,1.0055,false,24
-2024-04-29,somm,stSOMM,1.0464,false,31
-2024-04-29,stars,stSTARS,1.4864,false,17
-2024-04-29,umee,stUMEE,1.1661,false,17
+2024-04-30,cosmos,stATOM,1.3485,false,24
+2024-04-30,comdex,stCMDX,1.2410,false,24
+2024-04-30,dydx,stDYDX,1.0375,false,35
+2024-04-30,evmos,stEVMOS,1.5252,false,17
+2024-04-30,inj,stINJ,1.2596,false,24
+2024-04-30,juno,stJUNO,1.4648,false,33
+2024-04-30,terra,stLUNA,1.2224,false,24
+2024-04-30,osmo,stOSMO,1.2340,false,17
+2024-04-30,saga,stSAGA,1.0057,false,24
+2024-04-30,somm,stSOMM,1.0466,false,31
+2024-04-30,stars,stSTARS,1.4869,false,17
+2024-04-30,umee,stUMEE,1.1664,false,17
