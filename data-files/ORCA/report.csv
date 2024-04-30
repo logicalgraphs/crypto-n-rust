@@ -2,140 +2,105 @@
 ORCA liquidations by Market
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
-2024-03-22,xUSK,KUJI,3,$58617.645,xUSK->KUJI, , , , , , , ,32,xUSK,KUJI,32,$91247.672,xUSK->KUJI
-2024-03-22,USK,STARS,1,$2.176,USK->STARS, , , , , , , ,13,xaxlUSDC,MNTA,13,$1374.860,xaxlUSDC->MNTA
-2024-03-21,xUSK,KUJI,15,$23523.088,xUSK->KUJI, , , , , , , ,6,USK,MNTA,6,$1449.633,USK->MNTA
-2024-03-21,xUSDC,KUJI,2,$74.594,xUSDC->KUJI, , , , , , , ,5,xUSK,MNTA,5,$469.754,xUSK->MNTA
-2024-03-20,xKUJI,qcKUJI,2,$218.643,xKUJI->qcKUJI, , , , , , , ,5,USK,STARS,5,$1979.135,USK->STARS
-2024-03-19,USK,wFTM,2,$776.788,USK->wFTM, , , , , , , ,5,USK,ATOM,5,$3040.117,USK->ATOM
-2024-03-19,USK,wBTC,2,$1952.699,USK->wBTC, , , , , , , ,4,USK,wFTM,4,$1239.536,USK->wFTM
-2024-03-19,USK,INJ,1,$796.628,USK->INJ, , , , , , , ,4,USK,WHALE,4,$240.103,USK->WHALE
-2024-03-19,USK,WHALE,4,$240.103,USK->WHALE, , , , , , , ,4,xUSDC,KUJI,4,$4211.692,xUSDC->KUJI
-2024-03-19,USK,ATOM,4,$2827.057,USK->ATOM, , , , , , , ,3,USK,stOSMO,3,$8927.693,USK->stOSMO
-2024-03-19,xUSDC,KUJI,2,$4137.098,xUSDC->KUJI, , , , , , , ,2,USK,whSOL,2,$2866.673,USK->whSOL
-2024-03-19,xUSK,MNTA,4,$361.016,xUSK->MNTA, , , , , , , ,2,USK,LUNA,2,$0.000,USK->LUNA
-2024-03-19,xaxlUSDC,MNTA,7,$251.410,xaxlUSDC->MNTA, , , , , , , ,2,xaxlUSDC,ATOM,2,$3333.550,xaxlUSDC->ATOM
-2024-03-19,xUSK,KUJI,12,$9093.899,xUSK->KUJI, , , , , , , ,2,xaxlUSDC,ARB,2,$148.502,xaxlUSDC->ARB
-2024-03-19,USK,stATOM,2,$34323.965,USK->stATOM, , , , , , , ,2,USK,stATOM,2,$34323.965,USK->stATOM
-2024-03-19,USK,stOSMO,1,$103.945,USK->stOSMO, , , , , , , ,2,USK,wBTC,2,$1952.699,USK->wBTC
-2024-03-18,USK,whSOL,1,$78.976,USK->whSOL, , , , , , , ,2,xKUJI,qcKUJI,2,$218.643,xKUJI->qcKUJI
-2024-03-18,xaxlUSDC,MNTA,6,$1123.450,xaxlUSDC->MNTA, , , , , , , ,2,xaxlUSDC,AKT,2,$76.462,xaxlUSDC->AKT
-2024-03-18,USK,MNTA,6,$1449.633,USK->MNTA, , , , , , , ,1,USK,INJ,1,$796.628,USK->INJ
-2024-03-18,xUSK,MNTA,1,$108.738,xUSK->MNTA, , , , , , , , , , , , , ,
-2024-03-18,xaxlUSDC,ARB,2,$148.502,xaxlUSDC->ARB, , , , , , , , , , , , , ,
-2024-03-18,xaxlUSDC,ATOM,2,$3333.550,xaxlUSDC->ATOM, , , , , , , , , , , , , ,
-2024-03-18,USK,ATOM,1,$213.060,USK->ATOM, , , , , , , , , , , , , ,
-2024-03-18,xaxlUSDC,AKT,2,$76.462,xaxlUSDC->AKT, , , , , , , , , , , , , ,
-2024-03-18,USK,stOSMO,2,$8823.748,USK->stOSMO, , , , , , , , , , , , , ,
-2024-03-18,USK,LUNA,2,$0.000,USK->LUNA, , , , , , , , , , , , , ,
-2024-03-18,USK,STARS,2,$875.521,USK->STARS, , , , , , , , , , , , , ,
-2024-03-18,xUSK,KUJI,2,$13.042,xUSK->KUJI, , , , , , , , , , , , , ,
-2024-03-17,USK,STARS,2,$1101.438,USK->STARS, , , , , , , , , , , , , ,
-2024-03-17,USK,whSOL,1,$2787.697,USK->whSOL, , , , , , , , , , , , , ,
-2024-03-17,USK,wFTM,2,$462.747,USK->wFTM, , , , , , , , , , , , , ,
+2024-04-30,USK,stOSMO,5,$1686.924,USK->stOSMO, , , , , , , ,12,USK,STARS,12,$1429.062,USK->STARS
+2024-04-30,USK,MNTA,4,$21.022,USK->MNTA, , , , , , , ,8,USK,MNTA,8,$62.863,USK->MNTA
+2024-04-30,USK,STARS,12,$1429.062,USK->STARS, , , , , , , ,5,USK,stOSMO,5,$1686.924,USK->stOSMO
+2024-04-30,USK,wETH,2,$92.351,USK->wETH, , , , , , , ,3,xUSDC.axl,ATOM,3,$3.234,xUSDC.axl->ATOM
+2024-04-30,xUSDC,MNTA,2,$139.782,xUSDC->MNTA, , , , , , , ,2,USK,wETH,2,$92.351,USK->wETH
+2024-04-30,USK,wFTM,1,$861.272,USK->wFTM, , , , , , , ,2,xUSDC,MNTA,2,$139.782,xUSDC->MNTA
+2024-04-29,USK,stATOM,2,$0.125,USK->stATOM, , , , , , , ,2,USK,INJ,2,$89.671,USK->INJ
+2024-04-29,USK,MNTA,4,$41.841,USK->MNTA, , , , , , , ,2,USK,WHALE,2,$101.456,USK->WHALE
+2024-04-28,USK,wBTC,2,$121.230,USK->wBTC, , , , , , , ,2,xUSK,KUJI,2,$0.129,xUSK->KUJI
+2024-04-28,xUSDC.axl,ATOM,3,$3.234,xUSDC.axl->ATOM, , , , , , , ,2,USK,wFTM,2,$1818.379,USK->wFTM
+2024-04-27,USK,wFTM,1,$957.107,USK->wFTM, , , , , , , ,2,USK,stATOM,2,$0.125,USK->stATOM
+2024-04-26,xUSK,KUJI,2,$0.129,xUSK->KUJI, , , , , , , ,2,USK,wBTC,2,$121.230,USK->wBTC
+2024-04-26,USK,INJ,2,$89.671,USK->INJ, , , , , , , , , , , , , ,
+2024-04-24,USK,WHALE,2,$101.456,USK->WHALE, , , , , , , , , , , , , ,
 
-Top 5 liquidations on @TeamKujira ORCA by Market ($) for 7-days trailing 2024-03-24
+Top 5 liquidations on @TeamKujira ORCA by Market ($) for 7-days trailing 2024-04-30
 
-1,xUSK->KUJI,for,$91247.672
-2,USK->stATOM,for,$34323.965
-3,USK->stOSMO,for,$8927.693
-4,xUSDC->KUJI,for,$4211.692
-5,xaxlUSDC->ATOM,for,$3333.550
+1,USK->wFTM,for,$1818.379
+2,USK->stOSMO,for,$1686.924
+3,USK->STARS,for,$1429.062
+4,xUSDC->MNTA,for,$139.782
+5,USK->wBTC,for,$121.230
 
 Raw CSV of report archived at https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/ORCA/report.csv
 
 <h2>By Market</h2>
 <p>&nbsp;</p>
-<h3>Top 5 liquidations on @TeamKujira ORCA by Market ($) for 7-days trailing 2024-03-24</h3>
+<h3>Top 5 liquidations on @TeamKujira ORCA by Market ($) for 7-days trailing 2024-04-30</h3>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<ol><li>xUSK->KUJI for $91247.672</li>
-<li>USK->stATOM for $34323.965</li>
-<li>USK->stOSMO for $8927.693</li>
-<li>xUSDC->KUJI for $4211.692</li>
-<li>xaxlUSDC->ATOM for $3333.550</li></ol>
+<ol><li>USK->wFTM for $1818.379</li>
+<li>USK->stOSMO for $1686.924</li>
+<li>USK->STARS for $1429.062</li>
+<li>xUSDC->MNTA for $139.782</li>
+<li>USK->wBTC for $121.230</li></ol>
 <a href="https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/ORCA/report.csv">Raw CSV of report</a>
 
 ORCA liquidations by Bid
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
-2024-03-22,USK,---,1,$2.176,USK, , , , , , , ,37,xUSK,---,37,$91717.430,xUSK
-2024-03-22,xUSK,---,3,$58617.645,xUSK, , , , , , , ,36,USK,---,36,$56816.184,USK
-2024-03-21,xUSDC,---,2,$74.594,xUSDC, , , , , , , ,19,xaxlUSDC,---,19,$4933.375,xaxlUSDC
-2024-03-21,xUSK,---,15,$23523.088,xUSK, , , , , , , ,4,xUSDC,---,4,$4211.692,xUSDC
-2024-03-20,xKUJI,---,2,$218.643,xKUJI, , , , , , , ,2,xKUJI,---,2,$218.643,xKUJI
-2024-03-19,USK,---,16,$41021.188,USK, , , , , , , , , , , , , ,
-2024-03-19,xaxlUSDC,---,7,$251.410,xaxlUSDC, , , , , , , , , , , , , ,
-2024-03-19,xUSDC,---,2,$4137.098,xUSDC, , , , , , , , , , , , , ,
-2024-03-19,xUSK,---,16,$9454.915,xUSK, , , , , , , , , , , , , ,
-2024-03-18,USK,---,14,$11440.937,USK, , , , , , , , , , , , , ,
-2024-03-18,xUSK,---,3,$121.781,xUSK, , , , , , , , , , , , , ,
-2024-03-18,xaxlUSDC,---,12,$4681.964,xaxlUSDC, , , , , , , , , , , , , ,
-2024-03-17,USK,---,5,$4351.882,USK, , , , , , , , , , , , , ,
+2024-04-30,xUSDC,---,2,$139.782,xUSDC, , , , , , , ,37,USK,---,37,$5402.062,USK
+2024-04-30,USK,---,24,$4090.631,USK, , , , , , , ,3,xUSDC.axl,---,3,$3.234,xUSDC.axl
+2024-04-29,USK,---,6,$41.966,USK, , , , , , , ,2,xUSDC,---,2,$139.782,xUSDC
+2024-04-28,USK,---,2,$121.230,USK, , , , , , , ,2,xUSK,---,2,$0.129,xUSK
+2024-04-28,xUSDC.axl,---,3,$3.234,xUSDC.axl, , , , , , , , , , , , , ,
+2024-04-27,USK,---,1,$957.107,USK, , , , , , , , , , , , , ,
+2024-04-26,xUSK,---,2,$0.129,xUSK, , , , , , , , , , , , , ,
+2024-04-26,USK,---,2,$89.671,USK, , , , , , , , , , , , , ,
+2024-04-24,USK,---,2,$101.456,USK, , , , , , , , , , , , , ,
 
-Top 5 liquidations on @TeamKujira ORCA by Bid ($) for 7-days trailing 2024-03-24
+Top 4 liquidations on @TeamKujira ORCA by Bid ($) for 7-days trailing 2024-04-30
 
-1,xUSK,for,$91717.430
-2,USK,for,$56816.184
-3,xaxlUSDC,for,$4933.375
-4,xUSDC,for,$4211.692
-5,xKUJI,for,$218.643
+1,USK,for,$5402.062
+2,xUSDC,for,$139.782
+3,xUSDC.axl,for,$3.234
+4,xUSK,for,$0.129
 
 <h2>By Bid</h2>
 <p>&nbsp;</p>
-<h3>Top 5 liquidations on @TeamKujira ORCA by Bid ($) for 7-days trailing 2024-03-24</h3>
+<h3>Top 4 liquidations on @TeamKujira ORCA by Bid ($) for 7-days trailing 2024-04-30</h3>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<ol><li>xUSK for $91717.430</li>
-<li>USK for $56816.184</li>
-<li>xaxlUSDC for $4933.375</li>
-<li>xUSDC for $4211.692</li>
-<li>xKUJI for $218.643</li></ol>
+<ol><li>USK for $5402.062</li>
+<li>xUSDC for $139.782</li>
+<li>xUSDC.axl for $3.234</li>
+<li>xUSK for $0.129</li></ol>
 
 ORCA liquidations by Asset
 
 date,bid,asset,n,amount ($),market, , , , , , , ,n,bid,asset,n,amount ($),market
-2024-03-22,---,KUJI,3,$58617.645,KUJI, , , , , , , ,36,---,KUJI,36,$95459.367,KUJI
-2024-03-22,---,STARS,1,$2.176,STARS, , , , , , , ,24,---,MNTA,24,$3294.247,MNTA
-2024-03-21,---,KUJI,17,$23597.682,KUJI, , , , , , , ,7,---,ATOM,7,$6373.667,ATOM
-2024-03-20,---,qcKUJI,2,$218.643,qcKUJI, , , , , , , ,5,---,STARS,5,$1979.135,STARS
-2024-03-19,---,stATOM,2,$34323.965,stATOM, , , , , , , ,4,---,WHALE,4,$240.103,WHALE
-2024-03-19,---,wBTC,2,$1952.699,wBTC, , , , , , , ,4,---,wFTM,4,$1239.536,wFTM
-2024-03-19,---,KUJI,14,$13230.998,KUJI, , , , , , , ,3,---,stOSMO,3,$8927.693,stOSMO
-2024-03-19,---,INJ,1,$796.628,INJ, , , , , , , ,2,---,qcKUJI,2,$218.643,qcKUJI
-2024-03-19,---,WHALE,4,$240.103,WHALE, , , , , , , ,2,---,stATOM,2,$34323.965,stATOM
-2024-03-19,---,stOSMO,1,$103.945,stOSMO, , , , , , , ,2,---,AKT,2,$76.462,AKT
-2024-03-19,---,wFTM,2,$776.788,wFTM, , , , , , , ,2,---,wBTC,2,$1952.699,wBTC
-2024-03-19,---,ATOM,4,$2827.057,ATOM, , , , , , , ,2,---,LUNA,2,$0.000,LUNA
-2024-03-19,---,MNTA,11,$612.426,MNTA, , , , , , , ,2,---,ARB,2,$148.502,ARB
-2024-03-18,---,MNTA,13,$2681.821,MNTA, , , , , , , ,2,---,whSOL,2,$2866.673,whSOL
-2024-03-18,---,LUNA,2,$0.000,LUNA, , , , , , , ,1,---,INJ,1,$796.628,INJ
-2024-03-18,---,ATOM,3,$3546.610,ATOM, , , , , , , , , , , , , ,
-2024-03-18,---,stOSMO,2,$8823.748,stOSMO, , , , , , , , , , , , , ,
-2024-03-18,---,STARS,2,$875.521,STARS, , , , , , , , , , , , , ,
-2024-03-18,---,KUJI,2,$13.042,KUJI, , , , , , , , , , , , , ,
-2024-03-18,---,whSOL,1,$78.976,whSOL, , , , , , , , , , , , , ,
-2024-03-18,---,ARB,2,$148.502,ARB, , , , , , , , , , , , , ,
-2024-03-18,---,AKT,2,$76.462,AKT, , , , , , , , , , , , , ,
-2024-03-17,---,wFTM,2,$462.747,wFTM, , , , , , , , , , , , , ,
-2024-03-17,---,STARS,2,$1101.438,STARS, , , , , , , , , , , , , ,
-2024-03-17,---,whSOL,1,$2787.697,whSOL, , , , , , , , , , , , , ,
+2024-04-30,---,wETH,2,$92.351,wETH, , , , , , , ,12,---,STARS,12,$1429.062,STARS
+2024-04-30,---,stOSMO,5,$1686.924,stOSMO, , , , , , , ,10,---,MNTA,10,$202.645,MNTA
+2024-04-30,---,wFTM,1,$861.272,wFTM, , , , , , , ,5,---,stOSMO,5,$1686.924,stOSMO
+2024-04-30,---,MNTA,6,$160.804,MNTA, , , , , , , ,3,---,ATOM,3,$3.234,ATOM
+2024-04-30,---,STARS,12,$1429.062,STARS, , , , , , , ,2,---,wETH,2,$92.351,wETH
+2024-04-29,---,stATOM,2,$0.125,stATOM, , , , , , , ,2,---,wFTM,2,$1818.379,wFTM
+2024-04-29,---,MNTA,4,$41.841,MNTA, , , , , , , ,2,---,WHALE,2,$101.456,WHALE
+2024-04-28,---,wBTC,2,$121.230,wBTC, , , , , , , ,2,---,KUJI,2,$0.129,KUJI
+2024-04-28,---,ATOM,3,$3.234,ATOM, , , , , , , ,2,---,INJ,2,$89.671,INJ
+2024-04-27,---,wFTM,1,$957.107,wFTM, , , , , , , ,2,---,wBTC,2,$121.230,wBTC
+2024-04-26,---,INJ,2,$89.671,INJ, , , , , , , ,2,---,stATOM,2,$0.125,stATOM
+2024-04-26,---,KUJI,2,$0.129,KUJI, , , , , , , , , , , , , ,
+2024-04-24,---,WHALE,2,$101.456,WHALE, , , , , , , , , , , , , ,
 
-Top 5 liquidations on @TeamKujira ORCA by Asset ($) for 7-days trailing 2024-03-24
+Top 5 liquidations on @TeamKujira ORCA by Asset ($) for 7-days trailing 2024-04-30
 
-1,KUJI,for,$95459.367
-2,stATOM,for,$34323.965
-3,stOSMO,for,$8927.693
-4,ATOM,for,$6373.667
-5,MNTA,for,$3294.247
+1,wFTM,for,$1818.379
+2,stOSMO,for,$1686.924
+3,STARS,for,$1429.062
+4,MNTA,for,$202.645
+5,wBTC,for,$121.230
 
 <h2>By Asset</h2>
 <p>&nbsp;</p>
-<h3>Top 5 liquidations on @TeamKujira ORCA by Asset ($) for 7-days trailing 2024-03-24</h3>
+<h3>Top 5 liquidations on @TeamKujira ORCA by Asset ($) for 7-days trailing 2024-04-30</h3>
 <p>&nbsp;</p>
 <p>&nbsp;</p>
-<ol><li>KUJI for $95459.367</li>
-<li>stATOM for $34323.965</li>
-<li>stOSMO for $8927.693</li>
-<li>ATOM for $6373.667</li>
-<li>MNTA for $3294.247</li></ol>
+<ol><li>wFTM for $1818.379</li>
+<li>stOSMO for $1686.924</li>
+<li>STARS for $1429.062</li>
+<li>MNTA for $202.645</li>
+<li>wBTC for $121.230</li></ol>

@@ -3,6 +3,8 @@
 
 use std::collections::HashMap;
 
+use book::file_utils::read_file;
+
 use crate::rest_utils::read_aliases;
 
 // ----- Aliases -------------------------------------------------------
@@ -14,19 +16,30 @@ pub fn alias(aliases: &Aliases, i: &String) -> String {
 }
 
 pub fn load_aliases(opt_url: &Option<String>) -> Aliases {
-   let mut ans = HashMap::new();
    if let Some(url) = opt_url {
       let file = read_aliases(url).expect("Cannot read aliases file.");
-      let all_lines: Vec<_> = file.split("\n").collect();
-      let (_date, lines) = all_lines.split_at(3);
+      aliases_loader(&file)
+   } else {
+      HashMap::new()
+   }
+}
 
-      for alias in lines {
-         if let [id,name] = alias.split(",").collect::<Vec<_>>().as_slice() {
-           ans.insert(id.to_string(), name.to_string());
-         } else {
-            if !alias.is_empty() {
-               println!("Unable to parse alias: '{alias}'");
-            }
+pub fn load_aliases_from_file(filename: &str) -> Aliases {
+   let file = read_file(filename);
+   aliases_loader(&file)
+}
+
+fn aliases_loader(file: &str) -> Aliases {
+   let mut ans = HashMap::new();
+   let all_lines: Vec<_> = file.split("\n").collect();
+   let (_date, lines) = all_lines.split_at(3);
+
+   for alias in lines {
+      if let [id,name] = alias.split(",").collect::<Vec<_>>().as_slice() {
+         ans.insert(id.to_string(), name.to_string());
+      } else {
+         if !alias.is_empty() {
+            println!("Unable to parse alias: '{alias}'");
          }
       }
    }

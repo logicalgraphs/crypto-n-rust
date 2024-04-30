@@ -10,7 +10,9 @@ use crypto::{
       kujira_nums::parse_kujira_number
    },
    types::{
-      books::Prices,
+      aliases::{Aliases,alias},
+      interfaces::Prices,
+      pairs::value,
       usd::{USD,mk_usd}
    }
 };
@@ -38,29 +40,32 @@ The very next line is the next liquidation.
 
 // ----- liquidations --------------------------------------------------
 
-pub fn process_liquidations_by_date(prices: &Prices, lines: &Lines)
-   -> LiquidationsByDate {
+pub fn process_liquidations_by_date(prices: &Prices, lines: &Lines,
+                                    aliases: &Aliases) -> LiquidationsByDate {
    let mut ans = HashMap::new();
-   process_liqs(prices, lines, &mut ans);
+   process_liqs(prices, lines, aliases, &mut ans);
    ans
 }
 
-fn process_liqs(prices: &Prices, lyns: &Lines, ans: &mut LiquidationsByDate) {
-   if let Some((n, date, market, amt)) = process_liquidation(prices, lyns) {
+fn process_liqs(prices: &Prices, lyns: &Lines, 
+                aliases: &Aliases, ans: &mut LiquidationsByDate) {
+   if let Some((n, date, market, amt))
+         = process_liquidation(prices, lyns, aliases) {
       let mut day = ans.entry(date).or_insert(HashMap::new());
       update_market(id_market, &market, &(1, amt), &mut day);
-      process_liqs(prices, &skip(n, &lyns), ans);
+      process_liqs(prices, &skip(n, &lyns), aliases, ans);
    }
 }
 
-fn process_liquidation(prices: &Prices, lines: &Lines)
+fn process_liquidation(prices: &Prices, lines: &Lines, aliases: &Aliases)
    -> Option<(usize, NaiveDate, Market, USD)> {
    if let Some((n, date)) = find_next_date(0, &lines) {
       let nl: Vec<String> = skip(n, &lines);
       if let Ok(amt) = parse_kujira_number(&nl) {
-         if let (Some(asset), t) = ht(&skip(2, &nl)) {
+         if let (Some(asset0), t) = ht(&skip(2, &nl)) {
+            let asset = alias(aliases, &asset0);
             if let Some(price) = prices.get(&asset) {
-               let amount = mk_usd(price.amount * amt);
+               let amount = mk_usd(value(price).amount * amt);
                if let Some(bid) = skip(2, &t).first() {
                   Some((7, date, (asset, bid.to_string()), amount))
                } else {

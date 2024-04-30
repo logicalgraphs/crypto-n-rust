@@ -25,3 +25,5 @@ pub fn mk_tag<T>((tag, value): (String, T)) -> Tag<T> {
 pub fn untag<T: Clone>(t: &Tag<T>) -> (String, T) {
    (t.tag.clone(), t.value.clone())
 }
+
+pub fn value<T: Clone>(t: &Tag<T>) -> T { t.value.clone() }
