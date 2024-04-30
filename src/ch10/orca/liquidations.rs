@@ -5,7 +5,7 @@ use book::{
 
 use crypto::{
    parsers::token_prices::read_prices,
-   types::aliases::load_aliases_from_file
+   types::aliases::load_aliases_graph
 };
 
 use cillaz::{
@@ -15,17 +15,17 @@ use cillaz::{
 
 // ----- Main -------------------------------------------------------
 
-fn usage() -> bool {
-   println!("./cillaz <date> <prices CSV> <liquidations LSV> <aliases CSV>");
+fn usage() {
+   println!("./cillaz <date> <prices CSV> <liquidations LSV>");
    println!("\nSlices and dices liquidations on ORCA (by day and by market)");
-   true
+   println!("\nUses aliases.csv to resolve the au courant .axl tokens.");
 }
 
 fn main() {
-   if let [date, prices, liquids, aliasus] = get_args().as_slice() {
+   if let [date, prices, liquids] = get_args().as_slice() {
       let prces = read_prices(&prices);
       let lines = lines_from_file(&liquids);
-      let aliases = load_aliases_from_file(&aliasus);
+      let aliases = load_aliases_graph();
       let jours = process_liquidations_by_date(&prces, &lines, &aliases);
       report(&date, &jours);
    } else {

@@ -5,7 +5,7 @@ use std::collections::HashMap;
 
 use book::file_utils::read_file;
 
-use crate::rest_utils::read_aliases;
+use crate::rest_utils::{graphs_fin_res,read_aliases};
 
 // ----- Aliases -------------------------------------------------------
 
@@ -13,6 +13,10 @@ pub type Aliases = HashMap<String, String>;
 
 pub fn alias(aliases: &Aliases, i: &String) -> String {
    aliases.get(i).unwrap_or(i).clone()
+}
+
+pub fn load_aliases_graph() -> Aliases {
+   load_aliases(&Some(graphs_fin_res("aliases.csv")))
 }
 
 pub fn load_aliases(opt_url: &Option<String>) -> Aliases {
