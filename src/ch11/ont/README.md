@@ -28,15 +28,11 @@ interesting representations that fall out, such as:
 * Which tokens are in which blockchains?
 * How much do I have in each token?
 
-## TODO
+A [domain-query](cypher/dom.cyph) overlays `Domains` onto protocols,
+providing aspects, such as `Trading`, `Arbitrage`, `HODL`, `Leverage`, and
+other domains, to query into the ontology:
 
-Further representations are possible by overlaying (meta-)graphs onto this
-ontology. 
-
-For example, 'purpose' or 'strategy' can be an aspect of investing. Am I 
-investing into this token (on this protocol) to HODL? arb? leverage? loan?
-
-O! the possibilities!
+![Protocol Domains](imgs/domains.png)
 
 ## Video
 

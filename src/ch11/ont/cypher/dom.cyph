@@ -1,0 +1,7 @@
+load csv with headers
+from "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/blockaverse/domains.tsv" as row
+fieldterminator '\t'
+    merge (d:Domain { kind: row.domain })
+    with d as dom, row as r
+    match (p:Protocol { name: r.protocol })
+    merge (p)-[:IN_DOMAIN]->(dom)
