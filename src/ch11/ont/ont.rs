@@ -3,7 +3,8 @@ use std::collections::{HashSet,HashMap};
 use book::{
    compose,
    matrix_utils::{Matrix,from_lines},
-   stream_utils::lines_from_stream
+   stream_utils::lines_from_stream,
+   utils::get_args
 };
 
 use crypto::types::usd::USD;
@@ -84,6 +85,13 @@ fn map_protocols(matrix: &Matrix<String>) {
 }
 
 fn main() {
+   let args = get_args();
+   if let Some(_) = args.first() {
+      usage();
+   } else { ont(); };
+}
+
+fn ont() {
    let lines = lines_from_stream();
    let matrix: Matrix<String> = from_lines(&lines, "\t");
 
@@ -94,4 +102,12 @@ fn main() {
    map_protocols(&matrix);
 
    print_str(step_5_map_blockchains_portfolio());
+}
+
+fn usage() {
+   println!("\necho <token-blockchain-protocol.tsv> | ont\n");
+   println!("Prints the cypher commands to create an ontology in neo4j of a");
+   println!("cryptocurrency portfolio.\n");
+   let url = "https://github.com/logicalgraphs/crypto-n-rust/tree/main/src";
+   println!("See\n{url}/ch11/ont/README.md\nfor more information.");
 }

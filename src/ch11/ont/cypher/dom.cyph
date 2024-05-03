@@ -1,3 +1,5 @@
+-- loads associations of Domains to protocols, mapping the former to the latter
+
 load csv with headers
 from "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/blockaverse/domains.tsv" as row
 fieldterminator '\t'
@@ -5,3 +7,15 @@ fieldterminator '\t'
     with d as dom, row as r
     match (p:Protocol { name: r.protocol })
     merge (p)-[:IN_DOMAIN]->(dom)
+
+-- liquidity-to-domain query, distinct
+
+match (d:Domain)<--()<-[o:ON]-() return d.kind as domain, sum(o.value) as tvl
+
+-- liquidity-to-domains query, with intersections
+
+match (d:Domain)<--(p:Protocol)<-[o:ON]-()
+with distinct collect(d.kind) as domains,
+     p.name as protocol,
+     o.value as liquidity
+return protocol, domains, sum(liquidity) as tvl
