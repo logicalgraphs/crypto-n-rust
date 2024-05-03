@@ -22,4 +22,4 @@ This way, we could then represent liquidity deployment as a Venn diagram:
 
 The above is rendered from the file output from:
 
-`$ dom data/records.json > venn.js`
+`$ dom data/records.json > $VENN_DIR/crypto.js`
