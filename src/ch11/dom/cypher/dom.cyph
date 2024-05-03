@@ -1,0 +1,7 @@
+-- liquidity-to-domains query, with intersections
+
+match (d:Domain)<--(p:Protocol)<-[o:ON]-()
+with distinct collect(d.kind) as domains,
+     p.name as protocol,
+     o.value as liquidity
+return protocol, domains, sum(liquidity) as tvl

@@ -11,11 +11,3 @@ fieldterminator '\t'
 -- liquidity-to-domain query, distinct
 
 match (d:Domain)<--()<-[o:ON]-() return d.kind as domain, sum(o.value) as tvl
-
--- liquidity-to-domains query, with intersections
-
-match (d:Domain)<--(p:Protocol)<-[o:ON]-()
-with distinct collect(d.kind) as domains,
-     p.name as protocol,
-     o.value as liquidity
-return protocol, domains, sum(liquidity) as tvl
