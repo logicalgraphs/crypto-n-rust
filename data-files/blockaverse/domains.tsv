@@ -3,26 +3,34 @@ Leverage	GMX
 Trading	GMX
 Trading	Arbitrum
 Money Market	Benqi
+HODL	Benqi
 Trading	Avalanche
 Staking	Indigo
+HODL	Indigo
 Trading	Cardano
 Staking	Osmosis
-Trading	Nolus
-Leverage	Nolus
-Leasing	Nolus
+HODL	Osmosis
+Staking	Nolus
+HODL	Nolus
 Staking	Stride
+HODL	Stride
 Money Market	Geist
+HODL	Geist
 Money Market	POLTER
+HODL	POLTER
 Trading	FANTOM
 Money Market	Aave
+HODL Aave
 Trading	ETHBTC
 Arbitrage	ETHBTC
 HODL	Sumo Vault
 Arbitrage	Mensa
 Trading	Mensa
 Liquidations	ORCA
+Trading	ORCA
 Trading	FIN
 Money Market	Ghost
+HODL	Ghost
 Staking	BLUE
 Staking	Fuzion
 Trading	Kujira
@@ -31,15 +39,23 @@ Staking	Manta DAO
 Trading	Manta DAO
 Trading	Synthetix
 Arbitrage	Synthetix
+Trading	Synthetix
 Money Market	Granary
+HODL	Granary
 Trading	Optimism
 Arbitrage	Optimism
+Trading	Optimism
 Arbitrage	Astroport
+Trading	Astroport
 Arbitrage	Station
+Trading	Station
 Arbitrage	Eris
 LSD	Eris
 Trading	Eris
+HODL	Eris
 HODL	Migaloo
 Money Market	Capapult
+HODL	Capapult
 HODL	Sun
+Staking	Sun
 HODL	Tron
