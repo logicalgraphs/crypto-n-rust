@@ -1,0 +1,256 @@
+﻿[
+  {
+    "protocol": "GMX",
+    "domains": [
+      "Leverage",
+      "Trading"
+    ],
+    "tvl": 10603.65
+  },
+  {
+    "protocol": "Nolus",
+    "domains": [
+      "Leverage",
+      "Trading",
+      "Leasing"
+    ],
+    "tvl": 128.714
+  },
+  {
+    "protocol": "Arbitrum",
+    "domains": [
+      "Trading"
+    ],
+    "tvl": 324.3
+  },
+  {
+    "protocol": "Avalanche",
+    "domains": [
+      "Trading"
+    ],
+    "tvl": 1387.8
+  },
+  {
+    "protocol": "Cardano",
+    "domains": [
+      "Trading"
+    ],
+    "tvl": 1314.15
+  },
+  {
+    "protocol": "FANTOM",
+    "domains": [
+      "Trading"
+    ],
+    "tvl": 6.44
+  },
+  {
+    "protocol": "ETHBTC",
+    "domains": [
+      "Trading",
+      "Arbitrage"
+    ],
+    "tvl": 14023.311999999998
+  },
+  {
+    "protocol": "Mensa",
+    "domains": [
+      "Trading",
+      "Arbitrage"
+    ],
+    "tvl": 1629.7370000000003
+  },
+  {
+    "protocol": "FIN",
+    "domains": [
+      "Trading"
+    ],
+    "tvl": 5692.812000000001
+  },
+  {
+    "protocol": "Kujira",
+    "domains": [
+      "Trading",
+      "Staking"
+    ],
+    "tvl": 38.21
+  },
+  {
+    "protocol": "Kujira",
+    "domains": [
+      "Trading",
+      "Trading",
+      "Staking",
+      "Staking"
+    ],
+    "tvl": 0
+  },
+  {
+    "protocol": "Manta DAO",
+    "domains": [
+      "Trading",
+      "Staking"
+    ],
+    "tvl": 30.5
+  },
+  {
+    "protocol": "Synthetix",
+    "domains": [
+      "Trading",
+      "Arbitrage"
+    ],
+    "tvl": 234.94
+  },
+  {
+    "protocol": "Optimism",
+    "domains": [
+      "Trading",
+      "Arbitrage"
+    ],
+    "tvl": 182.01
+  },
+  {
+    "protocol": "Eris",
+    "domains": [
+      "Trading",
+      "LSD",
+      "Arbitrage"
+    ],
+    "tvl": 1190.87
+  },
+  {
+    "protocol": "Benqi",
+    "domains": [
+      "Money Market"
+    ],
+    "tvl": 20556.35
+  },
+  {
+    "protocol": "Geist",
+    "domains": [
+      "Money Market"
+    ],
+    "tvl": 0
+  },
+  {
+    "protocol": "POLTER",
+    "domains": [
+      "Money Market"
+    ],
+    "tvl": 266.74
+  },
+  {
+    "protocol": "Aave",
+    "domains": [
+      "Money Market",
+      "Money Market"
+    ],
+    "tvl": 0
+  },
+  {
+    "protocol": "Ghost",
+    "domains": [
+      "Money Market"
+    ],
+    "tvl": 76.66999999999999
+  },
+  {
+    "protocol": "Granary",
+    "domains": [
+      "Money Market"
+    ],
+    "tvl": 309.57
+  },
+  {
+    "protocol": "Capapult",
+    "domains": [
+      "Money Market"
+    ],
+    "tvl": 5.35
+  },
+  {
+    "protocol": "Indigo",
+    "domains": [
+      "Staking"
+    ],
+    "tvl": 5473.7375999999995
+  },
+  {
+    "protocol": "Osmosis",
+    "domains": [
+      "Staking"
+    ],
+    "tvl": 598.8199999999999
+  },
+  {
+    "protocol": "Stride",
+    "domains": [
+      "Staking",
+      "LSD"
+    ],
+    "tvl": 396.95
+  },
+  {
+    "protocol": "BLUE",
+    "domains": [
+      "Staking"
+    ],
+    "tvl": 11826.425
+  },
+  {
+    "protocol": "Fuzion",
+    "domains": [
+      "Staking"
+    ],
+    "tvl": 17
+  },
+  {
+    "protocol": "Astroport",
+    "domains": [
+      "Arbitrage"
+    ],
+    "tvl": 0
+  },
+  {
+    "protocol": "Station",
+    "domains": [
+      "Arbitrage"
+    ],
+    "tvl": 590.63
+  },
+  {
+    "protocol": "Sumo Vault",
+    "domains": [
+      "HODL"
+    ],
+    "tvl": 3990.1899999999996
+  },
+  {
+    "protocol": "Migaloo",
+    "domains": [
+      "HODL"
+    ],
+    "tvl": 93.83
+  },
+  {
+    "protocol": "Sun",
+    "domains": [
+      "HODL"
+    ],
+    "tvl": 860.7
+  },
+  {
+    "protocol": "Tron",
+    "domains": [
+      "HODL"
+    ],
+    "tvl": 30.53
+  },
+  {
+    "protocol": "ORCA",
+    "domains": [
+      "Liquidations"
+    ],
+    "tvl": 2471.014
+  }
+]
