@@ -1,3 +1,8 @@
+-- remove all domains and domain-relations
+
+match (:Domain)-[r]-() delete r;
+match (d:Domain) delete d;
+
 -- loads associations of Domains to protocols, mapping the former to the latter
 
 load csv with headers

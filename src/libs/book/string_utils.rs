@@ -10,8 +10,15 @@ pub fn dequote(str: &String) -> String {
       .to_string()
 }
 
+pub fn bracket(brackets: &str, body: &str) -> String {
+   let mut i = brackets.chars();
+   let frist = i.next().unwrap();
+   let last = i.last().unwrap();
+   format!("{frist}{body}{last}")
+}
+
 pub fn quot(s: &str) -> String {
-   format!("\"{s}\"")
+   bracket("\"\"", s)
 }
 
 pub fn plural(n: usize, noun: &str) -> String {
