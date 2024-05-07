@@ -15,3 +15,10 @@ merge (t)-[:RECORD]->(c);
 match (t:Token)--(:CMC) 
 where not (t)--(:Protocol)
 return t.name
+
+-- query to see which tokens are in which blockchains
+
+match (t:Token)-->{2}(b:Blockchain)
+return b.name as blockchain, collect(distinct t.name) as tokens
+
+-- this also shows link-hopping in a query
