@@ -1,5 +1,5 @@
 use book::{
-   html_utils::{Mode,HTML,HTML::OL,LI,mk_li,proff,h},
+   html_utils::{Mode,HTML,HTML::OL,HTML::A,HTML::P,LI,mk_li,proff,roff,h},
    list_utils::first_last,
    num_utils::{mk_estimate,parse_or},
    string_utils::plural,
@@ -62,7 +62,22 @@ fn header(date: &str, n: usize) -> HTML {
 }
 
 fn print_report(date: &str, tops: &HTML, mode: &Mode, sz: usize) {
-   proff(&header(date, sz), &mode);
-   proff(&tops, &mode);
+   let pmode = |h: &HTML| proff(h, &mode);
+   pmode(&header(date, sz));
+   pmode(&tops);
+   pmode(&footer(&mode));
    println!("");
+}
+
+fn footer(mode: &Mode) -> HTML {
+   let arr = |url: &str, text: &str|
+      roff(&mode, &A((url.to_string(), text.to_string())));
+   let preable = "Report generated from @TeamKujira";
+   let tickers = arr("https://api.kujira.app/api/coingecko/tickers",
+                     "/tickers REST endpoint");
+   let lg = "https://github.com/logicalgraphs/crypto-n-rust/tree/main/src";
+   let url = format!("{lg}/ch09/top_traded");
+   let tt = arr(&url, "my <code>./top_traded</code> system");
+              
+   P(format!("{preable} {tickers} with {tt}."))
 }
