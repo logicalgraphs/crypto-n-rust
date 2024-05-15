@@ -17,6 +17,7 @@ pub enum HTML {
    OL(Vec<LI>),
    A((String, String)),
    P(String),
+   CODE(String),
    NBSP
 }
 
@@ -141,6 +142,7 @@ impl AsHTML for HTML {
          HTML::OL(lis) => elt("ol", &list_h(&lis)),
          HTML::A((url, content)) => eattrs("a", &attrib("href", url), &content),
          HTML::P(content) => elt("p", content),
+         HTML::CODE(code) => elt("code", code),
          HTML::NBSP => elt("p", "&nbsp;")
       }
    }
@@ -186,6 +188,7 @@ impl AsText for HTML {
          HTML::OL(lis) => list_t(&lis, true),
          HTML::A((url, content)) => format!("{content} ({url})"),
          HTML::P(content) => div(&content),
+         HTML::CODE(code) => code.to_string(),
          HTML::NBSP => "".to_string()
       }
    }
