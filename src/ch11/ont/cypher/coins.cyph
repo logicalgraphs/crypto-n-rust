@@ -1,14 +1,6 @@
 # collects coins and amounts and outputs with their type (stable, blue chip,...)
 
-match (t:Token)-[r:ON]->()
-return t.name as token, 
-case t.name 
-   when 'BTC','ETH','ADA','PAXG','BNB' then 'blue chip'
-   when 'stable' then 'stable'
-   when 'AVAX','KUJI','LUNA','ARB','FTM','ONE','LINK','OSMO','ATOM',
-        'DOT','OP','LDO','WHALE','TRX' then 'protocol'
-   when 'SNEK' then 'meme'
-   else 'alt'
-end as kind,
-"$0.00" as invested, 
-"$"+sum(r.value) as value
+match (k:Kind)-->(t:Token)-[r:ON]->()
+with k.kind as kind, t.name as token, sum(r.value) as tot
+where tot > 0
+return token, kind, "$0.00" as invested, "$"+tot as value

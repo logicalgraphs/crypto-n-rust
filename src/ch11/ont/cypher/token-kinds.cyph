@@ -8,7 +8,7 @@ match (k:Kind) delete k;
 # Now let's load the token-kinds
 
 load csv with headers
-from "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/graphing/data-files/blockaverse/token-kinds.csv" as row
+from "https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/main/data-files/blockaverse/token-kinds.csv" as row
 match (t:Token { name: row.token })
 merge (k:Kind { kind: row.kind })
 merge (k)-[:OF_KIND]->(t)
