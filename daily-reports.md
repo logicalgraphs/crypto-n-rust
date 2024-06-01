@@ -32,10 +32,15 @@ Now the fun begins: analysis, ... after I update all local token prices-quotes
 of all blockchains I have positions in (currently, I have positions in 
 11 blockchains).
 
+![11 blockchains](imgs/daily-reports/11-blockchains.png)
+
 1. Blockaverse report:
 
 * [venn](https://github.com/logicalgraphs/crypto-n-rust/tree/main/src/ch08/charts/venn)
 reports of protocol- and token-positions,
+
+![Venn diagram of blockaverse protocols](imgs/daily-reports/protocols.png)
+
 * [ont](https://github.com/logicalgraphs/crypto-n-rust/tree/main/src/ch11/ont)ological
 snapshot of all positions on all blockchains. This leads to the
 [voronoi](https://github.com/logicalgraphs/crypto-n-rust/tree/main/src/ch08/charts/voronoi)
@@ -72,3 +77,11 @@ generates the charts and reports with @TradingView
 4. Then I run my [ORCA reports](https://github.com/logicalgraphs/crypto-n-rust/tree/main/src/ch10/orca).
 4. [Daily Benqi positions](src/ch07/data_entry) reports the daily Benqi market
 positions.
+
+## Monthly reports
+
+Every month I update my transactional reports.
+
+1. I run [pnl](src/ch08/pnl) ("profit 'n loss") against all my Kujira-trades.
+2. I run my monthly transactional yields and expenses report.
+3. This leads to my year-to-date statement of my blockaverse portfolio.
