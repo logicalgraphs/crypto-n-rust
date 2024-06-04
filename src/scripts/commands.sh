@@ -19,7 +19,7 @@ export HOLDINGS=$CSV_DIR/portfolio_coins.lsv
 export PIVOTS=$CSV_DIR/pivots.csv
 
 export FIN_TICKERS=https://api.kujira.app/api/coingecko/tickers
-export GECKO_API=https://api.coingecko.com/api/v3/
+export GECKO_API=https://api.coingecko.com/api/v3
 export GECKO_PRICES=$GECKO_API/simple/price
 
 # -- ALIASES -----------------------------------------------------------------
