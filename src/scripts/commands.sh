@@ -3,19 +3,24 @@
 # that points to the root directory of this repository
 
 export LE_DATE=`date +%Y-%m-%d`
+
 DATA_DIR=$RUST_BOOK/data-files
 
-export CSV_DIR=$DATA_DIR/csv
 export ORCA_DIR=$DATA_DIR/ORCA
 export FIN_DIR=$DATA_DIR/FIN
 export PORT_DIR=$DATA_DIR/blockaverse
 
+export CSV_DIR=$DATA_DIR/csv
+
 export COLORS=$CSV_DIR/supported_colors.tsv
-export CSV_LISTING=$DATA_DIR/csv/alles/cmc_listings.csv
-export PORT_LISTING=$DATA_DIR/csv/portfolio/my_portfolio.csv
-export HOLDINGS=$DATA_DIR/csv/portfolio_coins.lsv
+export CSV_LISTING=$CSV_DIR/alles/cmc_listings.csv
+export PORT_LISTING=$CSV_DIR/portfolio/my_portfolio.csv
+export HOLDINGS=$CSV_DIR/portfolio_coins.lsv
+export PIVOTS=$CSV_DIR/pivots.csv
 
 export FIN_TICKERS=https://api.kujira.app/api/coingecko/tickers
+export GECKO_API=https://api.coingecko.com/api/v3/
+export GECKO_PRICES=$GECKO_API/simple/price
 
 # -- ALIASES -----------------------------------------------------------------
 
