@@ -12,7 +12,7 @@ pub fn fetch_burns() -> ErrStr<HashMap<String,u8>> {
    let burn_dir = "crypto-n-rust/main/src/ch09/lsd/data/burn-rates.csv";
    let csv = err_or(read_rest(&format!("{lg_url}/{burn_dir}")),
                     "error reading REST endpoint")?;
-   fn burn_f(row: Vec<String>) -> Result<(String, u8), String> {
+   fn burn_f(row: Vec<String>) -> ErrStr<(String, u8)> {
       if let [name, _, c, _] = row.as_slice() {
          let count: u8 = c.parse().expect(&format!("{c} is not a number"));
          Ok((name.to_string(), count))
