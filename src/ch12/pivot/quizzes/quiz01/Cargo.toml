@@ -10,5 +10,5 @@ name = "quiz01"
 path = "quiz01.rs"
 
 [dependencies]
-book = { path = "../../../libs/book" }
-crypto = { path = "../../../libs/crypto" }
+book = { path = "../../../../libs/book" }
+crypto = { path = "../../../../libs/crypto" }
