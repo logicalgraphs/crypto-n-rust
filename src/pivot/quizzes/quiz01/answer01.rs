@@ -6,7 +6,7 @@ use book::{
 use crypto::rest_utils::data_res;
 
 fn usage() {
-   println!("./quiz01");
+   println!("./answer01");
    println!("\tReads data from a REST endpoint.\n");
 }
 
