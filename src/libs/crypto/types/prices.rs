@@ -2,7 +2,7 @@
 // https://api.kujira.app/api/coingecko/tickers
 
 use crate::{
-   rest_utils::graphs_fin_res,
+   rest_utils::fin_res,
    types::{
       aliases::load_aliases,
       internal::{
@@ -14,7 +14,7 @@ use crate::{
 };
 
 pub fn prices_with_aliases(date: &str) -> Prices {
-   prices(&date, Some(graphs_fin_res("aliases.csv")))
+   prices(&date, Some(fin_res("main", "aliases.csv")))
 }
 
 pub fn prices(date: &str, opt_aliases: Option<String>) -> Prices {
