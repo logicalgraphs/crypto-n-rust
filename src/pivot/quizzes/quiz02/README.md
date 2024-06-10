@@ -1,7 +1,9 @@
 #Rust pop-quiz 02
 
-Now that you can read a REST endpoint, shunt that functionality into its own 
-module, `read_rest.rs`, that has the following function:
+Now that you can 
+[read a REST endpoint](../quiz01/answer.rs), shunt that functionality into its 
+own module, `read_rest.rs`, that has the following function:
+
 
 ```Rust
 read_pivots() -> ErrStr<Vec<String>>
