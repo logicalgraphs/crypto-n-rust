@@ -1,7 +1,30 @@
 # crypto-n-rust
+
 We do crypto. We do Rust. We do crypto 'n Rust.
 
 ... Maaaayyyyybee we'll even add a little graph database work here 'n there.
+
+## Pivots
+
+Here we build a dAPP that recommends trades from @coingecko-data based
+upon 
+[pivot-arbitrage](https://logicalgraphs.blogspot.com/p/prism.html).
+
+We have already built libraries around the book I'm writing (see below)
+and around some 
+[standard crypto-stuff I'm doing](https://github.com/logicalgraphs/crypto-n-rust/tree/main/src/libs/crypto).
+Both are included into this git repository.
+
+We introduce concepts iteratively via a series of quizzes.
+
+So:
+
+### Quizzes
+
+* quiz 01: reading a REST endpoint
+  * (answer)
+
+## Crypto-n-Rust book
 
 * Chapter 00: [Introduction](00-intro.md)
 * Chapter 01: ["Hello, world!"](01-hello-world.md)
