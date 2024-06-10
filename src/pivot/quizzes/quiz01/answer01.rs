@@ -3,6 +3,8 @@ use book::{
    rest_utils::read_rest
 };
 
+use crypto::rest_utils::data_res;
+
 fn usage() {
    println!("./quiz01");
    println!("\tReads data from a REST endpoint.\n");
@@ -10,10 +12,8 @@ fn usage() {
 
 fn main() -> ErrStr<()> {
    usage();
-   let lg = "https://raw.githubusercontent.com/logicalgraphs";
-   let piv_data = "crypto-n-rust/pivot-quiz-01/data-files/csv/pivots.csv";
-   let res = err_or(read_rest(&format!("{lg}/{piv_data}")),
-                    "Error reading REST endpoint")?;
+   let res = err_or(read_rest(&data_res("pivot-quiz-01-answer", "pivots.csv")),
+                    "Error reading pivots.csv on github")?;
    println!("First five lines of the pivots database:\n");
    for line in res.split("\n").take(5) {
       println!("{line}");
