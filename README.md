@@ -21,7 +21,7 @@ So:
 
 ### Quizzes
 
-* quiz 01: reading a REST endpoint
+* quiz 01: [reading a REST endpoint](https://github.com/logicalgraphs/crypto-n-rust/blob/pivot-quiz-01/src/pivot/quizzes/quiz01/README.md)
   * (answer)
 
 ## Crypto-n-Rust book
