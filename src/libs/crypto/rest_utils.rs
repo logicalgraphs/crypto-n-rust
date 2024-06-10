@@ -11,12 +11,20 @@ pub fn gecko_res(res: &str) -> String {
    format!("https://api.kujira.app/api/coingecko/{res}")
 }
 
-fn raw_graphs() -> String {
+fn git_lg_url() -> String {
    "https://raw.githubusercontent.com/logicalgraphs".to_string()
 }
 
-pub fn graphs_fin_res(res: &str) -> String {
-   format!("{}/crypto-n-rust/main/data-files/FIN/{res}", raw_graphs())
+fn rez(dir: &str, branch: &str, res: &str) -> String {
+   format!("{}/crypto-n-rust/{branch}/data-files/{dir}/{res}", git_lg_url())
+}
+
+pub fn fin_res(branch: &str, res: &str) -> String {
+   rez("FIN", branch, res)
+}
+
+pub fn data_res(branch: &str, res: &str) -> String {
+   rez("csv", branch, res)
 }
 
 pub fn read_orders_json(order_book: &str, depth: usize) -> ErrStrStr {

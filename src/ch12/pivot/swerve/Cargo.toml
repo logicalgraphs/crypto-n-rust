@@ -1,14 +1,14 @@
 [package]
-name = "pivot"
+name = "swerve"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[[bin]]
-name = "quiz02"
-path = "quiz02.rs"
+[lib]
+name = "swerve"
+path = "lib.rs"
 
 [dependencies]
-book = { path = "../../../../libs/book" }
-swerve = { path = "../../swerve" }
+book = { path = "../../../libs/book" }
+crypto = { path = "../../../libs/crypto" }

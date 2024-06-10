@@ -10,7 +10,7 @@ use book::{
 };
 
 use crate::{
-   rest_utils::graphs_fin_res,
+   rest_utils::fin_res,
    types::{
       aliases::load_aliases,
       interfaces::{Books,Book,BookBooks,mk_book,trades_token,vol_24h},
@@ -32,7 +32,7 @@ pub fn parse_books(date: &str, opt_aliases: Option<String>) -> BookBooks {
 }  
    
 pub fn parse_books_with_aliases(date: &str) -> BookBooks {
-   parse_books(&date, Some(graphs_fin_res("aliases.csv")))
+   parse_books(&date, Some(fin_res("main", "aliases.csv")))
 }  
 
 /* 
