@@ -13,6 +13,8 @@ That's it. You can print out the response if you'd like.
 
 Anybody want to counterchallenge me with #Elixir?
 
+* [answer](answer.md)
+
 ## FUN FACT!
 
 Did you know that you – YES, YOU! – can make your git repository data a (GET) 
