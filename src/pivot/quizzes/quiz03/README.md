@@ -12,3 +12,5 @@ Pair line 1 to line 2, then query a token API id to get its corresponding
 symbol, thusly:
 
 ![fantom's symbol is $FTM](imgs/fantom.jpg)
+
+* [answer](answer03.rs)
