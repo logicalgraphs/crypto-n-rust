@@ -1,5 +1,5 @@
 use book::{
-   err_utils::{err_or,ErrStr},
+   err_utils::ErrStr,
    rest_utils::read_rest
 };
 
@@ -10,10 +10,10 @@ fn usage() {
    println!("\tReads data from a REST endpoint.\n");
 }
 
-fn main() -> ErrStr<()> {
+#[tokio::main]
+async fn main() -> ErrStr<()> {
    usage();
-   let res = err_or(read_rest(&data_res("pivot-quiz-01-answer", "pivots.csv")),
-                    "Error reading pivots.csv on github")?;
+   let res = read_rest(&data_res("pivot-quiz-01-answer", "pivots.csv")).await?;
    println!("First five lines of the pivots database:\n");
    for line in res.split("\n").take(5) {
       println!("{line}");
