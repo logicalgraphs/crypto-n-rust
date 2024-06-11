@@ -43,7 +43,8 @@ pub fn books_orderbooks((prices, books): &BookBooks) -> HashSet<OrderBook> {
    books.into_iter().map(book_orderbook(&prices)).collect()
 }
 
-pub fn read_marketplace(date: &str) -> HashSet<OrderBook> {
+pub async fn read_marketplace(date: &str) -> HashSet<OrderBook> {
    println!("Reading order books from FIN REST endpoint");
-   books_orderbooks(&parse_books_with_aliases(&date))
+   let books = parse_books_with_aliases(&date).await;
+   books_orderbooks(&books)
 }

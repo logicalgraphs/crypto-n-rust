@@ -15,13 +15,13 @@ pub fn alias(aliases: &Aliases, i: &String) -> String {
    aliases.get(i).unwrap_or(i).clone()
 }
 
-pub fn load_aliases_graph() -> Aliases {
-   load_aliases(&Some(fin_res("main", "aliases.csv")))
+pub async fn load_aliases_graph() -> Aliases {
+   load_aliases(&Some(fin_res("main", "aliases.csv"))).await
 }
 
-pub fn load_aliases(opt_url: &Option<String>) -> Aliases {
+pub async fn load_aliases(opt_url: &Option<String>) -> Aliases {
    if let Some(url) = opt_url {
-      let file = read_aliases(url).expect("Cannot read aliases file.");
+      let file = read_aliases(url).await.expect("Cannot read aliases file.");
       aliases_loader(&file)
    } else {
       HashMap::new()

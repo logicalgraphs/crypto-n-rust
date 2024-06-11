@@ -10,3 +10,8 @@ You see --^ that 90% of my solution is using library functions to replace code
 I've already written, ... so I feel like a #Haskell programmer. Eheh. 😅
 
 !["Hello, world!" in Haskell](imgs/haskell-hello-world.JPG)
+
+## NEWS FLASH!
+
+I've updated the RESTful interactions to the reqwest::0.12.4 and made these
+interactions asynchronous.
