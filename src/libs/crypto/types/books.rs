@@ -23,16 +23,16 @@ use crate::{
    }
 };
 
-pub fn parse_books(date: &str, opt_aliases: Option<String>) -> BookBooks {
-   let b0 = raw_books();
-   let aliases = load_aliases(&opt_aliases);
+pub async fn parse_books(date: &str, opt_aliases: Option<String>) -> BookBooks {
+   let b0 = raw_books().await;
+   let aliases = load_aliases(&opt_aliases).await;
    let p = prices_from_books(&date, &b0, &aliases);
    let b = books2books(&p, &b0, &aliases);
    (p, b)
 }  
    
-pub fn parse_books_with_aliases(date: &str) -> BookBooks {
-   parse_books(&date, Some(fin_res("main", "aliases.csv")))
+pub async fn parse_books_with_aliases(date: &str) -> BookBooks {
+   parse_books(&date, Some(fin_res("main", "aliases.csv"))).await
 }  
 
 /* 
