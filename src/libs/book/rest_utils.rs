@@ -1,7 +1,4 @@
-use std::{
-   io::Read,
-   error::Error
-};
+use crate::err_utils::{ErrStr,err_or};
 
 /*
 The skeleton upon which this get-fetch example is based is:
@@ -15,10 +12,9 @@ reqwest = "0.9.18"
 in the Cargo.toml-build-man&ifest
 */
 
-pub fn read_rest(endpoint: &str) -> Result<String, Box<dyn Error>> {
-   let mut body = String::new();
-   let res = reqwest::get(endpoint);
-   res?.read_to_string(&mut body)?;
+pub async fn read_rest(endpoint: &str) -> ErrStr<String> {
+   let res = err_or(reqwest::get(endpoint).await, "https::GET")?;
+   let body = err_or(res.text().await, "no body in Response")?;
    Ok(body)
 }
 
@@ -29,6 +25,10 @@ fn usage() {
    println!("\tReads data from a REST endpoint.");
 }
 
+// tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+// as a dependency in app Cargo.toml-file
+
+#[tokio::main]
 fn main() -> Result<(), String> {
    let body = read_orders("LOCAL_USK", 10)?;
    reportage(&body);
