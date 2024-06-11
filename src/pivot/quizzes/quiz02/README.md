@@ -1,4 +1,4 @@
-#Rust pop-quiz 02
+# Rust pop-quiz 02
 
 Now that you can 
 [read a REST endpoint](../quiz01/answer01.rs), shunt that functionality into 
@@ -15,3 +15,5 @@ We'll be using this as a library function in follow-on quizzes. The library's
 name?
 
 `swerve`.
+
+* [answer](answer.md)
