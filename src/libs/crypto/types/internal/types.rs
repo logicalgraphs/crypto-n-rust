@@ -43,8 +43,8 @@ struct BooksVec {
    books: Books1
 }
 
-pub fn raw_books() -> Books1 {
-   let str = read_market_json().expect("Could not read FIN market data");
+pub async fn raw_books() -> Books1 {
+   let str = read_market_json().await.expect("Could not read FIN market data");
    let books: BooksVec = from_str(&str).expect("booked!");
    books.books
 }

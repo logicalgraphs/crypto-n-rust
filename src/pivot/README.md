@@ -31,9 +31,17 @@ I trade-back the 16,000 $QI for 11.5 $AVAX, I then have an ROI of 15%
 
 and the APR of ROI * 365 / (y - x)
 
-This way I measure the success of my pivot-arbitrage
+This way I measure the success of my pivot-arbitrage.
+
+![ROIs and APRs of pivot arbitrage](imgs/pivot-rois.png)
+
+[disclaimers](disclaimers.md)
 
 ## Quizzes
 
 I show how to BUIDL this system from the ground up in a series of
 [quizzes](quizzes).
+
+## NEWS FLASH!
+
+2024-06-11: upgraded to reqwest::0.12.4 and made all RESTful calls asynchronous.

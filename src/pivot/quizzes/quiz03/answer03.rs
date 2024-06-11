@@ -16,11 +16,12 @@ fn usage() {
    println!("\tgives the token-symbol for the provided <id>");
 }
 
-fn main() -> ErrStr<()> {
+#[tokio::main]
+async fn main() -> ErrStr<()> {
    let args = get_args();
    let mb_id = args.first();
    if let Some(id) = mb_id {
-      let res = read_pivots()?;
+      let res = read_pivots().await?;
       let ids = res[0].split(",").skip(1).map(to_string);
       let syms = res[1].split(",").skip(1).map(to_string);
       let dict: HashMap<String, String> = zip(ids, syms).collect();

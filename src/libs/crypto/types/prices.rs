@@ -13,12 +13,12 @@ use crate::{
    }
 };
 
-pub fn prices_with_aliases(date: &str) -> Prices {
-   prices(&date, Some(fin_res("main", "aliases.csv")))
+pub async fn prices_with_aliases(date: &str) -> Prices {
+   prices(&date, Some(fin_res("main", "aliases.csv"))).await
 }
 
-pub fn prices(date: &str, opt_aliases: Option<String>) -> Prices {
-   let b0 = raw_books();
-   let aliases = load_aliases(&opt_aliases);
+pub async fn prices(date: &str, opt_aliases: Option<String>) -> Prices {
+   let b0 = raw_books().await;
+   let aliases = load_aliases(&opt_aliases).await;
    prices_from_books(&date, &b0, &aliases)
 }

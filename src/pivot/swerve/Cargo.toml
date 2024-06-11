@@ -12,3 +12,4 @@ path = "lib.rs"
 [dependencies]
 book = { path = "../../libs/book" }
 crypto = { path = "../../libs/crypto" }
+reqwest = "0.12.4"
