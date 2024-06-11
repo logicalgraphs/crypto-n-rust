@@ -7,9 +7,10 @@ fn usage() {
    println!("\tReads data from a REST endpoint.\n");
 }
 
-fn main() -> ErrStr<()> {
+#[tokio::main]
+async fn main() -> ErrStr<()> {
    usage();
-   let pivots = read_pivots()?;
+   let pivots = read_pivots().await?;
    println!("The first five lines of pivots.csv on github:\n");
    for line in pivots.into_iter().take(5) {
       println!("{line}");
