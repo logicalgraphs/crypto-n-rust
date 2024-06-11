@@ -27,18 +27,29 @@ pub fn data_res(branch: &str, res: &str) -> String {
    rez("csv", branch, res)
 }
 
-pub fn read_orders_json(order_book: &str, depth: usize) -> ErrStrStr {
+/*
+Remember to put the following on main()
+
+#[tokio::main]
+
+and
+
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+*/
+
+pub async fn read_orders_json(order_book: &str, depth: usize) -> ErrStrStr {
    let endpoint = format!("{}?ticker_id={order_book}&depth={depth}",
                           gecko_res("orderbook"));
-   err_or(read_rest(&endpoint),
+   err_or(read_rest(&endpoint).await,
           &format!("Could not read orderbook {order_book}"))
 }
 
-pub fn read_market_json() -> ErrStrStr {
-   err_or(read_rest(&gecko_res("tickers")), "Could not read FIN marketplace.")
+pub async fn read_market_json() -> ErrStrStr {
+   err_or(read_rest(&gecko_res("tickers")).await,
+          "Could not read FIN marketplace.")
 }
 
-pub fn read_aliases(aliases_url: &str) -> ErrStrStr {
-   err_or(read_rest(aliases_url),
+pub async fn read_aliases(aliases_url: &str) -> ErrStrStr {
+   err_or(read_rest(aliases_url).await,
           &format!("Could not read aliases from {aliases_url}"))
 }

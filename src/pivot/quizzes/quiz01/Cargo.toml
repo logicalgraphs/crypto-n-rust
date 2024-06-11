@@ -12,3 +12,4 @@ path = "answer01.rs"
 [dependencies]
 book = { path = "../../../libs/book" }
 crypto = { path = "../../../libs/crypto" }
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
