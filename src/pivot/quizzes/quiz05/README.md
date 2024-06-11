@@ -10,3 +10,7 @@ Now:
 
 Write a Rust program to get the prices for the tokens listed in 
 [pivots.csv](https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/pivot-quiz-04/data-files/csv/pivots.csv).
+
+As part of your answer for this pop-quiz to query the @coingecko REST endpoint 
+for token-prices, libraryitize the work you did before (which was to create a 
+dictionary of @coingecko API ids to token-symbols from pivots.csv-data).
