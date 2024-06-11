@@ -35,6 +35,8 @@ This way I measure the success of my pivot-arbitrage.
 
 ![ROIs and APRs of pivot arbitrage](imgs/pivot-rois.png)
 
+[disclaimers](disclaimers.md)
+
 ## Quizzes
 
 I show how to BUIDL this system from the ground up in a series of
