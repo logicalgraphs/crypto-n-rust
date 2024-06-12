@@ -6,3 +6,4 @@
 * quiz 04: [Sign up as coingecko dev and obtain API-key](quiz04) ... and play 
 in the sandbox.
 * quiz 05: [Query prices on coingecko](quiz05)
+* quiz 06: [Parse token-price JSON](quiz06)
