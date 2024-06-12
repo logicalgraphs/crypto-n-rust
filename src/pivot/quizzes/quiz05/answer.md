@@ -18,7 +18,7 @@ The answer is 'simple' enough: ([answer05.rs](answer05.rs)), but, as directed,
 the prior functionality (of creating a coingecko token-id dictionary) was rolled
 up into the swerve library module, [token_ids.rs](../../swerve/token_ids.rs).
 
-Now, the call to coingecko to get token-prices /could have been/ complicated,
+Now, the call to coingecko to get token-prices _could have been_ complicated,
 but, fortunately, the `reqwest`-library encapsulated all those difficulties
 into its builder, including adding headers and adding parameters and values
 to the query-string, so, that was sweet! 
@@ -59,7 +59,7 @@ JSON INTO UNIFORMLY-TYPED VALUES* façile!
 
 But I don't have the latter. I have the former.
 
-The next exercise will be ... /'fun.'/
+The next exercise will be ... _'fun.'_
 
 ## Rant
 
