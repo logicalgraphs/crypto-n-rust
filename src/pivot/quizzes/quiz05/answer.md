@@ -82,13 +82,13 @@ Why not:
 
 HUH?
 
-When you, the consumer, try to consume the above JSON (the one with VARIANT 
-KEYS?!?!?) in a programatic-fashion?
+When you, the consumer, try to consume the above JSON (the one with _VARIANT 
+KEYS?!?!?_) in a programatic-fashion?
 
 You're going to have to hack the HELL around trying to define what a key is, 
-BECAUSE THE KEY IS A VALUE, FFS!
+_BECAUSE THE KEY IS A VALUE, FFS!_
 
-Perverting JSON's VERY CLEAR structure is just stupid!
+Perverting JSON's _VERY CLEAR_ structure is just stupid!
 
 Maybe it's because I have a 25-year background in structured data and 
 knowledge-engineering, but when you define your schema as:
@@ -97,13 +97,16 @@ knowledge-engineering, but when you define your schema as:
 
 instead of
 
-> "The key is 'token-id' because it's an eff'n KEY not an eff'n VALUE!"
+> "The key is 'token-id' because it's an eff'n _KEY_ not an eff'n _VALUE!"_
 
 Then you're an eff'n idiot.
 
 Remember, kids, there's a difference between:
 
-* metadata, or labels; and,
+* metadata, or labels 
+
+verses
+
 * data, or values.
 
 If you call yourself a computer scientist, software engineer, or data 
@@ -118,8 +121,8 @@ My 2¢.
 Now, for my next rant:
 
 Let's talk about people who put compound or composite values into (atomic) 
-cells, so you have to CREATE A PARSER to ingest data FROM A DATABASE?!??? ... 
-when they could have just as easily loaded each atomic value into its 
+cells, so you have to _CREATE A PARSER_ to ingest data _FROM A DATABASE?!???_ 
+... when they could have just as easily loaded each atomic value into its 
 own (labeled/typed) cell?
 
 Fun!
