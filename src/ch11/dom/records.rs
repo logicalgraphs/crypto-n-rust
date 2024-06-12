@@ -6,8 +6,8 @@ use std::{
 
 extern crate serde;
 
-use serde_json::from_reader; // {Value, from_str}; // , from_value};
-use serde::Deserialize; // ,Deserializer};
+use serde_json::from_reader;
+use serde::Deserialize;
 
 use book::{
    string_utils::bracket
