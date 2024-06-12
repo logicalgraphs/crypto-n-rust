@@ -13,4 +13,4 @@ symbol, thusly:
 
 ![fantom's symbol is $FTM](imgs/fantom.jpg)
 
-* [answer](answer03.rs)
+* [answer](answer.md)
