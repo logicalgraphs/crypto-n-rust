@@ -14,3 +14,5 @@ Write a Rust program to get the prices for the tokens listed in
 As part of your answer for this pop-quiz to query the @coingecko REST endpoint 
 for token-prices, libraryitize the work you did before (which was to create a 
 dictionary of @coingecko API ids to token-symbols from pivots.csv-data).
+
+* [answer](answer.md)
