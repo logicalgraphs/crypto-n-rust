@@ -25,3 +25,5 @@ Print the result as a report.
 For those of you wishing to test your JSON-parser directly, I've added a 
 [sample response of token-prices-as-JSON](https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/pivot-quiz-06/src/pivot/quizzes/quiz06/data/sample-response-token-prices.json)
 from @coingecko REST /simple/price endpoint.
+
+* [answer](answer.md)
