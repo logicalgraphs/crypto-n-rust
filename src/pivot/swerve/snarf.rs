@@ -1,13 +1,20 @@
 // name-explanation: when you've got to fetch-all, you're snarfin' it!
 // ... am I right, fam? 😎
 
-use std::env::var;
+use std::{
+   env::var,
+   iter::zip
+};
 
-use book::err_utils::ErrStr;
+use book::{
+   err_utils::{err_or,ErrStr},
+   string_utils::to_string
+};
 
 use crate::{
-   types::{Dict,Pivots},
-   fetch_pivots::fetch_pivots
+   types::{Dict,Pivots,Price},
+   fetch_pivots::fetch_pivots,
+   fetch_prices::fetch_prices
 };
 
 fn parse_keys_symbols(pivots: &Pivots) -> Dict {
@@ -22,4 +29,12 @@ pub async fn snarf_pivots() -> ErrStr<(Pivots, Dict)> {
    Ok((pivs, dict))
 }
 
-pub async fn snarf() -> ErrStr<(
+// the el biggie en-snarf-ifier!
+
+pub async fn snarf() -> ErrStr<Vec<Price>> {
+   let (_pivs, dict) = snarf_pivots().await?;
+   let pass = err_or(var("COIN_GECKO_API_KEY"),
+                     "Could not fetch API key from environment")?;
+   let prices = fetch_prices(&pass, &dict).await?;
+   Ok(prices)
+}
