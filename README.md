@@ -15,14 +15,8 @@ and around some
 [standard crypto-stuff I'm doing](https://github.com/logicalgraphs/crypto-n-rust/tree/main/src/libs/crypto).
 Both are included into this git repository.
 
-We introduce concepts iteratively via a series of quizzes.
-
-So:
-
-### Quizzes
-
-* quiz 01: [reading a REST endpoint](https://github.com/logicalgraphs/crypto-n-rust/blob/pivot-quiz-01/src/pivot/quizzes/quiz01/README.md)
-  * (answer)
+We introduce concepts iteratively via a series of 
+[quizzes](src/pivot/quizzes).
 
 ## Crypto-n-Rust book
 
