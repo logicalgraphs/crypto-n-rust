@@ -3,6 +3,10 @@
 A very slow 'arbitrage'-trade from one token, back to that token, via a 
 pivot-token.
 
+## Components
+
+* [gecko](gecko) - fetches token-prices from coingecko REST API endpoint
+
 ## Determinor
 
 The determinor to execute the trade is the

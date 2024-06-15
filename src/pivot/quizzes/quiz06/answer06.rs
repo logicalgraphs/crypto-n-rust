@@ -9,7 +9,7 @@ use swerve::{
 };
 
 fn usage() {
-   println!("\n./answer06 <date>");
+   println!("\n./gecko <date>");
    println!("\tQueries coingecko REST endpoint for token-prices");
 }
 
