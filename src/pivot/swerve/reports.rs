@@ -22,7 +22,7 @@ pub fn portfolio_prices(date: &str, row: &Vec<Price>) {
 }
 
 pub fn report(date: &str, row: &Vec<Price>) {
-   println!("\nPortfolio tokens\n");
+   println!("\nPortfolio tokens,,,\n,,,");
    portfolio_prices(date, row);
    println!("\n... and as one line:\n");
    one_row(date, row);
