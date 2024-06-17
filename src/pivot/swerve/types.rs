@@ -14,10 +14,10 @@ impl CsvWriter for Quote {
    fn ncols(&self) -> usize { 1 }
 }
 
-pub type Dict = HashMap<String, String>;
+pub type TokenId = String;
+pub type Token = String;
+pub type Dict = HashMap<TokenId, Token>;
 
 pub type Pivots = Vec<String>;
 
-pub type TokenId = String;
-pub type Token = String;
 pub type Price = ((TokenId, Token), Quote);
