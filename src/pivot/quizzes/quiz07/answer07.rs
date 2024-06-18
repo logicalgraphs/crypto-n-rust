@@ -1,0 +1,26 @@
+use book::{
+   err_utils::ErrStr,
+   utils::get_args
+};
+
+use swerve::{
+   reports::report,
+   snarf::snarf
+};
+
+fn usage() {
+   println!("\n./gecko <date>");
+   println!("\tQueries coingecko REST endpoint for token-prices");
+}
+
+#[tokio::main]
+async fn main() -> ErrStr<()> {
+   let args = get_args();
+   if let Some(date) = args.first() {
+      let (prices, errs) = snarf().await?;
+      report(&date, &prices, &errs);
+   } else {
+      usage();
+   }
+   Ok(())
+}
