@@ -17,5 +17,5 @@ in the sandbox.
 
 We've ingested the data. Now, let's report today's token-prices.
 
-* quiz 08: [query and report today's token-prices[(quiz08) in a 
+* quiz 08: [query and report today's token-prices](quiz08) in a 
 portfolio-friendly format
