@@ -12,3 +12,10 @@ in the sandbox.
 * quiz 05: [Query prices on coingecko](quiz05)
 * quiz 06: [Parse token-price JSON](quiz06)
 * quiz 07: [Verify JSON response from coingecko](quiz07)
+
+## stat
+
+We've ingested the data. Now, let's report today's token-prices.
+
+* quiz 08: [query and report today's token-prices[(quiz08) in a 
+portfolio-friendly format

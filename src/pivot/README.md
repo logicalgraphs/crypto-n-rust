@@ -6,6 +6,7 @@ pivot-token.
 ## Components
 
 * [gecko](gecko) - fetches token-prices from coingecko REST API endpoint
+* [stat](stat) - provides today's token-prices from fetched data
 
 ## Determinor
 
