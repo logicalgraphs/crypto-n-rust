@@ -6,8 +6,8 @@ We do crypto. We do Rust. We do crypto 'n Rust.
 
 ## Pivots
 
-Here we build a dAPP that recommends trades from @coingecko-data based
-upon 
+Here we build a dAPP, [`./pivot`](src/pivot), that recommends trades from 
+@coingecko-data based upon 
 [pivot-arbitrage](https://logicalgraphs.blogspot.com/p/prism.html).
 
 We have already built libraries around the book I'm writing (see below)
