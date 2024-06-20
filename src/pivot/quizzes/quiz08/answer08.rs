@@ -1,18 +1,14 @@
 use std::iter::zip;
 
-use chrono::NaiveDate;
-
 use book::{
-   err_utils::{err_or,ErrStr},
-   list_utils::{parse_nums,tail},
-   string_utils::to_string,
+   err_utils::ErrStr,
    utils::get_args
 };
 
 use swerve::{
-   fetch_pivots::{fetch_lines,parse_token_headers},
+   fetch_pivots::{fetch_lines,parse_token_headers,parse_row},
    reports::portfolio_prices,
-   types::{Price,mk_quote,Quote,TokenId,Token}
+   types::{Price,Quote,TokenId,Token}
 };
 
 fn usage() {
@@ -34,14 +30,6 @@ async fn main() -> ErrStr<()> {
    } else {
       Err("No last pivot!".to_string())
    }
-}
-
-fn parse_row(row: &str) -> ErrStr<(NaiveDate, Vec<Quote>)> {
-   let (date, line) = err_or(NaiveDate::parse_and_remainder(row, "%Y-%m-%d"),
-                             &format!("Unable to parse date from '{row}'"))?;
-   let cols: Vec<String> = line.split(",").map(to_string).collect();
-   let nums = parse_nums(tail(&cols)).into_iter().map(mk_quote).collect();
-   Ok((date, nums))
 }
 
 fn to_portfolio(hdr: Vec<(TokenId,Token)>, prices: Vec<Quote>) -> Vec<Price> {
