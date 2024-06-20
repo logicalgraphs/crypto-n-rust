@@ -1,3 +1,5 @@
+use chrono::NaiveDate;
+
 use book::{
    csv_utils::CsvWriter,
    string_utils::plural
@@ -5,7 +7,7 @@ use book::{
 
 use crate::types::{Diffs,Price,Token};
 
-fn one_row(date: &str, row: &Vec<Price>) {
+fn one_row(date: &NaiveDate, row: &Vec<Price>) {
 
    // first we show the symbols as a header:
    let syms: Vec<Token> =
@@ -17,7 +19,8 @@ fn one_row(date: &str, row: &Vec<Price>) {
    println!("{date},{}\n", vals.join(","));
 }
 
-fn portfolio_prices(date: &str, row: &Vec<Price>) {
+pub fn portfolio_prices(date: &NaiveDate, row: &Vec<Price>) {
+   println!("\nPortfolio tokens,,,\n,,,");
    println!("date,token,id,price");
    row.into_iter().for_each(|((id,sym),price)|
       println!("{date},{sym},{id},{}", price.as_csv()));
@@ -30,8 +33,7 @@ fn report_diffs((kind, diffs): &Diffs) {
             plural(n, "token"), kind.as_csv(), diffs.join(", "));
 }
 
-pub fn report(date: &str, row: &Vec<Price>, errs: &Option<Diffs>) {
-   println!("\nPortfolio tokens,,,\n,,,");
+pub fn report(date: &NaiveDate, row: &Vec<Price>, errs: &Option<Diffs>) {
    portfolio_prices(date, row);
    println!("\n... and as one line:\n");
    one_row(date, row);

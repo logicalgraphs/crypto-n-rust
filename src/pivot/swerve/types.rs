@@ -8,6 +8,7 @@ use serde::Deserialize;
 
 #[derive(Deserialize, Debug, Clone)]
 pub struct Quote { usd: f32 }
+pub fn mk_quote(usd: f32) -> Quote { Quote { usd } }
 
 impl CsvWriter for Quote {
    fn as_csv(&self) -> String { format!("{}", self.usd) }

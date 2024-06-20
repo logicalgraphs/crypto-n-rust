@@ -9,10 +9,13 @@ use book::{
 
 use crypto::rest_utils::data_res;
 
-use crate::types::{Dict,Pivots};
+use crate::types::{Dict,Pivots,TokenId,Token};
 
 pub fn parse_keys_symbols(pivots: &Pivots) -> Dict {
+   parse_token_headers(pivots).into_iter().collect()
+}
 
+pub fn parse_token_headers(pivots: &Pivots) -> Vec<(TokenId, Token)> {
    fn splitter(line: &str) -> impl Iterator<Item=String> + '_ {
       line.split(",").skip(1).map(compose!(to_string)(str::trim_end))
    }
@@ -22,7 +25,7 @@ pub fn parse_keys_symbols(pivots: &Pivots) -> Dict {
 }
 
 pub async fn fetch_lines() -> ErrStr<Pivots> {
-   let url = data_res("pivot", "pivots.csv");
+   let url = data_res("main", "pivots.csv");
    let res = read_rest(&url).await?;
    let lines: Pivots = res.split("\n").map(to_string).collect();
    Ok(lines)
