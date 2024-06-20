@@ -1,26 +1,20 @@
-use book::{
-   err_utils::ErrStr,
-   utils::get_args
-};
+use book::err_utils::ErrStr;
 
-use swerve::{
-   reports::report,
-   snarf::snarf
-};
+use swerve::snarf::snarf_pivots;
 
 fn usage() {
-   println!("\n./gecko <date>");
-   println!("\tQueries coingecko REST endpoint for token-prices");
+   println!("\n./stat");
+   println!("\tSnarfs pivots.csv and reports the latest numbers.");
 }
 
 #[tokio::main]
 async fn main() -> ErrStr<()> {
-   let args = get_args();
-   if let Some(date) = args.first() {
-      let (prices, errs) = snarf().await?;
-      report(&date, &prices, &errs);
+   usage();
+   let (pivs, _dict) = snarf_pivots().await?;
+   if let Some(line) = pivs.last() {
+      println!("My last pivot is {line}");
+      Ok(())
    } else {
-      usage();
+      Err("No last pivot!".to_string())
    }
-   Ok(())
 }

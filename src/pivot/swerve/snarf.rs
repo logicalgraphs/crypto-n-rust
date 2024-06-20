@@ -1,36 +1,19 @@
 // name-explanation: when you've got to fetch-all, you're snarfin' it!
 // ... am I right, fam? 😎
 
-use std::{
-   env::var,
-   iter::{Iterator,zip}
-};
+use std::env::var;
 
-use book::{
-   compose,
-   err_utils::{err_or,ErrStr},
-   string_utils::to_string
-};
+use book::err_utils::{err_or,ErrStr};
 
 use crate::{
    types::{Dict,Diffs,Pivots,Price},
-   fetch_pivots::fetch_pivots,
+   fetch_pivots::{fetch_lines,parse_keys_symbols},
    fetch_prices::{fetch_prices,transform_prices},
    verify::verify
 };
 
-fn parse_keys_symbols(pivots: &Pivots) -> Dict {
-
-   fn splitter(line: &str) -> impl Iterator<Item=String> + '_ {
-      line.split(",").skip(1).map(compose!(to_string)(str::trim_end))
-   }
-   let ids = splitter(&pivots[0]);
-   let syms = splitter(&pivots[1]);
-   zip(ids, syms).collect()
-}
-
 pub async fn snarf_pivots() -> ErrStr<(Pivots, Dict)> {
-   let pivs = fetch_pivots().await?;
+   let pivs = fetch_lines().await?;
    let dict = parse_keys_symbols(&pivs);
    Ok((pivs, dict))
 }
