@@ -1,6 +1,6 @@
 // we make our types CSVy
 
-use chrono::naive::NaiveDate; 
+use chrono::NaiveDate; 
 
 use crate::{
    compose,

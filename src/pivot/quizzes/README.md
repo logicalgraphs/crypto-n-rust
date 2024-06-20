@@ -19,3 +19,5 @@ We've ingested the data. Now, let's report today's token-prices.
 
 * quiz 08: [query `pivots.csv` and report today's token-prices](quiz08) in a 
 portfolio-friendly format
+* quiz 09: [Simplify gecko](quiz09) to fetch 1-row of pivots from coingecko,
+only.
