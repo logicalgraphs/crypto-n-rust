@@ -23,7 +23,7 @@ pub fn portfolio_prices(date: &NaiveDate, row: &Vec<Price>) {
    println!("\nPortfolio tokens,,,\n,,,");
    println!("date,token,id,price");
    row.into_iter().for_each(|((id,sym),price)|
-      println!("{date},{sym},{id},{}", price.as_csv()));
+      println!("{date},{sym},{id},${}", price.as_csv()));
 }
 
 fn report_diffs((kind, diffs): &Diffs) {
@@ -36,6 +36,10 @@ fn report_diffs((kind, diffs): &Diffs) {
 pub fn report(date: &NaiveDate, row: &Vec<Price>, errs: &Option<Diffs>) {
    portfolio_prices(date, row);
    println!("\n... and as one line:\n");
+   report_row(date, row, errs);
+}
+
+pub fn report_row(date: &NaiveDate, row: &Vec<Price>, errs: &Option<Diffs>) {
    one_row(date, row);
    if let Some(diffs) = errs {
       report_diffs(&diffs);
