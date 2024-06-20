@@ -12,6 +12,8 @@ path = "lib.rs"
 [dependencies]
 book = { path = "../../libs/book" }
 crypto = { path = "../../libs/crypto" }
+
+chrono = "0.4.38"
 reqwest = "0.12.4"
 
 serde = { version = "1.0.104", features = ["derive"] }
