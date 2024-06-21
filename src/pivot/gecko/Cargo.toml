@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "gecko"
-path = "../quizzes/quiz07/answer07.rs"
+path = "../quizzes/quiz09/answer09.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }

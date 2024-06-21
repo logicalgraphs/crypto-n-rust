@@ -24,7 +24,7 @@ pub type Pivots = Vec<String>;
 
 pub type Price = ((TokenId, Token), Quote);
 
-#[derive(PartialEq)]
+#[derive(PartialEq,Debug,Clone)]
 pub enum Diff { MISSING, ADDED }
 
 impl CsvWriter for Diff {

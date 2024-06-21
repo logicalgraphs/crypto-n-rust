@@ -17,3 +17,5 @@ and
 [`pivots.csv`](https://github.com/logicalgraphs/crypto-n-rust/blob/main/data-files/csv/pivots.csv).
 
 ![Pivot rows](imgs/pivot-rows.png)
+
+* ([answer](answer.md)]
