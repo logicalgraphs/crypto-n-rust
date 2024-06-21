@@ -32,5 +32,5 @@ alias orca="rusty; kfc; cillaz $LE_DATE $FIN_DIR/prices.tsv $ORCA_DIR/liquidatio
 
 # -- PIVOTS -----------------------------------------------------------------
 
-alias geck="rusty; gecko $LE_DATE"
-alias oracle="rusty; status > $PORT_LISTING; git add $PORT_LISTING; cat $PORT_LISTING"
+alias geck="rusty; gecko $LE_DATE >> $PIVOTS; git add $PIVOTS; git commit -m 'new pivot row added'; echo 'new pivot row added; REMEMBER TO PUSH TO REPOSITORY!'; cd -"
+alias oracle="rusty; status > $PORT_LISTING; git add $PORT_LISTING; cat $PORT_LISTING; cd -"
