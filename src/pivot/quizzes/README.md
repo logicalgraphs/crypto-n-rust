@@ -21,3 +21,7 @@ We've ingested the data. Now, let's report today's token-prices.
 portfolio-friendly format
 * quiz 09: [Simplify gecko](quiz09) to fetch 1-row of pivots from coingecko,
 only.
+
+## ema
+
+* quiz 10: Given two tokens, [compute their ratios over time](quiz10)

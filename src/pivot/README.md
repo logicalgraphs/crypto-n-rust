@@ -7,6 +7,7 @@ pivot-token.
 
 * [gecko](gecko) - fetches token-prices from coingecko REST API endpoint
 * [status](status) - provides today's token-prices from fetched data
+* [ema](ema) - analyzes two-token ratios
 
 ## Determinor
 
@@ -41,6 +42,27 @@ This way I measure the success of my pivot-arbitrage.
 ![ROIs and APRs of pivot arbitrage](imgs/pivot-rois.png)
 
 [disclaimers](disclaimers.md)
+
+## Timeline
+
+### Completed
+
+1. Fetching/reporting data: DONE! ✅ 2024-06-21 (gecko, status)
+
+### WIP
+
+2. analyzing data (ema)
+
+### TODO
+
+3. making pivot-trade recommendations
+4. charting pivots
+
+### Long-term
+
+5. automate trades
+6. APR reportage
+7. Protocol/DAO/token-launch
 
 ## Quizzes
 
