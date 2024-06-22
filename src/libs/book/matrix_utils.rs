@@ -14,7 +14,7 @@ pub fn from_lines<T>(f: impl Fn(&str) -> T,
            .collect()
 }
 
-pub fn column_view<T: Clone>(rows: &Matrix<T>, col: usize) -> Vec<T> {
+pub fn col<T: Clone>(rows: &Matrix<T>, col: usize) -> Vec<T> {
    fn column<T: Clone>(c: usize) -> impl Fn(&Vec<T>) -> T {
       move |row| row[c].clone()
    }

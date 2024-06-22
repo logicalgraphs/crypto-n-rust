@@ -1,15 +1,17 @@
 use std::{
+   clone::Clone,
    cmp::Eq,
-   collections::HashMap,
+   collections::{HashMap,HashSet},
    hash::Hash
 };
 
 use crate::{
    compose,
    list_utils::{ht,tail},
-   matrix_utils::{Matrix, /* column_view, */ from_split_line},
+   matrix_utils,
+   matrix_utils::{Matrix, /* col, */ from_split_line},
    string_utils::to_string,
-   tuple_utils::swap
+   tuple_utils::{snd,swap}
 };
 
 // a Table is a matrix indexed by hashed values, so we can have, e.g.:
@@ -22,9 +24,9 @@ use crate::{
 // (the mappings can be any <T:Hash,Eq>-typed values)
 
 pub struct Table<Row, Col, T> {
-   rows: HashMap<Row, usize>,
-   cols: HashMap<Col, usize>,
-   data: Matrix<T>
+   pub rows: HashMap<Row, usize>,
+   pub cols: HashMap<Col, usize>,
+   pub data: Matrix<T>
 }
 
 pub fn ingest<ROW: Eq + Hash,COL: Eq + Hash,DATUM>(rowf: impl Fn(&str) -> ROW,
@@ -70,4 +72,34 @@ fn rows_in_jest<ROW: Eq + Hash, DATUM>(rowf: impl Fn(&str) -> ROW,
               .collect();
    let matrix = data.into_iter().map(from_split_line(&df)).collect();
    (parse_headers(rowf, &hdrs), matrix)
+}
+
+pub fn col<ROW, COL: Eq + Hash, DATUM: Clone>(table: &Table<ROW, COL, DATUM>,
+                                              cix: &COL) -> Option<Vec<DATUM>> {
+   table.cols.get(cix).and_then(|c| Some(matrix_utils::col(&table.data, *c)))
+}
+
+pub fn row_filter<ROW: Clone, COL: Clone, DATA: Clone>(f: impl Fn(&ROW) -> bool,
+                                   table: &Table<ROW, COL, DATA>)
+      -> Table<ROW, COL, DATA> {
+   // for the new table, 
+   // 1. the columns are the columns, so that's no biggie
+   let cols = table.cols.clone();
+
+   // 2. we filter the rows
+   let mut rows = table.rows.clone();
+   rows.retain(|k,_v| f(k));
+   
+   // 3. now we filter the data by rows
+   let row_ixen: HashSet<usize> = rows.values().map(|v| *v).collect();
+   let data: Matrix<DATA> =
+      table.data.clone()
+                .into_iter()
+                .enumerate()
+                .filter(|(ix,_row)| row_ixen.contains(ix))
+                .map(snd)
+                .collect();
+   Table { rows, cols, data }
+
+   // now a call to col() on this new table will be properly filtered.
 }
