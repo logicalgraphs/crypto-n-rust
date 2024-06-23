@@ -18,7 +18,7 @@ use crate::{
 };
 
 // a Table is a matrix indexed by hashed values, so we can have, e.g.:
-// Table<NaiveDate, String, f32> which maps to Matrix<T> with row headerss as 
+// Table<NaiveDate, String, f32> which maps to Matrix<T> with row headers as 
 // dates and column headers as strings.
 
 // I accomplish by the mapping, e.g.: 2024-03-10 -> 0, 2024-03-11 -> 1, ... 
