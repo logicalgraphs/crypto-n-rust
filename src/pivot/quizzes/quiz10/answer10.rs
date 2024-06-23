@@ -60,15 +60,16 @@ fn doit(pivs: &Vec<String>, start: &NaiveDate, t1: &String, t2: &String) {
    let ratios: Vec<f32> =
       a.clone().into_iter()
                .zip(b.clone().into_iter())
-               .map(|(a,b)| a / b).collect();
+               .map(|(a,b)| a / b)
+               .collect();
 
    let dates = rows(&domain);
    let cols: Vec<String> =
-      "ETH BTC Ratio".split_whitespace().map(to_string).collect();
+      format!("{t1} {t2} Ratio").split_whitespace().map(to_string).collect();
    let data0 = vec![a, b, ratios.clone()];
    let data = transpose(&data0);
 
-   println!("The ETH/BTC ratio table\n\n{}\n",
+   println!("\nThe {t1}/{t2} ratio table\n\n{}\n",
             mk_table(dates.clone(), cols, data).as_csv());
    report(t1, t2, &dates, &ratios);
 }
