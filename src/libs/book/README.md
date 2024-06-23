@@ -26,6 +26,10 @@ For example, let's say you have
 10 days of data, you would do something like this:
 
 ```Rust
+use std::ops::Sub;
+use chrono::{Days,NaiveDate};       // "0.4.38"
+use book::table_utils::row_filter;
+
 let days = Days::new(10);
 let start = today.sub(days);
 
