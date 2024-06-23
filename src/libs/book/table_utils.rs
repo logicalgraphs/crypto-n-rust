@@ -13,8 +13,7 @@ use crate::{
    matrix_utils,
    matrix_utils::{Matrix, from_split_line},
    string_utils::to_string,
-   tuple_utils::{fst,snd,swap},
-   utils::pred
+   tuple_utils::{fst,snd,swap}
 };
 
 // a Table is a matrix indexed by hashed values, so we can have, e.g.:
@@ -115,14 +114,11 @@ fn rows_in_jest<ROW: Eq + Hash, DATUM>(rowf: impl Fn(&str) -> ROW,
                             df:   impl Fn(&str) -> DATUM,
                             lines: Vec<String>, separator: &str)
       -> (HashMap<ROW, usize>, Matrix<DATUM>) {
-   fn split_line_p(separator: &str)
-         -> impl Fn(String) -> Option<Vec<String>> + '_ {
-      move |s| pred(!s.is_empty(), s.split(separator).map(to_string).collect())
+   fn split_line(separator: &str) -> impl Fn(String) -> Vec<String> + '_ {
+      move |s| s.split(separator).map(to_string).collect()
    }
    let rows: Vec<Vec<String>> =
-      lines.into_iter()
-           .filter_map(&split_line_p(separator))
-           .collect();
+      lines.into_iter().map(&split_line(separator)).collect();
    let (mbs_hdrs, data): (Vec<Option<String>>, Vec<Vec<String>>) =
       rows.iter().map(ht).unzip();
    let hdrs: Vec<String> = mbs_hdrs.into_iter().map(Option::unwrap).collect();
