@@ -19,4 +19,15 @@ pub fn col<T: Clone>(rows: &Matrix<T>, col: usize) -> Vec<T> {
       move |row| row[c].clone()
    }
    rows.into_iter().map(column(col)).collect()
+} 
+
+pub fn transpose<T: Clone>(cols: &Matrix<T>) -> Matrix<T> {
+   let mut ans = Vec::new();
+   if let Some(rows) = cols.first() {
+      for ix in 0 .. rows.len() {
+         let row = col(&cols, ix);
+         ans.push(row);
+      }
+   }
+   ans
 }
