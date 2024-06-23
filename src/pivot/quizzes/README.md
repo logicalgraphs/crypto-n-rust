@@ -25,3 +25,7 @@ only.
 ## ema
 
 * quiz 10: Given two tokens, [compute their ratios over time](quiz10)
+
+## chart
+
+* quiz 11: [automate charts](quiz11)
