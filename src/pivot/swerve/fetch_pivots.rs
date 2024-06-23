@@ -7,7 +7,8 @@ use book::{
    err_utils::ErrStr,
    list_utils::{parse_nums,tail},
    rest_utils::read_rest,
-   string_utils::to_string
+   string_utils::to_string,
+   utils::pred
 };
 
 use crypto::rest_utils::data_res;
@@ -30,7 +31,8 @@ pub fn parse_token_headers(pivots: &Pivots) -> Vec<(TokenId, Token)> {
 pub async fn fetch_lines() -> ErrStr<Pivots> {
    let url = data_res("main", "pivots.csv");
    let res = read_rest(&url).await?;
-   let lines: Pivots = res.lines().map(to_string).collect();
+   let lines: Pivots =
+      res.lines().filter_map(|l| pred(!l.is_empty(), to_string(l))).collect();
    Ok(lines)
 }
 
