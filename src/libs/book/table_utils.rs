@@ -18,13 +18,13 @@ use crate::{
 };
 
 // a Table is a matrix indexed by hashed values, so we can have, e.g.:
-// Table<NaiveDate, String, T> which maps to Matrix<T> with rows as dates
-// and columns as strings.
+// Table<NaiveDate, String, f32> which maps to Matrix<T> with row headerss as 
+// dates and column headers as strings.
 
-// I accomplish by the mapping 2024-03-10 -> 0, 2024-03-11 -> 1, ... for rows
-// and ADA -> 0, ATOM -> 1, AVAX -> 2, ... for columns.
+// I accomplish by the mapping, e.g.: 2024-03-10 -> 0, 2024-03-11 -> 1, ... 
+// for rows and ADA -> 0, ATOM -> 1, AVAX -> 2, ... for columns.
 
-// (the mappings can be any <T:Hash,Eq>-typed values)
+// (the mappings can be any <T:Hash+Eq>-typed values)
 
 pub struct Table<ROW, COL, T> {
    rows_: HashMap<ROW, usize>,
