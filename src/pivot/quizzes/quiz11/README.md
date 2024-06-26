@@ -6,4 +6,6 @@ The chart you see in [Pivot quiz 10](../quiz10) was manually generated.
 
 Automate this.
 
-Have the output formatted to charting software, e.g.: @tradingview.
+Have the output formatted to charting software, e.g.: d3js.org.
+
+* ([answer](answer.md))
