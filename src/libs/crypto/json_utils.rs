@@ -29,12 +29,12 @@ impl<'de> Deserialize<'de> for Coin {
       let json: Value = Value::deserialize(deserializer)?;
       let quot: &Value = json.get("quote").expect("quote");
       let usd: &Value = quot.get("USD").expect("USD");
-      let amount = val_num::<f32>(usd, "price");
-      let cmc_id = val_num::<u32>(&json, "id");
-      let rank = val_num::<u32>(&json, "cmc_rank");
+      let amount = val_num::<f32>(usd, "price").expect("price");
+      let cmc_id = val_num::<u32>(&json, "id").expect("id");
+      let rank = val_num::<u32>(&json, "cmc_rank").expect("cmc_rank");
       let name = unquot(&json, "name");
       let symbol = unquot(&json, "symbol");
-      let date = val_date(&json, "last_updated");
+      let date = val_date(&json, "last_updated").expect("last_updated");
       Ok(mk_coin(date, cmc_id, rank, name, symbol, amount))
    }
 }
