@@ -65,13 +65,6 @@ fn doit(pivs: &Vec<String>, start: &NaiveDate, t1: &String, t2: &String) {
                .collect();
 
    let dates = rows(&domain);
-   // let cols: Vec<String> =
-      // format!("{t1} {t2} Ratio").split_whitespace().map(to_string).collect();
-   // let data0 = vec![a, b, ratios.clone()];
-   // let data = transpose(&data0);
-
-   // println!("\nThe {t1}/{t2} ratio table\n\n{}\n",
-            // mk_table(dates.clone(), cols, data).as_csv());
    jsonify(t1, t2, &dates, &ratios);
 }
 
