@@ -2,6 +2,8 @@
 
 use std::cmp::Ordering;
 
+use chrono::NaiveDate;
+
 use crate::types::usd::{USD,mk_usd};
 use book::csv_utils::{CsvWriter,print_csv};
 
@@ -40,9 +42,10 @@ impl PartialEq for Coin {
    }
 }
 
-pub fn mk_coin(date: String, cmc_id: u32, rank: u32, name: String,
+pub fn mk_coin(dt: NaiveDate, cmc_id: u32, rank: u32, name: String,
                symbol: String, amount: f32) -> Coin {
-   Coin { date, cmc_id, rank, name, symbol, price: mk_usd(amount) }
+   Coin { date: format!("{dt}"), cmc_id, rank, name, 
+          symbol, price: mk_usd(amount) }
 }
 
 fn parse_coin(dat: &str, id: &str, rnk: &str, sym: &str,

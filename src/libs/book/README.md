@@ -4,6 +4,10 @@
 
 ## a set of common utilities around core functionalities
 
+### [json_utils](json_utils.rs)
+
+Both for the deserialization and serialization of JSON data/JavaScript objects
+
 ### [matrix_utils](matrix_utils.rs)
 
 `Matrix<T>` is aliased to `Vec<Vec<T>>` with an ingest function: 
