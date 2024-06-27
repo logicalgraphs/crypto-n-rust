@@ -22,10 +22,8 @@ portfolio-friendly format
 * quiz 09: [Simplify gecko](quiz09) to fetch 1-row of pivots from coingecko,
 only.
 
-## ema
+## ema/chart
 
 * quiz 10: Given two tokens, [compute their ratios over time](quiz10)
-
-## chart
-
 * quiz 11: [automate charts](quiz11)
+* quiz 12: [Compute and chart ema20](quiz12)
