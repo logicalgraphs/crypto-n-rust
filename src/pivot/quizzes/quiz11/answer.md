@@ -11,3 +11,10 @@ structures become, _not JSON_, but JavaScript objects.
 ![Ratios as JavaScript objects](imgs/JS-ratio-objects.png)
 
 We then embed these data directly into whichever chart-renderer you choose.
+
+An example of such is the 
+[d3js.org line-chart](https://logicalgraphs.github.io/charts/d3/graph.html) 
+I have on my page (you can view the sources):
+
+![ETH/BTC chart](imgs/eth-btc-ratio-charted.png)
+
