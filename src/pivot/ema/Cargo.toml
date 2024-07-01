@@ -1,0 +1,15 @@
+[package]
+name = "ema"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "ema"
+path = "../quizzes/quiz12/answer12.rs"
+
+[dependencies]
+book = { path = "../../libs/book" }
+swerve = { path = "../swerve" }
+
+chrono = "0.4.38"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }

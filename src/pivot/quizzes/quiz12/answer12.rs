@@ -13,10 +13,11 @@ use book::{
 
 use swerve::{fetch_pivots::fetch_lines,types::mk_emas};
 
-fn usage() {
-   println!("\n./answer12 <date> <days> <token1> <token2>");
-   println!("\tSnarfs pivots.csv and ratios token1/token2 for <days>");
+fn usage() -> ErrStr<()> {
+   println!("\n./ema <date> <days> <token1> <token2>");
+   println!("\tSnarfs pivots.csv and ratios <token1>/<token2> for <days>");
    println!("\tIt also computes the EMA20s for that token-pair.");
+   Err("Need to EMA20 over <date> <days> <token1> <token2>".to_string())
 }
 
 fn datef(s: &str) -> NaiveDate {
@@ -39,10 +40,10 @@ async fn main() -> ErrStr<()> {
       let start = date.sub(days);
       let pivs = fetch_lines().await?;
       doit(&tail(&pivs), &start, token1, token2);
+      Ok(())
    } else {
-      usage();
+      usage()
    }
-   Ok(())
 }
 
 fn doit(pivs: &Vec<String>, start: &NaiveDate, t1: &String, t2: &String) {
@@ -64,10 +65,6 @@ fn doit(pivs: &Vec<String>, start: &NaiveDate, t1: &String, t2: &String) {
                .collect();
 
    let dates = rows(&domain);
-   jsonify(t1, t2, &dates, &ratios);
-}
-
-fn jsonify(t1: &str, t2: &str, dates: &Vec<NaiveDate>, ratios: &Vec<f32>) {
-   let data = mk_emas(t1, t2, 20, dates, ratios);
+   let data = mk_emas(t1, t2, 20, &dates, &ratios);
    println!("emas = {};", data.as_json());
 }
