@@ -8,6 +8,7 @@ pivot-token.
 * [gecko](gecko) - fetches token-prices from coingecko REST API endpoint
 * [status](status) - provides today's token-prices from fetched data
 * [ema](ema) - analyzes two-token ratios
+* [rekt](rekt) - BUY / SELL call
 
 ## Determinor
 
@@ -48,15 +49,12 @@ This way I measure the success of my pivot-arbitrage.
 ### Completed
 
 1. Fetching/reporting data: DONE! ✅ 2024-06-21 (gecko, status)
+2. analyzing data (ema)
+3. charting pivots
 
 ### WIP
 
-2. analyzing data (ema)
-
-### TODO
-
-3. making pivot-trade recommendations
-4. charting pivots
+4. making pivot-trade recommendations
 
 ### Long-term
 
