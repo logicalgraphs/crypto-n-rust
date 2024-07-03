@@ -23,10 +23,14 @@ pub fn parse_or(n_opt: Option<&String>, default: f32) -> f32 {
    n_opt.and_then(|n| n.parse().ok()).unwrap_or(default)
 }
 
+pub fn parse_num(s: &str) -> ErrStr<f32> {
+   err_or(s.parse(), &format!("{s} is not a number"))
+}
+
 pub fn parse_commaless(str: &str) -> ErrStr<f32> {
    let mut no_comma = str.to_string();
    no_comma.retain(no(','));
-   err_or(no_comma.parse(), &format!("{no_comma} is not a number"))
+   parse_num(&no_comma)
 }
 
 fn no(ch: char) -> impl Fn(char) -> bool {

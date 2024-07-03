@@ -8,10 +8,10 @@ fn dt_fmt() -> String { "%Y-%m-%d".to_string() }
 
 fn err(s: &str) -> String { format!("Unable to parse date from '{s}'") }
 
-pub fn date(d: &str) -> ErrStr<NaiveDate> {
+pub fn parse_date(d: &str) -> ErrStr<NaiveDate> {
    err_or(NaiveDate::parse_from_str(d, &dt_fmt()), &err(d))
 }
 
-pub fn date_and<'a>(line: &'a str) -> ErrStr<(NaiveDate, &'a str)> {
+pub fn parse_date_and<'a>(line: &'a str) -> ErrStr<(NaiveDate, &'a str)> {
    err_or(NaiveDate::parse_and_remainder(line, &dt_fmt()), &err(line))
 }

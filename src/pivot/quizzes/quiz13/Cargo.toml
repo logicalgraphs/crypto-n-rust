@@ -1,0 +1,15 @@
+[package]
+name = "answer13"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "answer13"
+path = "answer13.rs"
+
+[dependencies]
+book = { path = "../../../libs/book" }
+swerve = { path = "../../swerve" }
+
+chrono = "0.4.38"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
