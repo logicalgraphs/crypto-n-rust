@@ -1,13 +1,37 @@
+Could not find burn rate for stISLM
+for BurnlessLSD { zone: "haqq", base: "aISLM", rate: 1.0028683, halted: false }
+I have:
+key: ampWHALE
+key: boneLUNA
+key: stSOMM
+key: LunaX
+key: stATOM
+key: stDYDX
+key: ampLUNA
+key: stSTARS
+key: stUMEE
+key: sAVAX
+key: stLUNA
+key: stOSMO
+key: stSAGA
+key: rATOM
+key: sFTMX
+key: stINJ
+key: stCMDX
+key: stJUNO
+key: stEVMOS
+
+...reminder to push burn-rates.csv to main branch.
 date,zone,lsd,exchange rate,halted,unbond (days)
-2024-07-02,cosmos,stATOM,1.3825,false,24
-2024-07-02,comdex,stCMDX,1.2651,false,24
-2024-07-02,dydx,stDYDX,1.0606,false,35
-2024-07-02,evmos,stEVMOS,1.5415,false,17
-2024-07-02,inj,stINJ,1.2960,false,24
-2024-07-02,juno,stJUNO,1.4973,false,33
-2024-07-02,terra,stLUNA,1.2541,false,24
-2024-07-02,osmo,stOSMO,1.2546,false,17
-2024-07-02,saga,stSAGA,1.0200,false,24
-2024-07-02,somm,stSOMM,1.0558,false,31
-2024-07-02,stars,stSTARS,1.5237,false,17
-2024-07-02,umee,stUMEE,1.1879,false,17
+2024-07-03,cosmos,stATOM,1.3828,false,24
+2024-07-03,comdex,stCMDX,1.2653,false,24
+2024-07-03,dydx,stDYDX,1.0607,false,35
+2024-07-03,evmos,stEVMOS,1.5417,false,17
+2024-07-03,inj,stINJ,1.2963,false,24
+2024-07-03,juno,stJUNO,1.4975,false,33
+2024-07-03,terra,stLUNA,1.2544,false,24
+2024-07-03,osmo,stOSMO,1.2549,false,17
+2024-07-03,saga,stSAGA,1.0201,false,24
+2024-07-03,somm,stSOMM,1.0558,false,31
+2024-07-03,stars,stSTARS,1.5240,false,17
+2024-07-03,umee,stUMEE,1.1881,false,17
