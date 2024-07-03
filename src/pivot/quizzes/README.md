@@ -27,3 +27,7 @@ only.
 * quiz 10: Given two tokens, [compute their ratios over time](quiz10)
 * quiz 11: [automate charts](quiz11)
 * quiz 12: [Compute and chart ema20](quiz12)
+
+## rekt
+
+* quiz 13: [Make buy/sell-recommendation](quiz13)
