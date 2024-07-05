@@ -12,7 +12,7 @@ use book::{
    date_utils::parse_date,
    err_utils::{err_or,ErrStr},
    list_utils::tail,
-   num_utils::parse_num,
+   num_utils::parse_num_or_zero,
    table_utils::{col,ingest,row_filter,rows}
 };
 
@@ -51,9 +51,6 @@ pub async fn snarf_emas(for_rows: u64, t1: &String, t2: &String)
    let pivs = fetch_lines().await?;
    let days = Days::new(for_rows);
    fn to_string_or(s: &str) -> ErrStr<String> { Ok(s.to_string()) }
-   fn parse_num_or_zero(s: &str) -> ErrStr<f32> {
-      if s == "" { Ok(0.0) } else { parse_num(s) }
-   }
    let table =
       ingest(parse_date, to_string_or, parse_num_or_zero, &tail(&pivs), ",")?;
    let dates: Vec<NaiveDate> = rows(&table);

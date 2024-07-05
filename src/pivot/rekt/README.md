@@ -64,3 +64,23 @@ of value if you don't mind getting it in exchange for the base-token.
 
 That's why BTC/ETH LPs are things of wonder! No matter which side is strong,
 I don't mind getting a lot of the other token in balance.
+
+## rekt in action
+
+Here's `rekt` in action. One of my queries is "Using the past 100 days of
+price-data, do I buy or sell $KUJI with $OSMO?"
+
+![rekt-ommendation](imgs/rekt-in-action.png)
+
+`rekt` replied:
+
+> On 2024-07-03, SELL KUJI for FTM
+
+So, ... yeah. That.
+
+### TODO
+
+`rekt` currently tells me _what_ to buy or to sell, but does not tell me _how
+much_ to buy or to sell. That'll incorportate EMA20-vs-ratio δ analyses.
+
+That's next.
