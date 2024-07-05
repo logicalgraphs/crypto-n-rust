@@ -1,7 +1,4 @@
-use std::{
-   fmt,
-   mem
-};
+use std::{fmt,mem};
 
 use crate::err_utils::{ErrStr,err_or};
 
@@ -25,6 +22,11 @@ pub fn parse_or(n_opt: Option<&String>, default: f32) -> f32 {
 
 pub fn parse_num(s: &str) -> ErrStr<f32> {
    err_or(s.parse(), &format!("{s} is not a number"))
+}
+
+// for when we wish to treat blanks (e.g.) in spreadsheets as 0.0
+pub fn parse_num_or_zero(s: &str) -> ErrStr<f32> {
+   if s == "" { Ok(0.0) } else { parse_num(s) }
 }
 
 pub fn parse_commaless(str: &str) -> ErrStr<f32> {

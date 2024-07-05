@@ -22,4 +22,4 @@ only works because I created a new type, `Name`, which separates `target` and
 ![sell BTC](imgs/02-sell-btc.png)
 
 The bulk of the work was to move the ensnarfation from `main()` to 
-[snarf.rs](../../../swerve/snarf.rs).
+[snarf.rs](https://github.com/logicalgraphs/crypto-n-rust/blob/pivot-quiz-13-answer/src/pivot/swerve/snarf.rs#L45-L79)
