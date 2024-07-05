@@ -10,3 +10,5 @@ to make a buy- or sell-call for that token-pair.
 
 I have a write-up on pivoting on EMA20s
 [here](../../rekt).
+
+* ([answer](answer.md))
