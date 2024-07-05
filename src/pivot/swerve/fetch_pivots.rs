@@ -3,7 +3,7 @@ use std::iter::{Iterator,zip};
 use chrono::NaiveDate;
 
 use book::{
-   date_utils::date_and,
+   date_utils::parse_date_and,
    err_utils::ErrStr,
    list_utils::{parse_nums,tail},
    rest_utils::read_rest,
@@ -37,7 +37,7 @@ pub async fn fetch_lines() -> ErrStr<Pivots> {
 }
 
 pub fn parse_row(row: &str) -> ErrStr<(NaiveDate, Vec<Quote>)> {
-   let (date, line) = date_and(row)?;
+   let (date, line) = parse_date_and(row)?;
    let cols: Vec<String> = line.split(",").map(to_string).collect();
    let nums = parse_nums(tail(&cols)).into_iter().map(mk_quote).collect();
    Ok((date, nums))

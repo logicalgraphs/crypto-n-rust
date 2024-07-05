@@ -15,3 +15,4 @@ pub mod stream_utils;
 pub mod string_utils;
 pub mod table_utils;
 pub mod tuple_utils;
+pub mod types;

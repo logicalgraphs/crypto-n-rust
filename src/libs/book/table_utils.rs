@@ -9,9 +9,10 @@ use std::{
 use crate::{
    compose,
    csv_utils::CsvWriter,
+   err_utils::ErrStr,
    list_utils::{ht,tail},
    matrix_utils,
-   matrix_utils::{Matrix, from_split_line},
+   matrix_utils::Matrix,
    string_utils::to_string,
    tuple_utils::{fst,snd,swap}
 };
@@ -83,37 +84,49 @@ fn display_cols<COL: Display + Clone>(cols: &HashMap<COL,usize>) -> String {
    format!(",{}", vec_to_vec(&sort_headers(cols)).join(","))
 }
 
-pub fn ingest<ROW: Eq + Hash,COL: Eq + Hash,DATUM>(rowf: impl Fn(&str) -> ROW,
-                             colf: impl Fn(&str) -> COL,
-                             df:   impl Fn(&str) -> DATUM,
-                             lines: &Vec<String>, separator: &str)
-      -> Table<ROW,COL,DATUM> {
+pub fn ingest<ROW: Eq + Hash,COL: Eq + Hash,DATUM>
+   (rowf: impl Fn(&str) -> ErrStr<ROW>,
+    colf: impl Fn(&str) -> ErrStr<COL>,
+    df:   impl Fn(&str) -> ErrStr<DATUM>,
+    lines: &Vec<String>, separator: &str) -> ErrStr<Table<ROW,COL,DATUM>> {
 
    // the first row is the column-headers:
    let (header, body) = ht(lines);
    if let Some(hdr) = header {
       let cols_str: Vec<String> =
          tail(&hdr.split(separator).map(to_string).collect());
-      let (rows, data) = rows_in_jest(rowf, df, body, separator);
-      Table { rows_: rows, cols_: parse_headers(colf, &cols_str), data }
+      let (rows_, data) = rows_in_jest(rowf, df, body, separator)?;
+      let cols_ = parse_headers(colf, &cols_str)?;
+      Ok(Table { rows_, cols_, data })
    } else {
-      panic!("No table to ingest!")
+      Err("No table to ingest!".to_string())
    }
 }
 
-fn parse_headers<HEADER: Eq + Hash>(headerf: impl Fn(&str) -> HEADER,
-                         headers: &Vec<String>) -> HashMap<HEADER, usize> {
-   let hdrs: Vec<HEADER> =
-      headers.into_iter().map(compose!(&headerf)(String::as_str)).collect();
-   enum_headers(hdrs)
+fn filter_map_or<T>(f: impl Fn(&str) -> ErrStr<T>, v: &Vec<String>)
+      -> ErrStr<Vec<T>> {
+   let mut ans: Vec<T> = Vec::new();
+   for elt in v {
+      let eh = f(elt)?;
+      ans.push(eh);
+   }
+   Ok(ans)
+}
+
+fn parse_headers<HEADER: Eq + Hash>
+   (headerf: impl Fn(&str) -> ErrStr<HEADER>,
+    headers: &Vec<String>) -> ErrStr<HashMap<HEADER, usize>> {
+   let hdrs = filter_map_or(&headerf, headers)?;
+   Ok(enum_headers(hdrs))
 }
 
 // rows_in_jest is a funny function ... GEDDIT? ;)
 
-fn rows_in_jest<ROW: Eq + Hash, DATUM>(rowf: impl Fn(&str) -> ROW,
-                            df:   impl Fn(&str) -> DATUM,
-                            lines: Vec<String>, separator: &str)
-      -> (HashMap<ROW, usize>, Matrix<DATUM>) {
+fn rows_in_jest<ROW: Eq + Hash, DATUM>
+   (rowf: impl Fn(&str) -> ErrStr<ROW>,
+    df:   impl Fn(&str) -> ErrStr<DATUM>,
+    lines: Vec<String>, separator: &str)
+      -> ErrStr<(HashMap<ROW, usize>, Matrix<DATUM>)> {
    fn split_line(separator: &str) -> impl Fn(String) -> Vec<String> + '_ {
       move |s| s.split(separator).map(to_string).collect()
    }
@@ -122,13 +135,13 @@ fn rows_in_jest<ROW: Eq + Hash, DATUM>(rowf: impl Fn(&str) -> ROW,
    let (mbs_hdrs, data): (Vec<Option<String>>, Vec<Vec<String>>) =
       rows.iter().map(ht).unzip();
    let hdrs: Vec<String> = mbs_hdrs.into_iter().map(Option::unwrap).collect();
-   fn deref<'a>(v: &'a Vec<String>) -> Vec<&'a str> {
-      v.iter().map(String::as_str).collect()
+   let mut matrix: Matrix<DATUM> = Vec::new();
+   for row in data {
+      let r: Vec<DATUM> = filter_map_or(&df, &row)?;
+      matrix.push(r);
    }
-   let matrix = data.iter()
-                    .map(compose!(from_split_line(&df))(deref))
-                    .collect();
-   (parse_headers(rowf, &hdrs), matrix)
+   let rows = parse_headers(rowf, &hdrs)?;
+   Ok((rows, matrix))
 }
 
 pub fn col<ROW, COL: Eq + Hash, DATUM: Clone>(table: &Table<ROW, COL, DATUM>,

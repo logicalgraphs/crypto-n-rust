@@ -1,11 +1,15 @@
-use std::collections::HashMap;
+use std::{
+   collections::HashMap,
+   fmt
+};
 
 use chrono::NaiveDate;
 
 use book::{
    csv_utils::CsvWriter,
    json_utils::{AsJSON,json_list,to_object},
-   string_utils::quot
+   string_utils::quot,
+   types::{stamp,Stamped}
 };
 
 extern crate serde;
@@ -30,6 +34,11 @@ pub type Pivots = Vec<String>;
 
 pub type Price = ((TokenId, Token), Quote);
 
+// ----- Diffs -------------------------------------------------------
+
+// The point of diffs is to tell me that the token-prices I requested are the
+// token-prices I got in the response.
+
 #[derive(PartialEq,Debug,Clone)]
 pub enum Diff { MISSING, ADDED }
 
@@ -42,27 +51,45 @@ impl CsvWriter for Diff {
 
 pub type Diffs = (Diff, Vec<String>);
 
-// for EMA calculations
+// ----- for EMA calculations ---------------------------------------------
 
-pub struct Ratio {
-   dt: NaiveDate,
-   ratio: f32
-}
+type R = Stamped<f32>;
+
+#[derive(Debug,Clone)]
+pub struct Ratio { r: R }
 
 fn mk_ratio((dt, ratio): (&NaiveDate, &f32)) -> Ratio {
-   Ratio { dt: dt.clone(), ratio: ratio.clone() }
+   let r = stamp(dt, ratio);
+   Ratio { r }
 }
 
 impl AsJSON for Ratio {
    fn as_json(&self) -> String {
       to_object("date ratio",
-                &[quot(&format!("{}", &self.dt)),
-                  format!("{:?}", self.ratio)])
+                &[quot(&format!("{}", &self.r.date)),
+                  format!("{:?}", self.r.pack)])
    }
 }
 
+#[derive(Clone,Debug)]
+struct Name {
+   base: String,
+   target: String
+}
+fn mk_name(t1: &str, t2: &str) -> Name {
+   Name { base: t2.to_string(), target: t1.to_string() }
+}
+
+impl CsvWriter for Name {
+   fn as_csv(&self) -> String { format!("{},{}", self.target, self.base) }
+   fn ncols(&self) -> usize { 2 }
+}
+
+fn namei(n: &Name) -> String { quot(&format!("{}/{}", n.target, n.base)) }
+
+#[derive(Debug,Clone)]
 pub struct Ratios {
-   name: String,
+   name: Name,
    ratios: Vec<Ratio>
 }
 
@@ -70,36 +97,36 @@ pub fn mk_ratios(t1: &str, t2: &str,
                  dates: &Vec<NaiveDate>, ratios: &Vec<f32>) -> Ratios {
    let dt_ratios: Vec<Ratio> =
       dates.into_iter().zip(ratios.into_iter()).map(mk_ratio).collect();
-   Ratios { name: format!("{t1}/{t2}"), ratios: dt_ratios }
+   let name = mk_name(t1, t2);
+   Ratios { name, ratios: dt_ratios }
 }
 
 impl AsJSON for Ratios {
    fn as_json(&self) -> String {
-      to_object("name ratios", &[quot(&self.name), json_list(&self.ratios)])
+      to_object("name ratios", &[namei(&self.name), json_list(&self.ratios)])
    }
 }
 
 pub struct EMAs {
-   name: String,
+   name: Name,
    period: usize,
    emas: Vec<EMA>
 }
 
 pub struct EMA {
-   dt: NaiveDate,
-   ratio: f32,
+   ratio: Ratio,
    ema: f32
 }
 
-fn mk_ema((ratio, ema): (&Ratio, &f32)) -> EMA {
-   EMA { dt: ratio.dt.clone(), ema: ema.clone(), ratio: ratio.ratio.clone() }
+fn mk_ema((r, ema): (&Ratio, &f32)) -> EMA {
+   EMA { ratio: r.clone(), ema: ema.clone() }
 }
 
 impl AsJSON for EMA {
    fn as_json(&self) -> String {
       to_object("date ratio ema",
-                &[quot(&format!("{}", &self.dt)),
-                  format!("{:?}", self.ratio),
+                &[quot(&format!("{}", &self.ratio.r.date)),
+                  format!("{:?}", self.ratio.r.pack),
                   format!("{:?}", self.ema)])
    }
 }
@@ -144,7 +171,44 @@ pub fn mk_emas(t1: &str, t2: &str, period: usize,
 impl AsJSON for EMAs {
    fn as_json(&self) -> String {
       to_object("name period emas",
-                &[quot(&self.name), format!("{}", self.period),
+                &[namei(&self.name), format!("{}", self.period),
                   json_list(&self.emas)])
    }
+}
+
+// ----- Recommendations --------------------------------------------------
+
+#[derive(Debug,Clone)]
+pub struct Rec {
+   name: Name,
+   call: CALL
+}
+
+#[derive(Debug,Clone,PartialEq)]
+pub enum CALL { BUY, SELL }
+
+impl fmt::Display for CALL {
+   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+      write!(f, "{}", if self == &CALL::BUY { "BUY" } else { "SELL" })
+   }
+} 
+
+impl CsvWriter for Rec {
+   fn as_csv(&self) -> String {
+      format!("{:?},{}", self.call, self.name.as_csv())
+   }
+   fn ncols(&self) -> usize { 1 + self.name.ncols() }
+}
+
+pub fn mk_rec(emas: &EMAs) -> Stamped<Rec> {
+   let ema = emas.emas.last().expect("No last row in EMAs");
+   let call = if ema.ratio.r.pack > ema.ema { CALL::SELL } else { CALL:: BUY };
+   stamp(&ema.ratio.r.date, &Rec { name: emas.name.clone(), call })
+}
+
+pub fn rec(r: &Stamped<Rec>) -> String {
+   format!("On {}, {} {} {} {}", r.date, r.pack.call, 
+           r.pack.name.target,
+           if r.pack.call == CALL::BUY { "with" } else { "for" },
+           r.pack.name.base)
 }
