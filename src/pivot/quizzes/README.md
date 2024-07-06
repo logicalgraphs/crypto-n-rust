@@ -31,3 +31,4 @@ only.
 ## rekt
 
 * quiz 13: [Make buy/sell-recommendation](quiz13)
+* quiz 14: [Calculate δs](quiz14)
