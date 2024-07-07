@@ -87,7 +87,17 @@ proportion to buy or to sell using the δs between the EMA20s and ratios.
 
 With the δs computed, `rekt` now renders a degree of confidence to the call.
 
-![δ-confidence](../quizzes/quiz14/05-confidence.png)
-much_ to buy or to sell. That'll incorportate EMA20-vs-ratio δ analyses.
+![δ-confidence](../quizzes/quiz14/imgs/05-confidence.png)
 
-That's next.
+## TODO
+
+Two directions:
+
+1. I've got to get charting of δs working on TradingView
+2. I need to translate confidence into amount to trade and amount expected
+in return by, eh: computing how much of a and b I have (in my wallet with
+a blockchain query?) verses the prices of each. I have the prices already, and,
+in fact, I only need today's base price, as the EMA20 entails today's ratio
+(so the other price is unnecessary to compute the target-amount).
+
+I got a bit pensive there, but that's what's next.
