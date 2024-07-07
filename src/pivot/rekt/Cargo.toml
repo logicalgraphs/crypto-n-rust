@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "rekt"
-path = "../quizzes/quiz13/answer13.rs"
+path = "../quizzes/quiz14/answer14.rs"
 
 [dependencies]
 book = { path = "../../libs/book" }

@@ -29,9 +29,13 @@ fn no(ch: char) -> impl Fn(char) -> bool {
 
 // --- minimax -------------------------------------------------------
 
+pub fn sort_f32(v: &mut Vec<f32>) {
+   v.sort_by(|a,b| a.partial_cmp(&b).unwrap());
+}
+
 pub fn minimax_f32(v: &Vec<f32>) -> (Option<f32>, Option<f32>) {
    let mut srtd = v.clone();
-   srtd.sort_by(|a,b| a.partial_cmp(&b).unwrap());
+   sort_f32(&mut srtd);
    (srtd.first().cloned(), srtd.last().cloned())
 }
 
