@@ -2,19 +2,7 @@ use std::{fmt,mem};
 
 use crate::err_utils::{ErrStr,err_or};
 
-// for when we need to serialize or to hash an f64 value
-
-pub fn integer_decode(val: f64) -> (u64, i16, i8) {
-   let bits: u64 = unsafe { mem::transmute(val) };
-   let sign: i8 = if bits >> 63 == 0 { 1 } else { -1 };
-   let exponent: i16 = ((bits >> 52) & 0x7ff) as i16;
-   let seive: u64 = bits & 0xfffffffffffff;
-   let mantissa = match exponent {
-       0 => seive << 1,
-       _ => seive | 0x10000000000000
-   };
-   (mantissa, exponent - (1023 + 52), sign)
-}
+// ----- parsers -------------------------------------------------------
 
 pub fn parse_or(n_opt: Option<&String>, default: f32) -> f32 {
    n_opt.and_then(|n| n.parse().ok()).unwrap_or(default)
@@ -37,6 +25,14 @@ pub fn parse_commaless(str: &str) -> ErrStr<f32> {
 
 fn no(ch: char) -> impl Fn(char) -> bool {
    move |chr| chr != ch
+}
+
+// --- minimax -------------------------------------------------------
+
+pub fn minimax_f32(v: &Vec<f32>) -> (Option<f32>, Option<f32>) {
+   let mut srtd = v.clone();
+   srtd.sort_by(|a,b| a.partial_cmp(&b).unwrap());
+   (srtd.first().cloned(), srtd.last().cloned())
 }
 
 // --- Estimates -------------------------------------------------------
@@ -90,3 +86,18 @@ impl fmt::Display for Estimate {
       write!(formatter, "{mantissa:.2}{exponent}")
    }
 }
+
+// for when we need to serialize or to hash an f64 value
+
+pub fn integer_decode(val: f64) -> (u64, i16, i8) {
+   let bits: u64 = unsafe { mem::transmute(val) };
+   let sign: i8 = if bits >> 63 == 0 { 1 } else { -1 };
+   let exponent: i16 = ((bits >> 52) & 0x7ff) as i16;
+   let seive: u64 = bits & 0xfffffffffffff;
+   let mantissa = match exponent {
+       0 => seive << 1,
+       _ => seive | 0x10000000000000
+   };
+   (mantissa, exponent - (1023 + 52), sign)
+}
+

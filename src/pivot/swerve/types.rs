@@ -8,6 +8,7 @@ use chrono::NaiveDate;
 use book::{
    csv_utils::CsvWriter,
    json_utils::{AsJSON,json_list,to_object},
+   num_utils::minimax_f32,
    string_utils::quot,
    types::{stamp,Stamped}
 };
@@ -76,6 +77,7 @@ struct Name {
    base: String,
    target: String
 }
+
 fn mk_name(t1: &str, t2: &str) -> Name {
    Name { base: t2.to_string(), target: t1.to_string() }
 }
@@ -211,4 +213,54 @@ pub fn rec(r: &Stamped<Rec>) -> String {
            r.pack.name.target,
            if r.pack.call == CALL::BUY { "with" } else { "for" },
            r.pack.name.base)
+}
+
+// ----- Deltas -------------------------------------------------------
+
+// Now, eventually, Deltas will tell us exactly how much A to swap for B
+// but, for now, they give us a confidence in the swap as a percentage
+
+#[derive(Clone,Debug)]
+pub struct Delta { d: R }
+
+impl AsJSON for Delta {
+   fn as_json(&self) -> String {
+      to_object("date delta",
+                &[quot(&format!("{}", &self.d.date)),
+                  format!("{:?}", self.d.pack)])
+   }
+}
+
+fn mk_delta(ema: &EMA) -> Delta {
+   let delta = ema.ema - ema.ratio.r.pack;
+   Delta { d: stamp(&ema.ratio.r.date, &delta) }
+}
+
+#[derive(Clone,Debug)]
+pub struct Deltas { deltas: Vec<Delta> }
+
+pub fn mk_deltas(emas: &EMAs) -> Deltas {
+  Deltas { deltas: emas.emas.iter().map(mk_delta).collect() }
+}
+
+impl AsJSON for Deltas {
+   fn as_json(&self) -> String {
+      to_object("deltas", &[json_list(&self.deltas)])
+   } 
+}  
+
+pub fn confidence(ds: &Deltas) -> Option<f32> {
+   ds.deltas.last().and_then(|stamped_delta| {
+      let deltas: Vec<f32> = ds.deltas.iter().map(|st_d| st_d.d.pack).collect();
+      let (mb_min, mb_max) = minimax_f32(&deltas);
+      mb_min.and_then(|min| {
+         mb_max.and_then(|max| {
+            let d = stamped_delta.d.pack;
+            let conf = d / if d > 0.0 { max } else { min };
+            println!("Confidence for {} trade: {:.2?}%", stamped_delta.d.date,
+                     conf * 100.0);
+            Some(conf)
+         })
+      })
+   }).or_else(||{ println!("no confidence"); None })
 }
