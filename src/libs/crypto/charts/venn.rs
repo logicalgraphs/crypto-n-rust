@@ -33,10 +33,11 @@ impl AsJSON for MonadUSD {
    }
 }
 
-pub fn venn_diagram((vols, toks): (&Volumes, &Books)) -> String {
-   let j: Vec<String> =
+pub fn venn_diagram(date: &str, (vols, toks): (&Volumes, &Books)) -> String {
+   let x: Vec<String> =
       toks.into_iter().map(|b| mk_d(vol_24h_pair(&b)).as_json()).collect();
-   let k: Vec<String> =
+   let y: Vec<String> =
       vols.clone().into_iter().map(|p| mk_m(mk_tag(p)).as_json()).collect();
-   format!("var sets = [{},\n{}];", j.join(",\n"), k.join(",\n"))
+   fn j(v: Vec<String>) -> String { v.join(",\n") }
+   format!("date = '{date}';\n\nsets = [{},\n{}];", j(x), j(y))
 }
