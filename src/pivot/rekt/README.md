@@ -78,9 +78,16 @@ price-data, do I buy or sell $KUJI with $OSMO?"
 
 So, ... yeah. That.
 
-### TODO
+## δ-confidence
 
-`rekt` currently tells me _what_ to buy or to sell, but does not tell me _how
+Besides computing the buy/sell-call, `rekt` computes the confidence or
+proportion to buy or to sell using the δs between the EMA20s and ratios.
+
+![δs](../quizzes/quiz14/imgs/02-δs.png)
+
+With the δs computed, `rekt` now renders a degree of confidence to the call.
+
+![δ-confidence](../quizzes/quiz14/05-confidence.png)
 much_ to buy or to sell. That'll incorportate EMA20-vs-ratio δ analyses.
 
 That's next.
