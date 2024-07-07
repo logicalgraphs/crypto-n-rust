@@ -88,7 +88,6 @@ proportion to buy or to sell using the δs between the EMA20s and ratios.
 With the δs computed, `rekt` now renders a degree of confidence to the call.
 
 ![δ-confidence](../quizzes/quiz14/imgs/05-confidence.png)
-much_ to buy or to sell. That'll incorportate EMA20-vs-ratio δ analyses.
 
 ## TODO
 
