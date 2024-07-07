@@ -34,3 +34,5 @@ We're not doing trades today, nor are we calculating the amount to commit.
 
 Today we're computing the δs for a period, then computing the δ-percentage 
 today, based off of either the max δ or the min δ.
+
+* ([answer](answer.md))
