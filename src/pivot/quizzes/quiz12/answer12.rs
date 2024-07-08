@@ -1,70 +1,28 @@
-use std::ops::Sub;
-
-use chrono::{Days,NaiveDate};
-
 use book::{
    err_utils::ErrStr,
    json_utils::AsJSON,
-   list_utils::tail,
-   string_utils::to_string,
-   table_utils::{ingest,row_filter,col,rows},
+   num_utils::parse_num,
    utils::get_args
 };
 
-use swerve::{fetch_pivots::fetch_lines,types::mk_emas};
+use swerve::snarf::snarf_emas;
 
 fn usage() -> ErrStr<()> {
-   println!("\n./ema <date> <days> <token1> <token2>");
+   println!("\n./ema <days> <token1> <token2>");
    println!("\tSnarfs pivots.csv and ratios <token1>/<token2> for <days>");
    println!("\tIt also computes the EMA20s for that token-pair.");
-   Err("Need to EMA20 over <date> <days> <token1> <token2>".to_string())
-}
-
-fn datef(s: &str) -> NaiveDate {
-   NaiveDate::parse_from_str(s, "%Y-%m-%d")
-             .expect(&format!("{s} not in date-format"))
-}
-
-fn parse_num(s: &str) -> f32 { 
-   if s == "" { 0.0 } else {
-      s.parse().expect(&format!("{s} is not a number"))
-   }
+   Err("Need to EMA20 over <days> <token1> <token2>".to_string())
 }
 
 #[tokio::main]
 async fn main() -> ErrStr<()> {
    let args = get_args();
-   if let [dat, dayz, token1, token2] = args.as_slice() {
-      let date = datef(&dat);
-      let days = Days::new(parse_num(&dayz) as u64);
-      let start = date.sub(days);
-      let pivs = fetch_lines().await?;
-      doit(&tail(&pivs), &start, token1, token2);
+   if let [dayz, token1, token2] = args.as_slice() {
+      let days = parse_num(&dayz)?;
+      let emas = snarf_emas(days as u64, &token1, &token2).await?;
+      println!("emas = {};", emas.as_json());
       Ok(())
    } else {
       usage()
    }
-}
-
-fn doit(pivs: &Vec<String>, start: &NaiveDate, t1: &String, t2: &String) {
-   let table = ingest(datef, to_string, parse_num, pivs, ",");
-   fn in_range(d: &NaiveDate) -> impl Fn(&NaiveDate) -> bool + '_ {
-      |date| { date.ge(d) }
-   }
-   let domain = row_filter(in_range(start), &table);
-
-   let a = col(&domain, &t1).expect(&format!("NO TOKEN NAMED {t1}"));
-   println!("{t1} data: {:?}", a);
-   let b = col(&domain, &t2).expect(&format!("NO TOKEN NAMED {t2}"));
-   println!("{t2} data: {:?}", b);
-
-   let ratios: Vec<f32> =
-      a.clone().into_iter()
-               .zip(b.clone().into_iter())
-               .map(|(a,b)| a / b)
-               .collect();
-
-   let dates = rows(&domain);
-   let data = mk_emas(t1, t2, 20, &dates, &ratios);
-   println!("emas = {};", data.as_json());
 }

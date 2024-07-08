@@ -1,19 +1,17 @@
 // name-explanation: when you've got to fetch-all, you're snarfin' it!
 // ... am I right, fam? 😎
 
-use std::{
-   env::var,
-   ops::Sub
-};
+use std::ops::Sub;
 
 use chrono::{Days,NaiveDate};
 
 use book::{
    date_utils::parse_date,
-   err_utils::{err_or,ErrStr},
+   err_utils::ErrStr,
    list_utils::tail,
    num_utils::parse_num_or_zero,
-   table_utils::{col,ingest,row_filter,rows}
+   table_utils::{col,ingest,row_filter,rows},
+   utils::get_env
 };
 
 use crate::{
@@ -33,8 +31,7 @@ pub async fn snarf_pivots() -> ErrStr<(Pivots, Dict)> {
 
 pub async fn snarf() -> ErrStr<(Vec<Price>, Option<Diffs>)> {
    let (_pivs, dict) = snarf_pivots().await?;
-   let pass = err_or(var("COIN_GECKO_API_KEY"),
-                     "Could not fetch API key from environment")?;
+   let pass = get_env("COIN_GECKO_API_KEY")?;
    let raw_prices = fetch_prices(&pass, &dict).await?;
    let errs = verify(&dict, &raw_prices);
    let prices = transform_prices(&dict, &raw_prices);

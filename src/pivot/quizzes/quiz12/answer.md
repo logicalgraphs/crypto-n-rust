@@ -12,6 +12,9 @@ State(/'mutable') variables, but Rust doesn't have a good comonad
 implementation, so I fell back to using these State-variables and the good
 ol' `for`-loop.
 
+p.s.: most of the work was pushed to 
+[swerve/snarf.rs `snarf_emas()`](https://github.com/logicalgraphs/crypto-n-rust/blob/pivot-quiz-15/src/pivot/swerve/snarf.rs#L45-L76)
+
 ### TradingView charts
 
 Also, during this exercise, I explored various charting solutions and fell,
