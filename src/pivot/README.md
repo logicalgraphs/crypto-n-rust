@@ -67,6 +67,11 @@ This way I measure the success of my pivot-arbitrage.
 I show how to BUIDL this system from the ground up in a series of
 [quizzes](quizzes).
 
+## COSMWASM
+
+I'm exploring exploring smart contracts with
+[this project](https://github.com/logicalgraphs/crypto-n-rust/tree/main/src/cosmwasm).
+
 ## NEWS FLASH!
 
 2024-06-11: upgraded to reqwest::0.12.4 and made all RESTful calls asynchronous.
