@@ -1,8 +1,11 @@
-use std::env::args;
+use std::env::{args,var};
 
-use crate::list_utils::{tail,parse_nums};
+use crate::{
+   err_utils::{ErrStr,err_or},
+   list_utils::{tail,parse_nums}
+};
 
-// command line arguments fetch functions
+// ----- command line arguments fetch functions -------------------------
 
 pub fn get_args() -> Vec<String> {
    tail::<String>(&args().collect())
@@ -10,6 +13,13 @@ pub fn get_args() -> Vec<String> {
 
 pub fn get_nums() -> Vec<f32> {
    parse_nums(get_args())
+}
+
+// ----- env vars -------------------------------------------------------
+
+pub fn get_env(variable: &str) -> ErrStr<String> {
+   err_or(var(variable),
+          &format!("Could not fetch {variable} var from environment"))
 }
 
 // Category theory
