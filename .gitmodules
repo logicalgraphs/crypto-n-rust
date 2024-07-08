@@ -1,0 +1,3 @@
+[submodule "src/cosmwasm/cw-plus"]
+	path = src/cosmwasm/cw-plus
+	url = https://github.com/logicalgraphs/cw-plus.git
