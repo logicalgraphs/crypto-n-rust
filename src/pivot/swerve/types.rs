@@ -6,7 +6,7 @@ use std::{
 use chrono::NaiveDate;
 
 use book::{
-   csv_utils::CsvWriter,
+   csv_utils::{CsvWriter,list_csv},
    json_utils::{AsJSON,json_list,to_object},
    num_utils::minimax_f32,
    string_utils::quot,
@@ -231,6 +231,11 @@ impl AsJSON for Delta {
    }
 }
 
+impl CsvWriter for Delta {
+   fn ncols(&self) -> usize { 2 }
+   fn as_csv(&self) -> String { format!("{},{:?}", self.d.date, self.d.pack) }
+}
+
 fn mk_delta(ema: &EMA) -> Delta {
    let delta = ema.ema - ema.ratio.r.pack;
    Delta { d: stamp(&ema.ratio.r.date, &delta) }
@@ -248,6 +253,13 @@ impl AsJSON for Deltas {
       to_object("deltas", &[json_list(&self.deltas)])
    } 
 }  
+
+impl CsvWriter for Deltas {
+   fn ncols(&self) -> usize { 2 }
+   fn as_csv(&self) -> String {
+      format!("date,delta\n{}", list_csv(&self.deltas))
+   }
+}
 
 pub fn confidence(ds: &Deltas) -> Option<f32> {
    ds.deltas.last().and_then(|stamped_delta| {

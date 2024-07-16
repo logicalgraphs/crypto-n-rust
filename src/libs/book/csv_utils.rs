@@ -29,6 +29,13 @@ pub fn print_as_tsv(row: &String) {
 }
 
 pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
+   let v1: Vec<String> = v.iter().map(|e| {
+      format!("{}", e.as_csv())
+   }).collect();
+   v1.join("\n")
+}
+
+pub fn enumerate_csv<T: CsvWriter>(v: &Vec<T>) -> String {
    let v1: Vec<String> = v.iter().enumerate().map(|(x,e)| {
       format!("{},{}", x + 1, e.as_csv())
    }).collect();
