@@ -1,37 +1,37 @@
 Could not find burn rate for stISLM
-for BurnlessLSD { zone: "haqq", base: "aISLM", rate: 1.0048916, halted: false }
+for BurnlessLSD { zone: "haqq", base: "aISLM", rate: 1.005208, halted: false }
 I have:
-key: stEVMOS
-key: ampWHALE
-key: stJUNO
-key: stINJ
-key: stOSMO
-key: sAVAX
-key: boneLUNA
-key: stDYDX
-key: stCMDX
-key: stSTARS
-key: stATOM
-key: ampLUNA
-key: stSAGA
 key: stUMEE
-key: rATOM
 key: LunaX
+key: rATOM
+key: stINJ
+key: stATOM
+key: sAVAX
+key: stEVMOS
 key: stLUNA
+key: stOSMO
 key: stSOMM
 key: sFTMX
+key: stCMDX
+key: stDYDX
+key: ampLUNA
+key: stJUNO
+key: ampWHALE
+key: boneLUNA
+key: stSTARS
+key: stSAGA
 
 ...reminder to push burn-rates.csv to main branch.
 date,zone,lsd,exchange rate,halted,unbond (days)
-2024-07-16,cosmos,stATOM,1.3898,false,24
-2024-07-16,comdex,stCMDX,1.2699,false,24
-2024-07-16,dydx,stDYDX,1.0663,false,35
-2024-07-16,evmos,stEVMOS,1.5441,false,17
-2024-07-16,inj,stINJ,1.3037,false,24
-2024-07-16,juno,stJUNO,1.5038,false,33
-2024-07-16,terra,stLUNA,1.2611,false,24
-2024-07-16,osmo,stOSMO,1.2593,false,17
-2024-07-16,saga,stSAGA,1.0231,false,24
-2024-07-16,somm,stSOMM,1.0580,false,31
-2024-07-16,stars,stSTARS,1.5315,false,17
-2024-07-16,umee,stUMEE,1.1927,false,17
+2024-07-18,cosmos,stATOM,1.3909,false,24
+2024-07-18,comdex,stCMDX,1.2705,false,24
+2024-07-18,dydx,stDYDX,1.0673,false,35
+2024-07-18,evmos,stEVMOS,1.5445,false,17
+2024-07-18,inj,stINJ,1.3048,false,24
+2024-07-18,juno,stJUNO,1.5048,false,33
+2024-07-18,terra,stLUNA,1.2621,false,24
+2024-07-18,osmo,stOSMO,1.2600,false,17
+2024-07-18,saga,stSAGA,1.0235,false,24
+2024-07-18,somm,stSOMM,1.0583,false,31
+2024-07-18,stars,stSTARS,1.5327,false,17
+2024-07-18,umee,stUMEE,1.1934,false,17
