@@ -11,3 +11,9 @@ const lcd = new LCDClient({
   },
 });
 
+const mk = new MnemonicKey({ mnemonic: process.env.WARP_WALLET });
+console.log("My key is ", mk);
+
+// const wallet = lcd.wallet(mk);
+
+// console.log("My wallet is ", wallet);
