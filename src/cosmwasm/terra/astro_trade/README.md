@@ -32,7 +32,7 @@ According to
 the problem with feather.js manifests in the latest version. Rolling back with:
 
 ```BASH
-$ npm install @terra-money/feather.js@2.0.2
+npm install @terra-money/feather.js@2.0.2
 ```
 
 finally gets the application working with the following output:
