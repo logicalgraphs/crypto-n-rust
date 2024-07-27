@@ -33,3 +33,7 @@ only.
 * quiz 13: [Make buy/sell-recommendation](quiz13)
 * quiz 14: [Calculate δs](quiz14)
 * quiz 15: [Plot δs](quiz15)
+
+## lizard
+
+* quiz 16: [Compute date-δ](quiz16)
