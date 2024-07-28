@@ -14,3 +14,5 @@ is my 'database' of token-prices (upon which I compute pivot-arbitrage).
 And all [my quizzes](../quizzes) are in my git repository.
 
 DOiT! TOiT!
+
+* ([answer](answer.md))
