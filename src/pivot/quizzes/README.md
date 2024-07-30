@@ -37,3 +37,4 @@ only.
 ## lizard
 
 * quiz 16: [Compute date-δ](quiz16)
+* quiz 17: [Fetch one token over a series of dates](quiz17)
