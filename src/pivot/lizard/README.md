@@ -1,6 +1,6 @@
 # lizard
 
-/WIP/
+_WIP_
 
 What happens when I've missed a few days of harvesting data from @coingecko
 using [`gecko`](../gecko)? This is where `lizard` comes in.
