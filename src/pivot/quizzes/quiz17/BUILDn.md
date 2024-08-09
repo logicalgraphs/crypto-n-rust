@@ -35,7 +35,7 @@ Label each datum, that is: don't use a list index to TYPE YOUR DATA?
 e.g.:
 
 ```JSON
-prices: [
+"prices": [
  { "quote": { "usd": 3420.796671 },
     "stamp": 1721340740565
  }, ...]
