@@ -86,3 +86,85 @@ Simply a `HashMap` with a `Vec<Vec<f64>>` as values to each section-key.
 
 A simple result, so now let's refine that result until we have workable
 data-sets.
+
+## Refinement: Timestamp
+
+The first thing we do in our refinement is a very simple substitution.
+
+We replace the `Vec<f64>` in
+
+```Rust
+type StampedData = Vec<Vec<f64>>;
+```
+
+with
+
+```Rust
+type StampedPrice = Vec<f64>;
+type StampedData = Vec<StampedPrice>;
+```
+
+This replacement gives us functionally-equivalent code, but allows us to 
+refine what a `StampedPrice` is without disturbing enclosing structures.
+
+### The `Deserializer`-problem
+
+Now, this is all well and good if the refinement led to an iterative and 
+modular improvement in code leading to an iterative and modular refinement of 
+the data.
+
+But then there's 
+[the `Deserializer`-documentation](https://serde.rs/impl-deserialize.html)
+
+Hm.
+
+Let's rethink this.
+
+Fortunately for me...
+
+_I'm old._
+
+This means that I've dealt with these kinds of problems before.
+
+The problem: sh!tty data-representation leads to nigh-impossible 
+data-transformation solutions if you follow convention.
+
+The solution: transform-by-default THEN transform from that.
+
+This, in no way, absolves the data-provider from being a complete sh!t.
+
+How do you know you're making life hard for people downstream?
+
+Take an outsider-view: 
+
+* Are there unlabeled elements? 
+* Are there composite elements that must be separated? 
+* Are there strings requiring a custom parser?
+
+JSON and CSV are transporters of atomic, labeled, and parsed data. 
+Don't complicate things downstream.
+
+This is data structures 101, folks.
+
+When did software engineers and data scientists forget these fundamentals?
+
+Well: UNforget these fundamentals! Start (re)applying them!
+
+... code, code, code ...
+
+I have a solution that converts the array of numbers (???) in the @coingecko 
+JSON response to a `Stamped<Price>`
+
+The problem is that `Stamp`. 
+
+![Millisecond stamps](imgs/05-date-in-milliseconds.png)
+
+It appears we are in the Year of our Lord 56,000???
+
+They stamp by milliseconds, come to find.
+
+With a slight adjustment to the solution (dividing the stamp by 1000.0 to
+readjust to seconds), we now have timestamped prices for a token in our
+pivot-table.
+
+![timestamped prices for a token](imgs/06-stamped-prices.png)
