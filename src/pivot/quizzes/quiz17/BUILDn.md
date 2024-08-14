@@ -163,8 +163,36 @@ It appears we are in the Year of our Lord 56,000???
 
 They stamp by milliseconds, come to find.
 
-With a slight adjustment to the solution (dividing the stamp by 1000.0 to
-readjust to seconds), we now have timestamped prices for a token in our
-pivot-table.
+With a slight adjustment to the [solution (dividing the stamp by 1000.0 to
+readjust to seconds)](answer17b_timestamp.rs#L33), we now have timestamped 
+prices for a token in our pivot-table.
+
 
 ![timestamped prices for a token](imgs/06-stamped-prices.png)
+
+The solution does show us something "interesting."
+
+The chart includes the current price along with all midnight prices, including 
+today's.
+
+I'll need to pop the first value to eliminate redundant prices for today in my 
+analyses.
+
+Upshot: always do a sanity-check of the results.
+
+## Refinement: eliminate redundant data by date
+
+Okay, next, we wish to clean redundantly-recorded data (by date). Let's do that.
+
+The fix to remove redundancies is a simple rebranding of types. We are indexing
+the prices by dates, so: let's just hash the indices, and that auto(magic)ally
+removes the redundancies.
+
+![Redundant prices by date removed](imgs/07-no-redundancy.png)
+
+Now, hashed dates aren't sorted by date (or: that sorting is not guaranteed),
+so there's a wee bit o' complication in extracting the results to display,
+both in curtailing the results and by showing those results, sorted by
+ascending date.
+
+That wee bit o' complication is easily, if I may say so: sorted.
