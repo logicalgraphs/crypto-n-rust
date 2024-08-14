@@ -276,3 +276,10 @@ pub fn confidence(ds: &Deltas) -> Option<f32> {
       })
    }).or_else(||{ println!("no confidence"); None })
 }
+
+// ----- Chart-data, or, fetching historical data for tokens -----------------
+
+pub type StampedData<A> = HashMap<NaiveDate, A>;
+pub type Chart<A> = HashMap<String, StampedData<A>>;
+
+// reading functionality in fetch_prices and (eventually) snarf

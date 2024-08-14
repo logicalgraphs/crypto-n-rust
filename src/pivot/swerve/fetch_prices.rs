@@ -1,14 +1,23 @@
-use std::cmp::Ordering;
+use std::{
+   cmp::Ordering,
+   collections::HashMap,
+   fmt::Debug,
+   fs::File,
+   io::BufReader,
+   path::Path
+};
+
+use chrono::{DateTime,NaiveDate};
 
 extern crate serde;
 
-use serde_json::from_str;
+use serde_json::{from_reader,from_str};
 
 use book::{
    err_utils::{err_or,ErrStr}
 };
 
-use crate::types::{Dict,Price,Quote,RawPrices,Token,TokenId};
+use crate::types::{Dict,Price,Quote,RawPrices,Token,TokenId,Chart};
 
 use reqwest::Client;
 
@@ -56,4 +65,37 @@ pub fn transform_prices(dict: &Dict, pric: &RawPrices) -> Vec<Price> {
    }
    rows.sort_by(|((_,a), _), ((_,b), _)| cmp(a, b));
    rows
+}
+
+// ----- Chart-data, or, fetching historical data for tokens -----------------
+
+type StampedPrice0 = Vec<f64>;
+type StampedData0<A> = Vec<A>;
+type Chart0<A> = HashMap<String, StampedData0<A>>;
+
+fn read_chart_from_file0<P: AsRef<Path> + Debug + Clone>(path: P)
+        -> ErrStr<Chart0<StampedPrice0>> {
+    // Open the file in read-only mode with buffer.
+    let p = path.clone();
+    let file = err_or(File::open(p), &format!("Cannot open {:?}", path))?;
+    let reader = BufReader::new(file);      
+
+    // Read the JSON contents of the file as an instance of the chart-data
+    let chart = err_or(from_reader(reader), "Cannot parse JSON")?;
+
+    Ok(chart)
+}
+
+pub fn read_chart_from_file<P: AsRef<Path> + Debug + Clone>(path: P)
+        -> ErrStr<Chart<f64>> {      
+   let raw = read_chart_from_file0(path)?;
+   let mut ans = HashMap::new();
+   fn to_stamp(v: &Vec<f64>) -> (NaiveDate, f64) {
+      let dt = DateTime::from_timestamp((v[0] / 1000.0) as i64, 0).unwrap();
+      (dt.date_naive(), v[1])
+   }
+   for (k,v) in raw {
+      ans.insert(k, v.iter().map(to_stamp).collect());
+   }
+   Ok(ans)
 }
