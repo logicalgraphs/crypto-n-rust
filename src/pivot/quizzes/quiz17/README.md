@@ -10,3 +10,6 @@ date/token-row.
 ![Coingecko chart of ETH](imgs/01-coingecko-response.png)
 
 ![Internalization of ETH chart](imgs/02-eth-row.png)
+
+* We explore and develop the solution to this quiz
+[here](BUILDn.md)

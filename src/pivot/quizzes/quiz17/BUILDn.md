@@ -185,8 +185,10 @@ Upshot: always do a sanity-check of the results.
 Okay, next, we wish to clean redundantly-recorded data (by date). Let's do that.
 
 The fix to remove redundancies is a simple rebranding of types. We are indexing
-the prices by dates, so: let's just hash the indices, and that auto(magic)ally
+the prices by dates, so: let's just 
+[hash the indices](answer17c_cleansed.rs#L10), and that auto(magic)ally 
 removes the redundancies.
+
 
 ![Redundant prices by date removed](imgs/07-no-redundancy.png)
 
@@ -195,4 +197,5 @@ so there's a wee bit o' complication in extracting the results to display,
 both in curtailing the results and by showing those results, sorted by
 ascending date.
 
-That wee bit o' complication is easily, if I may say so: sorted.
+That wee bit o' complication is easily, if I may say so: 
+[sorted](answer17c_cleansed.rs#L55-L59).

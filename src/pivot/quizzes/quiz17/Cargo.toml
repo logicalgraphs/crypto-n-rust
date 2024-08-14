@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "answer17"
-path = "answer17b_timestamp.rs"
+path = "answer17c_cleansed.rs"
 
 [dependencies]
 serde = { version = "1.0.104", features = ["derive"] }
