@@ -199,3 +199,45 @@ ascending date.
 
 That wee bit o' complication is easily, if I may say so: 
 [sorted](answer17c_cleansed.rs#L55-L59).
+
+## Refinement: presentation and abstraction
+
+There are two things remaining (for, recall, just the processing-side): 
+display/presentation and abstracting this functionality to our swerve-library.
+
+Let's tackle both for this processing-part of `lizard`.
+
+Tackling the abstract, first. This is easy enough. I move the types to 
+[types-module](../swerve/types.rs#L280-L285) and the functionality to 
+[fetch_prices-module](../swerve/fetch_prices.rs#L70-L101) in my 
+[swerve-library](../swerve).
+
+The [resulting program](answer17d_display.rs), much smaller (SLOC), runs as 
+before.
+
+For displaying the results, I use the 
+[`Table`-type](../../libs/book/table_utils.rs), which provides CSV-output 
+out-of-the-box!
+
+![CSV output from tabled results](imgs/08-eth-as-table.png)
+
+Because of this built-in display-functionality and the abstraction (as above), 
+the [codebase becomes much simpler](answer17d_display.rs).
+
+When I put this output into a spreadsheet, I see two issues:
+
+1. The dates aren't sorted by date.
+
+![CSV not sorted by date](imgs/09a-not-sorted.png)
+
+2. The [`$PIVOTS`-table](../../../data-files/csv/pivots.csv) have the dates as 
+rows, not columns.
+
+![CSV output transposed](imgs/09b-how-it-should-be.png)
+
+So:
+
+### Rust pop-quiz!
+
+1. Sort CSV-output of [`Table`-type](../../libs/book/table_utils.rs)
+2. Write a transpose-function for Table

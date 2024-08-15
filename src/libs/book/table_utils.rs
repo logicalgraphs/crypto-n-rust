@@ -58,6 +58,16 @@ pub fn mk_table<ROW: Eq + Hash, COL: Eq + Hash, T>(r: Vec<ROW>, c: Vec<COL>,
    Table { rows_: rows, cols_: cols, data }
 }
 
+// Generates a table from a Vec<T>-instance. We also need our column-headers.
+// The row-'headers' (all one of them) is obviously a String-type.
+
+pub fn from_vec<COL: Eq + Hash, T>(r: &str, cols: Vec<COL>, v: Vec<T>)
+      -> Table<String, COL, T> {
+   let rows = vec![r.to_string()];
+   let data = matrix_utils::from_vec(v);
+   mk_table(rows, cols, data)
+}
+
 impl <ROW: Display + Clone,COL: Display + Clone,DATUM: Display> CsvWriter
       for Table<ROW,COL,DATUM> {
    fn ncols(&self) -> usize { self.cols_.len() + 1 }
