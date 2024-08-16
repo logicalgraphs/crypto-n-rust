@@ -39,7 +39,7 @@ fn enum_headers<HEADER: Eq + Hash>(headers: Vec<HEADER>)
 
 fn sort_headers<HEADER: Clone>(hdrs: &HashMap<HEADER,usize>) -> Vec<HEADER> {
    let mut hdrs1: Vec<(&HEADER,&usize)> = hdrs.into_iter().collect();
-   hdrs1.sort_by(|a,b| a.1.cmp(&b.1));
+   hdrs1.sort_by_key(|k| k.1);
    hdrs1.into_iter().map(compose!(Clone::clone)(fst)).collect()
 }
 
@@ -58,14 +58,27 @@ pub fn mk_table<ROW: Eq + Hash, COL: Eq + Hash, T>(r: Vec<ROW>, c: Vec<COL>,
    Table { rows_: rows, cols_: cols, data }
 }
 
-// Generates a table from a Vec<T>-instance. We also need our column-headers.
+// Generates a table from a Vec<(COL, T)>-instance.
 // The row-'headers' (all one of them) is obviously a String-type.
 
-pub fn from_vec<COL: Eq + Hash, T>(r: &str, cols: Vec<COL>, v: Vec<T>)
+pub fn from_vec<COL: Eq + Hash, T>(row: &str, cols: Vec<(COL, T)>)
       -> Table<String, COL, T> {
-   let rows = vec![r.to_string()];
+   let rows = vec![row.to_string()];
+   let (cols, v) = cols.into_iter().unzip();
    let data = matrix_utils::from_vec(v);
    mk_table(rows, cols, data)
+}
+
+// The above function has the order embedded into the vector-of-pairs.
+// The below function is where ordering is unimportant, so we order by
+// the column-headers
+
+pub fn from_map<COL: Clone + Eq + Ord + Hash, T: Clone>(row: &str, 
+      cols: &HashMap<COL, T>) -> Table<String, COL, T> {
+   let mut data: Vec<(COL, T)> = Vec::new();
+   for (k, v) in cols { data.push((k.clone(), v.clone())); }
+   data.sort_by_key(|k| k.0.clone());
+   from_vec(row, data)
 }
 
 impl <ROW: Display + Clone,COL: Display + Clone,DATUM: Display> CsvWriter
