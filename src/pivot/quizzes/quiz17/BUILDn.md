@@ -241,3 +241,20 @@ So:
 
 1. Sort CSV-output of [`Table`-type](../../libs/book/table_utils.rs)
 2. Write a transpose-function for Table
+
+### Rust pop-quiz answer (part I)
+
+#Rust pop-quiz solution (part I):
+
+Nothing had to be done to fix sorting of headers for the CSV-output at all, in 
+fact.
+
+As you recall, I hashed ordering to eliminate redundancies 
+[here](https://x.com/logicalgraphs/status/1823821227657716065), so I just 
+needed to reassert ordering-by-date in the headers. 
+
+![Date-sorted CSV table data](imgs/10-sorted.png)
+
+In fact, I now provide a 
+[`from_map()` `Table`-creation-function](../../libs/book/table_utils.rs#L72-L82),
+as I do these conversions from `HashMap` to `Table` from time-to-time.
