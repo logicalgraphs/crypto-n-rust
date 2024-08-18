@@ -258,3 +258,8 @@ needed to reassert ordering-by-date in the headers.
 In fact, I now provide a 
 [`from_map()` `Table`-creation-function](../../libs/book/table_utils.rs#L72-L82),
 as I do these conversions from `HashMap` to `Table` from time-to-time.
+
+Okay, we've sorted by date. Now let's transpose the table to get it in the 
+format of date-rows and token-columns!
+
+![date-rows and token-columns](imgs/11-date-rows.png)
