@@ -265,7 +265,7 @@ format of date-rows and token-columns!
 ![date-rows and token-columns](imgs/11-date-rows.png)
 
 The solution was to write a 
-[`transpose()`-function `Table`](../../../libs/book/table_utils.rs). ... Note 
+[`transpose()`-function `Table`](../../../libs/book/table_utils.rs#L210-L221). ... Note 
 how the function simply falls out, declaratively, from work that's already
 been done.
 
