@@ -26,11 +26,41 @@ use crate::{
 
 // (the mappings can be any <T:Hash+Eq>-typed values)
 
+// ----- STRUCTURE -----------------------------------------------------------
+
 pub struct Table<ROW, COL, T> {
    rows_: HashMap<ROW, usize>,
    cols_: HashMap<COL, usize>,
    pub data: Matrix<T>
 }
+
+impl <ROW: Display + Clone,COL: Display + Clone,DATUM: Display> CsvWriter
+      for Table<ROW,COL,DATUM> {
+   fn ncols(&self) -> usize { self.cols_.len() + 1 }
+   fn as_csv(&self) -> String {
+      let cols = display_cols(&self.cols_);
+      let rows = sort_headers(&self.rows_);
+      fn fmt_row<ROW: Display, T: Display>((header, row): (&ROW, &Vec<T>))
+            -> String {
+         format!("{},{}", header, vec_to_vec(&row).join(","))
+      }
+      let data: Vec<String> = rows.iter()
+                                  .zip(self.data.iter())
+                                  .map(fmt_row)
+                                  .collect();
+      format!("{}\n{}", cols, data.join("\n"))
+   }
+}
+
+fn vec_to_vec<T: Display>(line: &Vec<T>) -> Vec<String> {
+   line.into_iter().map(|s| format!("{}", s)).collect()
+}
+
+fn display_cols<COL: Display + Clone>(cols: &HashMap<COL,usize>) -> String {
+   format!(",{}", vec_to_vec(&sort_headers(cols)).join(","))
+}
+
+// ----- META-INFORMATION ---------------------------------------------------
 
 fn enum_headers<HEADER: Eq + Hash>(headers: Vec<HEADER>)
       -> HashMap<HEADER, usize> {
@@ -50,6 +80,8 @@ pub fn rows<ROW: Clone,COL,T>(table: &Table<ROW,COL,T>) -> Vec<ROW> {
 pub fn cols<ROW,COL: Clone,T>(table: &Table<ROW,COL,T>) -> Vec<COL> {
    sort_headers(&table.cols_)
 }
+
+// ----- CONSTRUCTORS ------------------------------------------------------
 
 pub fn mk_table<ROW: Eq + Hash, COL: Eq + Hash, T>(r: Vec<ROW>, c: Vec<COL>,
       data: Matrix<T>) -> Table<ROW, COL, T> {
@@ -79,32 +111,6 @@ pub fn from_map<COL: Clone + Eq + Ord + Hash, T: Clone>(row: &str,
    for (k, v) in cols { data.push((k.clone(), v.clone())); }
    data.sort_by_key(|k| k.0.clone());
    from_vec(row, data)
-}
-
-impl <ROW: Display + Clone,COL: Display + Clone,DATUM: Display> CsvWriter
-      for Table<ROW,COL,DATUM> {
-   fn ncols(&self) -> usize { self.cols_.len() + 1 }
-   fn as_csv(&self) -> String {
-      let cols = display_cols(&self.cols_);
-      let rows = sort_headers(&self.rows_);
-      fn fmt_row<ROW: Display, T: Display>((header, row): (&ROW, &Vec<T>))
-            -> String {
-         format!("{},{}", header, vec_to_vec(&row).join(","))
-      }
-      let data: Vec<String> = rows.iter()
-                                  .zip(self.data.iter())
-                                  .map(fmt_row)
-                                  .collect();
-      format!("{}\n{}", cols, data.join("\n"))
-   }
-}
-
-fn vec_to_vec<T: Display>(line: &Vec<T>) -> Vec<String> {
-   line.into_iter().map(|s| format!("{}", s)).collect()
-}
-
-fn display_cols<COL: Display + Clone>(cols: &HashMap<COL,usize>) -> String {
-   format!(",{}", vec_to_vec(&sort_headers(cols)).join(","))
 }
 
 pub fn ingest<ROW: Eq + Hash,COL: Eq + Hash,DATUM>
@@ -167,6 +173,8 @@ fn rows_in_jest<ROW: Eq + Hash, DATUM>
    Ok((rows, matrix))
 }
 
+// ----- VIEWS ----------------------------------------------------------------
+
 pub fn col<ROW, COL: Eq + Hash, DATUM: Clone>(table: &Table<ROW, COL, DATUM>,
                                               cix: &COL) -> Option<Vec<DATUM>> {
    table.cols_.get(cix).and_then(|c| Some(matrix_utils::col(&table.data, *c)))
@@ -197,4 +205,17 @@ pub fn row_filter<ROW: Clone + Eq + Hash, COL: Clone + Eq + Hash, DATA: Clone>
    mk_table(rows, cols, data)
 
    // now a call to col() on this new table will be properly filtered.
+}
+
+// ----- TRANSPOSE ------------------------------------------------------------
+
+// transpose() is simply matrix_utils::transpose() with our table's rows and
+// columns swapped ... right?
+
+pub fn transpose<ROW: Clone + Eq + Hash, COL: Clone + Eq + Hash, DATUM: Clone>
+      (table: &Table<ROW, COL, DATUM>) -> Table<COL, ROW, DATUM> {
+   let new_rows = cols(&table);
+   let new_cols = rows(&table);
+   let new_dater = matrix_utils::transpose(&table.data);
+   mk_table(new_rows, new_cols, new_dater)
 }

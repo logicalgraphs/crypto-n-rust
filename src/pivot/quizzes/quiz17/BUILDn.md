@@ -263,3 +263,19 @@ Okay, we've sorted by date. Now let's transpose the table to get it in the
 format of date-rows and token-columns!
 
 ![date-rows and token-columns](imgs/11-date-rows.png)
+
+The solution was to write a 
+[`transpose()`-function `Table`](../../../libs/book/table_utils.rs). ... Note 
+how the function simply falls out, declaratively, from work that's already
+been done.
+
+Declaratively, `Table::transpose()` is `Matrix::transpose()`, where:
+
+* `table.rows_` is `cols()` and
+* `table.cols_` is `rows()`
+
+What could be simpler that that?
+
+![Transposed result](imgs/12-transposed.png)
+
+And with that, we've solved this quiz.
