@@ -11,5 +11,4 @@ date/token-row.
 
 ![Internalization of ETH chart](imgs/02-eth-row.png)
 
-* We explore and develop the solution to this quiz
-[here](BUILDn.md)
+* We explore and develop the solution to this quiz [here](BUILDn.md).
