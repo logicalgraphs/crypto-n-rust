@@ -42,15 +42,17 @@ async fn fetch_prices0(auth: &str, ids: &Vec<TokenId>) -> ErrStr<Blob> {
    gecko_fetcher(auth, url, &params).await
 }
 
-fn raw_to_prices(raw: &Blob) -> RawPrices {
-   from_str(raw).expect("JSON'd!")
-}
-
 pub async fn fetch_prices(auth: &str, dict: &Dict) -> ErrStr<RawPrices> {
    let ids: Vec<TokenId> = dict.keys().map(String::to_string).collect();
    let raw = fetch_prices0(auth, &ids).await?;
    Ok(raw_to_prices(&raw))
 }
+
+fn raw_to_prices(raw: &Blob) -> RawPrices {
+   from_str(raw).expect("JSON'd!")
+}
+
+// transforms JSON with token-ids to vec with token symbols
 
 pub fn transform_prices(dict: &Dict, pric: &RawPrices) -> Vec<Price> {
    fn arr_m<'a>((k,v): (&'a TokenId, &'a Quote))
@@ -104,3 +106,16 @@ pub fn read_chart_from_file<P: AsRef<Path> + Debug + Clone>(path: P)
    }
    Ok(ans)
 }
+
+/*
+So, to scan a chart from REST endpoint, we do a from_str instead of from_reader
+
+The curl command (use gecko_reader()):
+
+curl --request GET \
+     --url 'https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=42&interval=daily' \
+     --header 'accept: application/json' \
+     --header 'x-cg-demo-api-key: [API key]
+
+n.b.: the URL, itself, embeds the token-id
+*/
