@@ -33,3 +33,9 @@ as a starting point.
 
 ![fetch_prices0](imgs/02-fetch-prices.png)
 
+Specifically, I'm speaking about using the 
+[fetch_prices0() function](../../swerve/fetch_prices.rs#L24-L38) in the
+swerve::fetch_prices module.
+
+Let's create a function from that which takes a token, a number of days, the 
+metadata, returning JSON from @coingecko, which we'll reify later.

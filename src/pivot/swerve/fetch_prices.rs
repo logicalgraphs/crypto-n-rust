@@ -23,18 +23,23 @@ use reqwest::Client;
 
 type Blob = String;
 
-async fn fetch_prices0(auth: &str, ids: &Vec<TokenId>) -> ErrStr<Blob> {
+async fn gecko_fetcher(auth: &str, url: &str, params: &[(&str, &str)])
+      -> ErrStr<Blob> {
    let client = Client::new();
-   let ids: &str = &ids.join(",");
-   let params = [("ids", ids), ("vs_currencies", "usd")];
-   let url = "https://api.coingecko.com/api/v3/simple/price";
    let req = client.get(url)
-                   .query(&params)
+                   .query(params)
                    .header("accept", "application/json")
                    .header("x-cg-demo-api-key", auth);
    let res = err_or(req.send().await, "sending GET request to coingecko")?;
    let json = err_or(res.text().await, "parsing result body from coingecko")?;
    Ok(json)
+}
+
+async fn fetch_prices0(auth: &str, ids: &Vec<TokenId>) -> ErrStr<Blob> {
+   let ids: &str = &ids.join(",");
+   let params = [("ids", ids), ("vs_currencies", "usd")];
+   let url = "https://api.coingecko.com/api/v3/simple/price";
+   gecko_fetcher(auth, url, &params).await
 }
 
 fn raw_to_prices(raw: &Blob) -> RawPrices {
