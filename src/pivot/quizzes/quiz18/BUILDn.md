@@ -40,4 +40,15 @@ swerve::fetch_prices module.
 Let's create a function from that which takes a token, a number of days, the 
 metadata, returning JSON from @coingecko, which we'll reify later.
 
+## Solution
+
+So:
+
+1. fetch the chart for an asset from @coingecko REST endpoint? 
+[Done!](answer18.rs) ✅
+
+![sAVAX chart, last 31 days](imgs/03-fetched-sAVAX.png)
+
+This involved fleshing out the pivot-table-handling in the libraries. Nothing 
+major: just a complete top-to-bottom rewrite of everything. 🙄
 
