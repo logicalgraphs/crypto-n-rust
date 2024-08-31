@@ -39,3 +39,5 @@ swerve::fetch_prices module.
 
 Let's create a function from that which takes a token, a number of days, the 
 metadata, returning JSON from @coingecko, which we'll reify later.
+
+

@@ -10,14 +10,14 @@ use book::{
    err_utils::ErrStr,
    list_utils::tail,
    num_utils::parse_num_or_zero,
-   table_utils::{Table,col,ingest,row_filter,rows},
+   table_utils::{col,ingest,row_filter,rows},
    utils::get_env
 };
 
 use crate::{
    fetch_pivots::{fetch_lines,parse_keys_symbols},
    fetch_prices::{fetch_prices,transform_prices},
-   types::{Diffs,EMAs,mk_emas,Price},
+   types::{Diffs,EMAs,mk_emas,Price,PivotDict,PivotTable},
    verify::verify
 };
 
@@ -34,18 +34,17 @@ pub async fn snarf() -> ErrStr<(Vec<Price>, Option<Diffs>)> {
    Ok((prices, errs))
 }
 
-pub type Pivots = Table<NaiveDate, String, f32>;
-
 // snarfs the Pivots-table and gives the most recent row-date
 
-pub async fn snarf_pivots() -> ErrStr<(Pivots, NaiveDate)> {
+pub async fn snarf_pivots() -> ErrStr<(PivotDict, PivotTable, NaiveDate)> {
    let pivs = fetch_lines().await?;
+   let dict = parse_keys_symbols(&pivs);
    fn to_string_or(s: &str) -> ErrStr<String> { Ok(s.to_string()) }
-   let table: Pivots =
+   let table: PivotTable =
       ingest(parse_date, to_string_or, parse_num_or_zero, &tail(&pivs), ",")?;
    let dates: Vec<NaiveDate> = rows(&table);
    let date: &NaiveDate = dates.last().ok_or("pivot table empty?")?;
-   Ok((table, date.clone()))
+   Ok((dict, table, date.clone()))
 }
 
 // this is a bit more than a snarf: I snarf the pivots then compute the
@@ -55,7 +54,7 @@ pub async fn snarf_pivots() -> ErrStr<(Pivots, NaiveDate)> {
 pub async fn snarf_emas(for_rows: u64, t1: &String, t2: &String)
       -> ErrStr<EMAs> {
    let days = Days::new(for_rows);
-   let (table, date) = snarf_pivots().await?;
+   let (_dict, table, date) = snarf_pivots().await?;
    let start = date.sub(days);
 
    fn in_range(d: &NaiveDate) -> impl Fn(&NaiveDate) -> bool + '_ {

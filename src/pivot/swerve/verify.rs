@@ -1,20 +1,27 @@
-use std::collections::{HashMap,HashSet};
+use std::collections::HashSet;
 
 use crate::types::{
-   Dict,
+   PivotDict,
    Diff::{MISSING, ADDED},
    Diffs,
+   Quote,
    RawPrices,
+   Token,
    TokenId
 };
 
-pub fn verify(dict: &Dict, prices: &RawPrices) -> Option<Diffs> {
-
-   fn capt<V>(m: &HashMap<TokenId, V>) -> HashSet<TokenId> {
-      m.keys().map(String::to_string).collect()
+pub fn verify(dict: &PivotDict, prices: &RawPrices) -> Option<Diffs> {
+   fn capt<V>(m: &Vec<(TokenId, V)>) -> HashSet<TokenId> {
+      fn key<V>(kv: &(String, V)) -> String { kv.0.to_string() }
+      m.into_iter().map(key).collect()
    }
-   let requested = capt(&dict);
-   let returned = capt(&prices);
+   fn cloner<V: Clone>((k, v): (&String, &V)) -> (String, V) {
+      (k.clone(), v.clone())
+   }
+   let v1: Vec<(TokenId, Token)> = dict.into_iter().map(cloner).collect();
+   let requested = capt(&v1);
+   let v2: Vec<(TokenId, Quote)> = prices.into_iter().map(cloner).collect();
+   let returned = capt(&v2);
 
    fn diff(a: &HashSet<TokenId>, b: &HashSet<TokenId>) -> Vec<TokenId> {
       a.difference(b).map(String::to_string).collect()

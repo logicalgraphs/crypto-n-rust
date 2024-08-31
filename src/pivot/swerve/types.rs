@@ -3,6 +3,7 @@ use std::{
    fmt
 };
 
+use bimap::BiMap;
 use chrono::NaiveDate;
 
 use book::{
@@ -10,6 +11,7 @@ use book::{
    json_utils::{AsJSON,json_list,to_object},
    num_utils::minimax_f32,
    string_utils::quot,
+   table_utils::Table,
    types::{stamp,Stamped}
 };
 
@@ -29,9 +31,10 @@ impl CsvWriter for Quote {
 pub type TokenId = String;
 pub type Token = String;
 pub type RawPrices = HashMap<TokenId, Quote>;
-pub type Dict = HashMap<TokenId, Token>;
 
 pub type Pivots = Vec<String>;
+pub type PivotDict = BiMap<TokenId, Token>;
+pub type PivotTable = Table<NaiveDate, String, f32>;
 
 pub type Price = ((TokenId, Token), Quote);
 

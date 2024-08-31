@@ -15,3 +15,7 @@ pub fn parse_date(d: &str) -> ErrStr<NaiveDate> {
 pub fn parse_date_and<'a>(line: &'a str) -> ErrStr<(NaiveDate, &'a str)> {
    err_or(NaiveDate::parse_and_remainder(line, &dt_fmt()), &err(line))
 }
+
+pub fn datef(s: &str) -> NaiveDate {
+   parse_date(s).expect(&format!("{s} not in date-format"))
+}

@@ -13,6 +13,7 @@ path = "lib.rs"
 book = { path = "../../libs/book" }
 crypto = { path = "../../libs/crypto" }
 
+bimap = "0.6.3"
 chrono = "0.4.38"
 reqwest = "0.12.4"
 

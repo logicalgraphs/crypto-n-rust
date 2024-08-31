@@ -17,7 +17,7 @@ use book::{
    err_utils::{err_or,ErrStr}
 };
 
-use crate::types::{Dict,Price,Quote,RawPrices,Token,TokenId,Chart};
+use crate::types::{PivotDict,Price,Quote,RawPrices,Token,TokenId,Chart};
 
 use reqwest::Client;
 
@@ -42,8 +42,8 @@ async fn fetch_prices0(auth: &str, ids: &Vec<TokenId>) -> ErrStr<Blob> {
    gecko_fetcher(auth, url, &params).await
 }
 
-pub async fn fetch_prices(auth: &str, dict: &Dict) -> ErrStr<RawPrices> {
-   let ids: Vec<TokenId> = dict.keys().map(String::to_string).collect();
+pub async fn fetch_prices(auth: &str, dict: &PivotDict) -> ErrStr<RawPrices> {
+   let ids: Vec<TokenId> = dict.left_values().map(String::to_string).collect();
    let raw = fetch_prices0(auth, &ids).await?;
    Ok(raw_to_prices(&raw))
 }
@@ -54,14 +54,15 @@ fn raw_to_prices(raw: &Blob) -> RawPrices {
 
 // transforms JSON with token-ids to vec with token symbols
 
-pub fn transform_prices(dict: &Dict, pric: &RawPrices) -> Vec<Price> {
+pub fn transform_prices(dict: &PivotDict, pric: &RawPrices) -> Vec<Price> {
    fn arr_m<'a>((k,v): (&'a TokenId, &'a Quote))
          -> impl Fn(&Token) -> Option<Price> + 'a {
       move |x| Some(((k.to_string(), x.to_string()), v.clone()))
+      // or compose!(Some)(first(|k| (k.to_string(), x.to_string())))
    }
 
    let mut rows: Vec<Price> = pric.into_iter()
-          .filter_map(|entry| dict.get(entry.0).and_then(arr_m(entry)))
+          .filter_map(|entry| dict.get_by_left(entry.0).and_then(arr_m(entry)))
                  // much easier with monads and arrows, seriously! :<
           .collect();
    fn root(s: &str) -> String {
@@ -119,3 +120,12 @@ curl --request GET \
 
 n.b.: the URL, itself, embeds the token-id
 */
+
+pub async fn fetch_chart0(auth: &str, tok_id: &str, days: i64) -> ErrStr<Blob> {
+   let day6: &str = &format!("{days}");
+   let ps = [("days", day6), ("vs_currency", "usd"), ("interval", "daily")];
+   let url =
+      format!("https://api.coingecko.com/api/v3/coins/{tok_id}/market_chart");
+   gecko_fetcher(auth, &url, &ps).await
+}
+

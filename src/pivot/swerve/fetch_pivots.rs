@@ -13,9 +13,9 @@ use book::{
 
 use crypto::rest_utils::data_res;
 
-use crate::types::{Dict,Pivots,mk_quote,Quote,TokenId,Token};
+use crate::types::{PivotDict,Pivots,mk_quote,Quote,TokenId,Token};
 
-pub fn parse_keys_symbols(pivots: &Pivots) -> Dict {
+pub fn parse_keys_symbols(pivots: &Pivots) -> PivotDict {
    parse_token_headers(pivots).into_iter().collect()
 }
 

@@ -9,3 +9,4 @@ Let's do two things from here.
 
 ![Pivot table assets](imgs/01-pivots.png)
 
+* Our [answer](BUIDLn.md) as a process.
