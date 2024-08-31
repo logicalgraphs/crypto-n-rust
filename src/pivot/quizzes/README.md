@@ -39,3 +39,5 @@ only.
 * quiz 16: [Compute date-δ](quiz16)
 * quiz 17: [Fetch one token over a series of dates](quiz17)
 * quiz 18: [Fetch all pivot-table assets from REST endpoint](quiz18)
+  1. Request a token's chart from @coingeckco REST endpoint
+  2. Reify the JSON response

@@ -13,7 +13,7 @@ working (shell) application to (more) working application.
 * **bottom-up** builds each piece, first, then stitches the working pieces 
 together at the end to realize the application entire.
 
-I *chose* top-down for [quiz 17](../quiz17) because I new the (entire)
+I *chose* top-down for [quiz 17](../quiz17) because I knew the (entire)
 structure, and the puzzle for me was to refine that structure iteratively
 to round-out the data ingested.
 
@@ -57,3 +57,12 @@ This answer fetched the first entry in our pivot-(hashed)-dictionary: $sAVAX.
 Recall that we are doing the bottom-up approach to coding this solution, so we 
 only got the JSON-as-String from the @coingecko REST endpoint. Processing and 
 tabling the result comes later.
+
+## Pivot quiz 18.1.b: reifying the JSON response
+
+...that last part was 18.1.a, don't you know: bottom-up development do be like 
+that.
+
+Reify the above JSON string response from @coingecko into appropriate 
+#Rust-structures, 
+[as we did before](../quiz17).
