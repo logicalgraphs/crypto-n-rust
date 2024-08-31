@@ -52,3 +52,8 @@ So:
 This involved fleshing out the pivot-table-handling in the libraries. Nothing 
 major: just a complete top-to-bottom rewrite of everything. 🙄
 
+This answer fetched the first entry in our pivot-(hashed)-dictionary: $sAVAX.
+
+Recall that we are doing the bottom-up approach to coding this solution, so we 
+only got the JSON-as-String from the @coingecko REST endpoint. Processing and 
+tabling the result comes later.
