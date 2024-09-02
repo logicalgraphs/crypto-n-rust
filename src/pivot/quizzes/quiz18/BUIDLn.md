@@ -45,7 +45,7 @@ metadata, returning JSON from @coingecko, which we'll reify later.
 So:
 
 1. fetch the chart for an asset from @coingecko REST endpoint? 
-[Done!](answer18.rs) ✅
+[Done!](answer18a_read_json.rs) ✅
 
 ![sAVAX chart, last 31 days](imgs/03-fetched-sAVAX.png)
 

@@ -1,10 +1,12 @@
 use std::collections::HashMap;
 
-use book::tuple_utils::{fst,snd};
+use book::{
+   tuple_utils::{fst,snd},
+   types::untag
+};
 
 use crate::types::{
    interfaces::{Book,Books,VPair,vols},
-   pairs::untag,
    usd::{USD,no_monay}
 };
 

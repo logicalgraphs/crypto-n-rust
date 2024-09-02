@@ -3,13 +3,15 @@
 
 use std::collections::{HashMap,HashSet};
 
-use book::utils::pred;
+use book::{
+   types::untag,
+   utils::pred
+};
 
 use crate::types::{
    internal::types::{Book1,Books1},
    aliases::{Aliases,alias},
    interfaces::{Prices,Price,mk_price},
-   pairs::untag,
    usd::{USD,mk_usd}
 };
 

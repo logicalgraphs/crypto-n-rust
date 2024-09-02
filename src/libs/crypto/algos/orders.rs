@@ -2,12 +2,13 @@
 
 use std::collections::HashSet;
 
+use book::types::untag;
+
 use crate::types::{
    assets::Asset,
    books::{fetch_books_by_vol,parse_books_with_aliases},
    interfaces::{Books,BookBooks,tokens,Prices,ticker,book_orderbook,vol_24h},
    marketplace::{OrderBook,dual_asset,orderbook},
-   pairs::untag,
    usd::USD,
    volumes::{Volumes,volumes_by_token}
 };

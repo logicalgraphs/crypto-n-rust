@@ -1,11 +1,13 @@
 // Give Venn Diagram-representation as per https://github.com/benfred/venn.js
 
-use book::json_utils::AsJSON;
+use book::{
+   json_utils::AsJSON,
+   types::{Dyad,unpair,Tag,mk_tag,untag}
+};
 
 use crate::{
    types::{
       interfaces::{Books,vol_24h_pair},
-      pairs::{Dyad,unpair,Tag,mk_tag,untag},
       usd::USD,
       volumes::Volumes
    }

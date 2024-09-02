@@ -5,7 +5,6 @@ pub mod coins;
 pub mod interfaces;
 pub mod liquidations;
 pub mod marketplace;
-pub mod pairs;
 pub mod percentage;
 pub mod portfolio;
 pub mod prices;

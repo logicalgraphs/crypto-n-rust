@@ -18,6 +18,9 @@ fn usage() {
 ");
 }
 
+// This answer simply snarfs the JSON.
+// We're happy with that (incremental) result, because: bottom-up, 'n stuff.
+
 #[tokio::main]
 async fn main() -> ErrStr<()> {
    let pass = err_or(var("COIN_GECKO_API_KEY"),
@@ -26,7 +29,10 @@ async fn main() -> ErrStr<()> {
    if let Some(date) = args.first() {
       let today = parse_date(&date)?;
       let (dict, _pivots, max_date) = snarf_pivots().await?;
-      if let Some((tok_id,tok)) = dict.iter().next() {
+      if let Some((tok_id,tok)) = dict.iter().next() { 
+            // iter().next() is a complicated way of saying: first().
+            // although, tbf, 'first' of a bijection is a weird request with
+            // a perplexing job for implementors to provide a consistent answer.
          let n = (today - max_date).num_days();
          let json = fetch_chart0(&pass, &tok_id, n).await?;
          println!("JSON for {tok} for last {n} days is:\n\n{json}");

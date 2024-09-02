@@ -14,7 +14,8 @@ extern crate serde;
 use serde_json::{from_reader,from_str};
 
 use book::{
-   err_utils::{err_or,ErrStr}
+   err_utils::{err_or,ErrStr},
+   types::{Tag,mk_tag}
 };
 
 use crate::types::{PivotDict,Price,Quote,RawPrices,Token,TokenId,Chart};
@@ -97,6 +98,10 @@ fn read_chart_from_file0<P: AsRef<Path> + Debug + Clone>(path: P)
 pub fn read_chart_from_file<P: AsRef<Path> + Debug + Clone>(path: P)
         -> ErrStr<Chart<f64>> {      
    let raw = read_chart_from_file0(path)?;
+   raw_to_chart(raw)
+}
+
+fn raw_to_chart(raw: Chart0<StampedPrice0>) -> ErrStr<Chart<f64>> {
    let mut ans = HashMap::new();
    fn to_stamp(v: &Vec<f64>) -> (NaiveDate, f64) {
       let dt = DateTime::from_timestamp((v[0] / 1000.0) as i64, 0).unwrap();
@@ -121,7 +126,8 @@ curl --request GET \
 n.b.: the URL, itself, embeds the token-id
 */
 
-pub async fn fetch_chart0(auth: &str, tok_id: &str, days: i64) -> ErrStr<Blob> {
+pub async fn fetch_chart_json(auth: &str, tok_id: &TokenId, days: i64)
+       -> ErrStr<Blob> {
    let day6: &str = &format!("{days}");
    let ps = [("days", day6), ("vs_currency", "usd"), ("interval", "daily")];
    let url =
@@ -129,3 +135,12 @@ pub async fn fetch_chart0(auth: &str, tok_id: &str, days: i64) -> ErrStr<Blob> {
    gecko_fetcher(auth, &url, &ps).await
 }
 
+fn parse_chart0(b: Blob) -> ErrStr<Chart0<StampedPrice0>> {
+   err_or(from_str(&b), "Cannot parse JSON")
+}
+
+pub fn parse_chart(symbol: &Token, b: Blob) -> ErrStr<Tag<Chart<f64>>> {
+   let raw = parse_chart0(b)?;
+   let chart = raw_to_chart(raw)?;
+   Ok(mk_tag((symbol.to_string(), chart)))
+}

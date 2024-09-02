@@ -5,13 +5,13 @@ use std::{
 
 use book::{
    csv_utils::CsvWriter,
-   num_utils::mk_estimate
+   num_utils::mk_estimate,
+   types::{Dyad,mk_dyad,unpair,Tag,mk_tag,untag}
 };
 
 use crate::types::{
    books::fetch_books,
    marketplace::{OrderBook,mk_orderbook},
-   pairs::{Dyad,mk_dyad,unpair,Tag,mk_tag,untag},
    usd::{USD,mk_usd}
 };
 

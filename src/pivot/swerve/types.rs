@@ -1,6 +1,6 @@
 use std::{
    collections::HashMap,
-   fmt
+   fmt, fmt::Debug
 };
 
 use bimap::BiMap;
@@ -12,7 +12,7 @@ use book::{
    num_utils::minimax_f32,
    string_utils::quot,
    table_utils::Table,
-   types::{stamp,Stamped}
+   types::{stamp,Stamped,Tag,untag}
 };
 
 extern crate serde;
@@ -285,4 +285,24 @@ pub fn confidence(ds: &Deltas) -> Option<f32> {
 pub type StampedData<A> = HashMap<NaiveDate, A>;
 pub type Chart<A> = HashMap<String, StampedData<A>>;
 
-// reading functionality in fetch_prices and (eventually) snarf
+pub fn print_chart<A: Debug + Clone>(c: &Tag<Chart<A>>) {
+   let (tag, value) = untag(&c);
+   println!("{} Chart:\n", tag);
+   for section in value {
+      print_section(&section);
+   }
+}
+
+fn print_section<A: Debug + Clone>((section, row): &(String, StampedData<A>)) {
+   println!("Section: {section}");
+
+   fn print_datum<A: Debug>(data: &A) {
+      println!("\t{:?}", data);
+   }
+   let mut prices: Vec<(NaiveDate, A)> = Vec::new();
+   // ugh: row.into_iter().cloned().collect();
+   for (k,v) in row { prices.push((k.clone(), v.clone())); }
+   prices.sort_by_key(|k| k.0);
+   prices.iter().take(3).for_each(print_datum);
+   println!("\t...");
+}

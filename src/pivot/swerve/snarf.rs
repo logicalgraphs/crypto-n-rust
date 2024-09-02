@@ -11,13 +11,14 @@ use book::{
    list_utils::tail,
    num_utils::parse_num_or_zero,
    table_utils::{col,ingest,row_filter,rows},
+   types::Tag,
    utils::get_env
 };
 
 use crate::{
    fetch_pivots::{fetch_lines,parse_keys_symbols},
-   fetch_prices::{fetch_prices,transform_prices},
-   types::{Diffs,EMAs,mk_emas,Price,PivotDict,PivotTable},
+   fetch_prices::{fetch_prices,transform_prices,fetch_chart_json,parse_chart},
+   types::{Chart,Diffs,EMAs,mk_emas,Price,PivotDict,PivotTable,Token,TokenId},
    verify::verify
 };
 
@@ -73,4 +74,12 @@ pub async fn snarf_emas(for_rows: u64, t1: &String, t2: &String)
    let dates = rows(&domain);
    let emas = mk_emas(t1, t2, 20, &dates, &ratios);
    Ok(emas)
+}
+
+// gets a symbol's historical price data, known as its 'chart'
+
+pub async fn snarf_chart(auth: &str, tok_id: &TokenId, symbol: &Token,
+                         days: i64) -> ErrStr<Tag<Chart<f64>>> {
+   let json = fetch_chart_json(auth, tok_id, days).await?;
+   parse_chart(symbol, json)
 }

@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "answer18"
-path = "answer18.rs"
+path = "answer18b_reify_row.rs"
 
 [dependencies]
 serde = { version = "1.0.104", features = ["derive"] }

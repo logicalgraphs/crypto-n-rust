@@ -1,8 +1,9 @@
 use std::cmp::Ordering;
 
+use book::types::untag;
+
 use crate::types::{
    interfaces::{Prices,Price},
-   pairs::untag
 };
 
 type Pair = (String, Price);
