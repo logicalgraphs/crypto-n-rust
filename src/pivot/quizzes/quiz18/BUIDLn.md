@@ -66,3 +66,13 @@ that.
 Reify the above JSON string response from @coingecko into appropriate 
 #Rust-structures, 
 [as we did before](../quiz17).
+
+### Partial answer.
+
+We do reify the JSON into a chart, but it's more than we need, as I'm only 
+looking for the prices at present.
+
+![DOT chart](imgs/04b-parse-DOT-chart.png)
+
+One more step to reify to a symbol's price-chart, but what we have here is a 
+[good step forward](../../swerve/snarf.rs#L79-L85).
