@@ -84,4 +84,5 @@ from @coingecko to a `PivotTable`.
 
 ![$OP price-chart as `PivotTable`](imgs/05-op-prices.png)
 
-We do this by adding a `swerve::snarf::snarf_pivot_table()`-function.
+We do this by adding a 
+[`swerve::snarf::snarf_pivot_table()`](../../swerve/snarf.rs#L88-L96)-function.
