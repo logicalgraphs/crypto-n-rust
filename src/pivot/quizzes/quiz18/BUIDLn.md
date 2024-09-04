@@ -58,7 +58,7 @@ Recall that we are doing the bottom-up approach to coding this solution, so we
 only got the JSON-as-String from the @coingecko REST endpoint. Processing and 
 tabling the result comes later.
 
-## Pivot quiz 18.1.b: reifying the JSON response
+## Pivot quiz 18.b: reifying the JSON response
 
 ...that last part was 18.1.a, don't you know: bottom-up development do be like 
 that.
@@ -86,3 +86,29 @@ from @coingecko to a `PivotTable`.
 
 We do this by adding a 
 [`swerve::snarf::snarf_pivot_table()`](../../swerve/snarf.rs#L88-L96)-function.
+
+## Pivot quiz 18.c: iterate
+
+Going forward we need to:
+
+1. grab all the $PIVOT asset charts
+2. merge those results into the BIG-OL' pivot-table.
+
+The first one is easy enough. The second one can be shunted OFT! into its own 
+quizzy-whizzy. Let's start with the first one, then.
+
+## Pivot quiz 18.d: throttling REST endpoint calls
+
+OOPHDA! I thought the quiz was going to be replacing a call to `first()` 
+(-...equivalent) with a `for`-loop.
+
+It was, ... until I got a JSON parse error.
+
+![JSON parse error???](imgs/06a-JSON-parse-error.png)
+
+Digging deeper, come to find @coingecko throttles the number of calls to their 
+REST endpoint on the free-tier, as they should.
+
+![Throttled REST endpoint calls on the free tier](imgs/06b-throttled-response.png)
+
+Pop-quiz: FIX THIS!

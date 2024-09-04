@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "answer18"
-path = "answer18c_price_row.rs"
+path = "answer18d_all_prices.rs"
 
 [dependencies]
 serde = { version = "1.0.104", features = ["derive"] }

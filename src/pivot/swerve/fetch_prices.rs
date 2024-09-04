@@ -140,7 +140,9 @@ fn parse_chart0(b: Blob) -> ErrStr<Chart0<StampedPrice0>> {
 }
 
 pub fn parse_chart(symbol: &Token, b: Blob) -> ErrStr<Tag<Chart<f32>>> {
-   let raw = parse_chart0(b)?;
+   let raw =
+      parse_chart0(b.clone())
+        .expect(&format!("Cannot parse JSON for chart {symbol}; JSON is {b}"));
    let chart = raw_to_chart(raw)?;
    Ok(mk_tag((symbol.to_string(), chart)))
 }
