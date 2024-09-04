@@ -91,7 +91,7 @@ impl fmt::Display for Estimate {
    }
 }
 
-// for when we need to serialize or to hash an f64 value
+// for when we need to serialize or to hash an f32 value
 
 pub fn integer_decode(val: f64) -> (u64, i16, i8) {
    let bits: u64 = unsafe { mem::transmute(val) };

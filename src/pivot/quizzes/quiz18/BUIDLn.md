@@ -76,3 +76,12 @@ looking for the prices at present.
 
 One more step to reify to a symbol's price-chart, but what we have here is a 
 [good step forward](../../swerve/snarf.rs#L79-L85).
+
+### Pivot Table
+
+Using the work we did in [quiz 17](../quiz17), we convert the chart-data
+from @coingecko to a `PivotTable`.
+
+![$OP price-chart as `PivotTable`](imgs/05-op-prices.png)
+
+We do this by adding a `swerve::snarf::snarf_pivot_table()`-function.

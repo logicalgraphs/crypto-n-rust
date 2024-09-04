@@ -10,15 +10,16 @@ use book::{
    err_utils::ErrStr,
    list_utils::tail,
    num_utils::parse_num_or_zero,
-   table_utils::{col,ingest,row_filter,rows},
-   types::Tag,
+   table_utils::{col,ingest,row_filter,rows,from_map,transpose},
+   types::{Tag,untag},
    utils::get_env
 };
 
 use crate::{
    fetch_pivots::{fetch_lines,parse_keys_symbols},
    fetch_prices::{fetch_prices,transform_prices,fetch_chart_json,parse_chart},
-   types::{Chart,Diffs,EMAs,mk_emas,Price,PivotDict,PivotTable,Token,TokenId},
+   types::{Chart,Diffs,EMAs,mk_emas,Price,PivotDict,PivotTable,
+           StampedData,Token,TokenId},
    verify::verify
 };
 
@@ -76,10 +77,20 @@ pub async fn snarf_emas(for_rows: u64, t1: &String, t2: &String)
    Ok(emas)
 }
 
-// gets a symbol's historical price data, known as its 'chart'
+// gets a symbol's historical price data, known as its 'table'
 
-pub async fn snarf_chart(auth: &str, tok_id: &TokenId, symbol: &Token,
-                         days: i64) -> ErrStr<Tag<Chart<f64>>> {
+async fn snarf_chart(auth: &str, tok_id: &TokenId, symbol: &Token,
+                     days: i64) -> ErrStr<Tag<Chart<f32>>> {
    let json = fetch_chart_json(auth, tok_id, days).await?;
    parse_chart(symbol, json)
+}
+
+pub async fn snarf_pivot_table(auth: &str, tok_id: &TokenId, symbol: &Token,
+                     days: i64) -> ErrStr<PivotTable> {
+   let chart = snarf_chart(auth, tok_id, symbol, days).await?;
+   let (_tag, value) = untag(&chart);
+   let stamped_prices: &StampedData<f32> =
+      value.get("prices").expect(&format!("price for {symbol}/{tok_id}"));
+   let table = from_map(symbol, stamped_prices);
+   Ok(transpose(&table))
 }

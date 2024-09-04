@@ -78,7 +78,7 @@ pub fn transform_prices(dict: &PivotDict, pric: &RawPrices) -> Vec<Price> {
 
 // ----- Chart-data, or, fetching historical data for tokens -----------------
 
-type StampedPrice0 = Vec<f64>;
+type StampedPrice0 = Vec<f32>;
 type StampedData0<A> = Vec<A>;
 type Chart0<A> = HashMap<String, StampedData0<A>>;
 
@@ -96,14 +96,14 @@ fn read_chart_from_file0<P: AsRef<Path> + Debug + Clone>(path: P)
 }
 
 pub fn read_chart_from_file<P: AsRef<Path> + Debug + Clone>(path: P)
-        -> ErrStr<Chart<f64>> {      
+        -> ErrStr<Chart<f32>> {      
    let raw = read_chart_from_file0(path)?;
    raw_to_chart(raw)
 }
 
-fn raw_to_chart(raw: Chart0<StampedPrice0>) -> ErrStr<Chart<f64>> {
+fn raw_to_chart(raw: Chart0<StampedPrice0>) -> ErrStr<Chart<f32>> {
    let mut ans = HashMap::new();
-   fn to_stamp(v: &Vec<f64>) -> (NaiveDate, f64) {
+   fn to_stamp(v: &Vec<f32>) -> (NaiveDate, f32) {
       let dt = DateTime::from_timestamp((v[0] / 1000.0) as i64, 0).unwrap();
       (dt.date_naive(), v[1])
    }
@@ -139,7 +139,7 @@ fn parse_chart0(b: Blob) -> ErrStr<Chart0<StampedPrice0>> {
    err_or(from_str(&b), "Cannot parse JSON")
 }
 
-pub fn parse_chart(symbol: &Token, b: Blob) -> ErrStr<Tag<Chart<f64>>> {
+pub fn parse_chart(symbol: &Token, b: Blob) -> ErrStr<Tag<Chart<f32>>> {
    let raw = parse_chart0(b)?;
    let chart = raw_to_chart(raw)?;
    Ok(mk_tag((symbol.to_string(), chart)))
