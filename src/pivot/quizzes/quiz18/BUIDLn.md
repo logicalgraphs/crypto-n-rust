@@ -97,7 +97,7 @@ Going forward we need to:
 The first one is easy enough. The second one can be shunted OFT! into its own 
 quizzy-whizzy. Let's start with the first one, then.
 
-## Pivot quiz 18.d: throttling REST endpoint calls
+## Pivot quiz 18.d: throttled REST endpoint
 
 OOPHDA! I thought the quiz was going to be replacing a call to `first()` 
 (-...equivalent) with a `for`-loop.
