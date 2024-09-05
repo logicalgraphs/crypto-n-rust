@@ -53,9 +53,6 @@ This way I measure the success of my pivot-arbitrage.
 1. Fetching/reporting data: DONE! ✅ 2024-06-21 (gecko, status)
 2. analyzing data (ema)
 3. charting pivots
-
-### WIP
-
 4. making pivot-trade recommendations
 
 ### Long-term
