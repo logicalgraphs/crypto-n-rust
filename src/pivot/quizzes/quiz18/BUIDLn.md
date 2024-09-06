@@ -136,4 +136,4 @@ and it varies depending on the traffic size."
 
 ![CoinGecko Public API rate limits](imgs/08-rate-limits.png)
 
-Is one big pause better? Or isone little pause between each API-call better?
+Is one big pause better? Or is one little pause between each API-call better?
