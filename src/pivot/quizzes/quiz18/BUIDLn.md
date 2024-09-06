@@ -125,3 +125,15 @@ I chose option 2 by adding a `task::sleep()` to the
 ![... please hold](imgs/07a-please-hold.png)
 
 ![Got all responses now](imgs/07b-and-we-are-done.png)
+
+## Pivot quiz 18.d: rate limits
+
+From 
+[@coingecko docs](https://docs.coingecko.com/v3.0.1/reference/common-errors-rate-limit): 
+
+> "For Public API user (Demo plan), the rate limit is ~30 calls per minutes 
+and it varies depending on the traffic size." 
+
+![CoinGecko Public API rate limits](imgs/08-rate-limits.png)
+
+Is one big pause better? Or isone little pause between each API-call better?
