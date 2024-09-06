@@ -22,7 +22,7 @@ use crate::types::{PivotDict,Price,Quote,RawPrices,Token,TokenId,Chart};
 
 use reqwest::Client;
 
-type Blob = String;
+pub type Blob = String;
 
 async fn gecko_fetcher(auth: &str, url: &str, params: &[(&str, &str)])
       -> ErrStr<Blob> {

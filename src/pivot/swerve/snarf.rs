@@ -1,7 +1,8 @@
 // name-explanation: when you've got to fetch-all, you're snarfin' it!
 // ... am I right, fam? 😎
 
-use std::ops::Sub;
+use std::{ops::Sub, time::Duration};
+use async_std::task;
 
 use chrono::{Days,NaiveDate};
 
@@ -17,7 +18,8 @@ use book::{
 
 use crate::{
    fetch_pivots::{fetch_lines,parse_keys_symbols},
-   fetch_prices::{fetch_prices,transform_prices,fetch_chart_json,parse_chart},
+   fetch_prices::{Blob,fetch_prices,transform_prices,
+                  fetch_chart_json,parse_chart},
    types::{Chart,Diffs,EMAs,mk_emas,Price,PivotDict,PivotTable,
            StampedData,Token,TokenId},
    verify::verify
@@ -77,12 +79,25 @@ pub async fn snarf_emas(for_rows: u64, t1: &String, t2: &String)
    Ok(emas)
 }
 
-// gets a symbol's historical price data, known as its 'table'
+// gets a symbol's historical price data, known as its 'chart'
 
 async fn snarf_chart(auth: &str, tok_id: &TokenId, symbol: &Token,
                      days: i64) -> ErrStr<Tag<Chart<f32>>> {
-   let json = fetch_chart_json(auth, tok_id, days).await?;
-   parse_chart(symbol, json)
+   async fn chart_fetcher(auth: &str, tok_id: &TokenId, days: i64)
+         -> ErrStr<Blob> {
+      fetch_chart_json(auth, tok_id, days).await
+   }
+   let json = chart_fetcher(auth, tok_id, days).await?;
+   let json1 = if json.trim() == "Throttled" {
+      let problem = "request to coingecko REST endpoint throttled";
+      let remedy = "pausing 60 seconds";
+      println!("*** {problem}; {remedy} ...");
+      task::sleep(Duration::from_secs(60)).await;
+      chart_fetcher(auth, tok_id, days).await?
+   } else {
+      json
+   };
+   parse_chart(symbol, json1)
 }
 
 pub async fn snarf_pivot_table(auth: &str, tok_id: &TokenId, symbol: &Token,

@@ -112,3 +112,5 @@ REST endpoint on the free-tier, as they should.
 ![Throttled REST endpoint calls on the free tier](imgs/06b-throttled-response.png)
 
 Pop-quiz: FIX THIS!
+
+
