@@ -113,4 +113,15 @@ REST endpoint on the free-tier, as they should.
 
 Pop-quiz: FIX THIS!
 
+There are several ways to solve this problem:
 
+1. pay coingecko
+2. introduce a wait-loop on a 'Throttled'-response
+3. break apart $PIVOTS into smaller chunks.
+
+I chose option 2 by adding a `task::sleep()` to the
+[snarf-call](../../swerve/snarf.rs#L82-L101)
+
+![... please hold](imgs/07a-please-hold.png)
+
+![Got all responses now](imgs/07b-and-we-are-done.png)
