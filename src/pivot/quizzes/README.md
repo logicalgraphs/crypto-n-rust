@@ -39,7 +39,8 @@ only.
 * quiz 16: [Compute date-δ](quiz16)
 * quiz 17: [Fetch one token over a series of dates](quiz17)
 * quiz 18: [Fetch all pivot-table assets from REST endpoint](quiz18)
-  1. Request a token's chart from @coingeckco REST endpoint
-  2. Reify the JSON response
-  3. iterate over all the assets in 
+  a. Request a token's chart from @coingeckco REST endpoint
+  b. Reify the JSON response
+  c. iterate over all the assets in 
 [`$PIVOTS`](../../../data-files/csv/pivots.csv)
+  d. @coingecko public API rate limits
