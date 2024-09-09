@@ -137,3 +137,20 @@ and it varies depending on the traffic size."
 ![CoinGecko Public API rate limits](imgs/08-rate-limits.png)
 
 Is one big pause better? Or is one little pause between each API-call better?
+
+### Answer
+
+If there are less than 30 calls, say 29 calls, there's no long pause, but 
+inlined pauses will at at least 2 seconds per pause, or, worst case: 58 seconds.
+
+If there are more than 30 calls, there's only 60 seconds long-pause, but 
+inlined is longer.
+
+Inlining the pauses is less troublesome per call, but ALWAYS WORSE than one 
+long pause.
+
+FURTHERMORE, subscribers need never pause between calls, so if pauses are 
+inlined, it punishes @coingecko premium subscribers unnecessarily.
+
+Long pauses pause ONLY on 'Throttled'-response.
+
