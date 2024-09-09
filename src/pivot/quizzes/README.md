@@ -44,3 +44,4 @@ only.
   3. iterate over all the assets in 
 [`$PIVOTS`](../../../data-files/csv/pivots.csv)
   4. @coingecko public API rate limits
+* quiz 19: [Coalesce assets fetched into one table](quiz19)
