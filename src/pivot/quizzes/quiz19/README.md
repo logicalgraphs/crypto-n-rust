@@ -13,3 +13,4 @@ so we can add these results to our data-store.
 
 One way to do that: write `table_utils::merge_tables()`
 
+* Follow along as we [BUIDL our solution](BUIDLn.md).
