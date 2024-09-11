@@ -244,25 +244,24 @@ pub fn transpose<ROW: Clone + Eq + Hash, COL: Clone + Eq + Hash, DATUM: Clone>
 type Headers<HEADER> = HashMap<HEADER, usize>;
 
 fn new_headers<HEADER: Eq + Hash + Ord + Clone>
-      (h1: &Headers<HEADER>, h2: &Headers<HEADER>) -> Headers<HEADER> {
+      (h1: &Headers<HEADER>, h2: &Headers<HEADER>)
+      -> (Headers<HEADER>, Vec<HEADER>) {
    let keys1: HashSet<HEADER> = h1.keys().cloned().collect();
    let keys2: HashSet<HEADER> = h2.keys().cloned().collect();
-   let mut new_headers0: Vec<HEADER> = keys1.union(&keys2).cloned().collect();
-   new_headers0.sort();
+   let mut sorted_headers: Vec<HEADER> = keys1.union(&keys2).cloned().collect();
+   sorted_headers.sort();
    let new_headers: Headers<HEADER> =
-      new_headers0.into_iter().enumerate().map(swap).collect();
-   new_headers
+      sorted_headers.clone().into_iter().enumerate().map(swap).collect();
+   (new_headers, sorted_headers)
 }
 
 pub fn merge<ROW: Clone + Eq + Hash + Ord, COL: Clone + Eq + Hash + Ord,
              DATUM: Clone>
       (source: &Table<ROW, COL, DATUM>, adjoin: &Table<ROW, COL, DATUM>,
        default: DATUM) -> Table<ROW, COL, DATUM> {
-   let new_rows = new_headers(&source.rows_, &adjoin.rows_);
-   let new_cols = new_headers(&source.cols_, &adjoin.cols_);
+   let (_new_rows, sorted_rows) = new_headers(&source.rows_, &adjoin.rows_);
+   let (new_cols, sorted_cols) = new_headers(&source.cols_, &adjoin.cols_);
    let mut new_mat = Vec::new();
-   let sorted_cols = sort_headers(&new_cols);
-   let sorted_rows = sort_headers(&new_rows);
 
    // now that we have the new headers (rows and cols), let's build the
    // new matrix for our table
