@@ -2,9 +2,11 @@ use std::{
    clone::Clone,
    cmp::Eq,
    collections::{HashMap,HashSet},
-   fmt::Display,
+   fmt::{Debug,Display},
    hash::Hash
 };
+
+use bimap::BiMap;
 
 use crate::{
    compose,
@@ -218,4 +220,65 @@ pub fn transpose<ROW: Clone + Eq + Hash, COL: Clone + Eq + Hash, DATUM: Clone>
    let new_cols = rows(&table);
    let new_dater = matrix_utils::transpose(&table.data);
    mk_table(new_rows, new_cols, new_dater)
+}
+
+// ----- MERGE ----------------------------------------------------------------
+
+// merging two tables is a rather complicated affair? Yes.
+
+// how do we manage this. My thought: new-rows is the union of the rows of
+// the source and adjoin tables. No duh, but then, that means that the new-row
+// index can be different than the old rows' indices. Cases for this:
+// interleaved values or values that collide, but with differing indices in the
+// source or adjoin tables. We therefore must assume that the new indices
+// are not related to the old indices in any way.
+
+// AND we must memoize the relationship between the old indices, for BOTH
+// the source and adjoin tables, and the new indices as a bijection.
+
+// FUN!
+
+type Headers<HEADER> = HashMap<HEADER, usize>;
+type Indices = BiMap<usize, usize>;
+
+fn new_headers<HEADER: Eq + Hash + Ord + Clone + Debug>(h1: &Headers<HEADER>,
+      h2: &Headers<HEADER>) -> Headers<HEADER> {
+   let keys1: HashSet<HEADER> = h1.keys().cloned().collect();
+   let keys2: HashSet<HEADER> = h2.keys().cloned().collect();
+   let mut new_headers0: Vec<HEADER> = keys1.union(&keys2).cloned().collect();
+   new_headers0.sort();
+   let new_headers: Headers<HEADER> =
+      new_headers0.into_iter().enumerate().map(swap).collect();
+   println!("new_headers are {new_headers:?}");
+   new_headers
+}
+
+fn indices<HEADER: Eq + Hash + Ord + Clone + Debug>(h1: &Headers<HEADER>,
+      h2: &Headers<HEADER>, new_h: &Headers<HEADER>) -> (Indices, Indices) {
+   let mut b1 = BiMap::new();
+   let mut b2 = BiMap::new();
+   for (k, v) in new_h {
+      h1.get(&k).and_then(|v1| Some(b1.insert(v1.clone(), v.clone())));
+      h2.get(&k).and_then(|v2| Some(b2.insert(v2.clone(), v.clone())));
+   }
+   (b1, b2)
+}
+
+pub fn merge<ROW: Clone + Eq + Hash + Ord + Debug, 
+             COL: Clone + Eq + Hash + Ord + Debug, DATUM: Clone>
+      (source: &Table<ROW, COL, DATUM>, adjoin: &Table<ROW, COL, DATUM>)
+      -> Table<ROW, COL, DATUM> {
+   fn hdrs<HEADER: Hash + Eq + Ord + Clone + Debug>(kind: &str, 
+         hdr1: &Headers<HEADER>, hdr2: &Headers<HEADER>,
+         new_h: &Headers<HEADER>) -> (Indices, Indices) {
+      println!("For {kind}:");
+      let ans = indices(hdr1, hdr2, new_h);
+      println!("{kind} indices: {ans:?}");
+      ans
+   }
+   let new_rows = new_headers(&source.rows_, &adjoin.rows_);
+   let _new_row_ix = hdrs("rows", &source.rows_, &adjoin.rows_, &new_rows);
+   let new_cols = new_headers(&source.cols_, &adjoin.cols_);
+   let _new_col_ix = hdrs("cols", &source.cols_, &adjoin.cols_, &new_cols);
+   panic!("table_utils::merge() not yet implemented.")
 }

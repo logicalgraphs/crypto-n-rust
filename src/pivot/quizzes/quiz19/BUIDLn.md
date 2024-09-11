@@ -6,6 +6,8 @@ How to solve this?
 
 Let's take a piecewise-approach, from the top-down.
 
+### `panic!()` as implementation-*'holes'*
+
 The first thing is we need a pair of tables (to merge) and we need a 
 `merge()`-function, so let's do that, implementing them with ... get this: 
 `panic!()` !?!??!??
@@ -25,6 +27,8 @@ Even though my implementation is currently 'no implementation' with panic!(),
 the program compiles, meaning that the types are correctly declared.
 
 This, in itself, is a big step forward in Rust program development.
+
+### implementing `map_table()`
 
 Okay, so, let's take the first implementation step.
 
@@ -46,3 +50,19 @@ because the `panic!()` tells us so.
 
 `panic!()`-calls are 'holes' in the program that we 'fill' (implement) as we 
 go along.
+
+### implementing `table_utils::merge()`
+
+So, the next 'hole' to implement is `table_utils::merge()`, itself.
+
+It's a big one, so let's address this problem, piecemeal.
+
+First, we want to merge the table-headers, both for rows and columns.
+
+Pretty interesting problem, as each table has its own indexing by row and 
+column.
+
+![merging headers](imgs/03a-merge-headers.png)
+
+![rolling merged headers into `merge()`](imgs/03b-merge-headers.png)
+
