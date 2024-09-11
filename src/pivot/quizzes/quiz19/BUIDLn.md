@@ -71,4 +71,19 @@ the new merged table, as we see in a new program-run.
 
 ![merged headers](imgs/03c-merged-headers.png)
 
+At the end of the day, a table-merge devolved into 
+[two for-loops](../../book/table_utils.rs#L244-L281), iterating 
+over the rows of the merged tables, then, in each row, iterating over the 
+columns in those rows.
 
+![`table_utils::merge()`](imgs/04a-merge-routine.png)
+
+![example using two smallish tables](imgs/04b-merge-sample.png)
+
+![merge result](imgs/04c-merged.png)
+
+A really simple idea, once explained in this fashion. ✅😅 
+
+All the above was a ... *'simple' (?)* test-case, showing that we could
+merge two tables. Now we need to merge the big-honkin' results from the
+coingecko charts-query to answer Pivot quiz 19.
