@@ -13,12 +13,22 @@ fn print_table<A: Display + Clone,B: Display + Clone,C: Display>(name: &str,
 }
 
 fn main() {
-   let a = HashMap::from([("Apple", 1.1), ("Banana", 2.3), ("Chocolate", 3.14)]);
-   let b = HashMap::from([("Apple", 2.2), ("Chocolate", 9.7)]);
-   let t1 = from_map("ETH", &a);
+
+/* testing merging row- and column-headers:
+
+   let a = HashMap::from([("Apple", 1.1), ("Banana", 2.3), ("Cherries", 3.14)]);
+   let b = HashMap::from([("Apple", 2.2), ("Durian", 9.7)]);
+   let t1 = from_map("ARB", &a);
    print_table("t1", &t1);
    let t2 = from_map("BTC", &b);
    print_table("t2", &t2);
    let m = merge(&t1, &t2);
+*/
+
+   let arb = HashMap::from([("Apple", 1.1), ("Banana", 1.2)]);
+   let btc = HashMap::from([("Apple", 53123.9), ("Banana", 54007.3)]);
+   let t1 = from_map("ARB", &arb);
+   let t2 = from_map("BTC", &btc);
+   let m = merge(&t1, &t2, 0.0);
    print_table("Merged table", &m);
 }

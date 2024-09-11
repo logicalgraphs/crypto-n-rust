@@ -66,3 +66,9 @@ column.
 
 ![rolling merged headers into `merge()`](imgs/03b-merge-headers.png)
 
+That's a rather big-ol' implementation, but that gives us the structure for 
+the new merged table, as we see in a new program-run.
+
+![merged headers](imgs/03c-merged-headers.png)
+
+

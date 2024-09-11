@@ -2,11 +2,9 @@ use std::{
    clone::Clone,
    cmp::Eq,
    collections::{HashMap,HashSet},
-   fmt::{Debug,Display},
+   fmt::Display,
    hash::Hash
 };
-
-use bimap::BiMap;
 
 use crate::{
    compose,
@@ -182,6 +180,11 @@ pub fn col<ROW, COL: Eq + Hash, DATUM: Clone>(table: &Table<ROW, COL, DATUM>,
    table.cols_.get(cix).and_then(|c| Some(matrix_utils::col(&table.data, *c)))
 }
 
+pub fn row<ROW: Eq + Hash, COL, DATUM: Clone>(table: &Table<ROW, COL, DATUM>,
+                                              rix: &ROW) -> Option<Vec<DATUM>> {
+   table.rows_.get(rix).and_then(|r| Some(table.data[*r].clone()))
+}
+
 pub fn row_filter<ROW: Clone + Eq + Hash, COL: Clone + Eq + Hash, DATA: Clone>
       (f: impl Fn(&ROW) -> bool, table: &Table<ROW, COL, DATA>)
       -> Table<ROW, COL, DATA> {
@@ -239,46 +242,41 @@ pub fn transpose<ROW: Clone + Eq + Hash, COL: Clone + Eq + Hash, DATUM: Clone>
 // FUN!
 
 type Headers<HEADER> = HashMap<HEADER, usize>;
-type Indices = BiMap<usize, usize>;
 
-fn new_headers<HEADER: Eq + Hash + Ord + Clone + Debug>(h1: &Headers<HEADER>,
-      h2: &Headers<HEADER>) -> Headers<HEADER> {
+fn new_headers<HEADER: Eq + Hash + Ord + Clone>
+      (h1: &Headers<HEADER>, h2: &Headers<HEADER>) -> Headers<HEADER> {
    let keys1: HashSet<HEADER> = h1.keys().cloned().collect();
    let keys2: HashSet<HEADER> = h2.keys().cloned().collect();
    let mut new_headers0: Vec<HEADER> = keys1.union(&keys2).cloned().collect();
    new_headers0.sort();
    let new_headers: Headers<HEADER> =
       new_headers0.into_iter().enumerate().map(swap).collect();
-   println!("new_headers are {new_headers:?}");
    new_headers
 }
 
-fn indices<HEADER: Eq + Hash + Ord + Clone + Debug>(h1: &Headers<HEADER>,
-      h2: &Headers<HEADER>, new_h: &Headers<HEADER>) -> (Indices, Indices) {
-   let mut b1 = BiMap::new();
-   let mut b2 = BiMap::new();
-   for (k, v) in new_h {
-      h1.get(&k).and_then(|v1| Some(b1.insert(v1.clone(), v.clone())));
-      h2.get(&k).and_then(|v2| Some(b2.insert(v2.clone(), v.clone())));
-   }
-   (b1, b2)
-}
-
-pub fn merge<ROW: Clone + Eq + Hash + Ord + Debug, 
-             COL: Clone + Eq + Hash + Ord + Debug, DATUM: Clone>
-      (source: &Table<ROW, COL, DATUM>, adjoin: &Table<ROW, COL, DATUM>)
-      -> Table<ROW, COL, DATUM> {
-   fn hdrs<HEADER: Hash + Eq + Ord + Clone + Debug>(kind: &str, 
-         hdr1: &Headers<HEADER>, hdr2: &Headers<HEADER>,
-         new_h: &Headers<HEADER>) -> (Indices, Indices) {
-      println!("For {kind}:");
-      let ans = indices(hdr1, hdr2, new_h);
-      println!("{kind} indices: {ans:?}");
-      ans
-   }
+pub fn merge<ROW: Clone + Eq + Hash + Ord, COL: Clone + Eq + Hash + Ord,
+             DATUM: Clone>
+      (source: &Table<ROW, COL, DATUM>, adjoin: &Table<ROW, COL, DATUM>,
+       default: DATUM) -> Table<ROW, COL, DATUM> {
    let new_rows = new_headers(&source.rows_, &adjoin.rows_);
-   let _new_row_ix = hdrs("rows", &source.rows_, &adjoin.rows_, &new_rows);
    let new_cols = new_headers(&source.cols_, &adjoin.cols_);
-   let _new_col_ix = hdrs("cols", &source.cols_, &adjoin.cols_, &new_cols);
-   panic!("table_utils::merge() not yet implemented.")
+   let mut new_mat = Vec::new();
+   let sorted_cols = sort_headers(&new_cols);
+   let sorted_rows = sort_headers(&new_rows);
+
+   // now that we have the new headers (rows and cols), let's build the
+   // new matrix for our table
+
+   for row_hdr in &sorted_rows {
+      let row = row(&adjoin, &row_hdr).or(row(&source, &row_hdr)).unwrap();
+      let mut cols = Vec::new();
+      for col in &sorted_cols {
+         cols.push(new_cols.get(&col)
+                           .and_then(|c| Some(row[*c].clone()))
+                           .or(Some(default.clone()))
+                           .unwrap());
+      }
+      new_mat.push(cols);
+   }
+   mk_table(sorted_rows, sorted_cols, new_mat)
 }
