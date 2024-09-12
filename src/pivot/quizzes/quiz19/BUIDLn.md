@@ -87,3 +87,20 @@ A really simple idea, once explained in this fashion. ✅😅
 All the above was a ... *'simple' (?)* test-case, showing that we could
 merge two tables. Now we need to merge the big-honkin' results from the
 coingecko charts-query to answer Pivot quiz 19.
+
+## The need for testing
+
+Okay, BUT HOLD UP!
+
+My implementation, earlier, used a bijection, then I dropped it (???).
+
+That didn't sit well with me.
+
+So I ran a test.
+
+![Old tables don't have new table indices!](imgs/05-need-bijection.png)
+
+Yup. I needed that bijection for a proper `Table`-merge to retain the 
+old-table indices.
+
+Let's fix the issues `table_utils::merge()`.
