@@ -104,3 +104,12 @@ Yup. I needed that bijection for a proper `Table`-merge to retain the
 old-table indices.
 
 Let's fix the issues `table_utils::merge()`.
+
+### re-added bijection
+
+Reintroducing bijection from the old tables to the newly merged table properly 
+frames the merged-data.
+
+![tables merge properly with bijection](imgs/06-with-bijection.png)
+
+Let's now proceed with merging the @coingecko chart-data into $PIVOTS.

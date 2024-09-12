@@ -6,6 +6,8 @@ use std::{
    hash::Hash
 };
 
+use bimap::BiMap;
+
 use crate::{
    compose,
    csv_utils::CsvWriter,
@@ -242,6 +244,7 @@ pub fn transpose<ROW: Clone + Eq + Hash, COL: Clone + Eq + Hash, DATUM: Clone>
 // FUN!
 
 type Headers<HEADER> = HashMap<HEADER, usize>;
+type Indices = BiMap<usize, usize>;
 
 fn new_headers<HEADER: Eq + Hash + Ord + Clone>
       (h1: &Headers<HEADER>, h2: &Headers<HEADER>)
@@ -255,27 +258,83 @@ fn new_headers<HEADER: Eq + Hash + Ord + Clone>
    (new_headers, sorted_headers)
 }
 
-pub fn merge<ROW: Clone + Eq + Hash + Ord, COL: Clone + Eq + Hash + Ord,
-             DATUM: Clone>
+fn indices<HEADER: Eq + Hash + Ord + Clone>(h1: &Headers<HEADER>,
+      h2: &Headers<HEADER>, new_h: &Headers<HEADER>) -> (Indices, Indices) {
+   let mut b1 = BiMap::new();
+   let mut b2 = BiMap::new();
+   for (k, v) in new_h {
+      h1.get(&k).and_then(|v1| Some(b1.insert(v1.clone(), v.clone())));
+      h2.get(&k).and_then(|v2| Some(b2.insert(v2.clone(), v.clone())));
+   }
+   (b1, b2)
+}
+
+fn or_some<'a, DATUM: Clone>(default: &'a DATUM)
+      -> impl Fn(Option<&'a DATUM>) -> Option<DATUM> + 'a {
+   move |mb_val| mb_val.or(Some(default)).cloned()
+}
+
+fn val_f<'a, DATUM: Clone>
+   (cix: &'a Indices, row: &'a Vec<DATUM>, default: &'a DATUM)
+      -> impl Fn(&usize) -> Option<DATUM> + 'a {
+   move |c| cix.get_by_right(c)
+               .and_then(|c1| or_some(default)(row.get(*c1)))
+}
+
+pub fn merge_d<ROW: Clone + Eq + Hash + Ord + Display, 
+               COL: Clone + Eq + Hash + Ord + Display,
+               DATUM: Clone + Display>
       (source: &Table<ROW, COL, DATUM>, adjoin: &Table<ROW, COL, DATUM>,
-       default: DATUM) -> Table<ROW, COL, DATUM> {
+       default: DATUM, debug: bool) -> Table<ROW, COL, DATUM> {
+
+   // `hdrs()` is an `indices()` around-method for debugging as needed
+
+   fn hdrs<HEADER: Hash + Eq + Ord + Clone + Display>(kind: &str, 
+         hdr1: &Headers<HEADER>, hdr2: &Headers<HEADER>,
+         new_h: &Headers<HEADER>, debug: bool) -> (Indices, Indices) {
+      if debug { println!("For {kind}:"); }
+      let ans = indices(hdr1, hdr2, new_h);
+      if debug { println!("{kind} indices: {ans:?}"); }
+      ans
+   }
+
    let (_new_rows, sorted_rows) = new_headers(&source.rows_, &adjoin.rows_);
    let (new_cols, sorted_cols) = new_headers(&source.cols_, &adjoin.cols_);
+   let (cix1, cix2) =
+      hdrs("cols", &source.cols_, &adjoin.cols_, &new_cols, debug);
    let mut new_mat = Vec::new();
+
+   // `with()` is `second()` in the Maybe-Monad
+
+   fn with<'a, DATUM>(ix: &'a Indices)
+         -> impl Fn(Option<DATUM>) -> Option<(DATUM, Indices)> + 'a {
+      |mb_v| mb_v.and_then(|v| Some((v, ix.clone())))
+   }
 
    // now that we have the new headers (rows and cols), let's build the
    // new matrix for our table
 
    for row_hdr in &sorted_rows {
-      let row = row(&adjoin, &row_hdr).or(row(&source, &row_hdr)).unwrap();
+      let (row, cix) = with(&cix2)(row(&adjoin, &row_hdr))
+                           .or(with(&cix1)(row(&source, &row_hdr)))
+                           .unwrap();
+      let val_get = val_f(&cix, &row, &default);
       let mut cols = Vec::new();
       for col in &sorted_cols {
-         cols.push(new_cols.get(&col)
-                           .and_then(|c| Some(row[*c].clone()))
-                           .or(Some(default.clone()))
-                           .unwrap());
+         let referent = new_cols.get(&col).and_then(&val_get);
+         let val = or_some(&default)(referent.as_ref()).unwrap().clone();
+         if debug { println!("Processed {col} for {row_hdr}: {val}"); }
+         cols.push(val);
       }
       new_mat.push(cols);
    }
    mk_table(sorted_rows, sorted_cols, new_mat)
+}
+
+pub fn merge<ROW: Clone + Eq + Hash + Ord + Display,
+             COL: Clone + Eq + Hash + Ord + Display,
+             DATUM: Clone + Display>
+      (source: &Table<ROW, COL, DATUM>, adjoin: &Table<ROW, COL, DATUM>,
+       default: DATUM) -> Table<ROW, COL, DATUM> {
+   merge_d(source, adjoin, default, false)
 }

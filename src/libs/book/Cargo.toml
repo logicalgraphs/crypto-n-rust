@@ -10,6 +10,7 @@ name = "book"
 path = "lib.rs"
 
 [dependencies]
+bimap = "0.6.3"
 chrono = "0.4.38"
 reqwest = "0.12.4"
 serde = { version = "1.0.104", features = ["derive"] }
