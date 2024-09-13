@@ -113,3 +113,16 @@ frames the merged-data.
 ![tables merge properly with bijection](imgs/06-with-bijection.png)
 
 Let's now proceed with merging the @coingecko chart-data into $PIVOTS.
+
+### ... one more thing: merge()-as-Result
+
+ONE more thing before proceeding.
+
+I implemented `merge()` with a `default`-argument for when I couldn't lookup 
+values during the merge.
+
+There are very serious times I'd rather fail, so now I allow defaults or throw 
+an `Err` when I don't want defaulting-behavior on merge.
+
+![Merge tables with defaults OR fail table-merge when values are missing](imgs/07-merge-as-result.png)
+

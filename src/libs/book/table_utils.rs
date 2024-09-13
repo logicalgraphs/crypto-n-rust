@@ -246,6 +246,8 @@ pub fn transpose<ROW: Clone + Eq + Hash, COL: Clone + Eq + Hash, DATUM: Clone>
 type Headers<HEADER> = HashMap<HEADER, usize>;
 type Indices = BiMap<usize, usize>;
 
+// merges headers of the old tables
+
 fn new_headers<HEADER: Eq + Hash + Ord + Clone>
       (h1: &Headers<HEADER>, h2: &Headers<HEADER>)
       -> (Headers<HEADER>, Vec<HEADER>) {
@@ -258,6 +260,8 @@ fn new_headers<HEADER: Eq + Hash + Ord + Clone>
    (new_headers, sorted_headers)
 }
 
+// creates a new indexing scheme for the new headers, bijected to old indices
+
 fn indices<HEADER: Eq + Hash + Ord + Clone>(h1: &Headers<HEADER>,
       h2: &Headers<HEADER>, new_h: &Headers<HEADER>) -> (Indices, Indices) {
    let mut b1 = BiMap::new();
@@ -269,23 +273,28 @@ fn indices<HEADER: Eq + Hash + Ord + Clone>(h1: &Headers<HEADER>,
    (b1, b2)
 }
 
-fn or_some<'a, DATUM: Clone>(default: &'a DATUM)
-      -> impl Fn(Option<&'a DATUM>) -> Option<DATUM> + 'a {
-   move |mb_val| mb_val.or(Some(default)).cloned()
+// looks up value in old table for the new, merged table using bijected indices
+
+fn val_f<'a, DATUM: Clone>(cix: &'a Indices, row: &'a Vec<DATUM>,
+                           default: impl Fn(String) -> ErrStr<DATUM> + 'a)
+      -> impl Fn(&usize) -> ErrStr<DATUM> + 'a {
+   move |c| {
+      cix.get_by_right(c)
+         .ok_or(format!("Unable to fetch old index from index {c}"))
+         .and_then(|ix| row.get(*ix).cloned()
+            .ok_or(format!("Unable to fetch value in table to merge at {ix}")))
+         .or_else(&default)
+   }
 }
 
-fn val_f<'a, DATUM: Clone>
-   (cix: &'a Indices, row: &'a Vec<DATUM>, default: &'a DATUM)
-      -> impl Fn(&usize) -> Option<DATUM> + 'a {
-   move |c| cix.get_by_right(c)
-               .and_then(|c1| or_some(default)(row.get(*c1)))
-}
+// merge function that allows tuning of defaults and spews debug info on request
 
-pub fn merge_d<ROW: Clone + Eq + Hash + Ord + Display, 
+pub fn merge_with_default_d<ROW: Clone + Eq + Hash + Ord + Display, 
                COL: Clone + Eq + Hash + Ord + Display,
-               DATUM: Clone + Display>
+               DATUM: Clone + Display + 'static>
       (source: &Table<ROW, COL, DATUM>, adjoin: &Table<ROW, COL, DATUM>,
-       default: DATUM, debug: bool) -> Table<ROW, COL, DATUM> {
+       default: impl Fn(String) -> ErrStr<DATUM> + 'static, debug: bool)
+         -> ErrStr<Table<ROW, COL, DATUM>> {
 
    // `hdrs()` is an `indices()` around-method for debugging as needed
 
@@ -311,30 +320,55 @@ pub fn merge_d<ROW: Clone + Eq + Hash + Ord + Display,
       |mb_v| mb_v.and_then(|v| Some((v, ix.clone())))
    }
 
+   // val_getter() fetches the value or default, or fails on the unknown index
+
+   fn val_getter<'a, COL: Display, DATUM: Clone>
+                (cix: &'a Indices, row: &'a Vec<DATUM>, 
+                 default: impl Fn(String) -> ErrStr<DATUM> + 'a, c: &'a COL)
+         -> impl Fn(&usize) -> ErrStr<DATUM> + 'a {
+      move |ix| val_f(&cix, &row, &default)(ix)
+                    .or_else(|msg| Err(format!("{msg}, idx: '{c}'")))
+   }
+
    // now that we have the new headers (rows and cols), let's build the
    // new matrix for our table
 
    for row_hdr in &sorted_rows {
       let (row, cix) = with(&cix2)(row(&adjoin, &row_hdr))
                            .or(with(&cix1)(row(&source, &row_hdr)))
-                           .unwrap();
-      let val_get = val_f(&cix, &row, &default);
+                           .ok_or(format!("Unable to find table {row_hdr}"))?;
       let mut cols = Vec::new();
       for col in &sorted_cols {
-         let referent = new_cols.get(&col).and_then(&val_get);
-         let val = or_some(&default)(referent.as_ref()).unwrap().clone();
+         let val =
+            new_cols.get(&col)
+                    .ok_or(format!("unable to locate cell at {col}"))
+                    .and_then(val_getter(&cix, &row, &default, &col))?;
          if debug { println!("Processed {col} for {row_hdr}: {val}"); }
          cols.push(val);
       }
       new_mat.push(cols);
    }
-   mk_table(sorted_rows, sorted_cols, new_mat)
+   Ok(mk_table(sorted_rows, sorted_cols, new_mat))
 }
+
+// standard merge-implementation: fail on unknown values (no defaulted values)
 
 pub fn merge<ROW: Clone + Eq + Hash + Ord + Display,
              COL: Clone + Eq + Hash + Ord + Display,
-             DATUM: Clone + Display>
-      (source: &Table<ROW, COL, DATUM>, adjoin: &Table<ROW, COL, DATUM>,
-       default: DATUM) -> Table<ROW, COL, DATUM> {
-   merge_d(source, adjoin, default, false)
+             DATUM: Clone + Display + 'static>
+      (source: &Table<ROW, COL, DATUM>, adjoin: &Table<ROW, COL, DATUM>)
+        -> ErrStr<Table<ROW, COL, DATUM>> {
+   merge_with_default_d(source, adjoin, err_out(), false)
+}
+
+fn err_out<'a, DATUM>() -> impl Fn(String) -> ErrStr<DATUM> + 'a {
+   move |msg| Err(format!("Merge failed. Reason: {msg}"))
+}
+
+// reshapes merge-implementation by providing a default value on merge-lookup
+// failure, call merge_with_default_d() when using this function-factory
+
+pub fn default_f<'a, DATUM: Clone>(d: &'a DATUM)
+      -> impl Fn(String) -> ErrStr<DATUM> + 'a {
+   move |_msg| Ok(d.clone())
 }
