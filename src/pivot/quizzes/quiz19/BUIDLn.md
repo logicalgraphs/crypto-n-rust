@@ -126,6 +126,8 @@ an `Err` when I don't want defaulting-behavior on merge.
 
 ![Merge tables with defaults OR fail table-merge when values are missing](imgs/07-merge-as-result.png)
 
+### ... aaaannnnnnddd the merge
+
 TA-DA! New functionality: bulk-loading of token charts from @coingecko, DONE! ✅
 
 ![loading charts...](imgs/08a-snarfing.png)
@@ -134,3 +136,8 @@ TA-DA! New functionality: bulk-loading of token charts from @coingecko, DONE! �
 
 Just one tweak: I have to tune alphabetizing by token-type (the circled 
 assets), but we GOT'r DONE! 
+
+So, a ... 'little' measurement. That's 46 days * 38 assets-worth of prices I 
+just bulk-loaded, or 1748 data-points.
+
+Automation. Me likey! 😎
