@@ -126,3 +126,11 @@ an `Err` when I don't want defaulting-behavior on merge.
 
 ![Merge tables with defaults OR fail table-merge when values are missing](imgs/07-merge-as-result.png)
 
+TA-DA! New functionality: bulk-loading of token charts from @coingecko, DONE! ✅
+
+![loading charts...](imgs/08a-snarfing.png)
+
+![... DONE!](imgs/08b-pivots.png)
+
+Just one tweak: I have to tune alphabetizing by token-type (the circled 
+assets), but we GOT'r DONE! 

@@ -6,8 +6,6 @@ use std::{
    hash::Hash
 };
 
-use bimap::BiMap;
-
 use crate::{
    compose,
    csv_utils::CsvWriter,
@@ -30,6 +28,7 @@ use crate::{
 
 // ----- STRUCTURE -----------------------------------------------------------
 
+#[derive(Debug,Clone)]
 pub struct Table<ROW, COL, T> {
    rows_: HashMap<ROW, usize>,
    cols_: HashMap<COL, usize>,
@@ -177,14 +176,31 @@ fn rows_in_jest<ROW: Eq + Hash, DATUM>
 
 // ----- VIEWS ----------------------------------------------------------------
 
+fn c_ix<ROW, COL: Eq + Hash, DATUM>(table: &Table<ROW, COL, DATUM>, cix: &COL)
+      -> Option<usize> {
+   table.cols_.get(cix).cloned()
+}
+
+fn r_ix<ROW: Eq + Hash, COL, DATUM>(table: &Table<ROW, COL, DATUM>, rix: &ROW)
+      -> Option<usize> {
+   table.rows_.get(rix).cloned()
+}
+
 pub fn col<ROW, COL: Eq + Hash, DATUM: Clone>(table: &Table<ROW, COL, DATUM>,
                                               cix: &COL) -> Option<Vec<DATUM>> {
-   table.cols_.get(cix).and_then(|c| Some(matrix_utils::col(&table.data, *c)))
+   c_ix(table, cix).and_then(|c| Some(matrix_utils::col(&table.data, c)))
 }
 
 pub fn row<ROW: Eq + Hash, COL, DATUM: Clone>(table: &Table<ROW, COL, DATUM>,
                                               rix: &ROW) -> Option<Vec<DATUM>> {
-   table.rows_.get(rix).and_then(|r| Some(table.data[*r].clone()))
+   r_ix(table, rix).and_then(|r| Some(table.data[r].clone()))
+}
+
+pub fn val<ROW: Eq + Hash, COL: Eq + Hash, DATUM: Clone>
+         (table: &Table<ROW, COL, DATUM>, rix: &ROW, cix: &COL)
+      -> Option<DATUM> {
+   row(table, rix).and_then(|row| c_ix(table, cix)
+                  .and_then(|ix| row.get(ix).cloned()))
 }
 
 pub fn row_filter<ROW: Clone + Eq + Hash, COL: Clone + Eq + Hash, DATA: Clone>
@@ -229,62 +245,23 @@ pub fn transpose<ROW: Clone + Eq + Hash, COL: Clone + Eq + Hash, DATUM: Clone>
 
 // ----- MERGE ----------------------------------------------------------------
 
-// merging two tables is a rather complicated affair? Yes.
+// merging two tables is a rather complicated affair? Nah.
 
-// how do we manage this. My thought: new-rows is the union of the rows of
-// the source and adjoin tables. No duh, but then, that means that the new-row
-// index can be different than the old rows' indices. Cases for this:
-// interleaved values or values that collide, but with differing indices in the
-// source or adjoin tables. We therefore must assume that the new indices
-// are not related to the old indices in any way.
-
-// AND we must memoize the relationship between the old indices, for BOTH
-// the source and adjoin tables, and the new indices as a bijection.
-
-// FUN!
+// after some (very) heavy lifting, I simply added val(Table, ROW, COL)
+// this reduced the problem with a nested for-loop, looking up the values in
+// both tables to populate the newly merged table.
 
 type Headers<HEADER> = HashMap<HEADER, usize>;
-type Indices = BiMap<usize, usize>;
 
 // merges headers of the old tables
 
 fn new_headers<HEADER: Eq + Hash + Ord + Clone>
-      (h1: &Headers<HEADER>, h2: &Headers<HEADER>)
-      -> (Headers<HEADER>, Vec<HEADER>) {
+      (h1: &Headers<HEADER>, h2: &Headers<HEADER>) -> Vec<HEADER> {
    let keys1: HashSet<HEADER> = h1.keys().cloned().collect();
    let keys2: HashSet<HEADER> = h2.keys().cloned().collect();
    let mut sorted_headers: Vec<HEADER> = keys1.union(&keys2).cloned().collect();
    sorted_headers.sort();
-   let new_headers: Headers<HEADER> =
-      sorted_headers.clone().into_iter().enumerate().map(swap).collect();
-   (new_headers, sorted_headers)
-}
-
-// creates a new indexing scheme for the new headers, bijected to old indices
-
-fn indices<HEADER: Eq + Hash + Ord + Clone>(h1: &Headers<HEADER>,
-      h2: &Headers<HEADER>, new_h: &Headers<HEADER>) -> (Indices, Indices) {
-   let mut b1 = BiMap::new();
-   let mut b2 = BiMap::new();
-   for (k, v) in new_h {
-      h1.get(&k).and_then(|v1| Some(b1.insert(v1.clone(), v.clone())));
-      h2.get(&k).and_then(|v2| Some(b2.insert(v2.clone(), v.clone())));
-   }
-   (b1, b2)
-}
-
-// looks up value in old table for the new, merged table using bijected indices
-
-fn val_f<'a, DATUM: Clone>(cix: &'a Indices, row: &'a Vec<DATUM>,
-                           default: impl Fn(String) -> ErrStr<DATUM> + 'a)
-      -> impl Fn(&usize) -> ErrStr<DATUM> + 'a {
-   move |c| {
-      cix.get_by_right(c)
-         .ok_or(format!("Unable to fetch old index from index {c}"))
-         .and_then(|ix| row.get(*ix).cloned()
-            .ok_or(format!("Unable to fetch value in table to merge at {ix}")))
-         .or_else(&default)
-   }
+   sorted_headers
 }
 
 // merge function that allows tuning of defaults and spews debug info on request
@@ -296,55 +273,34 @@ pub fn merge_with_default_d<ROW: Clone + Eq + Hash + Ord + Display,
        default: impl Fn(String) -> ErrStr<DATUM> + 'static, debug: bool)
          -> ErrStr<Table<ROW, COL, DATUM>> {
 
-   // `hdrs()` is an `indices()` around-method for debugging as needed
+   let sorted_rows = new_headers(&source.rows_, &adjoin.rows_);
+   let sorted_cols = new_headers(&source.cols_, &adjoin.cols_);
 
-   fn hdrs<HEADER: Hash + Eq + Ord + Clone + Display>(kind: &str, 
-         hdr1: &Headers<HEADER>, hdr2: &Headers<HEADER>,
-         new_h: &Headers<HEADER>, debug: bool) -> (Indices, Indices) {
-      if debug { println!("For {kind}:"); }
-      let ans = indices(hdr1, hdr2, new_h);
-      if debug { println!("{kind} indices: {ans:?}"); }
-      ans
-   }
-
-   let (_new_rows, sorted_rows) = new_headers(&source.rows_, &adjoin.rows_);
-   let (new_cols, sorted_cols) = new_headers(&source.cols_, &adjoin.cols_);
-   let (cix1, cix2) =
-      hdrs("cols", &source.cols_, &adjoin.cols_, &new_cols, debug);
    let mut new_mat = Vec::new();
-
-   // `with()` is `second()` in the Maybe-Monad
-
-   fn with<'a, DATUM>(ix: &'a Indices)
-         -> impl Fn(Option<DATUM>) -> Option<(DATUM, Indices)> + 'a {
-      |mb_v| mb_v.and_then(|v| Some((v, ix.clone())))
-   }
-
-   // val_getter() fetches the value or default, or fails on the unknown index
-
-   fn val_getter<'a, COL: Display, DATUM: Clone>
-                (cix: &'a Indices, row: &'a Vec<DATUM>, 
-                 default: impl Fn(String) -> ErrStr<DATUM> + 'a, c: &'a COL)
-         -> impl Fn(&usize) -> ErrStr<DATUM> + 'a {
-      move |ix| val_f(&cix, &row, &default)(ix)
-                    .or_else(|msg| Err(format!("{msg}, idx: '{c}'")))
-   }
 
    // now that we have the new headers (rows and cols), let's build the
    // new matrix for our table
 
    for row_hdr in &sorted_rows {
-      let (row, cix) = with(&cix2)(row(&adjoin, &row_hdr))
-                           .or(with(&cix1)(row(&source, &row_hdr)))
-                           .ok_or(format!("Unable to find table {row_hdr}"))?;
       let mut cols = Vec::new();
-      for col in &sorted_cols {
-         let val =
-            new_cols.get(&col)
-                    .ok_or(format!("unable to locate cell at {col}"))
-                    .and_then(val_getter(&cix, &row, &default, &col))?;
-         if debug { println!("Processed {col} for {row_hdr}: {val}"); }
-         cols.push(val);
+
+      // REWRITE! ... *sheesh*
+      // 1. get the val, or nought, from adjoin table for the filtered row
+      // 2. if nought, get the val from source table for the filtered row
+      // 3. if nought, throw error
+
+      for col_hdr in &sorted_cols {
+
+         let err_msg =
+            format!("Unable to find value at indices [{row_hdr}, {col_hdr}]");
+         let cell: DATUM =
+            val(&adjoin, &row_hdr, &col_hdr)
+               .or(val(&source, &row_hdr, &col_hdr))
+               .ok_or(err_msg)
+               .or_else(&default)?;
+
+         if debug { println!("Processed {col_hdr} for {row_hdr}: {cell}"); }
+         cols.push(cell);
       }
       new_mat.push(cols);
    }
@@ -361,7 +317,7 @@ pub fn merge<ROW: Clone + Eq + Hash + Ord + Display,
    merge_with_default_d(source, adjoin, err_out(), false)
 }
 
-fn err_out<'a, DATUM>() -> impl Fn(String) -> ErrStr<DATUM> + 'a {
+pub fn err_out<'a, DATUM>() -> impl Fn(String) -> ErrStr<DATUM> + 'a {
    move |msg| Err(format!("Merge failed. Reason: {msg}"))
 }
 

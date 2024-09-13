@@ -5,14 +5,16 @@ use book::{
    csv_utils::CsvWriter,
    err_utils::ErrStr,
    string_utils::to_string,
-   table_utils::{Table,from_map,merge,merge_with_default_d,default_f},
+   table_utils::{Table,from_map,merge,merge_with_default_d,default_f,err_out},
    tuple_utils::first
 };
 
 fn print_table<A: Display + Clone,B: Display + Clone,C: Display>(name: &str,
      t: &Table<A,B,C>) {
    println!("{name} is
-{}", t.as_csv());
+
+{}
+", t.as_csv());
 }
 
 type Packet<'a> = (&'a str, Vec<(&'a str, f32)>);
@@ -31,7 +33,6 @@ fn from_packet<'a>(a: &Packet<'a>) -> LeTabl {
 fn merge_tables(t1: &LeTabl, t2: &LeTabl) -> ErrStr<LeTabl> {
    let m = merge_with_default_d(&t1, &t2, default_f(&0.0), true)?;
    print_table("Merged table", &m);
-   println!("");
    Ok(m)
 }
 
@@ -53,6 +54,17 @@ fn main() -> ErrStr<()> {
       from_packet(&("ETH", [("Banana", 2341.2), ("Elderberry", 2295.5),
                             ("Figs", 2401.1)].to_vec()));
    let _test_result = merge_tables(&a, &t1);
+
+   let b = testing("merging coingecko ARB tables",
+                   &("Apple", [("ARB", 0.748)].to_vec()),
+                   &("Banana", [("ARB", 0.774)].to_vec()))?;
+   let c = testing("merging coingecko BTC tables",
+                   &("Apple", [("BTC", 53123.5)].to_vec()),
+                   &("Banana", [("BTC", 54111.2)].to_vec()))?;
+   println!("Table ARB: {b:?}");
+   println!("Table BTC: {c:?}");
+   let d = merge_with_default_d(&b, &c, err_out(), true)?;
+   print_table("Merged coingecko tables", &d);
 
    let result = testing("merging disparate rows, same columns",
            &("Apple", [("ARB", 1.1), ("BTC", 53123.9)].to_vec()),

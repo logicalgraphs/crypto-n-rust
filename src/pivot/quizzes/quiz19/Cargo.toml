@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "answer19"
-path = "answer19a_simple.rs"
+path = "answer19b_merged_prices.rs"
 
 [dependencies]
 serde = { version = "1.0.104", features = ["derive"] }
