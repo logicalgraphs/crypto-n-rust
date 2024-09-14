@@ -94,9 +94,9 @@ pub fn mk_table<ROW: Eq + Hash, COL: Eq + Hash, T>(r: Vec<ROW>, c: Vec<COL>,
 // Generates a table from a Vec<(COL, T)>-instance.
 // The row-'headers' (all one of them) is obviously a String-type.
 
-pub fn from_vec<COL: Eq + Hash, T>(row: &str, cols: Vec<(COL, T)>)
-      -> Table<String, COL, T> {
-   let rows = vec![row.to_string()];
+pub fn from_vec<ROW: Clone + Eq + Hash, COL: Eq + Hash, T>
+      (row: &ROW, cols: Vec<(COL, T)>) -> Table<ROW, COL, T> {
+   let rows = vec![row.clone()];
    let (cols, v) = cols.into_iter().unzip();
    let data = matrix_utils::from_vec(v);
    mk_table(rows, cols, data)
@@ -106,8 +106,8 @@ pub fn from_vec<COL: Eq + Hash, T>(row: &str, cols: Vec<(COL, T)>)
 // The below function is where ordering is unimportant, so we order by
 // the column-headers
 
-pub fn from_map<COL: Clone + Eq + Ord + Hash, T: Clone>(row: &str, 
-      cols: &HashMap<COL, T>) -> Table<String, COL, T> {
+pub fn from_map<ROW: Clone + Eq + Hash, COL: Clone + Eq + Ord + Hash, T: Clone>
+      (row: &ROW, cols: &HashMap<COL, T>) -> Table<ROW, COL, T> {
    let mut data: Vec<(COL, T)> = Vec::new();
    for (k, v) in cols { data.push((k.clone(), v.clone())); }
    data.sort_by_key(|k| k.0.clone());

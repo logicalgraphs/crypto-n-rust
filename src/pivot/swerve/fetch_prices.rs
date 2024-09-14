@@ -1,5 +1,4 @@
 use std::{
-   cmp::Ordering,
    collections::HashMap,
    fmt::Debug,
    fs::File,
@@ -58,7 +57,7 @@ fn raw_to_prices(raw: &Blob) -> RawPrices {
 pub fn transform_prices(dict: &PivotDict, pric: &RawPrices) -> Vec<Price> {
    fn arr_m<'a>((k,v): (&'a TokenId, &'a Quote))
          -> impl Fn(&Token) -> Option<Price> + 'a {
-      move |x| Some(((k.to_string(), x.to_string()), v.clone()))
+      move |x| Some(((k.to_string(), x.clone()), v.clone()))
       // or compose!(Some)(first(|k| (k.to_string(), x.to_string())))
    }
 
@@ -66,13 +65,7 @@ pub fn transform_prices(dict: &PivotDict, pric: &RawPrices) -> Vec<Price> {
           .filter_map(|entry| dict.get_by_left(entry.0).and_then(arr_m(entry)))
                  // much easier with monads and arrows, seriously! :<
           .collect();
-   fn root(s: &str) -> String {
-      s.trim_matches(char::is_lowercase).to_string()
-   }
-   fn cmp(a: &str, b: &str) -> Ordering {
-      root(a).cmp(&root(b)).then(a.len().cmp(&b.len()))
-   }
-   rows.sort_by(|((_,a), _), ((_,b), _)| cmp(a, b));
+   rows.sort_by(|((_,a), _), ((_,b), _)| a.cmp(&b));
    rows
 }
 

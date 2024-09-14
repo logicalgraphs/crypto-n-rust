@@ -13,7 +13,7 @@ use book::{
 
 use crypto::rest_utils::data_res;
 
-use crate::types::{PivotDict,Pivots,mk_quote,Quote,TokenId,Token};
+use crate::types::{PivotDict,Pivots,mk_quote,Quote,TokenId,Token,mk_token};
 
 pub fn parse_keys_symbols(pivots: &Pivots) -> PivotDict {
    parse_token_headers(pivots).into_iter().collect()
@@ -24,7 +24,8 @@ pub fn parse_token_headers(pivots: &Pivots) -> Vec<(TokenId, Token)> {
       line.split(",").skip(1).map(to_string)
    }
    let ids = splitter(&pivots[0]);
-   let syms = splitter(&pivots[1]);
+   fn to_tok(s: String) -> Token { mk_token(&s) }
+   let syms = splitter(&pivots[1]).map(to_tok);
    zip(ids, syms).collect()
 }
 

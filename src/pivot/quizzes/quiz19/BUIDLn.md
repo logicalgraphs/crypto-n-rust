@@ -141,3 +141,14 @@ So, a ... 'little' measurement. That's 46 days * 38 assets-worth of prices I
 just bulk-loaded, or 1748 data-points.
 
 Automation. Me likey! 😎
+
+## Correcting `$PIVOT` sort-order for `lizard
+
+So, how do we alphabetize a table in the way WE want it to be alphabetized.
+
+Easy. The column-type is a generic type.
+
+So, instead of `String`, pass it a type with your own `Format`- and 
+`Ord`-constraints.
+
+Pivot pop-quiz 19-xyz: do that.

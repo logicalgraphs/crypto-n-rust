@@ -29,12 +29,31 @@ impl CsvWriter for Quote {
 }
 
 pub type TokenId = String;
-pub type Token = String;
+
+#[derive(Debug,Clone,PartialEq,Eq,PartialOrd,Ord,Hash)]
+pub struct Token {
+   token_type: String,
+   token_name: String
+}
+
+pub fn mk_token(name: &str) -> Token {
+   fn root(s: &str) -> String {
+      s.trim_matches(char::is_lowercase).to_string()
+   }
+   Token { token_type: root(name), token_name: name.to_string() }
+}
+
+impl fmt::Display for Token {
+   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+      write!(f, "{}", self.token_name)
+   }
+}
+
 pub type RawPrices = HashMap<TokenId, Quote>;
 
 pub type Pivots = Vec<String>;
 pub type PivotDict = BiMap<TokenId, Token>;
-pub type PivotTable = Table<NaiveDate, String, f32>;
+pub type PivotTable = Table<NaiveDate, Token, f32>;
 
 pub type Price = ((TokenId, Token), Quote);
 
@@ -77,12 +96,12 @@ impl AsJSON for Ratio {
 
 #[derive(Clone,Debug)]
 struct Name {
-   base: String,
-   target: String
+   base: Token,
+   target: Token
 }
 
-fn mk_name(t1: &str, t2: &str) -> Name {
-   Name { base: t2.to_string(), target: t1.to_string() }
+fn mk_name(t1: &Token, t2: &Token) -> Name {
+   Name { base: t2.clone(), target: t1.clone() }
 }
 
 impl CsvWriter for Name {
@@ -98,7 +117,7 @@ pub struct Ratios {
    ratios: Vec<Ratio>
 }
 
-pub fn mk_ratios(t1: &str, t2: &str,
+pub fn mk_ratios(t1: &Token, t2: &Token,
                  dates: &Vec<NaiveDate>, ratios: &Vec<f32>) -> Ratios {
    let dt_ratios: Vec<Ratio> =
       dates.into_iter().zip(ratios.into_iter()).map(mk_ratio).collect();
@@ -136,9 +155,8 @@ impl AsJSON for EMA {
    }
 }
 
-pub fn mk_emas(t1: &str, t2: &str, period: usize,
-               dates: &Vec<NaiveDate>,
-               ratios: &Vec<f32>) -> EMAs {
+pub fn mk_emas(t1: &Token, t2: &Token, period: usize,
+               dates: &Vec<NaiveDate>, ratios: &Vec<f32>) -> EMAs {
 
    // 1. SMAs for the series
    // ... this is best expressed as a comonad, but oh, well!
@@ -196,7 +214,7 @@ impl fmt::Display for CALL {
    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
       write!(f, "{}", if self == &CALL::BUY { "BUY" } else { "SELL" })
    }
-} 
+}
 
 impl CsvWriter for Rec {
    fn as_csv(&self) -> String {

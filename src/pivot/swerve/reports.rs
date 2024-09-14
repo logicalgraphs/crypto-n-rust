@@ -5,10 +5,10 @@ use book::{
    string_utils::plural
 };
 
-use crate::types::{Diffs,Price,Token};
+use crate::types::{Diffs,Price};
 
 fn headers(row: &Vec<Price>) {
-   let syms: Vec<Token> =
+   let syms: Vec<String> =
       row.iter().map(|price| price.0.1.to_string()).collect();
    println!(",{}", syms.join(","));
 }
