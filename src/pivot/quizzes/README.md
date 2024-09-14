@@ -45,3 +45,7 @@ only.
 [`$PIVOTS`](../../../data-files/csv/pivots.csv)
   4. @coingecko public API rate limits
 * quiz 19: [Coalesce assets fetched into one table](quiz19)
+
+## tok
+
+* quiz 20: [Load a token chart](quiz20)
