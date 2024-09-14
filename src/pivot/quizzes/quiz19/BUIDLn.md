@@ -152,3 +152,19 @@ So, instead of `String`, pass it a type with your own `Format`- and
 `Ord`-constraints.
 
 Pivot pop-quiz 19-xyz: do that.
+
+## Pivot quiz answer.
+
+A new type, [`Token`](../../swerve/types.rs#L33-L50), sorts the tokens by 
+token-type now, so: $sAVAX follows $AVAX now. YAY!
+
+![Sorted by type](imgs/09a-new-sort.png)
+
+![...kinda. Close enough](imgs/09b-new-sort-kinda.png)
+
+With the $PIVOTS-table updated, I can now (and I now DO get) recommendations 
+for buy- and sell- pivot-arbitrage. 
+
+![sell BTC recommendation](imgs/09c-rekt-sell-BTC.png)
+
+YAY! AGAIN!
