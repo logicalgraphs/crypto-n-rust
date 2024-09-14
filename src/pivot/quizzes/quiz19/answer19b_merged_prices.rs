@@ -9,7 +9,7 @@ use book::{
 use swerve::snarf::{snarf_pivots,snarf_pivot_table};
 
 fn usage() {
-   println!("./answer18 <date>
+   println!("./lizard <date>
 \tFetches all charts for $PIVOTS of the last n days.
 \tn is computed from the last date recorded on $PIVOTS to <date>.
 ");

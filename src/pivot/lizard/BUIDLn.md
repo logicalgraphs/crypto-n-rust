@@ -131,4 +131,12 @@ So, with that, let's decompose the problem.
 First, before we make the API call to get the prices for the tokens, we need 
 to know for how many days.
 
-[Pivot #Rust pop-quiz 16: compute date-δ](../quizzes/quiz16)
+* [Pivot #Rust pop-quiz 16: compute date-δ](../quizzes/quiz16)
+
+Other relevant quizes are:
+
+* [17: read one token's prices over a series of days](../quizzes/quiz17)
+* [18: fetch all the $PIVOTS assets from coingecko](../quizzes/quiz18)
+* [19: entable-i-fy and sort the results](../quizzes/quiz19)
+
+Please see those quizzes for specific details.
