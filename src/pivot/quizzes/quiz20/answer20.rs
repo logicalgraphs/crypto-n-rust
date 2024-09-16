@@ -32,7 +32,7 @@ async fn main() -> ErrStr<()> {
       let (_dict, pivots, _max_date) = snarf_pivots().await?;
       let rows = rows(&pivots);
       let min_date = rows.first().ok_or("PIVOTS table empty???")?;
-      let n = (today - *min_date).num_days();
+      let n = (today - *min_date).num_days() + 1;
       let token = mk_token(&sym);
       let table = snarf_pivot_table(&pass, &tok_id, &token, n).await?;
       print_csv(&table);
