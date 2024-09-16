@@ -7,10 +7,11 @@ pivot-token.
 
 ## Components
 
-* [gecko](gecko) - fetches token-prices from coingecko REST API endpoint
-* [status](status) - provides today's token-prices from fetched data
-* [ema](ema) - analyzes two-token ratios
-* [rekt](rekt) - BUY / SELL call
+* [gecko](dApps/gecko) - fetches token-prices from coingecko REST API endpoint
+* [ema](dApps/ema) - analyzes two-token ratios
+* [rekt](dApps/rekt) - BUY / SELL call
+* [tok](dApps/tok) - adds a new token to 
+[$PIVOTS](../../data-files/csv/pivots.csv)
 
 ## Determinor
 
@@ -65,11 +66,6 @@ This way I measure the success of my pivot-arbitrage.
 
 I show how to BUIDL this system from the ground up in a series of
 [quizzes](quizzes).
-
-## COSMWASM
-
-I'm exploring exploring smart contracts with
-[this project](https://github.com/logicalgraphs/crypto-n-rust/tree/main/src/cosmwasm).
 
 ## NEWS FLASH!
 
