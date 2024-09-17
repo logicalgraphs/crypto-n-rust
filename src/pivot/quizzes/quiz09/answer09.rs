@@ -1,5 +1,5 @@
 use book::{
-   date_utils::date,
+   date_utils::parse_date,
    err_utils::ErrStr,
    utils::get_args
 };
@@ -19,7 +19,7 @@ fn usage() -> ErrStr<()> {
 async fn main() -> ErrStr<()> {
    let args = get_args();
    if let Some(dt) = args.first() {
-      let dat = date(&dt)?;
+      let dat = parse_date(&dt)?;
       let (prices, errs) = snarf().await?;
       if let Some(diffs) = errs { 
          Err(report_diffs(&diffs))

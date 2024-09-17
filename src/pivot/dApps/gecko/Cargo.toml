@@ -5,10 +5,10 @@ edition = "2021"
 
 [[bin]]
 name = "gecko"
-path = "../quizzes/quiz09/answer09.rs"
+path = "../../quizzes/quiz09/answer09.rs"
 
 [dependencies]
-book = { path = "../../libs/book" }
-swerve = { path = "../swerve" }
+book = { path = "../../../libs/book" }
+swerve = { path = "../../swerve" }
 
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
