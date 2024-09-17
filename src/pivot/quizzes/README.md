@@ -49,3 +49,7 @@ only.
 ## tok
 
 * quiz 20: [Load a token chart](quiz20)
+
+## dawn
+
+* quiz 21: [Compute trade-amounts](quiz21)
