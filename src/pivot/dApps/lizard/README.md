@@ -5,7 +5,7 @@ using [`gecko`](../gecko)? This is where `lizard` comes in.
 
 `lizard` checks `$PIVOTS` and harvests all token-prices for all days missing.
 
-![Bulk-load of token-prices](../quizzes/quiz19/imgs/08b-pivots.png)
+![Bulk-load of token-prices](../../quizzes/quiz19/imgs/08b-pivots.png)
 
 Now, 
 

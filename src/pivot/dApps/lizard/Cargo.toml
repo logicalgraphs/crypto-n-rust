@@ -5,10 +5,10 @@ edition = "2021"
 
 [[bin]]
 name = "lizard"
-path = "../quizzes/quiz19/answer19b_merged_prices.rs"
+path = "../../quizzes/quiz19/answer19b_merged_prices.rs"
 
 [dependencies]
-book = { path = "../../libs/book" }
-swerve = { path = "../swerve" }
+book = { path = "../../../libs/book" }
+swerve = { path = "../../swerve" }
 
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
