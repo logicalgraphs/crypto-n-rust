@@ -3,7 +3,7 @@
 
 use std::collections::HashMap;
 
-use book::file_utils::read_file;
+use book::{err_utils::ErrStr, file_utils::read_file};
 
 use crate::rest_utils::{fin_res,read_aliases};
 
@@ -28,9 +28,9 @@ pub async fn load_aliases(opt_url: &Option<String>) -> Aliases {
    }
 }
 
-pub fn load_aliases_from_file(filename: &str) -> Aliases {
-   let file = read_file(filename);
-   aliases_loader(&file)
+pub fn load_aliases_from_file(filename: &str) -> ErrStr<Aliases> {
+   let file = read_file(filename)?;
+   Ok(aliases_loader(&file))
 }
 
 fn aliases_loader(file: &str) -> Aliases {

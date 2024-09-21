@@ -11,7 +11,7 @@ use crate::types::{
    usd::USD
 };
 
-use book::file_utils::lines_from_file;
+use book::{err_utils::ErrStr, file_utils::lines_from_file};
 
 #[derive(Debug, Clone)]
 pub struct Portfolio {
@@ -30,10 +30,10 @@ pub fn seed_portfolio(bag: HashSet<Asset>) -> Portfolio {
    Portfolio { bag: bag1 }
 }
 
-pub fn assets_from_file(file: &str) -> Portfolio {
-   let lines = lines_from_file(file);
+pub fn assets_from_file(file: &str) -> ErrStr<Portfolio> {
+   let lines = lines_from_file(file)?;
    let (_, daters) = lines.split_at(3);
-   Portfolio { bag: read_assets(daters.to_vec()) }
+   Ok(Portfolio { bag: read_assets(daters.to_vec()) })
 }
 
 pub fn consider(p: &Portfolio, assets: &Vec<String>) -> Portfolio {

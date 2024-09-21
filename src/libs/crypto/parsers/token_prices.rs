@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use book::{
+   err_utils::ErrStr,
    file_utils::lines_from_file,
    list_utils::tail
 };
@@ -10,8 +11,8 @@ use crate::types::{
    usd::USD
 };
 
-pub fn read_prices(file: &str) -> Prices {
-   let lines = lines_from_file(file);
+pub fn read_prices(file: &str) -> ErrStr<Prices> {
+   let lines = lines_from_file(file)?;
    let mut ans = HashMap::new();
 
    for line in tail(&lines) {
@@ -22,5 +23,5 @@ pub fn read_prices(file: &str) -> Prices {
          ans.insert(asset.to_string(),mk_price(date,quot));
       } else { panic!("Unparseable line in prices: {line}") }
    }
-   ans
+   Ok(ans)
 }
