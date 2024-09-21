@@ -18,6 +18,7 @@ use std::{
 
 use book::{
    csv_utils::{CsvWriter,print_csv},
+   err_utils::ErrStr,
    file_utils::lines_from_file,
    list_utils::head
 };
@@ -114,8 +115,8 @@ discovering arbitration paths.
 */
 
 pub fn read_synthetic_order_books(file: &str, quotes: &HashMap<String, USD>)
-   -> HashSet<OrderBook> {
-   let lines = lines_from_file(file);
+      -> ErrStr<HashSet<OrderBook>> {
+   let lines = lines_from_file(file)?;
    let (_header, rows) = lines.split_at(4);
    let mut pairs = HashSet::new();
    for row in rows {
@@ -129,16 +130,17 @@ pub fn read_synthetic_order_books(file: &str, quotes: &HashMap<String, USD>)
         println!("Could not process line {row}");
       }
    }
-   pairs
+   Ok(pairs)
 }
 
 pub fn merge_synthetics(markets: &mut HashSet<OrderBook>,
                         quotes: &HashMap<String, USD>,
-			synthetics: &str) {
-   let synths = read_synthetic_order_books(&synthetics, &quotes);
+			synthetics: &str) -> ErrStr<()> {
+   let synths = read_synthetic_order_books(&synthetics, &quotes)?;
    for s in synths {
       markets.insert(s.clone());
    }
+   Ok(())
 }
 
 // ----- Access -------------------------------------------------------

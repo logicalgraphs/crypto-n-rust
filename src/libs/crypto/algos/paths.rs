@@ -5,6 +5,7 @@
 use std::collections::{HashSet};
 
 use book::{
+   err_utils::ErrStr,
    file_utils::lines_from_file,
    list_utils::{head,tail,ht}
 };
@@ -33,8 +34,8 @@ pub fn print_path(ntoks: f32) -> impl Fn(&Path) -> () {
 
 pub fn paths_processor(
       f: &dyn Fn(&String, &mut Processed) -> Option<Path>,
-      file: &String, processed: &mut Processed) -> Vec<Path> {
-   let lines = lines_from_file(file);
+      file: &String, processed: &mut Processed) -> ErrStr<Vec<Path>> {
+   let lines = lines_from_file(file)?;
    let mut paths: Vec<Path> = Vec::new();
    for line in tail(&lines) {
       if let Some(path) = f(&line, processed) {
@@ -43,7 +44,7 @@ pub fn paths_processor(
    }
    paths.sort_by(|a, b| a.0.partial_cmp(&b.0)
         .expect(&format!("I don't know how to compare {a:?} and {b:?}")) );
-   paths
+   Ok(paths)
 }
 
 pub fn process_with_path(ntoks: f32, market: &HashSet<OrderBook>,
