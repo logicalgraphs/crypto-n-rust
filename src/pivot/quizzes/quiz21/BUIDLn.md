@@ -8,3 +8,5 @@ First things first. We need to
 
 Next, we need to parse our assets from [file](data/pools.csv), we do this with
 [answer21a_parse_assets.rs](answer21a_parse_assets.rs).
+
+![Assets](imgs/02-assets.png)
