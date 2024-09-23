@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "answer21"
-path = "answer21.rs"
+path = "answer21a_parse_assets.rs"
 
 [dependencies]
 serde = { version = "1.0.104", features = ["derive"] }

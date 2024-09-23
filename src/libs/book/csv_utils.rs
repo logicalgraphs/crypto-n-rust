@@ -2,6 +2,7 @@
 
 use crate::{
    compose,
+   err_utils::ErrStr,
    list_utils::mk_cycle,
    string_utils::{parse_lines,to_string}
 };
@@ -47,8 +48,8 @@ pub fn enumerate_csv<T: CsvWriter>(v: &Vec<T>) -> String {
 // Got CSV? This fn will parse that CSV into Vec<T>
 
 pub fn parse_csv<T>(skip_lines: usize,
-                    f: impl Fn(Vec<String>) -> Result<T, String>,
-                    lines: &Vec<String>) -> Result<Vec<T>, String> {
+                    f: impl Fn(Vec<String>) -> ErrStr<T>,
+                    lines: &Vec<String>) -> ErrStr<Vec<T>> {
    fn cols(line: String) -> Vec<String> {
       line.split(",").map(to_string).collect()
    }
