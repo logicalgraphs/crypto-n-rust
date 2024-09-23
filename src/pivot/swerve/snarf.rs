@@ -7,8 +7,10 @@ use async_std::task;
 use chrono::{Days,NaiveDate};
 
 use book::{
+   csv_utils::parse_csv,
    date_utils::parse_date,
    err_utils::ErrStr,
+   file_utils::extract_date_and_body,
    list_utils::tail,
    num_utils::parse_num_or_zero,
    table_utils::{col,ingest,row_filter,rows,from_map,transpose},
@@ -21,7 +23,7 @@ use crate::{
    fetch_prices::{Blob,fetch_prices,transform_prices,
                   fetch_chart_json,parse_chart},
    types::{Chart,Diffs,EMAs,mk_emas,Price,PivotDict,PivotTable,
-           StampedData,Token,TokenId,mk_token},
+           StampedData,Token,TokenId,mk_token,asset_parser,Pools,build_pools},
    verify::verify
 };
 
@@ -51,13 +53,9 @@ pub async fn snarf_pivots() -> ErrStr<(PivotDict, PivotTable, NaiveDate)> {
    Ok((dict, table, date.clone()))
 }
 
-// this is a bit more than a snarf: I snarf the pivots then compute the
-// EMAs for a pair. Fortunately the EMA-type self-computes, so it's an
-// easy hand-off.
-
-pub async fn snarf_emas(for_rows: u64, t1: &Token, t2: &Token) -> ErrStr<EMAs> {
+pub fn snarf_emas(table: &PivotTable, date: &NaiveDate, for_rows: u64,
+                  t1: &Token, t2: &Token) -> ErrStr<EMAs> {
    let days = Days::new(for_rows);
-   let (_dict, table, date) = snarf_pivots().await?;
    let start = date.sub(days);
 
    fn in_range(d: &NaiveDate) -> impl Fn(&NaiveDate) -> bool + '_ {
@@ -107,4 +105,11 @@ pub async fn snarf_pivot_table(auth: &str, tok_id: &TokenId, symbol: &Token,
       value.get("prices").expect(&format!("price for {symbol}/{tok_id}"));
    let table = from_map(symbol, stamped_prices);
    Ok(transpose(&table))
+}
+
+pub fn snarf_assets(file: &str) -> ErrStr<Pools> {
+   let (_date, lines) = extract_date_and_body(&file)?;
+   let blocks = parse_csv(0, asset_parser, &tail(&lines))?;
+   let pools = build_pools(&blocks);
+   Ok(pools)
 }

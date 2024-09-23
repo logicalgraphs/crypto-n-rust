@@ -8,8 +8,10 @@ use chrono::NaiveDate;
 
 use book::{
    csv_utils::{CsvWriter,list_csv},
+   err_utils::ErrStr,
    json_utils::{AsJSON,json_list,to_object},
-   num_utils::minimax_f32,
+   list_utils::ht,
+   num_utils::{minimax_f32,parse_num},
    string_utils::quot,
    table_utils::Table,
    types::{stamp,Stamped,Tag,untag}
@@ -296,6 +298,51 @@ pub fn confidence(ds: &Deltas) -> Option<f32> {
          })
       })
    }).or_else(||{ println!("no confidence"); None })
+}
+
+// ... and the application of deltas to assets
+
+type Blockchain = String;
+type Amount = f32;
+type Tokens = HashMap<Token, Amount>;
+
+fn parse_tokens(row: &Vec<String>) -> ErrStr<Tokens> {
+   let mut ans = HashMap::new();
+   for window in row.chunks(2) {
+      if let Some(tok) = window.get(0) {
+         if tok == "" { continue; }
+         let token = mk_token(&tok);
+         let amt = window.get(1).ok_or(format!("No amount listed for {tok}"))?;
+         let amount = parse_num(&amt)?;
+         ans.insert(token, amount);
+      }
+   }
+   Ok(ans)
+}
+
+pub struct Assets {
+   blockchain: Blockchain,
+   tokens: Tokens
+}
+
+pub fn asset_parser(v: Vec<String>) -> ErrStr<Assets> {
+   let (h, t) = ht(&v);
+   let blockchain = h.ok_or(format!("No blockchain in {v:?}"))?;
+   let tokens = parse_tokens(&t)?;
+   Ok(Assets { blockchain, tokens })
+}
+
+pub type Pools = HashMap<Blockchain, Vec<Tokens>>;
+
+pub fn build_pools(blocks: &Vec<Assets>) -> Pools {
+   let mut ans = HashMap::new();
+   for block in blocks {
+      let toks = block.tokens.clone();
+      ans.entry(block.blockchain.clone())
+         .and_modify(|assets: &mut Vec<_>| assets.push(toks.clone()))
+         .or_insert(vec!(toks));
+   }     
+   ans
 }
 
 // ----- Chart-data, or, fetching historical data for tokens -----------------

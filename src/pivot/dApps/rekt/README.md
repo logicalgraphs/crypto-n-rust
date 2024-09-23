@@ -1,7 +1,5 @@
 # rekt
 
-## WIP
-
 Makes BUY/SELL-trade recommendations for pivot-trades.
 
 `rekt` is so-called because if you just blindly follow these recommendations,
@@ -83,11 +81,11 @@ So, ... yeah. That.
 Besides computing the buy/sell-call, `rekt` computes the confidence or
 proportion to buy or to sell using the δs between the EMA20s and ratios.
 
-![δs](../quizzes/quiz14/imgs/02-δs.png)
+![δs](../../quizzes/quiz14/imgs/02-δs.png)
 
 With the δs computed, `rekt` now renders a degree of confidence to the call.
 
-![δ-confidence](../quizzes/quiz14/imgs/05-confidence.png)
+![δ-confidence](../../quizzes/quiz14/imgs/05-confidence.png)
 
 ## TODO
 
