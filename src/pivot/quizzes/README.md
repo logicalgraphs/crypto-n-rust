@@ -52,4 +52,4 @@ only.
 
 ## dawn
 
-* quiz 21: [Compute trade-amounts](quiz21)
+* quiz 21: [Read available blockchain assets](quiz21)
