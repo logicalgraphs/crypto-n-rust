@@ -97,9 +97,15 @@ impl AsJSON for Ratio {
 }
 
 #[derive(Clone,Debug)]
-struct Name {
-   base: Token,
-   target: Token
+pub struct Name {
+   pub base: Token,
+   pub target: Token
+}
+
+impl fmt::Display for Name {
+   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}<->{}", self.base, self.target)
+   }
 }
 
 fn mk_name(t1: &Token, t2: &Token) -> Name {
@@ -353,12 +359,45 @@ pub type Pools = HashMap<Blockchain, Vec<(Prime, Tokens)>>;
 pub fn build_pools(blocks: &Vec<Assets>) -> Pools {
    let mut ans = HashMap::new();
    for block in blocks {
-      fn toks(b: &Assets) -> (Prime, Tokens) { (b.prime.clone(), b.tokens.clone()) }
+      fn toks(b: &Assets) -> (Prime, Tokens) {
+         (b.prime.clone(), b.tokens.clone())
+      }
       ans.entry(block.blockchain.clone())
          .and_modify(|assets: &mut Vec<_>| assets.push(toks(&block)))
          .or_insert(vec!(toks(&block)));
    }     
    ans
+}
+
+pub type TradeRoute = Name;
+
+pub fn build_trade_routes(a: &Tokens) -> Vec<TradeRoute> {
+   // first iteration, not taking into account the prime asset
+   let toks: Vec<Token> = a.keys().cloned().collect();
+   fix_build_trade_routes(toks)
+}
+
+fn fix_build_trade_routes(v: Vec<Token>) -> Vec<TradeRoute> {
+   let (a, b) = ht(&v);
+   let mut ans = build_trade_routes_with(a, b.clone());
+   if ans.is_empty() {
+      ans
+   } else { 
+      ans.append(&mut fix_build_trade_routes(b));
+      ans
+   }
+}
+
+fn build_trade_routes_with(t: Option<Token>, v: Vec<Token>)
+      -> Vec<TradeRoute> {
+   if let Some(tok) = t {
+      fn mk_trade_route(base: Token) -> impl Fn(Token) -> TradeRoute {
+         move |target| mk_name(&base, &target)
+      }
+      v.into_iter().map(mk_trade_route(tok)).collect()
+   } else {
+      Vec::new()
+   }
 }
 
 // ----- Chart-data, or, fetching historical data for tokens -----------------

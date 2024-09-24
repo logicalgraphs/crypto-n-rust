@@ -1,36 +1,38 @@
+use std::fmt;
+
 use book::{
-   csv_utils::print_csv,
-   date_utils::parse_date,
    err_utils::ErrStr,
    utils::get_args
 };
 
 use swerve::{
-   recs::rec,
-   snarf::{snarf_assets,snarf_pivots},
-   types::{mk_token,print_confidence}
+   snarf::snarf_assets,
+   types::build_trade_routes
 };
 
 fn usage() -> ErrStr<()> {
-   println!("./answer22 <date> <portfolio>
+   println!("./answer22 <portfolio>
 	Parses <portfolio>, extracting tokens and amounts then builds pivot
 	trade-routes.");
-   Err("Must include today's <date> and <portfolio> file!".to_string())
+   Err("Must include <portfolio> file!".to_string())
 }
 
-#[tokio::main]
-async fn main() -> ErrStr<()> {
+fn main() -> ErrStr<()> {
    let args = get_args();
-   if let [date, file] = args.as_slice() {
-      let today = parse_date(&date)?;
+   if let Some(file) = args.first() {
       let pools = snarf_assets(&file)?;
-      println!("Pools are {pools:?}\n");
-      let (_, table, max_dt) = snarf_pivots().await?;
-      let btc = mk_token("BTC");
-      let eth = mk_token("ETH");
-      let (rekt, conf) = rec(&table, &max_dt, 100, &btc, &eth)?;
-      print_csv(&rekt);
-      print_confidence(&today, &conf);
+      for (blockchain, assets) in pools {
+         println!("For blockchain {blockchain}:");
+         for (_prime, asset) in assets {
+            let trade_routes = build_trade_routes(&asset);
+            fn vec_as_string<T: fmt::Display>(v: Vec<T>) -> String {
+               v.iter().map(|e| format!("{e}")).collect::<Vec<_>>().join(", ")
+            }
+            println!(" * Trade-routes for assets {} are\n\t{}",
+                     vec_as_string(asset.keys().collect()),
+                     vec_as_string(trade_routes));
+         }
+      }
       Ok(())
    } else {
       usage()
