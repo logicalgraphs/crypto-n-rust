@@ -292,12 +292,18 @@ pub fn confidence(ds: &Deltas) -> Option<f32> {
          mb_max.and_then(|max| {
             let d = stamped_delta.d.pack;
             let conf = d / if d > 0.0 { max } else { min };
-            println!("Confidence for {} trade: {:.2?}%", stamped_delta.d.date,
-                     conf * 100.0);
             Some(conf)
          })
       })
-   }).or_else(||{ println!("no confidence"); None })
+   }).or(None)
+}
+
+pub fn print_confidence(dt: &NaiveDate, mb_conf: &Option<f32>) {
+   println!("{}", if let Some(conf) = mb_conf {
+      format!("Confidence for {dt} trade: {:.2?}%", conf * 100.0)
+   } else {
+      "no confidence".to_string()
+   });
 }
 
 // ... and the application of deltas to assets
@@ -305,42 +311,52 @@ pub fn confidence(ds: &Deltas) -> Option<f32> {
 type Blockchain = String;
 type Amount = f32;
 type Tokens = HashMap<Token, Amount>;
+type Prime = Option<Token>;
 
-fn parse_tokens(row: &Vec<String>) -> ErrStr<Tokens> {
+fn parse_tokens(row: &Vec<String>) -> ErrStr<(Tokens, Prime)> {
    let mut ans = HashMap::new();
+   let mut prime = None;
    for window in row.chunks(2) {
       if let Some(tok) = window.get(0) {
          if tok == "" { continue; }
-         let token = mk_token(&tok);
+         let tok1 = if tok.starts_with("*") {
+            let ans = tok.strip_prefix("*").unwrap();
+            prime = Some(mk_token(&ans));
+            ans
+         } else {
+            tok
+         };
+         let token = mk_token(&tok1);
          let amt = window.get(1).ok_or(format!("No amount listed for {tok}"))?;
          let amount = parse_num(&amt)?;
          ans.insert(token, amount);
       }
    }
-   Ok(ans)
+   Ok((ans, prime))
 }
 
 pub struct Assets {
    blockchain: Blockchain,
-   tokens: Tokens
+   tokens: Tokens,
+   prime: Prime
 }
 
 pub fn asset_parser(v: Vec<String>) -> ErrStr<Assets> {
    let (h, t) = ht(&v);
    let blockchain = h.ok_or(format!("No blockchain in {v:?}"))?;
-   let tokens = parse_tokens(&t)?;
-   Ok(Assets { blockchain, tokens })
+   let (tokens, prime) = parse_tokens(&t)?;
+   Ok(Assets { blockchain, tokens, prime })
 }
 
-pub type Pools = HashMap<Blockchain, Vec<Tokens>>;
+pub type Pools = HashMap<Blockchain, Vec<(Prime, Tokens)>>;
 
 pub fn build_pools(blocks: &Vec<Assets>) -> Pools {
    let mut ans = HashMap::new();
    for block in blocks {
-      let toks = block.tokens.clone();
+      fn toks(b: &Assets) -> (Prime, Tokens) { (b.prime.clone(), b.tokens.clone()) }
       ans.entry(block.blockchain.clone())
-         .and_modify(|assets: &mut Vec<_>| assets.push(toks.clone()))
-         .or_insert(vec!(toks));
+         .and_modify(|assets: &mut Vec<_>| assets.push(toks(&block)))
+         .or_insert(vec!(toks(&block)));
    }     
    ans
 }
