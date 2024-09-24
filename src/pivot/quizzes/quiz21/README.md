@@ -1,6 +1,6 @@
 # Pivot quiz 21: `./dawn`
 
-## Compute trade-amounts
+## Read assets
 
 We have [`./rekt`](../../dApps/rekt), which renders a buy/sell-call on 2 
 tokens with a confidence-measure, δ.
@@ -14,14 +14,6 @@ Given the call, δ and blockchain, `./dawn` will look up the amounts of each
 token you have and compute the amount to trade and what you'll get from that 
 trade.
 
-```BASH
-./dawn SELL AVAX QI 12% avalanche
-```
-
-> `Swap 1.2 $AVAX for 2096 $QI`
-
-![AVAX / QI swap](imgs/01-AVAX-QI-swap.png)
-
-The lookup can be a wallet dApp or whatever.
+This pop-quiz focuses on the assets-lookup.
 
 * We [BUILD our solution here](BUIDLn.md).

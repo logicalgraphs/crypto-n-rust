@@ -26,9 +26,6 @@ async fn main() -> ErrStr<()> {
       let today = parse_date(&date)?;
       let pools = snarf_assets(&file)?;
       println!("Pools are {pools:?}\n");
-
-      // TODO: add build_curve_pools()
-
       let (_, table, max_dt) = snarf_pivots().await?;
       let btc = mk_token("BTC");
       let eth = mk_token("ETH");

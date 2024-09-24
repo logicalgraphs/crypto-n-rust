@@ -10,3 +10,8 @@ Next, we need to parse our assets from [file](data/pools.csv), we do this with
 [answer21a_parse_assets.rs](answer21a_parse_assets.rs).
 
 ![Assets](imgs/02-assets.png)
+
+Finally, I define an asset a `prime` if it's the only assets traded against
+in the pivot pool. Such asset is denoted with a star (`*`).
+
+![Prime asset](imgs/03-prime.png)
