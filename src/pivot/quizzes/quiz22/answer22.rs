@@ -12,8 +12,9 @@ use swerve::{
 };
 
 fn usage() -> ErrStr<()> {
-   println!("./answer21 <date> <portfolio>
-	Parses <portfolio>, extracting tokens and amounts");
+   println!("./answer22 <date> <portfolio>
+	Parses <portfolio>, extracting tokens and amounts then builds pivot
+	trade-routes.");
    Err("Must include today's <date> and <portfolio> file!".to_string())
 }
 
