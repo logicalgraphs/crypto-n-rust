@@ -53,3 +53,4 @@ only.
 ## dawn
 
 * quiz 21: [Read available blockchain assets](quiz21)
+* quiz 22: [Compute pivot trade-routes](quiz22)
