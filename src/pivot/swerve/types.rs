@@ -1,5 +1,5 @@
 use std::{
-   collections::HashMap,
+   collections::{HashMap,HashSet},
    fmt, fmt::Debug
 };
 
@@ -369,12 +369,19 @@ pub fn build_pools(blocks: &Vec<Assets>) -> Pools {
    ans
 }
 
+// ----- Trade-Routes --------------------------------------------------
+
 pub type TradeRoute = Name;
 
-pub fn build_trade_routes(a: &Tokens) -> Vec<TradeRoute> {
-   // first iteration, not taking into account the prime asset
-   let toks: Vec<Token> = a.keys().cloned().collect();
-   fix_build_trade_routes(toks)
+pub fn build_trade_routes(mb_prime: &Prime, a: &Tokens) -> Vec<TradeRoute> {
+   let mut toks: HashSet<Token> = a.keys().cloned().collect();
+   fn vectorize(h: HashSet<Token>) -> Vec<Token> { h.into_iter().collect() }
+   if let Some(prime) = mb_prime {
+      toks.remove(&prime);
+      build_trade_routes_with(mb_prime.clone(), vectorize(toks))
+   } else {
+      fix_build_trade_routes(vectorize(toks))
+   }
 }
 
 fn fix_build_trade_routes(v: Vec<Token>) -> Vec<TradeRoute> {

@@ -23,8 +23,8 @@ fn main() -> ErrStr<()> {
       let pools = snarf_assets(&file)?;
       for (blockchain, assets) in pools {
          println!("For blockchain {blockchain}:");
-         for (_prime, asset) in assets {
-            let trade_routes = build_trade_routes(&asset);
+         for (prime, asset) in assets {
+            let trade_routes = build_trade_routes(&prime, &asset);
             fn vec_as_string<T: fmt::Display>(v: Vec<T>) -> String {
                v.iter().map(|e| format!("{e}")).collect::<Vec<_>>().join(", ")
             }

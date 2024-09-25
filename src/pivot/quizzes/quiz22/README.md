@@ -13,3 +13,5 @@ For example, on Avalanche, the pivot trade route is AVAX<->QI
 On Optimism, it's much more complicated.
 
 Compute.
+
+* We BUIDL our solution step-by-step [here](BUIDLn.md).
