@@ -1,10 +1,11 @@
 use std::{
    collections::{HashMap,HashSet},
-   fmt, fmt::Debug
+   fmt, fmt::Debug,
+   ops::Sub
 };
 
 use bimap::BiMap;
-use chrono::NaiveDate;
+use chrono::{Days,NaiveDate};
 
 use book::{
    csv_utils::{CsvWriter,list_csv},
@@ -13,7 +14,7 @@ use book::{
    list_utils::ht,
    num_utils::{minimax_f32,parse_num},
    string_utils::quot,
-   table_utils::Table,
+   table_utils::{Table,row_filter,col,rows,val},
    types::{stamp,Stamped,Tag,untag}
 };
 
@@ -207,12 +208,35 @@ impl AsJSON for EMAs {
    }
 }
 
+pub fn calculate_emas(table: &PivotTable, date: &NaiveDate, for_rows: u64,
+                      t1: &Token, t2: &Token) -> ErrStr<EMAs> {
+   let days = Days::new(for_rows);
+   let start = date.sub(days);
+
+   fn in_range(d: &NaiveDate) -> impl Fn(&NaiveDate) -> bool + '_ {
+      |date| { date.ge(d) }
+   }
+   let domain = row_filter(in_range(&start), &table);
+   let a = col(&domain, t1).expect(&format!("NO TOKEN NAMED {t1}"));
+   let b = col(&domain, t2).expect(&format!("NO TOKEN NAMED {t2}"));
+
+   let ratios: Vec<f32> =
+      a.clone().into_iter()
+               .zip(b.clone().into_iter())
+               .map(|(a,b)| a / b)
+               .collect();
+
+   let dates = rows(&domain);
+   let emas = mk_emas(t1, t2, 20, &dates, &ratios);
+   Ok(emas)
+}
+
 // ----- Recommendations --------------------------------------------------
 
 #[derive(Debug,Clone)]
 pub struct Rec {
    name: Name,
-   call: CALL
+   pub call: CALL
 }
 
 #[derive(Debug,Clone,PartialEq)]
@@ -237,7 +261,14 @@ pub fn mk_rec(emas: &EMAs) -> Stamped<Rec> {
    stamp(&ema.ratio.r.date, &Rec { name: emas.name.clone(), call })
 }
 
-pub fn rec(r: &Stamped<Rec>) -> String {
+pub fn rec(table: &PivotTable, date: &NaiveDate, for_rows: u64,
+           t1: &Token, t2: &Token) -> ErrStr<(Stamped<Rec>, Option<f32>)> {
+   let emas = calculate_emas(table, date, for_rows, t1, t2)?;
+   let deltas = mk_deltas(&emas);
+   Ok((mk_rec(&emas),confidence(&deltas)))
+}
+
+pub fn rec_as_string(r: &Stamped<Rec>) -> String {
    format!("On {}, {} {} {} {}", r.date, r.pack.call, 
            r.pack.name.target,
            if r.pack.call == CALL::BUY { "with" } else { "for" },
@@ -301,7 +332,7 @@ pub fn confidence(ds: &Deltas) -> Option<f32> {
             Some(conf)
          })
       })
-   }).or(None)
+   })
 }
 
 pub fn print_confidence(dt: &NaiveDate, mb_conf: &Option<f32>) {
@@ -432,4 +463,73 @@ fn print_section<A: Debug + Clone>((section, row): &(String, StampedData<A>)) {
    prices.sort_by_key(|k| k.0);
    prices.iter().take(3).for_each(print_datum);
    println!("\t...");
+}
+
+// ----- Trade-Call -------------------------------------------------------
+
+// Given a set of Tokens(-with-amounts) and the pivot-table, we build the
+// EMA-20s, the deltas, and a recommendation.
+
+// From those derived values we can compute amount (and type) to trade and
+// the amount (of type) we'd receive.
+
+#[derive(Debug, Clone)]
+pub struct PricedAsset {
+   token: Token,
+   amount: f32,
+   price: f32
+}
+
+impl fmt::Display for PricedAsset {
+   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+      write!(f, "{} {} @ ${}ea (${})",
+             self.amount, self.token, self.price, self.amount * self.price)
+   }
+}
+
+#[derive(Debug, Clone)]
+pub struct TradeCall {
+   from: PricedAsset,
+   to:   PricedAsset
+}
+
+impl fmt::Display for TradeCall {
+   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+      write!(f, "SWAP {} for {}", self.from, self.to)
+   }
+}
+
+pub fn mk_trade_call(table: &PivotTable, date: &NaiveDate, for_rows: u64,
+                     amounts: &Tokens, route: &TradeRoute, min_amt: f32)
+      -> ErrStr<Option<TradeCall>> {
+   let (rec, conf) = rec(table, date, for_rows, &route.base, &route.target)?;
+   if let Some(delta) = conf {
+      let (from_t, to_t) = if rec.pack.call == CALL::SELL {
+         (route.base.clone(), route.target.clone())
+      } else {
+         (route.target.clone(), route.base.clone())
+      };
+      fn adjust_amt(toks: &Tokens, t: &Token, c: f32) -> ErrStr<f32> {
+         let amt = toks.get(t).expect(&format!("No amount for {t}"));
+         Ok(amt * 0.1 * c)
+      }
+      let from_amt = adjust_amt(amounts, &from_t, delta)?;
+      fn tok_price(tt: &PivotTable, t: &Token, dt: &NaiveDate) -> ErrStr<f32> {
+         val(tt, dt, t).ok_or(format!("No price for token {t} on {dt}"))
+      }
+      let from_prc = tok_price(table, &from_t, date)?;
+      if from_prc * from_amt < min_amt {
+         Ok(None)
+      } else {
+         let to_prc = tok_price(table, &to_t, date)?;
+         let to_amt = from_prc * from_amt / to_prc;
+         let from =
+            PricedAsset { token: from_t, amount: from_amt, price: from_prc };
+         let to =
+            PricedAsset { token: to_t, amount: to_amt, price: to_prc };
+         Ok(Some(TradeCall { from, to }))
+      }
+   } else {
+      Ok(None)
+   }
 }

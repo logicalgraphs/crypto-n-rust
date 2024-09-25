@@ -98,7 +98,7 @@ async fn snarf_chart(auth: &str, tok_id: &TokenId, symbol: &Token,
 }
 
 pub async fn snarf_pivot_table(auth: &str, tok_id: &TokenId, symbol: &Token,
-                     days: i64) -> ErrStr<PivotTable> {
+                               days: i64) -> ErrStr<PivotTable> {
    let chart = snarf_chart(auth, tok_id, symbol, days).await?;
    let (_tag, value) = untag(&chart);
    let stamped_prices: &StampedData<f32> =

@@ -18,3 +18,5 @@ That is to say: we have everything we need to determine how much we should
 trade and a close approximation of how much we'll get from the trade.
 
 Compute that.
+
+* ([answer](answer.md))
