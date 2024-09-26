@@ -1,5 +1,7 @@
 date: 2024-09-25
 
 blockchain,asset1,amount1,asset2,amount2,asset3,amount3,asset4,amount4
-ethereum,ETH,0.0,BTC,0.0,UNDEAD,16666666,,
+ethereum,ETH,0.0,BTC,0.0,UNDEAD,8333333,,
 ethereum,ETH,15,BTC,1,,,,
+ethereum,PAXG,0,ETH,0,BTC,0,,
+ethereum,PAXG,0,ETH,0,BTC,0,UNDEAD,8333333
