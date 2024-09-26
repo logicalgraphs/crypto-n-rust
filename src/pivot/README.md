@@ -13,6 +13,7 @@ pivot-token.
 * [rekt](dApps/rekt) - BUY / SELL call
 * [tok](dApps/tok) - adds a new token to 
 [$PIVOTS](../../data-files/csv/pivots.csv)
+* [dawn](dApps/dawn) - runs recommendations on all pivot pools
 
 ## Determinor
 

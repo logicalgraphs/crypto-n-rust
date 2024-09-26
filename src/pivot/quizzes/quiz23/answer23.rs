@@ -2,6 +2,7 @@ use std::fmt;
 
 use book::{
    err_utils::ErrStr,
+   num_utils::parse_or,
    utils::get_args
 };
 
@@ -11,7 +12,7 @@ use swerve::{
 };
 
 fn usage() -> ErrStr<()> {
-   println!("./dawn <portfolio>
+   println!("./dawn <portfolio> [min_swap_ammount=500.00]
 	Makes trade-calls for <portfolio>
 ");
    Err("Must include <portfolio> file!".to_string())
@@ -23,6 +24,7 @@ async fn main() -> ErrStr<()> {
    if let Some(file) = args.first() {
       let pools = snarf_assets(&file)?;
       let (_, table, max_date) = snarf_pivots().await?;
+      let min_swap = parse_or(args.last(), 500.0);
       for (blockchain, assets) in pools {
          println!("For blockchain {blockchain}:");
          for (prime, asset) in assets {
@@ -35,8 +37,8 @@ async fn main() -> ErrStr<()> {
                      vec_as_string(trade_routes.clone()));
             let mut swapped = false;
             for route in trade_routes {
-               let mb =
-                  mk_trade_call(&table, &max_date, 100, &asset, &route, 500.0)?;
+               let mb = mk_trade_call(&table, &max_date, 100, &asset,
+                                      &route, min_swap)?;
                if let Some(call) = mb { 
                   println!("\t* {call}");
                   swapped = true;
