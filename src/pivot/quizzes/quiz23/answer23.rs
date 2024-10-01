@@ -25,8 +25,10 @@ async fn main() -> ErrStr<()> {
       let pools = snarf_assets(&file)?;
       let (_, table, max_date) = snarf_pivots().await?;
       let min_swap = parse_or(args.last(), 500.0);
+      println!("./dawn.\n\nRecommendations for {}; min_swap is ${}.",
+               max_date, min_swap);
       for (blockchain, assets) in pools {
-         println!("For blockchain {blockchain}:");
+         println!("\nFor blockchain {blockchain}:");
          for (prime, asset) in assets {
             let trade_routes = build_trade_routes(&prime, &asset);
             fn vec_as_string<T: fmt::Display>(v: Vec<T>) -> String {
