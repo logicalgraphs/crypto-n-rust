@@ -8,7 +8,7 @@ use book::{
 
 use swerve::{
    snarf::{snarf_assets,snarf_pivots},
-   types::{build_trade_routes, mk_trade_call}
+   types::{build_trade_routes, mk_trade_call, print_trade_call}
 };
 
 fn usage() -> ErrStr<()> {
@@ -41,8 +41,8 @@ async fn main() -> ErrStr<()> {
             for route in trade_routes {
                let mb = mk_trade_call(&table, &max_date, 100, &asset,
                                       &route, min_swap)?;
-               if let Some(call) = mb { 
-                  println!("\t* {call}");
+               if let Some((dt, call, conf)) = mb { 
+                  print_trade_call(&call, &dt, conf);
                   swapped = true;
                }
             }

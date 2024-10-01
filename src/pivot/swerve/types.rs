@@ -261,8 +261,11 @@ pub fn mk_rec(emas: &EMAs) -> Stamped<Rec> {
    stamp(&ema.ratio.r.date, &Rec { name: emas.name.clone(), call })
 }
 
+pub type Confidence = f32;
+
 pub fn rec(table: &PivotTable, date: &NaiveDate, for_rows: u64,
-           t1: &Token, t2: &Token) -> ErrStr<(Stamped<Rec>, Option<f32>)> {
+           t1: &Token, t2: &Token)
+      -> ErrStr<(Stamped<Rec>, Option<Confidence>)> {
    let emas = calculate_emas(table, date, for_rows, t1, t2)?;
    let deltas = mk_deltas(&emas);
    Ok((mk_rec(&emas),confidence(&deltas)))
@@ -321,7 +324,7 @@ impl CsvWriter for Deltas {
    }
 }
 
-pub fn confidence(ds: &Deltas) -> Option<f32> {
+pub fn confidence(ds: &Deltas) -> Option<Confidence> {
    ds.deltas.last().and_then(|stamped_delta| {
       let deltas: Vec<f32> = ds.deltas.iter().map(|st_d| st_d.d.pack).collect();
       let (mb_min, mb_max) = minimax_f32(&deltas);
@@ -335,12 +338,12 @@ pub fn confidence(ds: &Deltas) -> Option<f32> {
    })
 }
 
-pub fn print_confidence(dt: &NaiveDate, mb_conf: &Option<f32>) {
-   println!("{}", if let Some(conf) = mb_conf {
+pub fn confidence_str(dt: &NaiveDate, mb_conf: &Option<Confidence>) -> String {
+   if let Some(conf) = mb_conf {
       format!("Confidence for {dt} trade: {:.2?}%", conf * 100.0)
    } else {
       "no confidence".to_string()
-   });
+   }
 }
 
 // ... and the application of deltas to assets
@@ -499,9 +502,14 @@ impl fmt::Display for TradeCall {
    }
 }
 
+pub fn print_trade_call(date: &NaiveDate, call: &TradeCall, conf: Confidence) {
+   println!("\t* {}\n\t  SWAP {}\n\t  for {}",
+            confidence_str(date, &Some(conf)), call.from, call.to);
+}
+
 pub fn mk_trade_call(table: &PivotTable, date: &NaiveDate, for_rows: u64,
                      amounts: &Tokens, route: &TradeRoute, min_amt: f32)
-      -> ErrStr<Option<TradeCall>> {
+      -> ErrStr<Option<(TradeCall, NaiveDate, Confidence)>> {
    let (rec, conf) = rec(table, date, for_rows, &route.base, &route.target)?;
    if let Some(delta) = conf {
       let (from_t, to_t) = if rec.pack.call == CALL::SELL {
@@ -527,7 +535,7 @@ pub fn mk_trade_call(table: &PivotTable, date: &NaiveDate, for_rows: u64,
             PricedAsset { token: from_t, amount: from_amt, price: from_prc };
          let to =
             PricedAsset { token: to_t, amount: to_amt, price: to_prc };
-         Ok(Some(TradeCall { from, to }))
+         Ok(Some((TradeCall { from, to }, date.clone(), delta)))
       }
    } else {
       Ok(None)
