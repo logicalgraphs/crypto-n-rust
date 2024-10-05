@@ -55,3 +55,7 @@ only.
 * quiz 21: [Read available blockchain assets](quiz21)
 * quiz 22: [Compute pivot trade-routes](quiz22)
 * quiz 23: [Compute trade amounts](quiz23)
+
+## dusk
+
+* quiz 25: [Parse open pivot positions](quiz25)
