@@ -1,14 +1,9 @@
 # Pivot quiz 24
 
-## Parsing open positions
+## Showing state for debugging
 
-Let's BUIDL ./dusk.
+What is happening with ./dawn under the hood to make these recommendations?
 
-First up, parse the open pivot positions, ...
+Output ./dawn's state for each (non-)recommendation, something like this: 
 
-![Open pivot positions](imgs/01-open-pivots.png)
-
-... so we can assess
-
-1. Should we close an open position? or
-2. Should we open a new position, given the current open positions (if any)? 
+![./dawn's state](imgs/01-state.png)
