@@ -384,7 +384,10 @@ pub struct Assets {
 pub fn asset_parser(v: Vec<String>) -> ErrStr<Assets> {
    let (h, t) = ht(&v);
    let blockchain = h.ok_or(format!("No blockchain in {v:?}"))?;
-   let (tokens, prime) = parse_tokens(&t)?;
+   let (h1, t1) = ht(&t);
+   let _pool =   // placeholder until we distinguish on pool-names
+      h1.ok_or(format!("No pool in blockchain {blockchain} in {t:?}"))?;
+   let (tokens, prime) = parse_tokens(&t1)?;
    Ok(Assets { blockchain, tokens, prime })
 }
 
