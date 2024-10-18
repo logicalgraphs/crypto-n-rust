@@ -12,3 +12,5 @@ First up, parse the open pivot positions, ...
 
 1. Should we close an open position? or
 2. Should we open a new position, given the current open positions (if any)? 
+
+* We work through our answer [here](BUIDLn.md).
