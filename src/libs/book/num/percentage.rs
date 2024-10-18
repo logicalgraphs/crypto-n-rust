@@ -6,6 +6,8 @@ use std::{
    str::FromStr
 };
 
+use crate::err_utils::ErrStr;
+
 #[derive(Debug, Clone, Default)]
 pub struct Percentage {
    pub percent: f32
@@ -29,15 +31,15 @@ impl fmt::Display for Percentage {
 
 impl FromStr for Percentage {
    type Err = String;
-   fn from_str(elt: &str) -> Result<Self, String> {
+   fn from_str(elt: &str) -> ErrStr<Self> {
       let mut per = elt.to_string();
       let perc_sym = per.pop();
       if Some('%') == perc_sym {
          let percent: Result<f32, _> = per.parse();
-         if let Ok(percent_p) = percent {
-            Ok(mk_percentage(percent_p / 100.0))
-         } else {
-            Err(format!("Not a percentage: {elt}"))
+         match percent {
+            Ok(percent_p) => Ok(mk_percentage(percent_p / 100.0)),
+            Err(err) =>
+               Err(format!("Could not parse percentage from {elt}: {err}"))
          }
       } else {
          Err(format!("Percentage missing terminating '%' in {elt}"))

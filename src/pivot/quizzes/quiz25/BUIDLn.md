@@ -39,3 +39,13 @@ programs to test both parsers:
 
 * [answer25a_percentage.rs](answer25a_percentage.rs)
 * [answer25b_usd.rs](answer25b_usd.rs)
+
+After some rearranging of some libraries, incorporating estimates, we have:
+
+* [answer25c_usd_perc.rs](answer25c_usd_perc.rs)
+
+with output:
+
+![Parsing CSV](imgs/03-parsing-csv.png)
+
+to get us part-way there!

@@ -1,7 +1,6 @@
 // we make our types CSVy
 
 use crate::{
-   compose,
    err_utils::ErrStr,
    list_utils::mk_cycle,
    string_utils::{parse_lines,to_string}
@@ -45,15 +44,30 @@ pub fn enumerate_csv<T: CsvWriter>(v: &Vec<T>) -> String {
 
 // ----- Parsers -------------------------------------------------------
 
+type ParserFn<T> = dyn Fn(Vec<String>) -> ErrStr<T>;
+
+fn parser<T>(separator: &str, skip_lines: usize, 
+             f: &ParserFn<T>, lines: &Vec<String>) -> ErrStr<Vec<T>> {
+   fn cols(s: &str) -> impl Fn(String) -> Vec<String> + '_ {
+      move |line| line.split(s).map(to_string).collect()
+   }
+   fn g<'a, T>(s: &'a str, f: &'a ParserFn<T>)
+         -> impl Fn(String) -> ErrStr<T> + 'a {
+      move |line| f(cols(s)(line))
+   }
+   parse_lines(g(separator, f), lines, Some(skip_lines))
+}
+
 // Got CSV? This fn will parse that CSV into Vec<T>
 
-pub fn parse_csv<T>(skip_lines: usize,
-                    f: impl Fn(Vec<String>) -> ErrStr<T>,
-                    lines: &Vec<String>) -> ErrStr<Vec<T>> {
-   fn cols(line: String) -> Vec<String> {
-      line.split(",").map(to_string).collect()
-   }
-   parse_lines(compose!(f)(cols), lines, Some(skip_lines))
+pub fn parse_csv<T>(skip_lines: usize, f: &ParserFn<T>, lines: &Vec<String>)
+      -> ErrStr<Vec<T>> {
+   parser(",", skip_lines, f, lines)
+}
+
+pub fn parse_tsv<T>(skip_lines: usize, f: &ParserFn<T>, lines: &Vec<String>)
+      -> ErrStr<Vec<T>> {
+   parser("\t", skip_lines, f, lines)
 }
 
 // ----- Formatters -------------------------------------------------------

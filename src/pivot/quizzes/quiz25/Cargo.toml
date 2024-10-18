@@ -5,7 +5,7 @@ edition = "2021"
 
 [[bin]]
 name = "answer25"
-path = "answer25b_usd.rs"
+path = "answer25c_usd_perc.rs"
 
 [dependencies]
 book = { path = "../../../libs/book" }

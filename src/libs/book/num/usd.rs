@@ -9,7 +9,10 @@ use std::{
    str::FromStr
 };
 
-use crate::num_utils::{integer_decode,parse_commaless};
+use crate::{
+   err_utils::ErrStr,
+   num_utils::{integer_decode,parse_commaless}
+};
 
 #[derive(Debug, Clone, Copy)]
 pub struct USD {
@@ -37,7 +40,7 @@ impl fmt::Display for USD {
 impl FromStr for USD {
    type Err = String;
 
-   fn from_str(elt: &str) -> Result<Self, Self::Err> {
+   fn from_str(elt: &str) -> ErrStr<Self> {
       if let Some(num) = elt.split('$').collect::<Vec<_>>().last() {
          let amount = parse_commaless(&num.to_string())?;
          Ok(mk_usd(amount))
