@@ -1,6 +1,7 @@
 pub mod utils;
 pub mod apy_utils;
 pub mod csv_utils;
+pub mod currency;
 pub mod date_utils;
 pub mod err_utils;
 pub mod file_utils;

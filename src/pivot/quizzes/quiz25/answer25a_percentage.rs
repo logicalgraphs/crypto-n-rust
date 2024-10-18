@@ -1,6 +1,6 @@
 use book::{
    err_utils::ErrStr,
-   percentage::Percentage,
+   num::percentage::Percentage,
    utils::get_args
 };
 

@@ -1,10 +1,10 @@
 use book::{
    csv_utils::{CsvWriter,parse_csv},
+   currency::usd::USD,
    err_utils::ErrStr,
    num::{
       estimate::Estimate,
-      percentage::Percentage,
-      usd::USD
+      percentage::Percentage
    },
    utils::get_args
 };

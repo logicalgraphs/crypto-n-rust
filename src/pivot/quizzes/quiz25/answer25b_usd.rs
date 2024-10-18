@@ -1,6 +1,6 @@
 use book::{
    err_utils::ErrStr,
-   usd::USD,
+   currency::usd::USD,
    utils::get_args
 };
 

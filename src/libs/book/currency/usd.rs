@@ -33,7 +33,7 @@ impl Eq for USD { }
 impl fmt::Display for USD {
    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
       let sign = if self.amount < 0.0 { "-" } else { "" };
-      write!(formatter, "{sign}${:.3}", self.amount.abs())
+      write!(formatter, "{sign}${:.2}", self.amount.abs())
    }
 }
 
