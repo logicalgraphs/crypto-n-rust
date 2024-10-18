@@ -1,0 +1,11 @@
+[package]
+name = "answer25"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "answer25"
+path = "answer25b_usd.rs"
+
+[dependencies]
+book = { path = "../../../libs/book" }

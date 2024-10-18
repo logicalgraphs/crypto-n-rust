@@ -31,12 +31,16 @@ impl FromStr for Percentage {
    type Err = String;
    fn from_str(elt: &str) -> Result<Self, String> {
       let mut per = elt.to_string();
-      per.pop();
-      let percent: Result<f32, _> = per.parse();
-      if let Ok(percent_p) = percent {
-         Ok(mk_percentage(percent_p / 100.0))
+      let perc_sym = per.pop();
+      if Some('%') == perc_sym {
+         let percent: Result<f32, _> = per.parse();
+         if let Ok(percent_p) = percent {
+            Ok(mk_percentage(percent_p / 100.0))
+         } else {
+            Err(format!("Not a percentage: {elt}"))
+         }
       } else {
-         Err(format!("Not a percentage: {elt}"))
+         Err(format!("Percentage missing terminating '%' in {elt}"))
       }
    }
 }

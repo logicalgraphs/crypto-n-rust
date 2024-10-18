@@ -9,7 +9,7 @@ use std::{
    str::FromStr
 };
 
-use book::num_utils::{integer_decode,parse_commaless};
+use crate::num_utils::{integer_decode,parse_commaless};
 
 #[derive(Debug, Clone, Copy)]
 pub struct USD {
