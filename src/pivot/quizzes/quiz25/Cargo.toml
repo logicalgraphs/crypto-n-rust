@@ -5,7 +5,8 @@ edition = "2021"
 
 [[bin]]
 name = "answer25"
-path = "answer25c_usd_perc.rs"
+path = "answer25d_open_pivots.rs"
 
 [dependencies]
+chrono = "0.4.38"
 book = { path = "../../../libs/book" }
