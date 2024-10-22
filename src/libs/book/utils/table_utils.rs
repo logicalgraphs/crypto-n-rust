@@ -8,13 +8,15 @@ use std::{
 
 use crate::{
    compose,
-   csv_utils::CsvWriter,
-   err_utils::ErrStr,
-   list_utils::{ht,tail},
-   matrix_utils,
-   matrix_utils::Matrix,
-   string_utils::to_string,
-   tuple_utils::{fst,snd,swap}
+   utils::{
+      csv_utils::CsvWriter,
+      err_utils::ErrStr,
+      list_utils::{ht,tail},
+      matrix_utils,
+      matrix_utils::Matrix,
+      string_utils::to_string,
+      tuple_utils::{fst,snd,swap}
+   }
 };
 
 // a Table is a matrix indexed by hashed values, so we can have, e.g.:

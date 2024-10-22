@@ -1,7 +1,9 @@
 use book::{
-   err_utils::ErrStr,
-   currency::usd::USD,
-   utils::get_args
+   num::currency::usd::USD,
+   utils::{
+      env_utils::get_args,
+      err_utils::ErrStr
+   }
 };
 
 fn main() -> ErrStr<()> {

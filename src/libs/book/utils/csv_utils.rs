@@ -1,6 +1,6 @@
 // we make our types CSVy
 
-use crate::{
+use crate::utils::{
    err_utils::ErrStr,
    list_utils::mk_cycle,
    string_utils::{parse_lines,to_string}

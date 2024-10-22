@@ -1,12 +1,14 @@
 use book::{
-   csv_utils::{CsvWriter,parse_csv},
-   currency::usd::USD,
-   err_utils::ErrStr,
+   utils::{
+      env_utils::get_args,
+      csv_utils::{CsvWriter,parse_csv},
+      err_utils::ErrStr
+   },
    num::{
+      currency::usd::USD,
       estimate::Estimate,
       percentage::Percentage
    },
-   utils::get_args
 };
 
 #[derive(Debug,Clone)]
@@ -37,10 +39,14 @@ fn parser(line: Vec<String>) -> ErrStr<USDPerc> {
 fn main() -> ErrStr<()> {
    let args = get_args();
    let anss = parse_csv(0, &parser, &args)?;
-   for ans in anss {
-      println!("Answer is {}", ans.as_csv());
+   if anss.is_empty() {
+      Err("Enter a '$,%,estimate'-value.".to_string())
+   } else {
+      for ans in anss {
+         println!("Answer is {}", ans.as_csv());
+      }
+      Ok(())
    }
-   Ok(())
 }
 
 // sample: '$623.97,-12.38%,307923k'

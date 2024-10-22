@@ -1,6 +1,6 @@
 use std::{fmt,str::FromStr};
 
-use crate::err_utils::ErrStr;
+use crate::utils::err_utils::ErrStr;
 
 // --- Estimates -------------------------------------------------------
 

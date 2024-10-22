@@ -1,7 +1,6 @@
 use book::{
-   err_utils::ErrStr,
    num::percentage::Percentage,
-   utils::get_args
+   utils::{err_utils::ErrStr,env_utils::get_args}
 };
 
 fn main() -> ErrStr<()> {

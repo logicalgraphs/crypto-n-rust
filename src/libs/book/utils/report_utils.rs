@@ -1,6 +1,6 @@
 // common functions to generate reports
 
-use crate::{
+use crate::utils::{
    csv_utils::CsvWriter,
    html_utils::{a,ol,p,h,Mode,roff,proff}
 };

@@ -6,7 +6,7 @@ use std::{
    str::FromStr
 };
 
-use crate::err_utils::ErrStr;
+use crate::utils::err_utils::ErrStr;
 
 #[derive(Debug, Clone, Default)]
 pub struct Percentage {

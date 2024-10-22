@@ -1,6 +1,6 @@
 use crate::{
    compose,
-   err_utils::ErrStr
+   utils::err_utils::ErrStr
 };
 
 pub fn dequote(str: &String) -> String {

@@ -1,8 +1,8 @@
 // some standard APY-calculation functoins
 
-use crate::{
+use crate::utils::{
    list_utils::{parse_nums,tail},
-   utils::{get_args,id}
+   env_utils::{get_args,id}
 };
 
 pub fn compute_real_r(supply: f32, borrow: f32, net_r: f32, spew: bool) -> f32 {

@@ -4,11 +4,11 @@
 
 ## a set of common utilities around core functionalities
 
-### [json_utils](json_utils.rs)
+### [json_utils](utils/json_utils.rs)
 
 Both for the deserialization and serialization of JSON data/JavaScript objects
 
-### [matrix_utils](matrix_utils.rs)
+### [matrix_utils](utils/matrix_utils.rs)
 
 `Matrix<T>` is aliased to `Vec<Vec<T>>` with an ingest function: 
 `from_lines` and a (coding-)efficient way to view columns: `col`. 
@@ -16,7 +16,7 @@ Both for the deserialization and serialization of JSON data/JavaScript objects
 Do you need to transpose a `Matrix`? No problem: `transpose` has got you 
 covered.
 
-### [table_utils](table_utils.rs)
+### [table_utils](utils/table_utils.rs)
 
 We present the `Table`-type, an enhancement of the `Matrix`-type in that both
 columns and rows have their own respective types and are indexed(-into) with
