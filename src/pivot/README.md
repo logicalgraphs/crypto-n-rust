@@ -15,6 +15,7 @@ pivot-token.
 [$PIVOTS](../../data-files/csv/pivots.csv)
 * [dawn](dApps/dawn) - runs recommendations on all pivot pools
 * [dusk](dApps/dusk) - checks for open pivots to close
+* [otto](dApps/otto) - converts reserve liquidity to pivot assets daily
 
 ## Determinor
 
