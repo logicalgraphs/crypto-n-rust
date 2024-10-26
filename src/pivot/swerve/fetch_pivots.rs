@@ -11,9 +11,20 @@ use book::{
    utils::pred
 };
 
-use crypto::rest_utils::data_res;
-
 use crate::types::{PivotDict,Pivots,mk_quote,Quote,TokenId,Token,mk_token};
+
+fn git_lg_url() -> String {
+   "https://raw.githubusercontent.com/logicalgraphs".to_string()
+}
+
+fn rez(dir: &str, branch: &str, res: &str) -> String {
+   format!("{}/crypto-n-rust/{branch}/data-files/{dir}/{res}", git_lg_url())
+}
+
+fn data_res(branch: &str, res: &str) -> String {
+   rez("csv", branch, res)
+}
+
 
 pub fn parse_keys_symbols(pivots: &Pivots) -> PivotDict {
    parse_token_headers(pivots).into_iter().collect()

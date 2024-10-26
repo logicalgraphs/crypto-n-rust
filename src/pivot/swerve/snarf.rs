@@ -109,7 +109,7 @@ pub async fn snarf_pivot_table(auth: &str, tok_id: &TokenId, symbol: &Token,
 
 pub fn snarf_assets(file: &str) -> ErrStr<Pools> {
    let (_date, lines) = extract_date_and_body(&file)?;
-   let blocks = parse_csv(0, asset_parser, &tail(&lines))?;
+   let blocks = parse_csv(0, &asset_parser, &tail(&lines))?;
    let pools = build_pools(&blocks);
    Ok(pools)
 }

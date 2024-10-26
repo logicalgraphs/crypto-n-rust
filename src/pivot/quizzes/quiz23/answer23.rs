@@ -12,7 +12,7 @@ use swerve::{
 };
 
 fn usage() -> ErrStr<()> {
-   println!("./dawn <portfolio> [min_swap_ammount=1000.00]
+   println!("./dawn <portfolio> [min_swap_amount=300.00]
 	Makes trade-calls for <portfolio>
 ");
    Err("Must include <portfolio> file!".to_string())
@@ -24,7 +24,7 @@ async fn main() -> ErrStr<()> {
    if let Some(file) = args.first() {
       let pools = snarf_assets(&file)?;
       let (_, table, max_date) = snarf_pivots().await?;
-      let min_swap = parse_or(args.last(), 1000.0);
+      let min_swap = parse_or(args.last(), 300.0);
       println!("./dawn.\n\nRecommendations for {}; min_swap is ${}.",
                max_date, min_swap);
       for (blockchain, assets) in pools {
