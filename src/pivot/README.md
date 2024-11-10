@@ -8,6 +8,7 @@ pivot-token.
 ## Components
 
 * [gecko](dApps/gecko) - fetches token-prices from coingecko REST API endpoint
+  * [lizard](dApps/lizard) - for when you miss a day, ... or few: grabs price-history of all pivotable tokens
 * [status](dApps/status) - formats the latest crypto prices for reportage
 * [ema](dApps/ema) - analyzes two-token ratios
 * [rekt](dApps/rekt) - BUY / SELL call
