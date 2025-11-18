@@ -1,5 +1,3 @@
-use std::mem;
-
 use crate::err_utils::{ErrStr,err_or};
 
 // ----- parsers -------------------------------------------------------
@@ -42,7 +40,7 @@ pub fn minimax_f32(v: &Vec<f32>) -> (Option<f32>, Option<f32>) {
 // for when we need to serialize or to hash an f32 value
 
 pub fn integer_decode(val: f64) -> (u64, i16, i8) {
-   let bits: u64 = unsafe { mem::transmute(val) };
+   let bits: u64 = f64::to_bits(val);
    let sign: i8 = if bits >> 63 == 0 { 1 } else { -1 };
    let exponent: i16 = ((bits >> 52) & 0x7ff) as i16;
    let seive: u64 = bits & 0xfffffffffffff;
