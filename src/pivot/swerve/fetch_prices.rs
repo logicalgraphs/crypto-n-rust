@@ -49,7 +49,7 @@ pub async fn fetch_prices(auth: &str, dict: &PivotDict) -> ErrStr<RawPrices> {
 }
 
 fn raw_to_prices(raw: &Blob) -> RawPrices {
-   from_str(raw).expect("JSON'd!")
+   from_str(raw).expect(&format!("JSON'd! received: {raw}"))
 }
 
 // transforms JSON with token-ids to vec with token symbols
