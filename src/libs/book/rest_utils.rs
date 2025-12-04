@@ -1,3 +1,5 @@
+use reqwest::header::HeaderMap;
+
 use crate::err_utils::{ErrStr,err_or};
 
 /*
@@ -12,32 +14,29 @@ reqwest = "0.9.18"
 in the Cargo.toml-build-man&ifest
 */
 
+/// a simple REST request-response
 pub async fn read_rest(endpoint: &str) -> ErrStr<String> {
    let res = err_or(reqwest::get(endpoint).await, "https::GET")?;
    let body = err_or(res.text().await, "no body in Response")?;
    Ok(body)
 }
 
-/* ----- test ---------------------------------------------------------------
+/// When we need to send a REST request with headers
+pub async fn read_rest_with(hm: HeaderMap, url: &str) -> ErrStr<String> {
+   let client = reqwest::Client::new();
+   let response = err_or(client
+            .get(url)
+            .headers(hm.clone())
+            .send()
+            .await, 
+      &format!("Could not get a response from {url} with headers {hm:?}"))?;
 
-fn usage() {
-   println!("./burn");
-   println!("\tReads data from a REST endpoint.");
+   if response.status().is_success() {
+            let body = err_or(response.text().await, "no text in response")?;
+            Ok(body)
+   } else {
+      let status = response.status();
+      let error_body = err_or(response.text().await, "no error in text")?;
+      Err(format!("Error status: {status}; Error body: {error_body}"))
+   }
 }
-
-// tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
-// as a dependency in app Cargo.toml-file
-
-#[tokio::main]
-fn main() -> Result<(), String> {
-   let body = read_orders("LOCAL_USK", 10)?;
-   reportage(&body);
-   usage();
-   Ok(())
-}
-
-fn reportage(body: &str) {
-   println!("I got {body}");
-}
-
-*/
