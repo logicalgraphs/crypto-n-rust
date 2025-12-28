@@ -105,12 +105,12 @@ fn mk_csv<T: CsvWriter>(row: &T) -> ToCsv {
    ToCsv { row: row.as_csv(), ncols: row.ncols() }
 }
 
-struct Blank {      // prints a blank row
+pub struct Blank {      // prints a blank row
    s: Vec<String>,
    n: usize
 }
 
-fn mk_blank(n: usize) -> Blank {
+pub fn mk_blank(n: usize) -> Blank {
    let eh = mk_cycle(&" ".to_string());  // odd syntax to borrow Clone-trait
    let s: Vec<String> = eh.iter().take(n).collect();
    Blank { s, n }
