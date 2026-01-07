@@ -124,7 +124,7 @@ pub fn ingest<ROW: Eq + Hash,COL: Eq + Hash,DATUM>
    let (header, body) = ht(lines);
    if let Some(hdr) = header {
       let cols_str: Vec<String> =
-         tail(&hdr.split(separator).map(to_string).collect());
+         tail(&hdr.split(separator).map(to_string).collect::<Vec<String>>());
       let (rows_, data) = rows_in_jest(rowf, df, body, separator)?;
       let cols_ = parse_headers(colf, &cols_str)?;
       Ok(Table { rows_, cols_, data })
@@ -163,7 +163,7 @@ fn rows_in_jest<ROW: Eq + Hash, DATUM>
    let rows: Vec<Vec<String>> =
       lines.into_iter().map(&split_line(separator)).collect();
    let (mbs_hdrs, data): (Vec<Option<String>>, Vec<Vec<String>>) =
-      rows.iter().map(ht).unzip();
+      rows.iter().map(|row| ht(&row)).unzip();
    let hdrs: Vec<String> = mbs_hdrs.into_iter().map(Option::unwrap).collect();
    let mut matrix: Matrix<DATUM> = Vec::new();
    for row in data {

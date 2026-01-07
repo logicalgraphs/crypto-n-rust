@@ -8,7 +8,8 @@ use crate::{
 // ----- command line arguments fetch functions -------------------------
 
 pub fn get_args() -> Vec<String> {
-   tail::<String>(&args().collect())
+   let argus: Vec<String> = args().collect();
+   tail(&argus)
 }
 
 pub fn get_nums() -> Vec<f32> {
@@ -39,3 +40,4 @@ macro_rules! compose {
 pub fn pred<T>(head: bool, consequence: T) -> Option<T> {
    if head { Some(consequence) } else { None }
 }
+

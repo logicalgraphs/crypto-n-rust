@@ -65,10 +65,11 @@ pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
 // ----- list functions --------------------------------------------------
 
 pub fn ht<T: Clone>(list: &[T]) -> (Option<T>, Vec<T>) {
-   if list.is_empty() {
-      (None, list.clone())
+   let listy = list.to_vec();
+   if listy.is_empty() {
+      (None, listy)
    } else {
-      let (f, t) = list.split_at(1);
+      let (f, t) = listy.split_at(1);
       (f.to_vec().pop(), t.to_vec())
    }
 }

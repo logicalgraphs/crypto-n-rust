@@ -1,4 +1,4 @@
-// some standard APY-calculation functoins
+// some standard APY-calculation functions
 
 use crate::{
    list_utils::{parse_nums,tail},
