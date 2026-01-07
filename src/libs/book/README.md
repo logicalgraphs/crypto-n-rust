@@ -42,3 +42,10 @@ fn in_range(d: &NaiveDate) -> impl Fn(&NaiveDate) -> bool + '_ {
 }
 let domain = row_filter(in_range(start), &table);
 ```
+
+## Revisions
+
+* 1.01, 2026-01-07: Added first test (`ht_empty_list`) to 
+[list_utils](list_utils.rs). It's all uphill, sry: sunshine and daffodils
+from here!
+

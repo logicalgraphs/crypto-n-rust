@@ -64,7 +64,7 @@ pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
 
 // ----- list functions --------------------------------------------------
 
-pub fn ht<T: Clone>(list: &Vec<T>) -> (Option<T>, Vec<T>) {
+pub fn ht<T: Clone>(list: &[T]) -> (Option<T>, Vec<T>) {
    if list.is_empty() {
       (None, list.clone())
    } else {
@@ -73,25 +73,38 @@ pub fn ht<T: Clone>(list: &Vec<T>) -> (Option<T>, Vec<T>) {
    }
 }
 
-pub fn tail<T: Clone>(list: &Vec<T>) -> Vec<T> {
+pub fn tail<T: Clone>(list: &[T]) -> Vec<T> {
    let (_, r) = ht(list);
    r
 }
 
-pub fn head<T: Clone>(list: &Vec<T>) -> Option<T> {
+pub fn head<T: Clone>(list: &[T]) -> Option<T> {
    let (h, _) = ht(list);
    h
 }
 
-pub fn first_last<T: Clone>(v: &Vec<T>) -> (Option<T>, Option<T>) {
+pub fn first_last<T: Clone>(v: &[T]) -> (Option<T>, Option<T>) {
    (v.first().cloned(), v.last().cloned())
 }
 
-pub fn init<T: Clone>(list: &Vec<T>) -> Vec<T> {
+pub fn init<T: Clone>(list: &[T]) -> Vec<T> {
    let v1: Vec<&T> = list.iter().rev().collect();
    let mut ans: Vec<T> = Vec::new();
    for t in tail(&v1).into_iter().rev() {
       ans.push(t.clone());
    }
    ans
+}
+
+#[cfg(test)]
+mod tests {
+   use super::*;
+
+   #[test]
+   fn test_ht_empty_list() {
+      let list: Vec<usize> = Vec::new();
+      let (h, t) = ht(&list);
+      assert_eq!(None, h);
+      assert!(t.is_empty());
+   }
 }
