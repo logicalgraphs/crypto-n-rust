@@ -44,10 +44,10 @@ classDiagram
 	Tag ..|> Value
 	Dyad ..|> CsvHeader
 	Dyad ..|> CsvWriter
-	Dyad ..|> Valu~
+	Dyad ..|> Value
 	Index ..|> CsvHeader
 	Index ..|> CsvWriter
-	Index ..|> Valu~
+	Index ..|> Value
 	Stamp ..|> CsvHeader
 	Stamp ..|> CsvWriter
 	Stamp ..|> Value
