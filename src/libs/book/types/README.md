@@ -25,9 +25,9 @@ classDiagram
                 +untag() (String, T)
 	}
 	class Dyad~T~{
-		-(String, String) pair
+		-Pair~String, String~ pair
 		-T value
-		+unpair() ((String, String), T)
+		+unpair() Pair~Pair~String, String~, T~
 	}
 	class Index~T~{
 		-usize ix
@@ -42,6 +42,15 @@ classDiagram
 	Tag~T~ ..|> CsvHeader~T~
 	Tag~T~ ..|> CsvWriter~T~
 	Tag~T~ ..|> Value~T~
+	Dyad~T~ ..|> CsvHeader~T~
+	Dyad~T~ ..|> CsvWriter~T~
+	Dyad~T~ ..|> Value~T~
+	Index~T~ ..|> CsvHeader~T~
+	Index~T~ ..|> CsvWriter~T~
+	Index~T~ ..|> Value~T~
+	Stamp~T~ ..|> CsvHeader~T~
+	Stamp~T~ ..|> CsvWriter~T~
+	Stamp~T~ ..|> Value~T~
 ```
 
 * [Tag](tagged.rs)
