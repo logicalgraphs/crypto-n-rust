@@ -1,6 +1,6 @@
 // normalizes date-usage: parsing, printing, et al
 
-use chrono::NaiveDate;
+use chrono::{NaiveDate,Local};
 
 use crate::err_utils::{err_or,ErrStr};
 
@@ -19,3 +19,8 @@ pub fn parse_date_and<'a>(line: &'a str) -> ErrStr<(NaiveDate, &'a str)> {
 pub fn datef(s: &str) -> NaiveDate {
    parse_date(s).expect(&format!("{s} not in date-format"))
 }
+
+pub fn today() -> NaiveDate {
+   Local::now().date_naive()
+}
+

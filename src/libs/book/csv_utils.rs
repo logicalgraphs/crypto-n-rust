@@ -8,6 +8,10 @@ use crate::{
 
 // ----- Types -------------------------------------------------------
 
+pub trait CsvHeader {
+   fn header(&self) -> String;
+}
+
 pub trait CsvWriter {
    fn as_csv(&self) -> String;
    fn ncols(&self) -> usize;
