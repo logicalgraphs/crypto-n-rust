@@ -51,13 +51,6 @@ classDiagram
 	Stamp ..|> CsvHeader
 	Stamp ..|> CsvWriter
 	Stamp ..|> Value
-	link Value "values.rs"
-	link CsvHeader "../csv_utils.rs"
-	link CsvWriter "../csv_utils.rs"
-	link Tag "tagged.rs"
-	link Index "indexed.rs"
-	link Dyad "dyadic.rs"
-	link Stamp "stamped.rs"
 ```
 
 * [Tag](tagged.rs)
