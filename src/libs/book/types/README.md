@@ -1,16 +1,47 @@
 # types
 
-A set of types used throughout the book.
-
-* [Tag](tagged.rs)
+A set of types used throughout the book. All these types are 
+[csv-able](../csv_utils.rs).
 
 ```mermaid
 classDiagram
+
+	class CsvHeader~T~{
+		<<Interface>>
+		+header() String
+	}
+	class CsvWriter~T~{
+		<<Interface>>
+		+as_csv() String
+		+ncols() usize
+	}
+        class Value~T~{
+		<<Interface>>
+                +value() T
+        }
 	class Tag~T~{
-		+String tag
-		+T value
+		-String tag
+		-T value
+                +untag() (String, T)
+	}
+	class Dyad~T~{
+		-(String, String) pair
+		-T value
+		+unpair() ((String, String), T)
+	}
+	class Index~T~{
+		-usize ix
+		-T value
+		+mk_idx_offset(usize offset)
+	}
+        class Stamp~T~{
+		-NaiveDate stamp
+		-T value
+		+date() NaiveDate
 	}
 ```
+
+* [Tag](tagged.rs)
 
 > A tagged-type: a value that has a tag/associated-descriptor/key
 
