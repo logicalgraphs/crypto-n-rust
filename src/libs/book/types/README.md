@@ -6,9 +6,10 @@ A set of types used throughout the book.
 
 ```mermaid
 classDiagram
-	class Tag<T>
+	class Tag~T~{
 		+String tag
 		+T value
+	}
 ```
 
 > A tagged-type: a value that has a tag/associated-descriptor/key
