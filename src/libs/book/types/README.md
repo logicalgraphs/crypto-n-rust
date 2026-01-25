@@ -4,6 +4,13 @@ A set of types used throughout the book.
 
 * [Tag](tagged.rs)
 
+```mermaid
+classDiagram
+	class Tag<T>
+		+String tag
+		+T value
+```
+
 > A tagged-type: a value that has a tag/associated-descriptor/key
 
 * [Dyad](dyadic.rs)
