@@ -40,6 +40,8 @@ classDiagram
 		+date() NaiveDate
 	}
 	Tag~T~ ..|> CsvHeader~T~
+	Tag~T~ ..|> CsvWriter~T~
+	Tag~T~ ..|> Value~T~
 ```
 
 * [Tag](tagged.rs)
