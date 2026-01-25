@@ -25,9 +25,9 @@ classDiagram
                 +untag() Pair~String, T~
 	}
 	class Dyad~T~{
-		-Pair~String, String~ pair
+		-StringPair pair
 		-T value
-		+unpair() Pair~Pair~String, String~, T~
+		+unpair() Pair~StringPair, T~
 	}
 	class Index~T~{
 		-usize ix
@@ -40,18 +40,24 @@ classDiagram
 		+date() NaiveDate
 	}
 	Tag ..|> CsvHeader
-	Tag~T~ ..|> CsvWriter~T~
-	Tag~T~ ..|> Value~T~
-	Dyad~T~ ..|> CsvHeader~T~
-	Dyad~T~ ..|> CsvWriter~T~
-	Dyad~T~ ..|> Value~T~
-	Index~T~ ..|> CsvHeader~T~
-	Index~T~ ..|> CsvWriter~T~
-	Index~T~ ..|> Value~T~
-	Stamp~T~ ..|> CsvHeader~T~
-	Stamp~T~ ..|> CsvWriter~T~
-	Stamp~T~ ..|> Value~T~
-	click Value~T~ href "values.rs"
+	Tag ..|> CsvWriter
+	Tag ..|> Value
+	Dyad ..|> CsvHeader
+	Dyad ..|> CsvWriter
+	Dyad ..|> Valu~
+	Index ..|> CsvHeader
+	Index ..|> CsvWriter
+	Index ..|> Valu~
+	Stamp ..|> CsvHeader
+	Stamp ..|> CsvWriter
+	Stamp ..|> Value
+	click Value href "values.rs"
+	click CsvHeader href "../csv_utils.rs"
+	click CsvWriter href "../csv_utils.rs"
+	click Tag href "tagged.rs"
+	click Index href "indexed.rs"
+	click Dyad href "dyadic.rs"
+	click Stamp href "stamped.rs"
 ```
 
 * [Tag](tagged.rs)
