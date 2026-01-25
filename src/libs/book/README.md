@@ -4,6 +4,8 @@
 
 ## a set of common utilities around core functionalities
 
+### [types](types)
+
 ### [json_utils](json_utils.rs)
 
 Both for the deserialization and serialization of JSON data/JavaScript objects
@@ -45,6 +47,7 @@ let domain = row_filter(in_range(start), &table);
 
 ## Revisions
 
+* 1.02, 2026-01-25: Separated types to its own set of modules; added type-tests
 * 1.01, 2026-01-07: Added first test (`ht_empty_list`) to 
 [list_utils](list_utils.rs). It's all uphill, sry: sunshine and daffodils
 from here!
