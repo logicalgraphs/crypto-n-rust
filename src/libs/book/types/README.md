@@ -22,7 +22,7 @@ classDiagram
 	class Tag~T~{
 		-String tag
 		-T value
-                +untag() (String, T)
+                +untag() Pair~String, T~
 	}
 	class Dyad~T~{
 		-Pair~String, String~ pair
@@ -39,7 +39,7 @@ classDiagram
 		-T value
 		+date() NaiveDate
 	}
-	Tag~T~ ..|> CsvHeader~T~
+	Tag ..|> CsvHeader
 	Tag~T~ ..|> CsvWriter~T~
 	Tag~T~ ..|> Value~T~
 	Dyad~T~ ..|> CsvHeader~T~
@@ -51,6 +51,7 @@ classDiagram
 	Stamp~T~ ..|> CsvHeader~T~
 	Stamp~T~ ..|> CsvWriter~T~
 	Stamp~T~ ..|> Value~T~
+	click Value~T~ href "values.rs"
 ```
 
 * [Tag](tagged.rs)
