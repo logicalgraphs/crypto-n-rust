@@ -10,6 +10,7 @@ pub mod list_utils;
 pub mod matrix_utils;
 pub mod num_utils;
 pub mod num;
+pub mod parse_utils;
 pub mod report_utils;
 pub mod rest_utils;
 pub mod stream_utils;

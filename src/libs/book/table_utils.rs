@@ -63,7 +63,7 @@ fn display_cols<COL: Display + Clone>(cols: &HashMap<COL,usize>) -> String {
 
 // ----- META-INFORMATION ---------------------------------------------------
 
-fn enum_headers<HEADER: Eq + Hash>(headers: Vec<HEADER>)
+pub fn enum_headers<HEADER: Eq + Hash>(headers: Vec<HEADER>)
       -> HashMap<HEADER, usize> {
    headers.into_iter().enumerate().map(swap).collect()
 }
@@ -161,7 +161,10 @@ fn rows_in_jest<ROW: Eq + Hash, DATUM>
       move |s| s.split(separator).map(to_string).collect()
    }
    let rows: Vec<Vec<String>> =
-      lines.into_iter().map(&split_line(separator)).collect();
+      lines.into_iter()
+           .filter(|x| !x.is_empty())
+           .map(&split_line(separator))
+           .collect();
    let (mbs_hdrs, data): (Vec<Option<String>>, Vec<Vec<String>>) =
       rows.iter().map(|row| ht(&row)).unzip();
    let hdrs: Vec<String> = mbs_hdrs.into_iter().map(Option::unwrap).collect();
@@ -328,3 +331,78 @@ pub fn default_f<'a, DATUM: Clone>(d: &'a DATUM)
       -> impl Fn(String) -> ErrStr<DATUM> + 'a {
    move |_msg| Ok(d.clone())
 }
+
+#[cfg(test)]
+mod tests {
+   use super::*;
+
+   use crate::parse_utils::{parse_id,parse_str,parse_int};
+
+   fn tsv_table() -> String {
+"store	apples	bananas	chips	durian	eggs	fish	guinness
+1	29	27	33	28	18	44	7
+2	14	38	15	2	46	5	12
+3	15	5	28	44	13	39	17
+4	38	48	16	22	47	8	37
+5	5	27	2	30	42	18	14".to_string()
+   }
+
+   fn ingest_table() -> ErrStr<Table<usize,String,i32>> {
+      let lines: Vec<String> =
+         tsv_table().split("\n").map(to_string).collect();
+      ingest(parse_id, parse_str, parse_int, &lines, "\t")
+   }
+
+   #[test]
+   fn test_ingest() {
+      let table = ingest_table();
+      assert!(table.is_ok());
+   }
+
+   #[test]
+   fn test_rows() -> ErrStr<()> {
+      let table = ingest_table()?;
+      assert_eq!(rows(&table).len(), 5);
+      Ok(())
+   }
+
+   #[test]
+   fn test_cols() -> ErrStr<()> {
+      let table = ingest_table()?;
+      assert_eq!(cols(&table).len(), 7);
+      Ok(())
+   }
+
+   fn val1(t: Table<usize, String, i32>, r: usize, c: &str) -> Option<i32> {
+      val(&t, &r, &c.to_string())
+   }
+
+   #[test]
+   fn fail_val_row_col() -> ErrStr<()> {
+      let table = ingest_table()?;
+      assert!(val1(table, 7, "hamburger").is_none());
+      Ok(())
+   }
+
+   #[test]
+   fn fail_val_row() -> ErrStr<()> {
+      let table = ingest_table()?;
+      assert!(val1(table, 12, "bananas").is_none());
+      Ok(())
+   }
+
+   #[test]
+   fn fail_val_col() -> ErrStr<()> {
+      let table = ingest_table()?;
+      assert!(val1(table, 3, "apple pie").is_none());
+      Ok(())
+   }
+
+   #[test]
+   fn test_val() -> ErrStr<()> {
+      let table = ingest_table()?;
+      assert_eq!(val1(table, 2, "chips"), Some(15));
+      Ok(())
+   }
+}
+
