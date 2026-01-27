@@ -88,10 +88,8 @@ impl AddAssign for USD {
 
 impl Sum<Self> for USD {
     fn sum<I>(iter: I) -> Self
-    where
-        I: Iterator<Item = Self>,
-    {
-        iter.fold(no_monay(), |a, b| mk_usd(a.amount + b.amount))
+          where I: Iterator<Item = Self> {
+       iter.fold(no_monay(), |a, b| mk_usd(a.amount + b.amount))
     }
 }
 
@@ -103,3 +101,53 @@ pub fn mk_usd(amount: f32) -> USD {
 }
 
 pub fn no_monay() -> USD { mk_usd(0.0) }
+
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+   use super::*;
+
+   #[test]
+   fn test_no_monay_is_zero() {
+      assert_eq!(mk_usd(0.0), no_monay());
+   }
+
+   #[test]
+   fn test_parse_ok() {
+      let ans: ErrStr<USD> = "$5.29".parse();
+      assert!(ans.is_ok());
+   }
+
+   #[test]
+   fn test_parse_amount() -> ErrStr<()> {
+      let fiver: USD = "$5".parse()?;
+      assert_eq!(5.0, fiver.amount);
+      Ok(())
+   }
+
+   #[test]
+   fn test_sum() {
+      let fiver = mk_usd(5.0);
+      let tri = mk_usd(3.14);
+      let sum = fiver + tri;
+      assert_eq!(mk_usd(8.14), sum);
+   }
+
+   #[test]
+   fn test_parse_commaless() {
+      let ans: ErrStr<USD> = "$89,534.12".parse();
+      assert!(ans.is_ok());
+   }
+
+   #[test]
+   fn test_ordering() {
+      let btc_quote = mk_usd(88094.0);
+      let eth_quote = mk_usd(2923.35);
+
+      // quotes from 2026-01-27
+
+      assert!(btc_quote > eth_quote);
+   }
+}
+
