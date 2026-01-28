@@ -12,3 +12,9 @@ pub fn swap<T, U>(t: (T, U)) -> (U, T) {
 pub fn first<A, B, C>(f: impl Fn(A) -> C) -> impl Fn((A, B)) -> (C, B) {
    move |(a, b)| (f(a), b)
 }
+
+/// a Partition is a particular tuple: a pair of sets of the same type,
+/// discriminated by something
+
+pub type Partition<T> = (Vec<T>, Vec<T>);
+
