@@ -35,3 +35,38 @@ pub fn parse_lines<T>(f: impl Fn(String) -> ErrStr<T>, lines: &Vec<String>,
         .map(compose!(f)(String::to_string))
         .collect()
 }  
+
+pub fn words(s: &str) -> Vec<String> {
+   s.split_whitespace().map(to_string).collect()
+}
+
+pub mod functional_tests {
+
+   use super::*;
+   use std::fmt;
+   use book::utils::pred;
+
+   fn same<T:PartialEq + fmt::Display>(a: T, b: T) -> ErrStr<()> {
+      pred(a == b, ()).ok_or(format!("{a} is not equal to {b}))
+   }
+
+   fn words_test() -> ErrStr<()> {
+      let lorem =
+         words("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
+      same(8, lorem.len())
+   }
+
+   pub fn runoff() -> ErrStr<()> {
+      
+#[cfg(test)]
+mod tests {
+
+   use super::*;
+
+   #[test]
+   fn test_words() {
+      let lorum = words("The quick, brown fox jumped over the lazy dog.");
+      assert_eq!(10, lorum.len())
+   }
+}
+

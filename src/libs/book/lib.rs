@@ -18,3 +18,7 @@ pub mod string_utils;
 pub mod table_utils;
 pub mod tuple_utils;
 pub mod types;
+
+/// functions to run functional tests
+pub mod test_utils;
+
