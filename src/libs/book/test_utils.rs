@@ -1,5 +1,6 @@
 use std::{collections::HashMap,fmt};
-// use futures::{Future, executor::block_on};
+use futures::{Future, executor::block_on};
+use tokio::runtime::Runtime;
 
 use super::{
    err_utils::ErrStr,
@@ -7,33 +8,35 @@ use super::{
    utils::pred
 }; 
 
-// pub enum Thunk<T: Future<Output=ErrStr<()>>> { F(T), E(fn() -> ErrStr<()>) }
-pub enum Thunk { E(fn() -> ErrStr<()>) }
+pub enum Thunk<T: Future<Output=ErrStr<()>>> { F(T), E(fn() -> ErrStr<()>) }
+// pub enum Thunk { E(fn() -> ErrStr<()>) }
 use Thunk::*;
 
-pub type Tests = HashMap<String, Thunk>;
+pub type Tests<T> = HashMap<String, Thunk<T>>;
 
-pub fn mk_tests(names: &str, fns: Vec<fn() -> ErrStr<()>>) -> Tests {
-   words(names).into_iter().zip(fns.into_iter().map(E)).collect()
+pub fn mk_tests<T: Future<Output=ErrStr<()>>>(names: &str, fns: Vec<Thunk<T>>)
+      -> Tests<T> {
+   words(names).into_iter().zip(fns.into_iter()).collect()
 }
 
 pub fn same<T:PartialEq + fmt::Display>(a: T, b: T) -> ErrStr<()> {
    pred(a == b, ()).ok_or(format!("{a} is not equal to {b}"))
 }
 
-fn run_test(test: &str, f: impl Fn() -> ErrStr<()>) -> ErrStr<()> {
-   let res = f();
+fn run_test<T: Future<Output=ErrStr<()>>>(test: &str, f: Thunk<T>)
+      -> ErrStr<()> {
+   let res = match f { E(f1) => f1(), F(f2) => mk_sync::<T>()(f2) };
    println!("\n{test}:...{}",
 	    if res.is_ok() { "ok" } else { "FAILURE!" });
    res
 }
 
-pub fn collate_results(suite: &str, tests: &Tests) -> ErrStr<()> {
+pub fn collate_results<T: Future<Output=ErrStr<()>>>
+      (suite: &str, tests: &Tests<T>) -> ErrStr<()> {
    let len = tests.len();
    println!("\n{suite} functional tests\n");
    let res: Vec<ErrStr<()>> =
-      tests.into_iter()
-           .map(|(k,v)| match v { E(f) => run_test(k, f)}).collect();
+      tests.into_iter().map(|(k,v)| run_test(k, v)).collect();
    let test_names: Vec<String> =
       tests.keys().into_iter().map(String::to_string).collect();
    if res.iter().all(Result::is_ok) {
@@ -45,15 +48,15 @@ pub fn collate_results(suite: &str, tests: &Tests) -> ErrStr<()> {
    }  
 }
 
-/*
-pub fn mk_sync<F>(f: F) -> fn() -> ErrStr<()>
-      where F: Future<Output = ErrStr<()>> {
-   fn thunk(f: F) -> fn() -> ErrStr<()> {
-      || { block_on(f) }
+pub fn mk_sync:<F: Future<Output=ErrStr<()>>>()
+      -> impl Fn(F) -> ErrStr<()> {
+
+   let rt = Runtime::new().expect("Failed to create Tokio runtime");
+
+   move |future_to_run| {
+      rt.block_on(future_to_run)
    }
-   thunk(f)
 }
-*/
 
 fn failures(res: &[ErrStr<()>], tests: &[String], len: usize) -> ErrStr<()> {
    let fs: Vec<String> =
@@ -100,7 +103,8 @@ mod tests {
 
    #[test]
    fn test_collate_results_ok() {
-      let tests: Vec<fn() -> ErrStr<()>> = vec![a,b,c,d]; // .into_iter().map(|f| E(f)).collect();
+      let tests: Vec<Thunk<_>> =
+         vec![a,b,c,d].into_iter().map(|f| E(f)).collect();
       let report =
          collate_results("test_utils", &mk_tests("a b c d", tests));
       assert!(report.is_ok());
@@ -108,7 +112,8 @@ mod tests {
 
    #[test]
    fn fail_collate_results() {
-      let tests: Vec<fn() -> ErrStr<()>> = vec![a,b,c,d,f]; // .into_iter().map(|x| E(x)).collect();
+      let tests: Vec<Thunk<_>> =
+         vec![a,b,c,d,f].into_iter().map(|x| E(x)).collect();
       let report =
          collate_results("test_utils", &mk_tests("a b c d f", tests));
       assert!(report.is_err());
