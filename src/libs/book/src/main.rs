@@ -1,24 +1,16 @@
 // we run the functional tests for the libs here
    
 use book::{
-   string_utils::{words, functional_tests::runoff as stri},
+   string_utils::functional_tests::runoff as stri,
+   date_utils::functional_tests::runoff as d,
    err_utils::ErrStr,
-   test_utils::{collate_results,run_test}
+   test_utils::{collate_results,mk_tests}
 }; 
-
-fn test_names() -> Vec<String> { words("string_utils") }
-
-fn tests() -> Vec<(String, impl Fn() -> ErrStr<()>)> {
-   let names = test_names();
-   let tests_fs = [stri];
-   names.into_iter().zip(tests_fs.into_iter()).collect()
-}
 
 // #[tokio::main]  
 // async 
 fn main() -> ErrStr<()> {
-   let res: Vec<ErrStr<()>> =
-      tests().iter().map(|(n,f)| run_test(n,f)).collect();
-   collate_results(&res, &test_names())
-}     
+   collate_results("book",
+      &mk_tests("string_utils date_utils", vec![stri, d]))
+}
 
