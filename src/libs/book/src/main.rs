@@ -1,36 +1,24 @@
 // we run the functional tests for the libs here
    
 use book::{
-   string_utils::{words, plural, functional_tests::runoff as stri},
+   string_utils::{words, functional_tests::runoff as stri},
    err_utils::ErrStr,
-   utils::pred
+   test_utils::{collate_results,run_test}
 }; 
 
-fn tests() -> Vec<String> {
-   words("string_utils")
+fn test_names() -> Vec<String> { words("string_utils") }
+
+fn tests() -> Vec<(String, impl Fn() -> ErrStr<()>)> {
+   let names = test_names();
+   let tests_fs = [stri];
+   names.into_iter().zip(tests_fs.into_iter()).collect()
 }
 
 // #[tokio::main]  
 // async 
-fn main() -> ErrStr<()> { 
-   let res = [stri()];       
-   let len = res.len();
-   if res.iter().all(Result::is_ok) {
-      println!("\nAll {} passed.", plural(len, "functional test"));
-      Ok(())
-   } else {
-      failures(&res, len)
-   }  
+fn main() -> ErrStr<()> {
+   let res: Vec<ErrStr<()>> =
+      tests().iter().map(|(n,f)| run_test(n,f)).collect();
+   collate_results(&res, &test_names())
 }     
-   
-fn failures(res: &[ErrStr<()>], len: usize) -> ErrStr<()> {
-   let fs: Vec<String> =
-      res.iter()
-         .enumerate()
-         .filter_map(|(n,r)| pred(!r.is_ok(), tests()[n].clone()))
-         .collect();
-   let many = plural(fs.len(), &format!("/{len} functional test"));
-   println!("The following {} FAILED!:\n\t{}", many, fs.join("\n\t"));
-   Err(format!("{} FAILED!", many))
-}  
 

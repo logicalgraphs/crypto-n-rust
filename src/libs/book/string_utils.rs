@@ -43,20 +43,24 @@ pub fn words(s: &str) -> Vec<String> {
 pub mod functional_tests {
 
    use super::*;
-   use std::fmt;
-   use book::utils::pred;
-
-   fn same<T:PartialEq + fmt::Display>(a: T, b: T) -> ErrStr<()> {
-      pred(a == b, ()).ok_or(format!("{a} is not equal to {b}))
-   }
+   use crate::test_utils::same;
 
    fn words_test() -> ErrStr<()> {
-      let lorem =
-         words("Lorem ipsum dolor sit amet, consectetur adipiscing elit.");
-      same(8, lorem.len())
+      let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+      let w = words(lorem);
+      println!("words() functional test
+
+phrase: {lorem}
+words: {:?}
+", w);
+      same(8, w.len())
    }
 
    pub fn runoff() -> ErrStr<()> {
+      println!("\nstring_utils functional tests\n");
+      words_test()
+   }
+}
       
 #[cfg(test)]
 mod tests {
@@ -66,7 +70,7 @@ mod tests {
    #[test]
    fn test_words() {
       let lorum = words("The quick, brown fox jumped over the lazy dog.");
-      assert_eq!(10, lorum.len())
+      assert_eq!(9, lorum.len())
    }
 }
 
