@@ -1,5 +1,5 @@
 use std::{collections::HashMap,fmt};
-// use futures::executor::block_on;
+use futures::{Future, executor::block_on};
 
 use super::{
    err_utils::ErrStr,
@@ -7,10 +7,14 @@ use super::{
    utils::pred
 }; 
 
-pub type Tests = HashMap<String, fn() -> ErrStr<()>>;
+// pub enum Thunk<T: Future<Output=ErrStr<()>>> { F(T), E(fn() -> ErrStr<()>) }
+pub enum Thunk { E(fn() -> ErrStr<()>) }
+use Thunk::*;
+
+pub type Tests = HashMap<String, Thunk>;
 
 pub fn mk_tests(names: &str, fns: Vec<fn() -> ErrStr<()>>) -> Tests {
-   words(names).into_iter().zip(fns.into_iter()).collect()
+   words(names).into_iter().zip(fns.into_iter().map(E)).collect()
 }
 
 pub fn same<T:PartialEq + fmt::Display>(a: T, b: T) -> ErrStr<()> {
@@ -28,7 +32,8 @@ pub fn collate_results(suite: &str, tests: &Tests) -> ErrStr<()> {
    let len = tests.len();
    println!("\n{suite} functional tests\n");
    let res: Vec<ErrStr<()>> =
-      tests.into_iter().map(|(k,v)| run_test(k, v)).collect();
+      tests.into_iter()
+           .map(|(k,v)| match v { E(f) => run_test(k, f)}).collect();
    let test_names: Vec<String> =
       tests.keys().into_iter().map(String::to_string).collect();
    if res.iter().all(Result::is_ok) {
@@ -41,8 +46,12 @@ pub fn collate_results(suite: &str, tests: &Tests) -> ErrStr<()> {
 }
 
 /*
-pub fn mk_sync(f: impl Fn() -> ErrStr<()>) -> impl Fn() -> ErrStr<()> {
-   || { block_on(f()) }
+pub fn mk_sync<F>(f: F) -> fn() -> ErrStr<()>
+      where F: Future<Output = ErrStr<()>> {
+   fn thunk(f: F) -> fn() -> ErrStr<()> {
+      || { block_on(f) }
+   }
+   thunk(f)
 }
 */
 
@@ -55,5 +64,74 @@ fn failures(res: &[ErrStr<()>], tests: &[String], len: usize) -> ErrStr<()> {
    let many = plural(fs.len(), &format!("/{len} functional test"));
    println!("The following {} FAILED!:\n\t{}", many, fs.join("\n\t"));
    Err(format!("{} FAILED!", many))
+}
+
+#[cfg(test)]
+mod tests {
+
+// when you're testing the test-framework, you have reached test-Nirvana.
+
+   use super::*;
+
+   #[test]
+   fn test_same_ok() {
+      let res = same(1, 1);
+      assert!(res.is_ok());
+   }
+
+   #[test]
+   fn fail_same() {
+      let res = same("same", "but different");
+      assert!(res.is_err());
+   }
+
+   // test functions for the test functions ... NIRVANA!
+
+   fn a() -> ErrStr<()> { Ok(()) }
+   fn b() -> ErrStr<()> { Ok(()) }
+   fn c() -> ErrStr<()> { Ok(()) }
+   fn d() -> ErrStr<()> { Ok(()) }
+   fn f() -> ErrStr<()> { Err("test f failed".to_string()) }
+
+/*
+   async fn zinc() -> ErrStr<()> { Ok(()) }
+   async fn thinc() -> ErrStr<()> { Err("Failed; asynchronously!".to_string()) }
+*/
+
+   #[test]
+   fn test_collate_results_ok() {
+      let tests: Vec<fn() -> ErrStr<()>> = vec![a,b,c,d]; // .into_iter().map(|f| E(f)).collect();
+      let report =
+         collate_results("test_utils", &mk_tests("a b c d", tests));
+      assert!(report.is_ok());
+   }
+
+   #[test]
+   fn fail_collate_results() {
+      let tests: Vec<fn() -> ErrStr<()>> = vec![a,b,c,d,f]; // .into_iter().map(|x| E(x)).collect();
+      let report =
+         collate_results("test_utils", &mk_tests("a b c d f", tests));
+      assert!(report.is_err());
+   }
+
+/*
+   #[test]
+   fn test_collate_results_async_ok() {
+      let z = mk_sync(zinc());
+      let report =
+         collate_results("test_utils", &mk_tests("a b c d z", vec![a,b,c,d,z]));
+      assert!(report.is_ok());
+   }
+
+   #[test]
+   fn fail_collate_results_async() {
+      let z = mk_sync(zinc());
+      let zf = mk_sync(thinc());
+      let report =
+         collate_results("test_utils",
+            &mk_tests("a b c d f z zf", vec![a,b,c,d,f,z,zf]));
+      assert!(report.is_err());
+   }
+*/
 }
 
