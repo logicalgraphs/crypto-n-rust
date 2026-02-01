@@ -10,6 +10,8 @@ name = "book"
 path = "lib.rs"
 
 [dependencies]
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+
 chrono = "0.4.38"
 
 futures = "0.3.31"

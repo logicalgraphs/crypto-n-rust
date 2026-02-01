@@ -42,8 +42,9 @@ pub fn words(s: &str) -> Vec<String> {
 
 pub mod functional_tests {
 
+   use futures::Future;
    use super::*;
-   use crate::test_utils::{same,collate_results,mk_tests};
+   use crate::test_utils::{same,collate_results,mk_tests,Thunk::E};
 
    fn words_test() -> ErrStr<()> {
       let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
@@ -56,8 +57,9 @@ words: {:?}
       same(8, w.len())
    }
 
-   pub fn runoff() -> ErrStr<()> {
-      collate_results("string_utils", &mk_tests("words", vec![words_test]))
+   pub fn runoff<T: Future<Output=ErrStr<()>>>() -> ErrStr<()> {
+      collate_results("string_utils",
+         &mk_tests::<T>("words", vec![E(words_test)]))
    }
 }
 
