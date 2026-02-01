@@ -26,8 +26,6 @@ pub fn today() -> NaiveDate {
 
 pub mod functional_tests {
 
-   use futures::Future;
-
    use super::*;
 
    use crate::test_utils::{mk_tests,collate_results,same,Thunk::E};
@@ -48,10 +46,10 @@ pub mod functional_tests {
       same(td, datef(&td_str))
    }
 
-   pub fn runoff<T: Future<Output=ErrStr<()>>>() -> ErrStr<()> {
+   pub fn runoff() -> ErrStr<()> {
       collate_results("date_utils",
-         &mk_tests::<T>("run_parse_date run_today",
-                   vec![E(run_parse_date), E(run_today)]))
+         mk_tests("run_parse_date run_today",
+                       vec![E(run_parse_date), E(run_today)]))
    }
 }
 

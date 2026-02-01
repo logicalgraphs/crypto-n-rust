@@ -97,9 +97,16 @@ pub fn init<T: Clone>(list: &[T]) -> Vec<T> {
    ans
 }
 
+pub fn postpend<T: Clone>(list: &[T], t: T) -> Vec<T> {
+   [list, &[t]].concat().to_vec()
+}
+
 #[cfg(test)]
 mod tests {
    use super::*;
+
+   fn one() -> Vec<i32> { vec![1] }
+   fn one_two() -> Vec<i32> { vec![1,2] }
 
    #[test]
    fn test_ht_empty_list() {
@@ -107,5 +114,52 @@ mod tests {
       let (h, t) = ht(&list);
       assert_eq!(None, h);
       assert!(t.is_empty());
+   }
+
+   #[test]
+   fn test_ht_uno() {
+      let (h,t) = ht(&one());
+      assert_eq!(Some(1), h);
+      assert!(t.is_empty())
+   }
+
+   #[test]
+   fn test_ht_uno_dos() {
+      let (h,t) = ht(&one_two());
+      assert_eq!(Some(1), h);
+      assert_eq!(vec![2], t);
+   }
+
+   #[test]
+   fn test_postpend() {
+      let vec = one();
+      let res = postpend(&vec, 2);
+      assert_eq!(one_two(), res);
+   }
+
+   #[test]
+   fn test_head_none() {
+      let empt: Vec<i32> = Vec::new();
+      assert_eq!(None, head(&empt));
+   }
+
+   #[test]
+   fn test_head_some_one() {
+      assert_eq!(Some(1), head(&one()));
+   }
+
+   #[test]
+   fn test_head_some_one_too() {
+      assert_eq!(Some(1), head(&one_two()));
+   }
+
+   #[test]
+   fn test_tail_empty() {
+      assert!(tail(&one()).is_empty());
+   }
+
+   #[test]
+   fn test_tail_too() {
+      assert_eq!(vec![2], tail(&one_two()));
    }
 }
