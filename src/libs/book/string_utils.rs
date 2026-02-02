@@ -58,7 +58,7 @@ words: {:?}
 
    pub fn runoff() -> ErrStr<usize> {
       collate_results("string_utils",
-         mk_tests("words", vec![E(words_test)]))
+         &mut mk_tests("words", vec![E(words_test)]))
    }
 }
 

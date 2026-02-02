@@ -48,7 +48,7 @@ pub mod functional_tests {
 
    pub fn runoff() -> ErrStr<usize> {
       collate_results("date_utils",
-         mk_tests("run_parse_date run_today",
+         &mut mk_tests("run_parse_date run_today",
                        vec![E(run_parse_date), E(run_today)]))
    }
 }

@@ -11,7 +11,8 @@ use book::{
 // async 
 fn main() -> ErrStr<()> {
    let _ = collate_results("book",
-      mk_tests("string_utils date_utils", vec![mk_sync(stri), mk_sync(d)]))?;
+      & mut mk_tests("string_utils date_utils",
+                     vec![mk_sync(stri), mk_sync(d)]))?;
    Ok(())
 }
 

@@ -1,4 +1,9 @@
-use std::{collections::HashMap,fmt,pin::Pin};
+use std::{
+   collections::HashMap,
+   fmt,
+   pin::Pin
+};
+
 use futures::{Future,executor::block_on};
 
 use super::{
@@ -7,7 +12,7 @@ use super::{
    utils::pred
 }; 
 
-type AsyncFn = Pin<Box<dyn Future<Output=ErrStr<usize>> + Send>>;
+pub type AsyncFn = Pin<Box<dyn Future<Output=ErrStr<usize>> + Send>>;
 pub enum Thunk { F(AsyncFn), E(fn() -> ErrStr<usize>) }
 use Thunk::*;
 
@@ -18,7 +23,7 @@ pub fn mk_tests(names: &str, fns: Vec<Thunk>) -> Tests {
 }
 
 pub fn mk_sync(f: fn() -> ErrStr<usize>) -> Thunk { E(f) }
-pub fn mk_async<F:Future<Output=ErrStr<usize>> + Send + 'static>
+pub fn mk_async<F: Future<Output=ErrStr<usize>> + Send + 'static>
       (res: F) -> Thunk {
    F(Box::pin(res))
 }
@@ -27,8 +32,16 @@ pub fn same<T:PartialEq + fmt::Display>(a: T, b: T) -> ErrStr<usize> {
    pred(a == b, 1).ok_or(format!("{a} is not equal to {b}"))
 }
 
-pub fn run_test(test: &str, f: Thunk) -> ErrStr<usize> {
-   let res = match f { E(f1) => f1(), F(f2) => block_on(f2) };
+pub fn run_test(test: &str, f: &mut Thunk) -> ErrStr<usize> {
+   let res = match f {
+      E(f1) => f1(),
+      F(f2) => {
+         // let boxed_future = Pin::into_inner(f2);
+         // unfortunately, f2 is not an Unpin impl
+         // block_on(boxed_future)
+         block_on(f2)
+      }
+   };
    test_result(test, res)
 }
 
@@ -38,18 +51,19 @@ pub fn test_result(test: &str, res: ErrStr<usize>) -> ErrStr<usize> {
    res
 }
 
-fn run_all_tests(tests: Tests) -> (Vec<String>, Vec<ErrStr<usize>>) {
+fn run_all_tests(tests: &mut Tests) -> (Vec<String>, Vec<ErrStr<usize>>) {
    let mut test_names = Vec::new();
    let mut res = Vec::new();
-   for (test, thunk) in tests {
+   let _ = tests.retain(|test, thunk| {
       let ans = run_test(&test, thunk);
-      test_names.push(test);
+      test_names.push(test.to_string());
       res.push(ans);
-   }
+      false
+   });
    (test_names, res)
 }
 
-pub fn collate_results(suite: &str, tests: Tests) -> ErrStr<usize> {
+pub fn collate_results(suite: &str, tests: &mut Tests) -> ErrStr<usize> {
    println!("\n{suite} functional tests\n");
    let (test_names, res) = run_all_tests(tests);
    report_test_results(test_names, res)
@@ -118,7 +132,7 @@ mod tests {
    #[test]
    fn test_collate_results_ok() {
       let report =
-         collate_results("test_utils", mk_tests("a b c d", passers()));
+         collate_results("test_utils", &mut mk_tests("a b c d", passers()));
       assert!(report.is_ok());
    }
 
@@ -127,7 +141,8 @@ mod tests {
       let tests: Vec<Thunk> = //  postpend(&passers(), mk_sync(f));
          // [passers().as_slice(), &[mk_sync(f)]].concat().as_vec();
           vec![a,b,c,d,f].into_iter().map(mk_sync).collect();
-      let report = collate_results("test_utils", mk_tests("a b c d f", tests));
+      let report = collate_results("test_utils",
+                                   &mut mk_tests("a b c d f", tests));
       assert!(report.is_err());
    }
 
@@ -135,7 +150,8 @@ mod tests {
    fn test_collate_results_async_ok() {
       let z = mk_async(zinc());
       let tests = vec![E(a),E(b),E(c),E(d),z];
-      let report = collate_results("test_utils", mk_tests("a b c d z", tests));
+      let report = collate_results("test_utils",
+                                   &mut mk_tests("a b c d z", tests));
       assert!(report.is_ok());
    }
 
@@ -145,7 +161,8 @@ mod tests {
       let zf = mk_async(thinc());
       let tests = vec![E(a),E(b),E(c),E(d),E(f),z,zf];
       let report =
-         collate_results("test_utils", mk_tests("a b c d f z zf", tests));
+         collate_results("test_utils",
+                         &mut mk_tests("a b c d f z zf", tests));
       assert!(report.is_err());
    }
 }
