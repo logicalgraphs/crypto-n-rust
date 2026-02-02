@@ -10,7 +10,8 @@ use book::{
 // #[tokio::main]  
 // async 
 fn main() -> ErrStr<()> {
-   collate_results("book",
-      mk_tests("string_utils date_utils", vec![E(stri), E(d)]))
+   let _ = collate_results("book",
+      mk_tests("string_utils date_utils", vec![E(stri), E(d)]))?;
+   Ok(())
 }
 

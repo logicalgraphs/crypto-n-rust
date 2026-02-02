@@ -45,7 +45,7 @@ pub mod functional_tests {
    use super::*;
    use crate::test_utils::{same,collate_results,mk_tests,Thunk::E};
 
-   fn words_test() -> ErrStr<()> {
+   fn words_test() -> ErrStr<usize> {
       let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
       let w = words(lorem);
       println!("words() functional test
@@ -56,7 +56,7 @@ words: {:?}
       same(8, w.len())
    }
 
-   pub fn runoff() -> ErrStr<()> {
+   pub fn runoff() -> ErrStr<usize> {
       collate_results("string_utils",
          mk_tests("words", vec![E(words_test)]))
    }

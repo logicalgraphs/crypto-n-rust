@@ -7,8 +7,8 @@ use super::{
    utils::pred
 }; 
 
-type AsyncFn = Pin<Box<dyn Future<Output=ErrStr<()>> + Send>>;
-pub enum Thunk { F(AsyncFn), E(fn() -> ErrStr<()>) }
+type AsyncFn = Pin<Box<dyn Future<Output=ErrStr<usize>> + Send>>;
+pub enum Thunk { F(AsyncFn), E(fn() -> ErrStr<usize>) }
 use Thunk::*;
 
 pub type Tests = HashMap<String, Thunk>;
@@ -17,39 +17,42 @@ pub fn mk_tests(names: &str, fns: Vec<Thunk>) -> Tests {
    words(names).into_iter().zip(fns.into_iter()).collect()
 }
 
-pub fn mk_sync(f: fn() -> ErrStr<()>) -> Thunk { E(f) }
-pub fn mk_async<F:Future<Output=ErrStr<()>> + Send + 'static>(res: F) -> Thunk {
+pub fn mk_sync(f: fn() -> ErrStr<usize>) -> Thunk { E(f) }
+pub fn mk_async<F:Future<Output=ErrStr<usize>> + Send + 'static>(res: F) -> Thunk {
    F(Box::pin(res))
 }
 
-pub fn same<T:PartialEq + fmt::Display>(a: T, b: T) -> ErrStr<()> {
-   pred(a == b, ()).ok_or(format!("{a} is not equal to {b}"))
+pub fn same<T:PartialEq + fmt::Display>(a: T, b: T) -> ErrStr<usize> {
+   pred(a == b, 1).ok_or(format!("{a} is not equal to {b}"))
 }
 
-fn run_test(test: &str, f: Thunk) -> ErrStr<()> {
+fn run_test(test: &str, f: Thunk) -> ErrStr<usize> {
    let res = match f { E(f1) => f1(), F(f2) => block_on(f2) };
    println!("\n{test}:...{}",
 	    if res.is_ok() { "ok" } else { "FAILURE!" });
    res
 }
 
-pub fn collate_results(suite: &str, tests: Tests) -> ErrStr<()> {
+pub fn collate_results(suite: &str, tests: Tests) -> ErrStr<usize> {
    let len = tests.len();
    println!("\n{suite} functional tests\n");
    let test_names: &Vec<String> =
       &tests.keys().into_iter().map(String::to_string).collect();
-   let res: Vec<ErrStr<()>> =
+   let res: Vec<ErrStr<usize>> =
       tests.into_iter().map(|(k,v)| run_test(&k, v)).collect();
    if res.iter().all(Result::is_ok) {
+      let res1: ErrStr<usize> = res.into_iter().sum();
+      let len = res1.clone()?;
       let desig = if len == 1 { "The" } else { "All" };
       println!("\n{desig} {} passed.\n", plural(len, "functional test"));
-      Ok(())
+      res1
    } else {
       failures(&res, &test_names, len)
    }  
 }
 
-fn failures(res: &[ErrStr<()>], tests: &[String], len: usize) -> ErrStr<()> {
+fn failures(res: &[ErrStr<usize>], tests: &[String], len: usize)
+      -> ErrStr<usize> {
    let fs: Vec<String> =
       res.iter()
          .enumerate()

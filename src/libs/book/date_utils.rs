@@ -30,15 +30,15 @@ pub mod functional_tests {
 
    use crate::test_utils::{mk_tests,collate_results,same,Thunk::E};
 
-   fn run_parse_date() -> ErrStr<()> {
+   fn run_parse_date() -> ErrStr<usize> {
       println!("\nparse_date functional test\n");
       let dt_str = "2026-01-30";
       let dt = parse_date(dt_str);
       println!("Parsing date {}; result: {:?}", dt_str, dt);
-      match dt { Ok(_) => Ok(()), Err(str) => Err(str) }
+      match dt { Ok(_) => Ok(1), Err(str) => Err(str) }
    }
 
-   fn run_today() -> ErrStr<()> {
+   fn run_today() -> ErrStr<usize> {
       let td = today();
       let td_str = format!("{td}");
       println!("\ntoday functional test\n");
@@ -46,7 +46,7 @@ pub mod functional_tests {
       same(td, datef(&td_str))
    }
 
-   pub fn runoff() -> ErrStr<()> {
+   pub fn runoff() -> ErrStr<usize> {
       collate_results("date_utils",
          mk_tests("run_parse_date run_today",
                        vec![E(run_parse_date), E(run_today)]))
