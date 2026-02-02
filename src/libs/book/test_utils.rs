@@ -18,7 +18,8 @@ pub fn mk_tests(names: &str, fns: Vec<Thunk>) -> Tests {
 }
 
 pub fn mk_sync(f: fn() -> ErrStr<usize>) -> Thunk { E(f) }
-pub fn mk_async<F:Future<Output=ErrStr<usize>> + Send + 'static>(res: F) -> Thunk {
+pub fn mk_async<F:Future<Output=ErrStr<usize>> + Send + 'static>
+      (res: F) -> Thunk {
    F(Box::pin(res))
 }
 
@@ -33,13 +34,21 @@ fn run_test(test: &str, f: Thunk) -> ErrStr<usize> {
    res
 }
 
+fn run_all_tests(tests: Tests) -> (Vec<String>, Vec<ErrStr<usize>>) {
+   let mut test_names = Vec::new();
+   let mut res = Vec::new();
+   for (test, thunk) in tests {
+      let ans = run_test(&test, thunk);
+      test_names.push(test);
+      res.push(ans);
+   }
+   (test_names, res)
+}
+
 pub fn collate_results(suite: &str, tests: Tests) -> ErrStr<usize> {
    let len = tests.len();
    println!("\n{suite} functional tests\n");
-   let test_names: &Vec<String> =
-      &tests.keys().into_iter().map(String::to_string).collect();
-   let res: Vec<ErrStr<usize>> =
-      tests.into_iter().map(|(k,v)| run_test(&k, v)).collect();
+   let (test_names, res) = run_all_tests(tests);
    if res.iter().all(Result::is_ok) {
       let res1: ErrStr<usize> = res.into_iter().sum();
       let len = res1.clone()?;
@@ -84,14 +93,16 @@ mod tests {
 
    // test functions for the test functions ... NIRVANA!
 
-   fn a() -> ErrStr<()> { Ok(()) }
-   fn b() -> ErrStr<()> { Ok(()) }
-   fn c() -> ErrStr<()> { Ok(()) }
-   fn d() -> ErrStr<()> { Ok(()) }
-   fn f() -> ErrStr<()> { Err("test f failed".to_string()) }
+   fn a() -> ErrStr<usize> { Ok(1) }
+   fn b() -> ErrStr<usize> { Ok(1) }
+   fn c() -> ErrStr<usize> { Ok(1) }
+   fn d() -> ErrStr<usize> { Ok(1) }
+   fn f() -> ErrStr<usize> { Err("test f failed".to_string()) }
 
-   async fn zinc() -> ErrStr<()> { Ok(()) }
-   async fn thinc() -> ErrStr<()> { Err("Failed; asynchronously!".to_string()) }
+   async fn zinc() -> ErrStr<usize> { Ok(1) }
+   async fn thinc() -> ErrStr<usize> {
+      Err("Failed; asynchronously!".to_string())
+   }
 
    fn passers() -> Vec<Thunk> { [a,b,c,d].into_iter().map(mk_sync).collect() }
 
