@@ -27,8 +27,12 @@ pub fn same<T:PartialEq + fmt::Display>(a: T, b: T) -> ErrStr<usize> {
    pred(a == b, 1).ok_or(format!("{a} is not equal to {b}"))
 }
 
-fn run_test(test: &str, f: Thunk) -> ErrStr<usize> {
+pub fn run_test(test: &str, f: Thunk) -> ErrStr<usize> {
    let res = match f { E(f1) => f1(), F(f2) => block_on(f2) };
+   test_result(test, res)
+}
+
+pub fn test_result(test: &str, res: ErrStr<usize>) -> ErrStr<usize> {
    println!("\n{test}:...{}",
 	    if res.is_ok() { "ok" } else { "FAILURE!" });
    res
@@ -46,12 +50,17 @@ fn run_all_tests(tests: Tests) -> (Vec<String>, Vec<ErrStr<usize>>) {
 }
 
 pub fn collate_results(suite: &str, tests: Tests) -> ErrStr<usize> {
-   let len = tests.len();
    println!("\n{suite} functional tests\n");
    let (test_names, res) = run_all_tests(tests);
+   report_test_results(test_names, res)
+}
+
+pub fn report_test_results(test_names: Vec<String>, res: Vec<ErrStr<usize>>)
+      -> ErrStr<usize> {
+   let len = test_names.len();
    if res.iter().all(Result::is_ok) {
       let res1: ErrStr<usize> = res.into_iter().sum();
-      let len = res1.clone()?;
+      let len = res1.clone()?;  // the real len
       let desig = if len == 1 { "The" } else { "All" };
       println!("\n{desig} {} passed.\n", plural(len, "functional test"));
       res1
