@@ -25,7 +25,6 @@ fn data_res(branch: &str, res: &str) -> String {
    rez("csv", branch, res)
 }
 
-
 pub fn parse_keys_symbols(pivots: &Pivots) -> PivotDict {
    parse_token_headers(pivots).into_iter().collect()
 }
@@ -41,10 +40,11 @@ pub fn parse_token_headers(pivots: &Pivots) -> Vec<(TokenId, Token)> {
 }
 
 pub async fn fetch_lines() -> ErrStr<Pivots> {
-   let url = data_res("main", "quotes.csv");
+   let url = data_res("library-upgrades", "quotes.csv");
    let res = read_rest(&url).await?;
    let lines: Pivots =
       res.lines().filter_map(|l| pred(!l.is_empty(), to_string(l))).collect();
+eprintln!("***I have {:?} lines", lines);
    Ok(lines)
 }
 

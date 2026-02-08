@@ -15,7 +15,7 @@ use book::{
    num_utils::{minimax_f32,parse_num},
    string_utils::quot,
    table_utils::{Table,row_filter,col,rows,val},
-   types::{stamp,Stamped,Tag,untag}
+   types::{stamped::{stamp,Stamped},tagged::{Tag,untag},values::Value}
 };
 
 extern crate serde;
@@ -92,8 +92,8 @@ fn mk_ratio((dt, ratio): (&NaiveDate, &f32)) -> Ratio {
 impl AsJSON for Ratio {
    fn as_json(&self) -> String {
       to_object("date ratio",
-                &[quot(&format!("{}", &self.r.date)),
-                  format!("{:?}", self.r.pack)])
+                &[quot(&format!("{}", &self.r.date())),
+                  format!("{:?}", self.r.value())])
    }
 }
 
@@ -158,8 +158,8 @@ fn mk_ema((r, ema): (&Ratio, &f32)) -> EMA {
 impl AsJSON for EMA {
    fn as_json(&self) -> String {
       to_object("date ratio ema",
-                &[quot(&format!("{}", &self.ratio.r.date)),
-                  format!("{:?}", self.ratio.r.pack),
+                &[quot(&format!("{}", self.ratio.r.date())),
+                  format!("{:?}", self.ratio.r.value()),
                   format!("{:?}", self.ema)])
    }
 }
@@ -241,10 +241,11 @@ pub struct Rec {
 
 #[derive(Debug,Clone,PartialEq)]
 pub enum CALL { BUY, SELL }
+use CALL::*;
 
 impl fmt::Display for CALL {
    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-      write!(f, "{}", if self == &CALL::BUY { "BUY" } else { "SELL" })
+      write!(f, "{}", if self == &BUY { "BUY" } else { "SELL" })
    }
 }
 
@@ -257,8 +258,8 @@ impl CsvWriter for Rec {
 
 pub fn mk_rec(emas: &EMAs) -> Stamped<Rec> {
    let ema = emas.emas.last().expect("No last row in EMAs");
-   let call = if ema.ratio.r.pack > ema.ema { CALL::SELL } else { CALL:: BUY };
-   stamp(&ema.ratio.r.date, &Rec { name: emas.name.clone(), call })
+   let call = if ema.ratio.r.value() > ema.ema { SELL } else { BUY };
+   stamp(&ema.ratio.r.date(), &Rec { name: emas.name.clone(), call })
 }
 
 pub type Confidence = f32;
@@ -272,10 +273,10 @@ pub fn rec(table: &PivotTable, date: &NaiveDate, for_rows: u64,
 }
 
 pub fn rec_as_string(r: &Stamped<Rec>) -> String {
-   format!("On {}, {} {} {} {}", r.date, r.pack.call, 
-           r.pack.name.target,
-           if r.pack.call == CALL::BUY { "with" } else { "for" },
-           r.pack.name.base)
+   format!("On {}, {} {} {} {}", r.date(), r.value().call, 
+           r.value().name.target,
+           if r.value().call == BUY { "with" } else { "for" },
+           r.value().name.base)
 }
 
 // ----- Deltas -------------------------------------------------------
@@ -289,19 +290,21 @@ pub struct Delta { d: R }
 impl AsJSON for Delta {
    fn as_json(&self) -> String {
       to_object("date delta",
-                &[quot(&format!("{}", &self.d.date)),
-                  format!("{:?}", self.d.pack)])
+                &[quot(&format!("{}", &self.d.date())),
+                  format!("{:?}", self.d.value())])
    }
 }
 
 impl CsvWriter for Delta {
    fn ncols(&self) -> usize { 2 }
-   fn as_csv(&self) -> String { format!("{},{:?}", self.d.date, self.d.pack) }
+   fn as_csv(&self) -> String {
+      format!("{},{:?}", self.d.date(), self.d.value())
+   }
 }
 
 fn mk_delta(ema: &EMA) -> Delta {
-   let delta = ema.ema - ema.ratio.r.pack;
-   Delta { d: stamp(&ema.ratio.r.date, &delta) }
+   let delta = ema.ema - ema.ratio.r.value();
+   Delta { d: stamp(&ema.ratio.r.date(), &delta) }
 }
 
 #[derive(Clone,Debug)]
@@ -326,11 +329,12 @@ impl CsvWriter for Deltas {
 
 pub fn confidence(ds: &Deltas) -> Option<Confidence> {
    ds.deltas.last().and_then(|stamped_delta| {
-      let deltas: Vec<f32> = ds.deltas.iter().map(|st_d| st_d.d.pack).collect();
+      let deltas: Vec<f32> =
+         ds.deltas.iter().map(|st_d| st_d.d.value()).collect();
       let (mb_min, mb_max) = minimax_f32(&deltas);
       mb_min.and_then(|min| {
          mb_max.and_then(|max| {
-            let d = stamped_delta.d.pack;
+            let d = stamped_delta.d.value();
             let conf = d / if d > 0.0 { max } else { min };
             Some(conf)
          })
@@ -515,7 +519,7 @@ pub fn mk_trade_call(table: &PivotTable, date: &NaiveDate, for_rows: u64,
       -> ErrStr<Option<(TradeCall, NaiveDate, Confidence)>> {
    let (rec, conf) = rec(table, date, for_rows, &route.base, &route.target)?;
    if let Some(delta) = conf {
-      let (from_t, to_t) = if rec.pack.call == CALL::SELL {
+      let (from_t, to_t) = if rec.value().call == SELL {
          (route.base.clone(), route.target.clone())
       } else {
          (route.target.clone(), route.base.clone())

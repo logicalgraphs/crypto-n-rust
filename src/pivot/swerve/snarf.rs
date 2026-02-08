@@ -14,7 +14,7 @@ use book::{
    list_utils::tail,
    num_utils::parse_num_or_zero,
    table_utils::{col,ingest,row_filter,rows,from_map,transpose},
-   types::{Tag,untag},
+   types::tagged::{Tag,untag},
    utils::get_env
 };
 
@@ -30,8 +30,8 @@ use crate::{
 // the el biggie en-snarf-ifier!
 
 pub async fn snarf() -> ErrStr<(Vec<Price>, Option<Diffs>)> {
-   let pivs = fetch_lines().await?;
-   let dict = parse_keys_symbols(&pivs);
+   let quotes = fetch_lines().await?;
+   let dict = parse_keys_symbols(&quotes);
    let pass = get_env("COIN_GECKO_API_KEY")?;
    let raw_prices = fetch_prices(&pass, &dict).await?;
    let errs = verify(&dict, &raw_prices);
@@ -44,7 +44,7 @@ pub async fn snarf() -> ErrStr<(Vec<Price>, Option<Diffs>)> {
 
 pub async fn snarf_quotes() -> ErrStr<(PivotDict, PivotTable, NaiveDate)> {
    let quotes = fetch_lines().await?;
-   let dict = parse_keys_symbols(&pivs);
+   let dict = parse_keys_symbols(&quotes);
    fn token_or(s: &str) -> ErrStr<Token> { Ok(mk_token(s)) }
    let table: PivotTable =
       ingest(parse_date, token_or, parse_num_or_zero, &tail(&quotes), ",")?;

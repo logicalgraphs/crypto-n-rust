@@ -14,7 +14,7 @@ use serde_json::{from_reader,from_str};
 
 use book::{
    err_utils::{err_or,ErrStr},
-   types::{Tag,mk_tag}
+   types::tagged::{Tag,mk_tag}
 };
 
 use crate::types::{PivotDict,Price,Quote,RawPrices,Token,TokenId,Chart};
@@ -138,5 +138,5 @@ pub fn parse_chart(symbol: &Token, b: Blob) -> ErrStr<Tag<Chart<f32>>> {
       parse_chart0(b.clone())
         .expect(&format!("Cannot parse JSON for chart {symbol}; JSON is {b}"));
    let chart = raw_to_chart(raw)?;
-   Ok(mk_tag((symbol.to_string(), chart)))
+   Ok(mk_tag(&symbol.to_string(), &chart))
 }
