@@ -16,7 +16,7 @@ export COLORS=$CSV_DIR/supported_colors.tsv
 export CSV_LISTING=$CSV_DIR/alles/cmc_listings.csv
 export PORT_LISTING=$CSV_DIR/portfolio/my_portfolio.csv
 export HOLDINGS=$CSV_DIR/portfolio_coins.lsv
-export PIVOTS=$CSV_DIR/pivots.csv
+export QUOTES=$CSV_DIR/pivots.csv
 
 export FIN_TICKERS=https://api.kujira.app/api/coingecko/tickers
 export GECKO_API=https://api.coingecko.com/api/v3
