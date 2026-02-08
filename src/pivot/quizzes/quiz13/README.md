@@ -1,7 +1,7 @@
 # Pivot quiz 13: get rekt!
 
 Given that we can automatically compute the EMA20s for any token-pair in
-[pivots.csv](../../../../../data-files/csv/pivots.csv), use that information
+[quotes.csv](../../../../../data-files/csv/quotes.csv), use that information
 to make a buy- or sell-call for that token-pair.
 
 ![BUY call](../../rekt/imgs/ema-high.png)

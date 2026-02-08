@@ -6,15 +6,15 @@ use book::{
 };
 
 use swerve::{
-   fetch_pivots::{fetch_lines,parse_token_headers,parse_row},
+   fetch_quotes::{fetch_lines,parse_token_headers,parse_row},
    reports::portfolio_prices,
    types::{Price,Quote,TokenId,Token}
 };
 
 fn usage() {
    println!("\n./stat");
-   println!("\tSnarfs pivots.csv and reports the latest numbers.\n");
-   println!("...allow 5 minutes after pivots.csv updated for raw to catch up.");
+   println!("\tSnarfs quotes.csv and reports the latest numbers.\n");
+   println!("...allow 5 minutes after quotes.csv updated for raw to catch up.");
 }
 
 #[tokio::main]

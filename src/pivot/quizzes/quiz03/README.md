@@ -1,9 +1,9 @@
 # Pivot pop-quiz 03
 
 You see, when you complete the previous quizfos that the first two lines of 
-pivots.csv are metadata:
+quotes.csv are metadata:
 
-![Headers for pivots.csv](imgs/pivot-csv.png)
+![Headers for quotes.csv](imgs/pivot-csv.png)
 
 * line 1: @coingecko token API ids
 * line 2: token-symbols

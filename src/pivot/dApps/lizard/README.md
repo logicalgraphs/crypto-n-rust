@@ -3,7 +3,7 @@
 What happens when I've missed a few days of harvesting data from @coingecko
 using [`gecko`](../gecko)? This is where `lizard` comes in.
 
-`lizard` checks `$PIVOTS` and harvests all token-prices for all days missing.
+`lizard` checks `$QUOTES` and harvests all token-prices for all days missing.
 
 ![Bulk-load of token-prices](../../quizzes/quiz19/imgs/08b-pivots.png)
 

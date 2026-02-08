@@ -13,10 +13,10 @@ requested in the response?
 
 2.a.
 
-(1) IF the response is GOOD, update $CVS_DIR/pivots.csv 'database' with the 
+(1) IF the response is GOOD, update $CVS_DIR/quotes.csv 'database' with the 
 new row of data.
 
-(2) SIMULATE calling trade-analytics on pivots-data.
+(2) SIMULATE calling trade-analytics on quotes-data.
 
 2.b. (or not 2.b. lulz)
 

@@ -1,6 +1,6 @@
 # Pivot pop-quiz 19: merge tables
 
-We've collected the results for all the tokens in $PIVOTS, ...
+We've collected the results for all the tokens in $QUOTES, ...
 
 ![token a, ... pause](../quiz18/imgs/07a-please-hold.png)
 

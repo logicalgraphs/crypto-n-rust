@@ -7,13 +7,13 @@ use book::{
 };
 
 use swerve::{
-   snarf::{snarf_pivots,snarf_pivot_table},
+   snarf::{snarf_quotes,snarf_pivot_table},
    types::{mk_token}
 };
 
 fn usage() {
    println!("./tok <date> <API-id> <symbol>
-\tFetches chart for $PIVOTS for entire date-range of $PIVOTS.
+\tFetches chart for $QUOTES for entire date-range of $QUOTES.
 \tYou can find <API-id> from https://www.coingecko.com/
 \t<symbol> is the token, e.g.: BTC or ETH or whatevs.
 \t<date> is today.
@@ -29,9 +29,9 @@ async fn main() -> ErrStr<()> {
    let args = get_args();
    if let [date, tok_id, sym] = args.as_slice() {
       let today = parse_date(&date)?;
-      let (_dict, pivots, _max_date) = snarf_pivots().await?;
+      let (_dict, pivots, _max_date) = snarf_quotes().await?;
       let rows = rows(&pivots);
-      let min_date = rows.first().ok_or("PIVOTS table empty???")?;
+      let min_date = rows.first().ok_or("QUOTES table empty???")?;
       let n = (today - *min_date).num_days() + 1;
       let token = mk_token(&sym);
       let table = snarf_pivot_table(&pass, &tok_id, &token, n).await?;

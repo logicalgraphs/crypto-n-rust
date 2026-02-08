@@ -6,12 +6,12 @@ use book::{
    utils::{get_args,get_env}
 };
 
-use swerve::snarf::{snarf_pivots,snarf_pivot_table};
+use swerve::snarf::{snarf_quotes,snarf_pivot_table};
 
 fn usage() {
    println!("./lizard <date>
-\tFetches all charts for $PIVOTS of the last n days.
-\tn is computed from the last date recorded on $PIVOTS to <date>.
+\tFetches all charts for $QUOTES of the last n days.
+\tn is computed from the last date recorded on $QUOTES to <date>.
 ");
 }
 
@@ -24,7 +24,7 @@ async fn main() -> ErrStr<()> {
    let args = get_args();
    if let Some(date) = args.first() {
       let today = parse_date(&date)?;
-      let (dict, _pivots, max_date) = snarf_pivots().await?;
+      let (dict, _pivots, max_date) = snarf_quotes().await?;
       if dict.is_empty() { panic!("Pivot table has no token ids!"); }
       let n = (today - max_date).num_days();
       let mut pivots = None;

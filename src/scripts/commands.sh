@@ -16,7 +16,7 @@ export COLORS=$CSV_DIR/supported_colors.tsv
 export CSV_LISTING=$CSV_DIR/alles/cmc_listings.csv
 export PORT_LISTING=$CSV_DIR/portfolio/my_portfolio.csv
 export HOLDINGS=$CSV_DIR/portfolio_coins.lsv
-export QUOTES=$CSV_DIR/pivots.csv
+export QUOTES=$CSV_DIR/quotes.csv
 
 export FIN_TICKERS=https://api.kujira.app/api/coingecko/tickers
 export GECKO_API=https://api.coingecko.com/api/v3
@@ -27,9 +27,9 @@ export GECKO_PRICES=$GECKO_API/simple/price
 alias rusty="cd $RUST_BOOK"
 alias cmc="rusty; cmc_prices > $CSV_LISTING; cmc_filter $CSV_LISTING $HOLDINGS > $PORT_LISTING; git add $CSV_LISTING $PORT_LISTING; cat $PORT_LISTING; cd -"
 
-# -- PIVOTS -----------------------------------------------------------------
+# -- QUOTES -----------------------------------------------------------------
 
-alias geck="rusty; gecko $LE_DATE >> $PIVOTS; git add $PIVOTS; tail -n 3 $PIVOTS; echo 'new pivot row added; REMEMBER TO PUSH TO REPOSITORY NOW!'; cd -"
+alias geck="rusty; gecko $LE_DATE >> $QUOTES; git add $QUOTES; tail -n 3 $QUOTES; echo 'new quote row added; REMEMBER TO PUSH TO REPOSITORY NOW!'; cd -"
 alias oracle="rusty; status > $PORT_LISTING; git add $PORT_LISTING; cat $PORT_LISTING; cd -"
 
 alias bae=geck

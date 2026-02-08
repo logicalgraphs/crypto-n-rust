@@ -8,7 +8,7 @@
 
 ![`gecko` results](imgs/01-gecko-results.jpg)
 
-![Putting `gecko` results into `$PIVOTS`](imgs/02-spreadsheet.png)
+![Putting `gecko` results into `$QUOTES`](imgs/02-spreadsheet.png)
 
 ... but if'n I'm missing prior days' prices, it's of no help.
 
@@ -136,7 +136,7 @@ to know for how many days.
 Other relevant quizes are:
 
 * [17: read one token's prices over a series of days](../quizzes/quiz17)
-* [18: fetch all the $PIVOTS assets from coingecko](../quizzes/quiz18)
+* [18: fetch all the $QUOTES assets from coingecko](../quizzes/quiz18)
 * [19: entable-i-fy and sort the results](../quizzes/quiz19)
 
 Please see those quizzes for specific details.

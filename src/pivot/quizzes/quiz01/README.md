@@ -7,7 +7,7 @@ Build a trade-recommender based upon pivots
 [here](https://logicalgraphs.blogspot.com/p/prism.html)) in Rust.
 
 * quiz 01: read 
-[this REST endpoint](https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/pivot-quiz-01/data-files/csv/pivots.csv)
+[this REST endpoint](https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/pivot-quiz-01/data-files/csv/quotes.csv)
 
 That's it. You can print out the response if you'd like.
 

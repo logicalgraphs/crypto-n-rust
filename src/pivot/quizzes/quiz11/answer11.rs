@@ -11,13 +11,13 @@ use book::{
    utils::get_args
 };
 
-use swerve::fetch_pivots::fetch_lines;
+use swerve::fetch_quotes::fetch_lines;
 
 use aeson::types::mk_ratios;
 
 fn usage() {
    println!("\n./answer11 <date> <days> <token1> <token2>");
-   println!("\tSnarfs pivots.csv and ratios token1/token2 for <days>");
+   println!("\tSnarfs quotes.csv and ratios token1/token2 for <days>");
 }
 
 fn datef(s: &str) -> NaiveDate {

@@ -9,7 +9,7 @@
 Fair question.
 
 It reads the token-prices for the coingecko API IDs listed in
-[`$PIVOTS`](../../../data-files/csv/pivots.csv)
+[`$QUOTES`](../../../data-files/csv/quotes.csv)
 
 As this dApp accesses the coingecko API, an authetication is required. I put
 the authentication-token into the `COIN_GECKO_API_KEY` environmental variable.

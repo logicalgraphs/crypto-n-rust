@@ -3,7 +3,7 @@ is to fetch these rows, token-by-token.
 
 # Pivot pop-quiz
 
-Programmatically select just one token archived in $PIVOTS, fetch from 
+Programmatically select just one token archived in $QUOTES, fetch from 
 @coingecko the number of rows needed, then output the result as a 
 date/token-row.
 

@@ -4,7 +4,7 @@
 
 Now that we are capturing token-prices from @coingecko, we need to start 
 analyzing it. You see that I repose these data into 
-[pivots.csv](../../../../data-files/csv/pivots.csv).
+[quotes.csv](../../../../data-files/csv/quotes.csv).
 
 ![Pivot data store](imgs/pivots-data.png)
 

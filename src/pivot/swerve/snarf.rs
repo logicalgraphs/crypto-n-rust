@@ -19,7 +19,7 @@ use book::{
 };
 
 use crate::{
-   fetch_pivots::{fetch_lines,parse_keys_symbols},
+   fetch_quotes::{fetch_lines,parse_keys_symbols},
    fetch_prices::{Blob,fetch_prices,transform_prices,
                   fetch_chart_json,parse_chart},
    types::{Chart,Diffs,EMAs,mk_emas,Price,PivotDict,PivotTable,
@@ -42,12 +42,12 @@ pub async fn snarf() -> ErrStr<(Vec<Price>, Option<Diffs>)> {
 
 // snarfs the Pivots-table and gives the most recent row-date
 
-pub async fn snarf_pivots() -> ErrStr<(PivotDict, PivotTable, NaiveDate)> {
-   let pivs = fetch_lines().await?;
+pub async fn snarf_quotes() -> ErrStr<(PivotDict, PivotTable, NaiveDate)> {
+   let quotes = fetch_lines().await?;
    let dict = parse_keys_symbols(&pivs);
    fn token_or(s: &str) -> ErrStr<Token> { Ok(mk_token(s)) }
    let table: PivotTable =
-      ingest(parse_date, token_or, parse_num_or_zero, &tail(&pivs), ",")?;
+      ingest(parse_date, token_or, parse_num_or_zero, &tail(&quotes), ",")?;
    let dates: Vec<NaiveDate> = rows(&table);
    let date: &NaiveDate = dates.last().ok_or("pivot table empty?")?;
    Ok((dict, table, date.clone()))

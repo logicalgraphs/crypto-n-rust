@@ -9,6 +9,6 @@ fn main() -> ErrStr<()> {
    usage();
 
    // do something here to read the REST endpoint
-   // URL: https://github.com/logicalgraphs/crypto-n-rust/blob/pivot-quiz-01/data-files/csv/pivots.csv
+   // URL: https://github.com/logicalgraphs/crypto-n-rust/blob/pivot-quiz-01/data-files/csv/quotes.csv
    Ok(())
 }

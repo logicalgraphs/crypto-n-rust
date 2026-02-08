@@ -5,12 +5,12 @@ use book::{
    utils::{get_args,get_env}
 };
 
-use swerve::snarf::{snarf_pivots,snarf_pivot_table};
+use swerve::snarf::{snarf_quotes,snarf_pivot_table};
 
 fn usage() {
    println!("./answer18 <date>
-\tFetches, well, one of the charts for $PIVOTS of the last n days
-\tn is computed from the last date recorded on $PIVOTS to <date>
+\tFetches, well, one of the charts for $QUOTES of the last n days
+\tn is computed from the last date recorded on $QUOTES to <date>
 ");
 }
 
@@ -22,7 +22,7 @@ async fn main() -> ErrStr<()> {
    let args = get_args();
    if let Some(date) = args.first() {
       let today = parse_date(&date)?;
-      let (dict, _pivots, max_date) = snarf_pivots().await?;
+      let (dict, _pivots, max_date) = snarf_quotes().await?;
       if let Some((tok_id, sym)) = dict.iter().next() { 
             // iter().next() is a complicated way of saying: first().
             // although, tbf, 'first' of a bijection is a weird request with

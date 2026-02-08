@@ -13,8 +13,8 @@ fn usage() {
 #[tokio::main]
 async fn main() -> ErrStr<()> {
    usage();
-   let res = read_rest(&data_res("pivot-quiz-01-answer", "pivots.csv")).await?;
-   println!("First five lines of the pivots database:\n");
+   let res = read_rest(&data_res("pivot-quiz-01-answer", "quotes.csv")).await?;
+   println!("First five lines of the quotes database:\n");
    for line in res.split("\n").take(5) {
       println!("{line}");
    }

@@ -5,7 +5,7 @@
 So, this was a bit of an interesting problem. I have known, for some time,
 that WhiteWhale's $WHALE prices weren't coming back, and I suspected that issue
 was due to $WHALE being the last token on the list of tokens in
-[pivots.csv](../../../../data-files/csv/pivots.csv).
+[quotes.csv](../../../../data-files/csv/quotes.csv).
 
 ![Missing $WHALE](imgs/missing-WHALE.png)
 

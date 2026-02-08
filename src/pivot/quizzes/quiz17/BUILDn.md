@@ -230,7 +230,7 @@ When I put this output into a spreadsheet, I see two issues:
 
 ![CSV not sorted by date](imgs/09a-not-sorted.png)
 
-2. The [`$PIVOTS`-table](../../../data-files/csv/pivots.csv) have the dates as 
+2. The [`$QUOTES`-table](../../../data-files/csv/quotes.csv) have the dates as 
 rows, not columns.
 
 ![CSV output transposed](imgs/09b-how-it-should-be.png)

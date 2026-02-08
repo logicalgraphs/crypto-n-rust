@@ -41,7 +41,7 @@ pub fn parse_token_headers(pivots: &Pivots) -> Vec<(TokenId, Token)> {
 }
 
 pub async fn fetch_lines() -> ErrStr<Pivots> {
-   let url = data_res("main", "pivots.csv");
+   let url = data_res("main", "quotes.csv");
    let res = read_rest(&url).await?;
    let lines: Pivots =
       res.lines().filter_map(|l| pred(!l.is_empty(), to_string(l))).collect();

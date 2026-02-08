@@ -17,9 +17,9 @@ in the sandbox.
 
 We've ingested the data. Now, let's report today's token-prices.
 
-* quiz 08: [query `pivots.csv` and report today's token-prices](quiz08) in a 
+* quiz 08: [query `quotes.csv` and report today's token-prices](quiz08) in a 
 portfolio-friendly format
-* quiz 09: [Simplify gecko](quiz09) to fetch 1-row of pivots from coingecko,
+* quiz 09: [Simplify gecko](quiz09) to fetch 1-row of quotes from coingecko,
 only.
 
 ## ema/chart
@@ -42,7 +42,7 @@ only.
   1. Request a token's chart from @coingeckco REST endpoint
   2. Reify the JSON response
   3. iterate over all the assets in 
-[`$PIVOTS`](../../../data-files/csv/pivots.csv)
+[`$QUOTES`](../../../data-files/csv/quotes.csv)
   4. @coingecko public API rate limits
 * quiz 19: [Coalesce assets fetched into one table](quiz19)
 

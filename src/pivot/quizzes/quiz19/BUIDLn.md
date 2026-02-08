@@ -112,7 +112,7 @@ frames the merged-data.
 
 ![tables merge properly with bijection](imgs/06-with-bijection.png)
 
-Let's now proceed with merging the @coingecko chart-data into $PIVOTS.
+Let's now proceed with merging the @coingecko chart-data into $QUOTES.
 
 ### ... one more thing: merge()-as-Result
 
@@ -162,7 +162,7 @@ token-type now, so: $sAVAX follows $AVAX now. YAY!
 
 ![...kinda. Close enough](imgs/09b-new-sort-kinda.png)
 
-With the $PIVOTS-table updated, I can now (and I now DO get) recommendations 
+With the $QUOTES-table updated, I can now (and I now DO get) recommendations 
 for buy- and sell- pivot-arbitrage. 
 
 ![sell BTC recommendation](imgs/09c-rekt-sell-BTC.png)

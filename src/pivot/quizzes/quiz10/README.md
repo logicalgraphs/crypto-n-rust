@@ -8,7 +8,7 @@ Given two tokens, say, $ETH and $BTC, compute their ratios over time.
 
 ![ETHBTC](imgs/ethbtc-ratios.png)
 
-Of course, use [pivot.csv](../../../../data-files/csv/pivots.csv) as your
+Of course, use [pivot.csv](../../../../data-files/csv/quotes.csv) as your
 database.
 
 ... which means you need to read those data, extract the appropriate two sets,

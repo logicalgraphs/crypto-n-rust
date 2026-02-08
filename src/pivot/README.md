@@ -13,7 +13,7 @@ pivot-token.
 * [ema](dApps/ema) - analyzes two-token ratios
 * [rekt](dApps/rekt) - BUY / SELL call
 * [tok](dApps/tok) - adds a new token to 
-[$PIVOTS](../../data-files/csv/pivots.csv)
+[$QUOTES](../../data-files/csv/quotes.csv)
 * [dawn](dApps/dawn) - runs recommendations on all pivot pools
 * [dusk](dApps/dusk) - checks for open pivots to close
 * [otto](dApps/otto) - converts reserve liquidity to pivot assets daily

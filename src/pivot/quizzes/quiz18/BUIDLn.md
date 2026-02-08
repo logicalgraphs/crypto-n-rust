@@ -117,7 +117,7 @@ There are several ways to solve this problem:
 
 1. pay coingecko
 2. introduce a wait-loop on a 'Throttled'-response
-3. break apart $PIVOTS into smaller chunks.
+3. break apart $QUOTES into smaller chunks.
 
 I chose option 2 by adding a `task::sleep()` to the
 [snarf-call](../../swerve/snarf.rs#L82-L101)

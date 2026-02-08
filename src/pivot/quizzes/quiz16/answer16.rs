@@ -4,12 +4,12 @@ use book::{
    utils::get_args
 };
 
-use swerve::snarf::snarf_pivots;
+use swerve::snarf::snarf_quotes;
 
 fn usage() {
    println!("
 ./answer16 <date>
-	Finds last update date for $PIVOTS and computes how many rows need 
+	Finds last update date for $QUOTES and computes how many rows need 
 	to be fetched.
 ");
 }
@@ -18,10 +18,10 @@ fn usage() {
 async fn main() -> ErrStr<()> {
    let args = get_args();
    if let Some(date) = args.first() {
-      let (_table, max_date) = snarf_pivots().await?;
+      let (_table, max_date) = snarf_quotes().await?;
       let today = parse_date(&date)?;
       let n = (today - max_date).num_days();
-      println!("The most recent update to $PIVOTS is {max_date}
+      println!("The most recent update to $QUOTES is {max_date}
 I need to collect {n} days'-worth of pivots.");
    } else {
       usage();

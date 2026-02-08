@@ -27,7 +27,7 @@ There's quite a bit going on here.
 falls out naturally here.
 * [reports.rs](../../swerve/reports.rs) provides both portfolio report and the
 daily update to
-[pivots.csv](../../../data-files/csv/pivots.csv)
+[quotes.csv](../../../data-files/csv/quotes.csv)
 * There's a clever bit of sorting by token-symbol root in
 [fetch_prices.rs](../../swerve/fetch_prices.rs)
 * There's an unclever sledgehammer disregard for arrows from Category Theory

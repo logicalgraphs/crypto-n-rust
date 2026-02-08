@@ -9,10 +9,10 @@ Now:
 * we can GET from a REST endpoint
 
 Write a Rust program to get the prices for the tokens listed in 
-[pivots.csv](https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/pivot-quiz-04/data-files/csv/pivots.csv).
+[quotes.csv](https://raw.githubusercontent.com/logicalgraphs/crypto-n-rust/pivot-quiz-04/data-files/csv/quotes.csv).
 
 As part of your answer for this pop-quiz to query the @coingecko REST endpoint 
 for token-prices, libraryitize the work you did before (which was to create a 
-dictionary of @coingecko API ids to token-symbols from pivots.csv-data).
+dictionary of @coingecko API ids to token-symbols from quotes.csv-data).
 
 * [answer](answer.md)

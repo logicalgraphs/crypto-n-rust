@@ -13,7 +13,7 @@ use swerve::{
 
 fn usage() -> ErrStr<()> {
    println!("\n./rekt [--CSV] [--help|-h] <days> <token1> <token2>");
-   println!("\tSnarfs pivots.csv and ratios <token1>/<token2> for <days>");
+   println!("\tSnarfs quotes.csv and ratios <token1>/<token2> for <days>");
    println!("\tIt also computes the EMA20s for that token-pair,");
    println!("\tthen issues a buy- or sell-call.\n");
    println!("The --CSV-option directs rekt to output analysis as CSV.");

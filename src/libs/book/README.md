@@ -27,7 +27,7 @@ such.
 The `Table`-type also has `cols` and has its own `row_filter`.
 
 For example, let's say you have 
-[token-price data](../../../data-files/csv/pivots.csv) extending beyond the last
+[token-price data](../../../data-files/csv/quotes.csv) extending beyond the last
 100 days, but you only wish to do analysis on the last 10 days. To get the last
 10 days of data, you would do something like this:
 

@@ -13,4 +13,4 @@ The solution presented itself because of two things:
 
 The answer – voilà – manifests itself!
 
-![Most recent update on `$PIVOTS`](imgs/most-recent-update.png)
+![Most recent update on `$QUOTES`](imgs/most-recent-update.png)
