@@ -11,7 +11,7 @@ use book::{
    utils::pred
 };
 
-use crate::types::{PivotDict,Pivots,mk_quote,Quote,TokenId,Token,mk_token};
+use super::types::{PivotDict,Pivots,mk_quote,Quote,TokenId,Token,mk_token};
 
 fn git_lg_url() -> String {
    "https://raw.githubusercontent.com/logicalgraphs".to_string()
@@ -44,7 +44,6 @@ pub async fn fetch_lines() -> ErrStr<Pivots> {
    let res = read_rest(&url).await?;
    let lines: Pivots =
       res.lines().filter_map(|l| pred(!l.is_empty(), to_string(l))).collect();
-eprintln!("***I have {:?} lines", lines);
    Ok(lines)
 }
 
