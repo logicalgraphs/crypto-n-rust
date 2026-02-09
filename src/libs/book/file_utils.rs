@@ -41,6 +41,13 @@ pub fn subdirs(dir: &str) -> Vec<PathBuf> {
    dir_filter(dirs, dir)
 }
 
+pub fn file_names(files: &[PathBuf]) -> Vec<String> {
+   fn file_name(file: &PathBuf) -> Option<String> {
+      file.file_name().and_then(|f| Some(f.to_string_lossy().to_string()))
+   }
+   files.iter().filter_map(file_name).collect()
+}
+
 pub fn dirs_files(dir: &str) -> Partition<PathBuf> {
    let mut bldr = WalkBuilder::new(dir);
    let (dirs, files) = dirs_files_special_dirs(&mut bldr);
@@ -106,6 +113,22 @@ mod tests {
    }
 
    #[test]
+   fn test_file_names() {
+      let ans = dirs_files(".");
+      let (_dirs, files) = &ans;
+      assert!(!files.is_empty());
+      let filenames = file_names(files);
+      assert!(!filenames.is_empty());
+   }
+
+   #[test]
+   fn test_subdirs() {
+      let ans = subdirs(".");
+      // assert_eq!("foo", format!("{ans:?}"));  // shows sub-directories
+      assert_eq!(4, ans.len());
+   }
+
+   #[test]
    fn test_read_file_ok() {
       let testing_with_this_very_file = "file_utils.rs";
       let file = read_file(testing_with_this_very_file);
@@ -123,12 +146,5 @@ mod tests {
       let lines = lines_from_file("file_utils.rs")?;
       assert!(lines.len() > 5);
       Ok(())
-   }
-
-   #[test]
-   fn test_subdirs() {
-      let ans = subdirs(".");
-      // assert_eq!("foo", format!("{ans:?}"));  // shows sub-directories
-      assert_eq!(4, ans.len());
    }
 }
