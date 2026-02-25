@@ -37,3 +37,22 @@ pub fn transpose<T: Clone>(cols: &Matrix<T>) -> Matrix<T> {
    }
    ans
 }
+
+#[cfg(test)]
+mod tests {
+   use super::*;
+
+   fn sudoku() -> Matrix<i32> {
+      vec![vec![1,2,3],
+           vec![4,5,6],
+           vec![7,8,9]]
+   }
+
+  #[test]
+  fn test_col() {
+     let test_matrix = sudoku();
+     let b = col(&test_matrix, 1);
+     assert_eq!(vec![2,3,4], b);
+  }
+}
+
