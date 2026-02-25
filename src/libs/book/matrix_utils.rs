@@ -51,4 +51,14 @@ mod tests {
         let b = col(&test_matrix, 1);
         assert_eq!(vec![2, 5, 8], b);
     }
+    fn skinny() -> Matrix<i32> {
+        vec![vec![1, 2], vec![2, 5], vec![5, 6]]
+    }
+
+    #[test]
+    fn test_transpose() {
+        let test_matrix = skinny();
+        let b = transpose(&test_matrix);
+        assert_eq!(vec![vec![1, 2, 5], vec![2, 5, 6]], b);
+    }
 }
