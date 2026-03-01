@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 
 use crate::types::{
-   PivotDict,
+   QuoteDict,
    Diff::{MISSING, ADDED},
    Diffs,
    Quote,
@@ -10,7 +10,7 @@ use crate::types::{
    TokenId
 };
 
-pub fn verify(dict: &PivotDict, prices: &RawPrices) -> Option<Diffs> {
+pub fn verify(dict: &QuoteDict, prices: &RawPrices) -> Option<Diffs> {
    fn capt<V>(m: &Vec<(TokenId, V)>) -> HashSet<TokenId> {
       fn key<V>(kv: &(String, V)) -> String { kv.0.to_string() }
       m.into_iter().map(key).collect()

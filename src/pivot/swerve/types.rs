@@ -54,9 +54,9 @@ impl fmt::Display for Token {
 
 pub type RawPrices = HashMap<TokenId, Quote>;
 
-pub type Pivots = Vec<String>;
-pub type PivotDict = BiMap<TokenId, Token>;
-pub type PivotTable = Table<NaiveDate, Token, f32>;
+pub type Quotes = Vec<String>;
+pub type QuoteDict = BiMap<TokenId, Token>;
+pub type QuoteTable = Table<NaiveDate, Token, f32>;
 
 pub type Price = ((TokenId, Token), Quote);
 
@@ -208,7 +208,7 @@ impl AsJSON for EMAs {
    }
 }
 
-pub fn calculate_emas(table: &PivotTable, date: &NaiveDate, for_rows: u64,
+pub fn calculate_emas(table: &QuoteTable, date: &NaiveDate, for_rows: u64,
                       t1: &Token, t2: &Token) -> ErrStr<EMAs> {
    let days = Days::new(for_rows);
    let start = date.sub(days);
@@ -264,7 +264,7 @@ pub fn mk_rec(emas: &EMAs) -> Stamped<Rec> {
 
 pub type Confidence = f32;
 
-pub fn rec(table: &PivotTable, date: &NaiveDate, for_rows: u64,
+pub fn rec(table: &QuoteTable, date: &NaiveDate, for_rows: u64,
            t1: &Token, t2: &Token)
       -> ErrStr<(Stamped<Rec>, Option<Confidence>)> {
    let emas = calculate_emas(table, date, for_rows, t1, t2)?;
@@ -514,7 +514,7 @@ pub fn print_trade_call(date: &NaiveDate, call: &TradeCall, conf: Confidence) {
             confidence_str(date, &Some(conf)), call.from, call.to);
 }
 
-pub fn mk_trade_call(table: &PivotTable, date: &NaiveDate, for_rows: u64,
+pub fn mk_trade_call(table: &QuoteTable, date: &NaiveDate, for_rows: u64,
                      amounts: &Tokens, route: &TradeRoute, min_amt: f32)
       -> ErrStr<Option<(TradeCall, NaiveDate, Confidence)>> {
    let (rec, conf) = rec(table, date, for_rows, &route.base, &route.target)?;
@@ -529,7 +529,7 @@ pub fn mk_trade_call(table: &PivotTable, date: &NaiveDate, for_rows: u64,
          Ok(amt * 0.1 * c)
       }
       let from_amt = adjust_amt(amounts, &from_t, delta)?;
-      fn tok_price(tt: &PivotTable, t: &Token, dt: &NaiveDate) -> ErrStr<f32> {
+      fn tok_price(tt: &QuoteTable, t: &Token, dt: &NaiveDate) -> ErrStr<f32> {
          val(tt, dt, t).ok_or(format!("No price for token {t} on {dt}"))
       }
       let from_prc = tok_price(table, &from_t, date)?;

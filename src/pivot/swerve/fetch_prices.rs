@@ -17,7 +17,7 @@ use book::{
    types::tagged::{Tag,mk_tag}
 };
 
-use crate::types::{PivotDict,Price,Quote,RawPrices,Token,TokenId,Chart};
+use crate::types::{QuoteDict,Price,Quote,RawPrices,Token,TokenId,Chart};
 
 use reqwest::Client;
 
@@ -43,7 +43,7 @@ async fn fetch_prices0(auth: &str, ids: &Vec<TokenId>) -> ErrStr<Blob> {
    gecko_fetcher(auth, url, &params).await
 }
 
-pub async fn fetch_prices(auth: &str, dict: &PivotDict) -> ErrStr<RawPrices> {
+pub async fn fetch_prices(auth: &str, dict: &QuoteDict) -> ErrStr<RawPrices> {
    let ids: Vec<TokenId> = dict.left_values().map(String::to_string).collect();
    let raw = fetch_prices0(auth, &ids).await?;
    Ok(raw_to_prices(&raw))
@@ -55,7 +55,7 @@ fn raw_to_prices(raw: &Blob) -> RawPrices {
 
 // transforms JSON with token-ids to vec with token symbols
 
-pub fn transform_prices(dict: &PivotDict, pric: &RawPrices) -> Vec<Price> {
+pub fn transform_prices(dict: &QuoteDict, pric: &RawPrices) -> Vec<Price> {
    fn arr_m<'a>((k,v): (&'a TokenId, &'a Quote))
          -> impl Fn(&Token) -> Option<Price> + 'a {
       move |x| Some(((k.to_string(), x.clone()), v.clone()))

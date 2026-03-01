@@ -11,7 +11,7 @@ use book::{
    utils::pred
 };
 
-use super::types::{PivotDict,Pivots,mk_quote,Quote,TokenId,Token,mk_token};
+use super::types::{QuoteDict,Quotes,mk_quote,Quote,TokenId,Token,mk_token};
 
 fn git_lg_url() -> String {
    "https://raw.githubusercontent.com/logicalgraphs".to_string()
@@ -25,11 +25,11 @@ fn data_res(branch: &str, res: &str) -> String {
    rez("csv", branch, res)
 }
 
-pub fn parse_keys_symbols(pivots: &Pivots) -> PivotDict {
+pub fn parse_keys_symbols(pivots: &Quotes) -> QuoteDict {
    parse_token_headers(pivots).into_iter().collect()
 }
 
-pub fn parse_token_headers(pivots: &Pivots) -> Vec<(TokenId, Token)> {
+pub fn parse_token_headers(pivots: &Quotes) -> Vec<(TokenId, Token)> {
    fn splitter(line: &str) -> impl Iterator<Item=String> + '_ {
       line.split(",").skip(1).map(to_string)
    }
@@ -39,10 +39,10 @@ pub fn parse_token_headers(pivots: &Pivots) -> Vec<(TokenId, Token)> {
    zip(ids, syms).collect()
 }
 
-pub async fn fetch_lines() -> ErrStr<Pivots> {
-   let url = data_res("main", "quotes.csv");
+pub async fn fetch_lines(branch: &str) -> ErrStr<Quotes> {
+   let url = data_res(branch, "quotes.csv");
    let res = read_rest(&url).await?;
-   let lines: Pivots =
+   let lines: Quotes =
       res.lines().filter_map(|l| pred(!l.is_empty(), to_string(l))).collect();
    Ok(lines)
 }

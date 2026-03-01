@@ -22,16 +22,16 @@ use crate::{
    fetch_quotes::{fetch_lines,parse_keys_symbols},
    fetch_prices::{Blob,fetch_prices,transform_prices,
                   fetch_chart_json,parse_chart},
-   types::{Chart,Diffs,EMAs,mk_emas,Price,PivotDict,PivotTable,
+   types::{Chart,Diffs,EMAs,mk_emas,Price,QuoteDict,QuoteTable,
            StampedData,Token,TokenId,mk_token,asset_parser,Pools,build_pools},
    verify::verify
 };
 
 // the el biggie en-snarf-ifier!
 
-pub async fn snarf() -> ErrStr<(Vec<Price>, Option<Diffs>)> {
+pub async fn snarf(branch: &str) -> ErrStr<(Vec<Price>, Option<Diffs>)> {
 
-   let quotes = fetch_lines().await?;
+   let quotes = fetch_lines(branch).await?;
    let dict = parse_keys_symbols(&quotes);
 
    let pass = get_env("COIN_GECKO_API_KEY")?;
@@ -42,20 +42,21 @@ pub async fn snarf() -> ErrStr<(Vec<Price>, Option<Diffs>)> {
    Ok((prices, errs))
 }
 
-// snarfs the Pivots-table and gives the most recent row-date
+// snarfs the Quotes-table and gives the most recent row-date
 
-pub async fn snarf_quotes() -> ErrStr<(PivotDict, PivotTable, NaiveDate)> {
-   let quotes = fetch_lines().await?;
+pub async fn snarf_quotes(branch: &str)
+      -> ErrStr<(QuoteDict, QuoteTable, NaiveDate)> {
+   let quotes = fetch_lines(branch).await?;
    let dict = parse_keys_symbols(&quotes);
    fn token_or(s: &str) -> ErrStr<Token> { Ok(mk_token(s)) }
-   let table: PivotTable =
+   let table: QuoteTable =
       ingest(parse_date, token_or, parse_num_or_zero, &tail(&quotes), ",")?;
    let dates: Vec<NaiveDate> = rows(&table);
    let date: &NaiveDate = dates.last().ok_or("pivot table empty?")?;
    Ok((dict, table, date.clone()))
 }
 
-pub fn snarf_emas(table: &PivotTable, date: &NaiveDate, for_rows: u64,
+pub fn snarf_emas(table: &QuoteTable, date: &NaiveDate, for_rows: u64,
                   t1: &Token, t2: &Token) -> ErrStr<EMAs> {
    let days = Days::new(for_rows);
    let start = date.sub(days);
@@ -99,8 +100,8 @@ async fn snarf_chart(auth: &str, tok_id: &TokenId, symbol: &Token,
    parse_chart(symbol, json1)
 }
 
-pub async fn snarf_pivot_table(auth: &str, tok_id: &TokenId, symbol: &Token,
-                               days: i64) -> ErrStr<PivotTable> {
+pub async fn snarf_quote_table(auth: &str, tok_id: &TokenId, symbol: &Token,
+                               days: i64) -> ErrStr<QuoteTable> {
    let chart = snarf_chart(auth, tok_id, symbol, days).await?;
    let (_tag, value) = untag(&chart);
    let stamped_prices: &StampedData<f32> =
