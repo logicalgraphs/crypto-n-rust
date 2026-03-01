@@ -30,8 +30,10 @@ use crate::{
 // the el biggie en-snarf-ifier!
 
 pub async fn snarf() -> ErrStr<(Vec<Price>, Option<Diffs>)> {
+
    let quotes = fetch_lines().await?;
    let dict = parse_keys_symbols(&quotes);
+
    let pass = get_env("COIN_GECKO_API_KEY")?;
    let raw_prices = fetch_prices(&pass, &dict).await?;
    let errs = verify(&dict, &raw_prices);
