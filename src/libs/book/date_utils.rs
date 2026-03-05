@@ -20,6 +20,12 @@ pub fn datef(s: &str) -> NaiveDate {
    parse_date(s).expect(&format!("{s} not in date-format"))
 }
 
+pub fn date_preceeding(d: &NaiveDate) -> ErrStr<NaiveDate> {
+   d.pred_opt().ok_or(format!("Unable to get date prior to {d}"))
+}
+
+pub fn yesterday() -> NaiveDate { date_preceeding(&today()).unwrap() }
+
 pub fn today() -> NaiveDate {
    Local::now().date_naive()
 }
@@ -75,5 +81,20 @@ mod tests {
       let some_date = datef("2026-01-30");
       assert!(today() > some_date);
    }
+
+   #[test]
+   fn test_date_preceeding_ok() {
+      let tday = datef("2026-03-05");
+      assert!(date_preceeding(&tday).is_ok());
+   }
+
+   #[test]
+   fn test_date_preceeding() -> ErrStr<()> {
+      let tday = datef("2026-03-05");
+      let prior = date_preceeding(&tday)?;
+      assert_eq!("2026-03-04", &format!("{prior}"));
+      Ok(())
+   }
+
 }
 
