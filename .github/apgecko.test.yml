@@ -1,0 +1,22 @@
+name: apgecko workflow
+
+on:
+  schedule:
+    # 21 is the hour (9 PM UTC), 21 is the minute. 
+    # This runs at 4:21 PM your local time.
+    - cron: '21 21 * * *'  
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Person to greet'
+        default: 'Prism_Man!'
+        required: true
+        type: string
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send greeting
+        # Using the input variable correctly here
+        run: echo "Hello ${{ github.event.inputs.name || 'Prism_Man!' }}"
