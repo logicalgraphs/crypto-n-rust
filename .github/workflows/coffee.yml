@@ -8,6 +8,7 @@ on:
 
 jobs:
   job_0:
+  build-and-run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -18,12 +19,17 @@ jobs:
         run: cargo run --bin coffee
 
   job_1:
-    scheduled-job:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: [actions/checkout@v4](https://github.com)
-        - name: Run Rust program and save output to file
-          run: |
-            ./.github/workflows/coffee.yml >> covfefe.txt
-          shell: bash
-        
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+      - name: Build Rust program
+        run: cargo build --release
+      - name: Run Rust program and save output to file
+        run: |
+          ./.github/workflows/coffee.yml >> data-files/covfefe.txt
+        shell: bash
