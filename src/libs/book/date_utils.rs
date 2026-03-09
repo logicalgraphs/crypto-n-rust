@@ -20,6 +20,14 @@ pub fn datef(s: &str) -> NaiveDate {
    parse_date(s).expect(&format!("{s} not in date-format"))
 }
 
+pub fn date_preceeding(d: &NaiveDate) -> ErrStr<NaiveDate> {
+   d.pred_opt().ok_or(format!("Unable to get date prior to {d}"))
+}
+
+pub fn yesterday() -> NaiveDate { date_preceeding(&today()).unwrap() }
+
+pub fn tomorrow() -> NaiveDate { today().succ_opt().unwrap() }
+
 pub fn today() -> NaiveDate {
    Local::now().date_naive()
 }
@@ -43,6 +51,8 @@ pub mod functional_tests {
       let td_str = format!("{td}");
       println!("\ntoday functional test\n");
       println!("Today is {td}");
+      println!("Yesterday is {}", yesterday());
+      println!("Tomorrow is {}", tomorrow());
       same(td, datef(&td_str))
    }
 
@@ -57,6 +67,7 @@ pub mod functional_tests {
 mod tests {
 
    use super::*;
+   use chrono::Duration;
 
    #[test]
    fn test_parse_date_ok() {
@@ -74,6 +85,27 @@ mod tests {
    fn test_today() {
       let some_date = datef("2026-01-30");
       assert!(today() > some_date);
+   }
+
+   #[test]
+   fn test_date_preceeding_ok() {
+      let tday = datef("2026-03-05");
+      assert!(date_preceeding(&tday).is_ok());
+   }
+
+   #[test]
+   fn test_date_preceeding() -> ErrStr<()> {
+      let tday = datef("2026-03-05");
+      let prior = date_preceeding(&tday)?;
+      assert_eq!("2026-03-04", &format!("{prior}"));
+      Ok(())
+   }
+
+   #[test]
+   fn test_tomorrow() {
+      let tday = today();
+      let tmrrw = tday + Duration::days(1);
+      assert_eq!(tmrrw, tomorrow());
    }
 }
 

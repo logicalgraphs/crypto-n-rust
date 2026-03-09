@@ -1,5 +1,6 @@
 name: Scheduled Workflow
 on:
+  workflow_dispatch: # Allows manual triggering of the workflow 
   schedule:
     - cron: "30 11 * * *"
 jobs:
