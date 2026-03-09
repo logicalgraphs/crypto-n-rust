@@ -26,6 +26,8 @@ pub fn date_preceeding(d: &NaiveDate) -> ErrStr<NaiveDate> {
 
 pub fn yesterday() -> NaiveDate { date_preceeding(&today()).unwrap() }
 
+pub fn tomorrow() -> NaiveDate { today().succ_opt().unwrap() }
+
 pub fn today() -> NaiveDate {
    Local::now().date_naive()
 }
@@ -49,6 +51,8 @@ pub mod functional_tests {
       let td_str = format!("{td}");
       println!("\ntoday functional test\n");
       println!("Today is {td}");
+      println!("Yesterday is {}", yesterday());
+      println!("Tomorrow is {}", tomorrow());
       same(td, datef(&td_str))
    }
 
@@ -63,6 +67,7 @@ pub mod functional_tests {
 mod tests {
 
    use super::*;
+   use chrono::Duration;
 
    #[test]
    fn test_parse_date_ok() {
@@ -96,5 +101,11 @@ mod tests {
       Ok(())
    }
 
+   #[test]
+   fn test_tomorrow() {
+      let tday = today();
+      let tmrrw = tday + Duration::days(1);
+      assert_eq!(tmrrw, tomorrow());
+   }
 }
 
