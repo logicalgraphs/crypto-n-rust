@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # test the cron at scheduled time
-      - cron: "55 22 * * *"
+      - cron: "35 23 * * *"
 
 jobs:
   build-and-run:
@@ -21,7 +21,7 @@ jobs:
 
       - name: Log Output
         run: |
-          ./.crypto-n-rust/data-files/covfefe.txt
+          cat ./crypto-n-rust/data-files/covfefe.txt
         
       - name: Commit and Push changes
         run: |
