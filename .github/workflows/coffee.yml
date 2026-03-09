@@ -19,9 +19,9 @@ jobs:
       - name: Run coffee.rs
         run: cargo run --bin coffee
 
-      - name: Run and Log Output
+      - name: Log Output
         run: |
-          ./.github/workflows >> data-files/covfefe.txt
+          >> data-files/covfefe.txt
         
       - name: Commit and Push changes
         run: |
