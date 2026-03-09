@@ -1,10 +1,9 @@
 name: coffee
 
 on:
-  workflow_dispatch: 
   schedule:
     # Run this cron job every ten minutes
-      - cron: "01 16 * * *"
+      - cron: "15 16 * * *"
 
 jobs:
   build-and-run:
