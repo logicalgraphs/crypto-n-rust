@@ -1,11 +1,13 @@
 name: coffee
 
 on:
+  workflow_dispatch:
   schedule:
     # test the cron at scheduled time
       - cron: "35 20 * * *"
 
 jobs:
+  job_0:
   build-and-run:
     runs-on: ubuntu-latest
     steps:
@@ -17,3 +19,18 @@ jobs:
 
       - name: Run coffee.rs
         run: cargo run --bin coffee
+
+  Job_1:
+    steps:
+      - uses: [actions/checkout@v4](https://github.com)
+      - name: Set up Rust
+        uses: [dtolnay/rust-toolchain@stable](https://github.com)
+        with:
+        toolchain: stable
+      - name: Build Rust program
+        run: cargo build --release
+      - name: Run Rust program and save output to file
+        run: |
+          ./crypto-n-rust/.github/workflows/coffee.yml >> crypto-n-rust/data-files/covfefe.txt
+        shell: bash
+        
