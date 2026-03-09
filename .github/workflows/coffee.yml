@@ -4,32 +4,19 @@ on:
   workflow_dispatch:
   schedule:
     # test the cron at scheduled time
-      - cron: "35 20 * * *"
+      - cron: "25 22 * * *"
 
 jobs:
-  job_0:
   build-and-run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
+
       - name: Run coffee.rs
         run: cargo run --bin coffee
 
-  job_1:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          toolchain: stable
-      - name: Build Rust program
-        run: cargo build --release
-      - name: Run Rust program and save output to file
-        run: |
-          ./.github/workflows/coffee.yml >> data-files/covfefe.txt
-        shell: bash
+  
