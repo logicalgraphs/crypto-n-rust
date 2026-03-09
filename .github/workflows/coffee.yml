@@ -3,7 +3,7 @@ name: coffee
 on:
   schedule:
     # test the cron at scheduled time
-      - cron: "55 14 * * *"
+      - cron: "35 20 * * *"
 
 jobs:
   build-and-run:
