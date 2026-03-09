@@ -8,7 +8,6 @@ on:
 
 jobs:
   job_0:
-  build-and-run:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,7 +18,6 @@ jobs:
         run: cargo run --bin coffee
 
   job_1:
-  build-and-run:
     runs-on: ubuntu-latest
     steps:
       - uses: [actions/checkout@v4](https://github.com)
