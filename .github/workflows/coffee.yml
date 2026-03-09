@@ -21,6 +21,7 @@ jobs:
         run: cargo run --bin coffee
 
   job_1:
+  build-and-run:
     runs-on: ubuntu-latest
     steps:
       - uses: [actions/checkout@v4](https://github.com)
