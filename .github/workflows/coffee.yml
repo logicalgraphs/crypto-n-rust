@@ -7,7 +7,7 @@ on:
       - cron: "35 20 * * *"
 
 jobs:
-  job_0:
+  job:
   build-and-run:
     runs-on: ubuntu-latest
     steps:
@@ -20,7 +20,7 @@ jobs:
       - name: Run coffee.rs
         run: cargo run --bin coffee
 
-  Job_1:
+  job:
     steps:
       - uses: [actions/checkout@v4](https://github.com)
       - name: Set up Rust
