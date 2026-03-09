@@ -21,7 +21,7 @@ jobs:
 
       - name: Log Output
         run: |
-          >> data-files/covfefe.txt
+          ./.crypto-n-rust/data-files/covfefe.txt
         
       - name: Commit and Push changes
         run: |
