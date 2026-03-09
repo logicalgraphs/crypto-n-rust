@@ -3,7 +3,7 @@ name: coffee
 on:
   schedule:
     # Run this cron job every ten minutes
-      - cron: "15 16 * * *"
+      - cron: "05 18 * * *"
 
 jobs:
   build-and-run:
