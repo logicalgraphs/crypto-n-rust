@@ -1,0 +1,11 @@
+name: Scheduled Workflow
+on:
+  schedule:
+    # Run this cron job every ten minutes
+    - cron: "*/10 * * * *" 
+jobs:
+  scheduled-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Perform scheduled task
+        run: echo "This is our first automation workflow, Prism-Man!"
