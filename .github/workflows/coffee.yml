@@ -31,6 +31,6 @@ jobs:
         run: cargo build --release
       - name: Run Rust program and save output to file
         run: |
-          ./crypto-n-rust/.github/workflows/coffee.yml >> crypto-n-rust/data-files/covfefe.txt
+          ./.github/workflows/coffee.yml >> /data-files/covfefe.txt
         shell: bash
         
