@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # test the cron at scheduled time
-      - cron: "25 22 * * *"
+      - cron: "55 22 * * *"
 
 jobs:
   build-and-run:
@@ -19,4 +19,12 @@ jobs:
       - name: Run coffee.rs
         run: cargo run --bin coffee
 
-  
+      - name: Run and Log Output
+        run: |
+          ./.github/workflows >> data-files/covfefe.txt
+        
+      - name: Commit and Push changes
+        run: |
+          git add data-file/covfefe.txt
+          git commit -m "The Coffee Is All Yours!"
+          git push
