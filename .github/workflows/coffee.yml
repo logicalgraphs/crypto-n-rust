@@ -2,8 +2,8 @@ name: coffee
 
 on:
   schedule:
-    # Run this cron job every ten minutes
-      - cron: "05 18 * * *"
+    # test the cron at scheduled time
+      - cron: "55 14 * * *"
 
 jobs:
   build-and-run:
