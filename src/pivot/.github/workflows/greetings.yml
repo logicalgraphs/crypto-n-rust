@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Perform scheduled task
-        run: echo "Prism-Man Unit!!"
+        run: echo "This is our first automation workflow, Prism-Man!"
