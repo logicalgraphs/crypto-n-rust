@@ -2,8 +2,7 @@ name: Scheduled Workflow
 on:
   workflow_dispatch: # Allows manual triggering of the workflow 
   schedule:
-    # Run this cron job every ten minutes
-    - cron: "*/10 * * * *" 
+    - cron: "30 11 * * *"
 jobs:
   scheduled-job:
     runs-on: ubuntu-latest
