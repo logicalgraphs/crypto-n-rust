@@ -16,6 +16,12 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Log Output
+      - name: Run coffee and Log Output
         run: cargo run --bin coffee >> data-files/covfefe.txt
         
+      - name: Commit and Push changes to book_issue_015
+        run: |
+          git add data-file/covfefe.txt
+          git commit -m "The Coffee Is All Yours!"
+          git push
+          
