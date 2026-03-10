@@ -17,5 +17,5 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
 
       - name: Log Output
-        run: cargo run --bin coffee >> crypto-n-rust/data-files/covfefe.txt
+        run: cargo run --bin coffee >> data-files/covfefe.txt
         
