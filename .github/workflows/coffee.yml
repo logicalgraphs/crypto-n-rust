@@ -21,7 +21,7 @@ jobs:
 
       - name: Log Output
         run: |
-          coffee.yml >> crypto-n-rust/data-files/covfefe.txt
+          cargo run --bin coffee >> crypto-n-rust/data-files/covfefe.txt
         
       - name: Commit and Push changes
         run: |
