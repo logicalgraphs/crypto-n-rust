@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # test the cron at scheduled time
-      - cron: "35 23 * * *"
+      - cron: "25 12 * * *"
 
 jobs:
   build-and-run:
