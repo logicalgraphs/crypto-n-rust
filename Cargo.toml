@@ -1,0 +1,9 @@
+[package]
+name = "coffee"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "coffee"
+path = "src/ch01/coffee.rs"
+

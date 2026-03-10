@@ -1,0 +1,19 @@
+name: coffee
+
+on:
+  schedule:
+    # Run this cron job every ten minutes
+      - cron: "05 18 * * *"
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Run coffee.rs
+        run: cargo run --bin coffee
