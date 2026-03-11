@@ -1,12 +1,13 @@
 name: coffee
 
 on:
-  permissions:
-    contents: write
   workflow_dispatch:
   schedule:
     # test the cron ("Min Hour Day Month DayofWeek" in UTC) at scheduled time 
-      - cron: "15 17 * * *" # in our time zone, this is 11:15 AM Eastern Time
+    - cron: "15 17 * * *" # in our time zone, this is 11:15 AM Eastern Time
+
+permissions:
+  contents: write
 
 jobs:
   build-and-run:
