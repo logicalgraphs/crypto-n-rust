@@ -21,9 +21,12 @@ jobs:
           cargo run --manifest-path src/ch01/Cargo.toml --bin coffee >> data-files/covfefe.txt
         
       - name: Commit and Push changes
+        env:
+          USER_EMAIL: ${{ secrets.USER1_EMAIL }}
+          USER_NAME: ${{ vars.USER1_NAME }}
         run: |
-          git config user.email "bparis2002@gmail.com"
-          git config user.name "DonxParis"
+          git config user.email "$USER1_EMAIL"
+          git config user.name "$USER1_NAME"
           git add data-files/covfefe.txt
           git commit -m "The Coffee Is All Yours!"
           git push
