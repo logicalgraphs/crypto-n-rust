@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # test the cron at scheduled time
-      - cron: "25 12 * * *"
+      - cron: "25 8 * * *" # From UTC, this is 12:25 PM Eastern Time
 
 jobs:
   build-and-run:
@@ -16,12 +16,17 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Run coffee and Log Output
-        run: cargo run --bin coffee >> data-files/covfefe.txt
+      - name: Run coffee.rs
+        run: cargo run --bin coffee
+
+      - name: Log Output
+        run: |
+          cargo run --bin coffee >> crypto-n-rust/data-files/covfefe.txt
         
       - name: Commit and Push changes to book_issue_015
         run: |
-          git add data-file/covfefe.txt
+          git config user.email "bparis2002@gmail.com"
+          git config user.name "DonxParis"
+          git add data-files/covfefe.txt
           git commit -m "The Coffee Is All Yours!"
           git push
-          
