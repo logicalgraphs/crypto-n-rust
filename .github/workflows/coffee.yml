@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # test the cron at scheduled time
-      - cron: "25 12 * * *"
+      - cron: "25 8 * * *" # From UTC, this is 12:25 PM Eastern Time
 
 jobs:
   build-and-run:
@@ -21,7 +21,7 @@ jobs:
 
       - name: Log Output
         run: |
-          cargo run --bin coffee >> data-files/covfefe.txt
+          cargo run --manifest-path src/ch01/Cargo.toml --bin coffee >> data-files/covfefe.txt
         
       - name: Commit and Push changes
         run: |
@@ -30,3 +30,5 @@ jobs:
           git add data-files/covfefe.txt
           git commit -m "The Coffee Is All Yours!"
           git push
+
+          
