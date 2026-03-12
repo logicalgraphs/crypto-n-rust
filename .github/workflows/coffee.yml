@@ -26,9 +26,9 @@ jobs:
       - name: Commit and Push changes
         env: 
           USER1_NAME: ${{ vars.USER1_NAME }}
-          PW_EMAIL: ${{ secrets.PW_EMAIL }}
+          USER1_EMAIL: ${{ secrets.USER1_EMAIL }}
         run: |
-          git config --local user.email "$PW_EMAIL"
+          git config --local user.email "$USER1_EMAIL"
           git config --local user.name "$USER1_NAME"
           git add data-files/covfefe.txt
           git commit -m "New Coffee Test"
