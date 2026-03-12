@@ -1,0 +1,36 @@
+name: quotes
+
+on:
+  workflow_dispatch:
+  schedule:
+    # test the cron ("Min Hour Day Month DayofWeek" in UTC) at scheduled time 
+    - cron: "15 17 * * *" # in our time zone, this is 11:15 AM Eastern Time
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cargo run and Log Output
+        run: |
+          cargo run --manifest-path src/pivot/dApps/gecko/Cargo.toml --bin gecko $LE_DATE >> data-files/csv/quotes.csv
+        
+      - name: Commit and Push changes
+        env:
+          USER1_NAME: ${{ vars.USER1_NAME }}
+          USER1_EMAIL: ${{ secrets.USER1_EMAIL }}
+        run: |
+          git config --local user.email "$USER1_EMAIL"
+          git config --local user.name "$USER1_NAME"
+          git add data-files/csv/quotes.csv
+          git commit -m "New Quotes Test! $LE_DATE"
+          git push
+
