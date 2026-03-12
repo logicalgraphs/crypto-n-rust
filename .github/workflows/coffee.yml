@@ -28,6 +28,6 @@ jobs:
           git config --local user.email "bparis2002@gmail.com"
           git config --local user.name "DonxParis"
           git add data-files/covfefe.txt
-          git commit -m "The Coffee Is All Yours!"
+          git commit -m "New Coffee Test"
           git push
 
