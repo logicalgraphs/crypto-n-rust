@@ -25,8 +25,8 @@ jobs:
         
       - name: Commit and Push changes
         env: 
+          USER1_NAME: ${{ vars.USER1_NAME }}
           PW_EMAIL: ${{ secrets.PW_EMAIL }}
-          USER1_EMAIL: ${{ vars.USER1_EMAIL }}
         run: |
           git config --local user.email "$PW_EMAIL"
           git config --local user.name "$USER1_NAME"
