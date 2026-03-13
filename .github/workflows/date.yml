@@ -1,6 +1,7 @@
 name: date
 on:
-  workflow_dispatch: # Allows manual triggering of the workflow 
+  workflow_dispatch: 
+    # Allows manual triggering of the workflow 
   schedule:
     - cron: "30 11 * * *"
 jobs:
@@ -11,3 +12,4 @@ jobs:
         env: 
           LE_DATE: ${ date +%Y-%m-%d }
         run: echo "This is today's date $LE_DATE!"
+        
