@@ -8,5 +8,6 @@ jobs:
     steps:
       - name: Run The Echo and Display The Date
         run: echo "LE_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
-
-
+        
+      - name: Display The Date
+        run: echo "The date is $LE_DATE"
