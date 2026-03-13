@@ -38,7 +38,7 @@ jobs:
           git config --local user.email "$USER1_EMAIL"
           git config --local user.name "$USER1_NAME"
           git add data-files/csv/quotes.csv
-          git commit -m "New Quotes Test! $LE_DATE"
+          git commit -m "Quotes for $LE_DATE"
           git push
 
           
