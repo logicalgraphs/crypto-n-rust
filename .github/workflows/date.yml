@@ -1,0 +1,13 @@
+name: date
+on:
+  workflow_dispatch: 
+
+jobs:
+  scheduled-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run The Echo and Display The Date
+        run: echo "LE_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+        
+      - name: Display The Date
+        run: echo "The date is $LE_DATE"
