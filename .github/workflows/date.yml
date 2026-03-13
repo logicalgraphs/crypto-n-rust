@@ -8,5 +8,5 @@ jobs:
     steps:
       - name: Run The Echo & Display The Date
         env: 
-          LE_DATE: ${ date +%Y-%m-%d }
+          LE_DATE: ${ `date +%Y-%m-%d` }
         run: echo "This is today's date $LE_DATE!"
