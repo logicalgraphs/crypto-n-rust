@@ -17,7 +17,12 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Run The Echo and Display The Date
+        run: echo "LE_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Cargo run and Log Output
         run: |
@@ -34,3 +39,4 @@ jobs:
           git commit -m "New Quotes Test! $LE_DATE"
           git push
 
+          
