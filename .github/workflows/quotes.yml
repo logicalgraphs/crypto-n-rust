@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # test the cron ("Min Hour Day Month DayofWeek" in UTC) at scheduled time 
-    - cron: "15 17 * * *" # in our time zone, this is 11:15 AM Eastern Time
+    - cron: "55 11 * * *" # in our time zone, this is 7:55 AM Eastern Time
 
 permissions:
   contents: write
@@ -17,9 +17,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set up Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Run The Echo and Display The Date
+        run: echo "LE_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Cargo run and Log Output
+        env:
+          COIN_GECKO_API_KEY: ${{ secrets.COIN_GECKO_API_KEY }}
         run: |
           cargo run --manifest-path src/pivot/dApps/gecko/Cargo.toml --bin gecko $LE_DATE >> data-files/csv/quotes.csv
         
@@ -31,6 +38,7 @@ jobs:
           git config --local user.email "$USER1_EMAIL"
           git config --local user.name "$USER1_NAME"
           git add data-files/csv/quotes.csv
-          git commit -m "New Quotes Test! $LE_DATE"
+          git commit -m "Quotes for $LE_DATE"
           git push
 
+          
