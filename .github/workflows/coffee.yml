@@ -3,8 +3,11 @@ name: coffee
 on:
   workflow_dispatch:
   schedule:
-    # test the cron at scheduled time
-      - cron: "25 12 * * *"
+    # test the cron ("Min Hour Day Month DayofWeek" in UTC) at scheduled time 
+    - cron: "15 17 * * *" # in our time zone, this is 11:15 AM Eastern Time
+
+permissions:
+  contents: write
 
 jobs:
   build-and-run:
@@ -16,12 +19,15 @@ jobs:
       - name: Set up Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Run coffee and Log Output
-        run: cargo run --bin coffee >> data-files/covfefe.txt
-        
-      - name: Commit and Push changes to book_issue_015
+      - name: Cargo run and Log Output
         run: |
-          git add data-file/covfefe.txt
-          git commit -m "The Coffee Is All Yours!"
+          cargo run --manifest-path src/ch01/Cargo.toml --bin coffee >> data-files/covfefe.txt
+        
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "bparis2002@gmail.com"
+          git config --local user.name "DonxParis"
+          git add data-files/covfefe.txt
+          git commit -m "New Coffee Test"
           git push
-          
+
