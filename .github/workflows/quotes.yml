@@ -32,6 +32,7 @@ jobs:
         env:
           USER1_NAME: ${{ vars.USER1_NAME }}
           USER1_EMAIL: ${{ secrets.USER1_EMAIL }}
+          COIN_GECKO_API_KEY: ${{ secrets.COIN_GECKO_API_KEY }}
         run: |
           git config --local user.email "$USER1_EMAIL"
           git config --local user.name "$USER1_NAME"
