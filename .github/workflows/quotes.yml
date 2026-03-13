@@ -1,4 +1,4 @@
-name: coffee
+name: quotes
 
 on:
   workflow_dispatch:
@@ -21,18 +21,16 @@ jobs:
 
       - name: Cargo run and Log Output
         run: |
-          cargo run --manifest-path src/ch01/Cargo.toml --bin coffee >> data-files/covfefe.txt
+          cargo run --manifest-path src/pivot/dApps/gecko/Cargo.toml --bin gecko $LE_DATE >> data-files/csv/quotes.csv
         
       - name: Commit and Push changes
-        # this uses vars and secrets instead of personal info 
-        env: 
+        env:
           USER1_NAME: ${{ vars.USER1_NAME }}
           USER1_EMAIL: ${{ secrets.USER1_EMAIL }}
         run: |
           git config --local user.email "$USER1_EMAIL"
           git config --local user.name "$USER1_NAME"
-          git add data-files/covfefe.txt
-          git commit -m "New Coffee Test"
+          git add data-files/csv/quotes.csv
+          git commit -m "New Quotes Test! $LE_DATE"
           git push
-
 
