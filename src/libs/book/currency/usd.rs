@@ -3,7 +3,6 @@
 use std::{
    cmp::Ordering,
    fmt,
-   hash::{Hash,Hasher},
    iter::Sum,
    ops::{Add,AddAssign},
    str::FromStr
@@ -11,29 +10,27 @@ use std::{
 
 use crate::{
    err_utils::ErrStr,
-   num_utils::{integer_decode,parse_commaless}
+   num_utils::parse_commaless
 };
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct USD {
-   pub amount: f32,
-   decode: (u64, i16, i8)
+   pub amount: f32
 }
 
 // ----- implementations -----------------------------------------------------
 
-impl PartialEq for USD {
-   fn eq(&self, other: &Self) -> bool {
-      self.amount == other.amount
-   }
-}
-
-impl Eq for USD { }
-
 impl fmt::Display for USD {
    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-      let sign = if self.amount < 0.0 { "-" } else { "" };
-      write!(formatter, "{sign}${:.2}", self.amount.abs())
+      let a = self.amount;
+      let b = a.abs();
+      let sign = if a < 0.0 { "-" } else { "" };
+      let precision =
+         if b == 0.0 { 2
+         } else if b < 0.01 { 6
+         } else if b < 0.99 { 4
+         } else { 2 };
+      write!(formatter, "{sign}${:.*}", precision, b)
    }
 }
 
@@ -50,11 +47,7 @@ impl FromStr for USD {
    }
 }
 
-impl Hash for USD {
-   fn hash<H: Hasher>(&self, state: &mut H) {
-      self.decode.hash(state);
-   }
-}
+impl Eq for USD { }
 
 impl Ord for USD {
    fn cmp(&self, other: &Self) -> Ordering {
@@ -96,13 +89,34 @@ impl Sum<Self> for USD {
 // ----- ... and our methods -------------------------------------------------
 
 pub fn mk_usd(amount: f32) -> USD {
-   let decode = integer_decode(amount.into());
-   USD { amount, decode }
+   USD { amount }
 }
 
 pub fn no_monay() -> USD { mk_usd(0.0) }
 
 // ----- TESTS -------------------------------------------------------
+
+pub mod functional_tests {
+   use super::*;
+   use crate::err_utils::err_or;
+
+   pub fn runoff() -> ErrStr<usize> {
+      fn to_usd(s: &str) -> ErrStr<String> {
+         let usd: USD =
+            err_or(s.parse(), &format!("Unable to parse money {s}"))?;
+         Ok(format!("{usd}"))
+      }
+      println!("\ncurrency::usd::fmt::Display functional test\n");
+      println!("Price-quotes as of 2026-03-13:
+
+ADA	AVAX	BTC		ETH		HBAR	UNDEAD");
+      let qts: Vec<String> =
+         vec!["$0.2716","$9.88","$71,427.00","$2,119.70","$0.0969","$0.002465"]
+            .iter().filter_map(|s| to_usd(s).ok()).collect();
+      println!("{}", qts.join("\t"));
+      Ok(1)
+   }
+}
 
 #[cfg(test)]
 mod tests {
