@@ -99,6 +99,34 @@ pub fn parse_data<T>(f: impl Fn(String) -> ErrStr<T>, file: &str,
    parse_lines(f, &lines, skip_header)
 }
 
+pub mod functional_tests {
+   use super::*;
+   use crate::utils::get_env;
+
+   fn run_file_names_pivot_pools() -> ErrStr<usize> {
+      println!("\nfile_utils::run_file_names_pivot_pools functional test\n");
+      let dir = get_env("PIVOT_DATA_DIR")?;
+      let (_dirs, files) = dirs_files(&format!("{dir}/pivots/open/raw"));
+      let filenames = file_names(&files);
+      for file in filenames {
+         if file.ends_with(".tsv") && file.contains("-") {
+            let split1: Vec<&str> = file.split(".").collect();
+            let name = split1.first().unwrap();
+            let split2: Vec<&str> = name.split("-").collect();
+            let prim = split2.first().unwrap();
+            let piv = split2.last().unwrap();
+            println!("\tFor file {file}, pool is ({prim}, {piv})");
+         } else { println!("\tignoring file {file}"); }
+      }
+      Ok(1)
+   }
+
+   pub fn runoff() -> ErrStr<usize> {
+      println!("\nfile_utils functional tests\n");
+      run_file_names_pivot_pools()
+   }
+}
+      
 #[cfg(test)]
 mod tests {
    use super::*;
