@@ -38,9 +38,15 @@ impl FromStr for USD {
    type Err = String;
 
    fn from_str(elt: &str) -> ErrStr<Self> {
-      if let Some(num) = elt.split('$').collect::<Vec<_>>().last() {
+      let splitage: Vec<&str> = elt.split('$').collect();
+      if let Some(num) = splitage.last() {
+         let sgn =
+            splitage.first()
+                    .and_then(|s| Some(if s == &"-" { -1.0 } else { 1.0 }))
+                    .or(Some(1.0))
+                    .unwrap();
          let amount = parse_commaless(&num.to_string())?;
-         Ok(mk_usd(amount))
+         Ok(mk_usd(sgn * amount))
       } else {
          Err(format!("USD: empty string"))
       }
@@ -137,6 +143,13 @@ mod tests {
    fn test_parse_amount() -> ErrStr<()> {
       let fiver: USD = "$5".parse()?;
       assert_eq!(5.0, fiver.amount);
+      Ok(())
+   }
+
+   #[test]
+   fn test_parse_negative_amount() -> ErrStr<()> {
+      let negger: USD = "-$9.30".parse()?;
+      assert_eq!(-9.3, negger.amount);
       Ok(())
    }
 
