@@ -109,6 +109,9 @@ pub fn parse_data<T>(f: impl Fn(String) -> ErrStr<T>, file: &str,
    parse_lines(f, &lines, skip_header)
 }
 
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
    use crate::utils::get_env;

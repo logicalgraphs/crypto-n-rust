@@ -73,6 +73,7 @@ impl Estimate {
 
 // ----- TESTS --------------------------------------------------------------
 
+#[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
    use crate::string_utils::words;

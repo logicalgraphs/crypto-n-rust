@@ -16,6 +16,8 @@ pub fn parse_usd(s: &str) -> ErrStr<USD> {
    err_or(s.parse(), &format!("Cannot parse USD from {s}"))
 }
 
+// ----- TESTS -------------------------------------------------------
+
 #[cfg(test)]
 mod tests {
    use super::*;
@@ -91,6 +93,7 @@ mod tests {
    }
 }
 
+#[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
 

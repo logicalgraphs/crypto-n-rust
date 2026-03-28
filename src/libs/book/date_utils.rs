@@ -32,6 +32,9 @@ pub fn today() -> NaiveDate {
    Local::now().date_naive()
 }
 
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
 
    use super::*;

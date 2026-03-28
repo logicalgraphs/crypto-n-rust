@@ -23,3 +23,9 @@ strum = "0.17.1"
 strum_macros = "0.17.1"
 ignore = "0.4.25"
 
+[lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = [
+    'cfg(tarpaulin_include)'
+]
+

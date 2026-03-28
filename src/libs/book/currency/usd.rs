@@ -102,6 +102,7 @@ pub fn no_monay() -> USD { mk_usd(0.0) }
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
    use crate::err_utils::err_or;

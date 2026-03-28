@@ -40,6 +40,9 @@ pub fn words(s: &str) -> Vec<String> {
    s.split_whitespace().map(to_string).collect()
 }
 
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
 
    use super::*;

@@ -39,6 +39,7 @@ pub fn minimax_f32(v: &Vec<f32>) -> (Option<f32>, Option<f32>) {
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
 

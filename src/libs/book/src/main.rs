@@ -13,6 +13,7 @@ use book::{
    test_utils::{collate_results,mk_tests,mk_sync}
 }; 
 
+#[cfg(not(tarpaulin_include))]
 fn main() -> ErrStr<()> {
    let t1 = "date_utils file_utils string_utils currency::usd num::estimate";
    let t2 = "parse_utils num_utils";
