@@ -332,14 +332,14 @@ pub fn default_f<'a, DATUM: Clone>(d: &'a DATUM)
    move |_msg| Ok(d.clone())
 }
 
-#[cfg(test)]
-mod tests {
+#[cfg(not(tarpaulin_include))]
+pub mod functional_tests {
    use super::*;
 
    use crate::parse_utils::{parse_id,parse_str,parse_int};
 
    fn tsv_table() -> String {
-"store	apples	bananas	chips	durian	eggs	fish	guinness
+"store	apples 	bananas	chips	durian	eggs	fish	guinness
 1	29	27	33	28	18	44	7
 2	14	38	15	2	46	5	12
 3	15	5	28	44	13	39	17
@@ -353,6 +353,49 @@ mod tests {
          tsv_table().split("\n").map(to_string).collect();
       ingest(parse_id, parse_str, parse_int, &lines, "\t")
    }
+
+   fn run_ingest() -> ErrStr<usize> { 
+      println!("\ntable_utils::ingest functional test\n");
+      let table = tsv_table();
+      println!("\tthe input table is:\n\n{table}");
+      let tab = ingest_table()?;
+      println!("\n\tthe parsed table is:\n\n{}", tab.as_csv());
+      println!("\ntable_utils::ingest:...ok");
+      Ok(1)
+   }
+
+   fn run_row_store_2() -> ErrStr<usize> {
+      println!("\ntable_utils::row functional test\n");
+      let stores = ingest_table()?;
+      println!("\tThe store table:\n{}\n", stores.as_csv());
+      println!("\tThe second store data is:\n{:?}", row(&stores, &2));
+      println!("\ntable_utils::row:...ok");
+      Ok(1)
+   }
+
+   fn run_val_store_5_fish() -> ErrStr<usize> {
+      println!("\ntable_utils::val functional test\n");
+      let stores = ingest_table()?;
+      fn s(x: &str) -> String { x.to_string() }
+      let ur_mom = val(&stores, &5, &s("fish")).unwrap();
+      println!("\tThe number of fish at store 5 is: {ur_mom}");
+      println!("\ntable_utils::val:...ok");
+      Ok(1)
+   }
+
+   pub fn runoff() -> ErrStr<usize> {
+      println!("\ntable_utils functional tests\n");
+      let a = run_ingest()?;
+      let b = run_row_store_2()?;
+      let c = run_val_store_5_fish()?;
+      Ok(a+b+c)
+   }
+
+
+#[cfg(test)]
+mod tests {
+   use super::*;
+   use super::functional_tests::ingest_table;
 
    #[test]
    fn test_ingest() {
@@ -406,4 +449,4 @@ mod tests {
       Ok(())
    }
 }
-
+}
