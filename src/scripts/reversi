@@ -1,0 +1,9 @@
+#!/usr/bin/perl
+
+my $input = <STDIN>;
+chomp($input);
+
+# Use 'scalar' to ensure character-wise reversal
+my $reversed = scalar reverse($input);
+
+print "$reversed\n";
