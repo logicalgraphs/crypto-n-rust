@@ -27,6 +27,7 @@ pub fn plural(n: usize, noun: &str) -> String {
 }
 
 pub fn to_string(s: &str) -> String { s.to_string() }
+pub fn s(st: &str) -> String { to_string(st) } // shorthand for to_string()
 
 pub fn parse_lines<T>(f: impl Fn(String) -> ErrStr<T>, lines: &Vec<String>,
                       skip_header: Option<usize>) -> ErrStr<Vec<T>> {
@@ -74,6 +75,18 @@ mod tests {
    fn test_words() {
       let lorum = words("The quick, brown fox jumped over the lazy dog.");
       assert_eq!(9, lorum.len())
+   }
+
+   #[test]
+   fn test_singular() {
+      let apple = plural(1, "apple");
+      assert_eq!("1 apple", &apple);
+   }
+
+   #[test]
+   fn test_plural() {
+      let kumquats = plural(2, "kumquat");
+      assert_eq!("2 kumquats", &kumquats);
    }
 }
 
