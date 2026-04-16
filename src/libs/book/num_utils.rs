@@ -42,8 +42,7 @@ pub fn minimax_f32(v: &Vec<f32>) -> (Option<f32>, Option<f32>) {
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
-
-   pub fn s(str: &str) -> String { str.to_string() }
+   use crate::string_utils::s;
 
    fn run_parse_or() -> ErrStr<usize> {
       println!("\nnum_utils::parse_or (10.0 default) functional test\n");
@@ -66,7 +65,7 @@ pub mod functional_tests {
 #[cfg(test)]
 mod tests {
    use super::*;
-   use super::functional_tests::s;
+   use crate::string_utils::s;
 
    #[test]
    fn test_parse_num_ok() {
