@@ -133,7 +133,7 @@ pub fn ingest<ROW: Eq + Hash,COL: Eq + Hash,DATUM>
    }
 }
 
-fn filter_map_or<T>(f: impl Fn(&str) -> ErrStr<T>, v: &Vec<String>)
+pub fn filter_map_or<T>(f: impl Fn(&str) -> ErrStr<T>, v: &Vec<String>)
       -> ErrStr<Vec<T>> {
    let mut ans: Vec<T> = Vec::new();
    for elt in v {
