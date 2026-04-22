@@ -40,5 +40,3 @@ jobs:
           git add data-files/csv/quotes.csv
           git commit -m "Quotes for $LE_DATE"
           git push
-
-          
