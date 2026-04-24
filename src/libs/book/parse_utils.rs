@@ -16,7 +16,37 @@ pub fn parse_usd(s: &str) -> ErrStr<USD> {
    err_or(s.parse(), &format!("Cannot parse USD from {s}"))
 }
 
+pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
+   strs.into_iter().map(|n| n.parse().expect(&format!("'{n}' NaN"))).collect()
+}
+
 // ----- TESTS -------------------------------------------------------
+
+#[cfg(not(tarpaulin_include))]
+pub mod functional_tests {
+   use super::*;
+   use crate::test_utils::{preamble,bind,reporter};
+
+   fn module() -> String { "parse_utils".to_string() }
+   fn run_parse_id() -> ErrStr<usize> { 
+      reporter(module())("parse_id", "5", bind(parse_id)) }
+   fn run_parse_int() -> ErrStr<usize> { 
+      reporter(module())("parse_int", "123", bind(parse_int)) }
+   fn run_parse_str() -> ErrStr<usize> {
+      reporter(module())("parse_str", "ugga-bugga", bind(parse_str))
+   }
+   fn run_parse_usd() -> ErrStr<usize> {
+      reporter(module())("parse_usd", "$314.16", bind(parse_usd))
+   }
+   pub fn runoff() -> ErrStr<usize> {
+      preamble(&module());
+      let n1 = run_parse_id()?;
+      let n2 = run_parse_int()?;
+      let n3 = run_parse_str()?;
+      let n4 = run_parse_usd()?;
+      Ok(n1+n2+n3+n4)
+   }
+}
 
 #[cfg(test)]
 mod tests {
@@ -90,53 +120,5 @@ mod tests {
       let ans = parse_usd("-$123.45")?;
       assert_eq!(-123.45, ans.amount);
       Ok(())
-   }
-}
-
-#[cfg(not(tarpaulin_include))]
-pub mod functional_tests {
-   use super::*;
-
-   fn run_parse_id() -> ErrStr<usize> {
-      println!("\nparse_utils::parse_id functional test\n");
-      let ans = parse_id("123")?;
-      println!("\tThe parsed id of '123' is {ans}");
-      println!("\nparse_utils::parse_id:...ok");
-      Ok(1)
-   }
-
-   fn run_parse_int() -> ErrStr<usize> {
-      println!("\nparse_utils::parse_int functional test\n");
-      let ans = parse_int("123")?;
-      println!("\tThe parsed int of '123' is {ans}");
-      println!("\nparse_utils::parse_int:...ok");
-      Ok(1)
-   }
-
-   fn run_parse_str() -> ErrStr<usize> {
-      let s = "ugga-bugga";
-      println!("\nparse_utils::parse_str functional test\n");
-      let ans = parse_str(s)?;
-      println!("\tThe parsed string of '{s}' is {ans}");
-      println!("\nparse_utils::parse_str:...ok");
-      Ok(1)
-   }
-
-   fn run_parse_usd() -> ErrStr<usize> {
-      let s = "$314.16";
-      println!("\nparse_utils::parse_usd functional test\n");
-      let ans = parse_usd(s)?;
-      println!("\tThe parsed usd of '{s}' is {ans}");
-      println!("\nparse_utils::parse_usd:...ok");
-      Ok(1)
-   }
-
-   pub fn runoff() -> ErrStr<usize> {
-      println!("\nparse_utils functional tests");
-      let n1 = run_parse_id()?;
-      let n2 = run_parse_int()?;
-      let n3 = run_parse_str()?;
-      let n4 = run_parse_usd()?;
-      Ok(n1+n2+n3+n4)
    }
 }

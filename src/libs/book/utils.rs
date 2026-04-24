@@ -25,7 +25,7 @@ pub fn get_env(variable: &str) -> ErrStr<String> {
 
 // Category theory
 
-pub fn id<T: Clone>(t: &T) -> T { t.clone() }
+pub fn id<T: Clone>(t: T) -> T { t }
 
 // from Kirill A. Khalitov on Stack Overflow
 // https://stackoverflow.com/questions/45786955/how-to-compose-functions-in-rust

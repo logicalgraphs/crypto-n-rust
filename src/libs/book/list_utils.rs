@@ -5,16 +5,18 @@ use std::{
                                                // item-renaming.
    slice::Iter
 };
+use super::err_utils::ErrStr;
 
 // ----- infinite lists --------------------------------------------------
 
+#[derive(Clone)]
 pub struct InfiniteList<T> {
    acid: T,
    base: Vec<T>
 }
 
-pub fn mk_inf<T: Clone>(v: &Vec<T>, d: T) -> InfiniteList<T> {
-   InfiniteList { acid: d, base: v.clone() }
+pub fn mk_inf<T: Clone>(v: &[T], d: T) -> InfiniteList<T> {
+   InfiniteList { acid: d, base: v.to_vec() }
 }
 
 pub fn mk_cycle<T: Clone>(a: &T) -> InfiniteList<T> {
@@ -99,6 +101,38 @@ pub fn init<T: Clone>(list: &[T]) -> Vec<T> {
 
 pub fn postpend<T: Clone>(list: &[T], t: T) -> Vec<T> {
    [list, &[t]].concat().to_vec()
+}
+
+pub fn filter_map_or<T>(f: impl Fn(&str) -> ErrStr<T>,
+                        v: &Vec<String>) -> ErrStr<Vec<T>> {
+   let mut ans: Vec<T> = Vec::new();
+   for elt in v {
+      let eh = f(elt)?;
+      ans.push(eh);
+   }
+   Ok(ans) 
+}  
+
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(not(tarpaulin_include))]
+pub mod functional_tests {
+   use super::*;
+   use crate::{
+      test_utils::{preamble,reporter,bind},
+      utils::id
+   };
+
+   fn module() -> String { "list_utils".to_string() }
+   fn run_mk_inf() -> ErrStr<usize> {
+      reporter(module())("mk_inf", mk_inf(&[3,1,4,1,5,9], 9), bind(id))
+   }
+
+   pub fn runoff() -> ErrStr<usize> {
+      preamble(&module());
+      let a = run_mk_inf()?;
+      Ok(a)
+   }
 }
 
 #[cfg(test)]
