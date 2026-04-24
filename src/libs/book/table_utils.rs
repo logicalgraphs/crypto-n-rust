@@ -13,7 +13,7 @@ use super::{
    list_utils::{ht,tail,filter_map_or},
    matrix_utils,
    matrix_utils::Matrix,
-   string_utils::to_string,
+   string_utils::{str2strf,to_string},
    tuple_utils::{fst,snd,swap}
 };
 
@@ -126,7 +126,7 @@ pub fn ingest<ROW: Eq + Hash,COL: Eq + Hash,DATUM>
       let cols_str: Vec<String> =
          tail(&hdr.split(separator).map(to_string).collect::<Vec<String>>());
       let (rows_, data) = rows_in_jest(rowf, df, body, separator)?;
-      let cols_ = parse_headers(colf, &cols_str)?;
+      let cols_ = parse_headers(str2strf(&colf), cols_str)?;
       Ok(Table { rows_, cols_, data })
    } else {
       Err("No table to ingest!".to_string())
@@ -134,8 +134,8 @@ pub fn ingest<ROW: Eq + Hash,COL: Eq + Hash,DATUM>
 }
 
 fn parse_headers<HEADER: Eq + Hash>
-   (headerf: impl Fn(&str) -> ErrStr<HEADER>,
-    headers: &Vec<String>) -> ErrStr<HashMap<HEADER, usize>> {
+   (headerf: impl Fn(String) -> ErrStr<HEADER>,
+    headers: Vec<String>) -> ErrStr<HashMap<HEADER, usize>> {
    let hdrs = filter_map_or(&headerf, headers)?;
    Ok(enum_headers(hdrs))
 }
@@ -160,10 +160,10 @@ fn rows_in_jest<ROW: Eq + Hash, DATUM>
    let hdrs: Vec<String> = mbs_hdrs.into_iter().map(Option::unwrap).collect();
    let mut matrix: Matrix<DATUM> = Vec::new();
    for row in data {
-      let r: Vec<DATUM> = filter_map_or(&df, &row)?;
+      let r: Vec<DATUM> = filter_map_or(str2strf(&df), row)?;
       matrix.push(r);
    }
-   let rows = parse_headers(rowf, &hdrs)?;
+   let rows = parse_headers(str2strf(&rowf), hdrs)?;
    Ok((rows, matrix))
 }
 
