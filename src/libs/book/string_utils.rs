@@ -37,6 +37,10 @@ pub fn parse_lines<T>(f: impl Fn(String) -> ErrStr<T>, lines: &Vec<String>,
         .collect()
 }  
 
+pub fn str2strf<T>(f: impl Fn(&str) -> T) -> impl Fn(String) -> T {
+   move | s: String | f(&s)
+}
+
 pub fn words(s: &str) -> Vec<String> {
    s.split_whitespace().map(to_string).collect()
 }

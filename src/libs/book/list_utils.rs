@@ -103,9 +103,9 @@ pub fn postpend<T: Clone>(list: &[T], t: T) -> Vec<T> {
    [list, &[t]].concat().to_vec()
 }
 
-pub fn filter_map_or<T>(f: impl Fn(&str) -> ErrStr<T>,
-                        v: &Vec<String>) -> ErrStr<Vec<T>> {
-   let mut ans: Vec<T> = Vec::new();
+pub fn filter_map_or<D,R>(f: impl Fn(D) -> ErrStr<R>,
+                        v: Vec<D>) -> ErrStr<Vec<R>> {
+   let mut ans: Vec<R> = Vec::new();
    for elt in v {
       let eh = f(elt)?;
       ans.push(eh);
