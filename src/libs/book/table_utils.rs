@@ -6,11 +6,11 @@ use std::{
    hash::Hash
 };
 
-use crate::{
+use super::{
    compose,
    csv_utils::CsvWriter,
    err_utils::ErrStr,
-   list_utils::{ht,tail},
+   list_utils::{ht,tail,filter_map_or},
    matrix_utils,
    matrix_utils::Matrix,
    string_utils::to_string,
@@ -131,16 +131,6 @@ pub fn ingest<ROW: Eq + Hash,COL: Eq + Hash,DATUM>
    } else {
       Err("No table to ingest!".to_string())
    }
-}
-
-pub fn filter_map_or<T>(f: impl Fn(&str) -> ErrStr<T>,
-                        v: &Vec<String>) -> ErrStr<Vec<T>> {
-   let mut ans: Vec<T> = Vec::new();
-   for elt in v {
-      let eh = f(elt)?;
-      ans.push(eh);
-   }
-   Ok(ans)
 }
 
 fn parse_headers<HEADER: Eq + Hash>
@@ -331,6 +321,8 @@ pub fn default_f<'a, DATUM: Clone>(d: &'a DATUM)
       -> impl Fn(String) -> ErrStr<DATUM> + 'a {
    move |_msg| Ok(d.clone())
 }
+
+// ----- TESTS -------------------------------------------------------
 
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {

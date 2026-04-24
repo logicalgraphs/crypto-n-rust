@@ -1,6 +1,7 @@
 use std::{
    collections::HashMap,
    fmt,
+   fmt::Debug,
    pin::Pin
 };
 
@@ -67,6 +68,30 @@ pub fn collate_results(suite: &str, tests: &mut Tests) -> ErrStr<usize> {
    println!("\n{suite} functional tests\n");
    let (test_names, res) = run_all_tests(tests);
    report_test_results(test_names, res)
+}
+
+pub fn preamble(module_name: &str) {
+   println!("\n{module_name} functional tests\n");
+}
+
+pub type Function<T, RES> = Box<dyn Fn(T) -> RES>;
+pub type Report<T, RES> =
+   Box<dyn Fn(&str, T, Function<T, RES>) -> ErrStr<usize>>;
+
+pub fn reporter<T: Debug + Clone, RES: Debug>(module_name: String)
+      -> Report<T, RES> {
+   Box::new(move |test: &str, t: T, f: Function<T, RES>| {
+      println!("\n{}::run_{test} functional test
+      
+        input: {:?}, function: {test}, result: {:?}
+
+{}::{test}:...ok", module_name, t.clone(), f(t), module_name);
+      Ok(1)
+   })
+}
+
+pub fn bind<T, RES>(f: impl Fn(T) -> RES + 'static) -> Box<dyn Fn(T) -> RES> {
+   Box::new(f)
 }
 
 pub fn report_test_results(test_names: Vec<String>, res: Vec<ErrStr<usize>>)
