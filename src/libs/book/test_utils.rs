@@ -13,19 +13,26 @@ use super::{
    utils::pred
 }; 
 
-pub type AsyncFn = Pin<Box<dyn Future<Output=ErrStr<usize>> + Send>>;
-pub enum Thunk { F(AsyncFn), E(fn() -> ErrStr<usize>) }
+pub type AsyncFn<RES> = Pin<Box<dyn Future<Output=ErrStr<RES>> + Send>>;
+pub type SyncFn<T, RES> = Box<dyn Fn(T) -> ErrStr<RES>>;
+pub enum Thunk<T, RES> { F(AsyncFn<RES>), E(SyncFn<T, RES>) }
 use Thunk::*;
 
-pub type Tests = HashMap<String, Thunk>;
+pub type Tests = HashMap<String, Thunk<(), usize>>;
 
-pub fn mk_tests(names: &str, fns: Vec<Thunk>) -> Tests {
+pub fn mk_tests(names: &str, fns: Vec<Thunk<(), usize>>) -> Tests {
    words(names).into_iter().zip(fns.into_iter()).collect()
 }
 
-pub fn mk_sync(f: fn() -> ErrStr<usize>) -> Thunk { E(f) }
+fn mk_null_sync(f: fn() -> ErrStr<usize>) -> SyncFn<(), usize> {
+   Box::new(move |_: ()| f())
+}
+
+pub fn mk_sync(f: fn() -> ErrStr<usize>) -> Thunk<(), usize> {
+   E(mk_null_sync(f))
+}
 pub fn mk_async<F: Future<Output=ErrStr<usize>> + Send + 'static>
-      (res: F) -> Thunk {
+      (res: F) -> Thunk<(), usize> {
    F(Box::pin(res))
 }
 
@@ -33,9 +40,9 @@ pub fn same<T:PartialEq + fmt::Display>(a: T, b: T) -> ErrStr<usize> {
    pred(a == b, 1).ok_or(format!("{a} is not equal to {b}"))
 }
 
-pub fn run_test(test: &str, f: &mut Thunk) -> ErrStr<usize> {
+pub fn run_test(test: &str, f: &mut Thunk<(), usize>) -> ErrStr<usize> {
    let res = match f {
-      E(f1) => f1(),
+      E(f1) => f1(()),
       F(f2) => {
          // let boxed_future = Pin::into_inner(f2);
          // unfortunately, f2 is not an Unpin impl
@@ -65,9 +72,9 @@ fn run_all_tests(tests: &mut Tests) -> (Vec<String>, Vec<ErrStr<usize>>) {
 }
 
 pub fn collate_results(suite: &str, tests: &mut Tests) -> ErrStr<usize> {
-   println!("\n{suite} functional tests\n");
+   preamble(suite);
    let (test_names, res) = run_all_tests(tests);
-   report_test_results(test_names, res)
+   report_test_results("book", &test_names, res)
 }
 
 pub fn preamble(module_name: &str) {
@@ -94,22 +101,23 @@ pub fn bind<T, RES>(f: impl Fn(T) -> RES + 'static) -> Box<dyn Fn(T) -> RES> {
    Box::new(f)
 }
 
-pub fn report_test_results(test_names: Vec<String>, res: Vec<ErrStr<usize>>)
-      -> ErrStr<usize> {
-   let len = test_names.len();
+pub fn report_test_results(module_name: &str, test_names: &[String],
+                           res: Vec<ErrStr<usize>>) -> ErrStr<usize> {
    if res.iter().all(Result::is_ok) {
       let res1: ErrStr<usize> = res.into_iter().sum();
-      let len = res1.clone()?;  // the real len
+      let len = res1.clone()?;
       let desig = if len == 1 { "The" } else { "All" };
-      println!("\n{desig} {} passed.\n", plural(len, "functional test"));
+      println!("\n{desig} {} passed.\n",
+               plural(len, &format!("{module_name} functional test")));
       res1
    } else {
-      failures(&res, &test_names, len)
-   }  
+      failures(&res, &test_names)
+   }
 }
 
-fn failures(res: &[ErrStr<usize>], tests: &[String], len: usize)
+fn failures(res: &[ErrStr<usize>], tests: &[String])
       -> ErrStr<usize> {
+   let len = tests.len();
    let fs: Vec<String> =
       res.iter()
          .enumerate()
@@ -152,7 +160,9 @@ mod tests {
       Err("Failed; asynchronously!".to_string())
    }
 
-   fn passers() -> Vec<Thunk> { [a,b,c,d].into_iter().map(mk_sync).collect() }
+   fn passers() -> Vec<Thunk<(), usize>> {
+      [a,b,c,d].into_iter().map(mk_sync).collect()
+   }
 
    #[test]
    fn test_collate_results_ok() {
@@ -163,8 +173,7 @@ mod tests {
 
    #[test]
    fn fail_collate_results() {
-      let tests: Vec<Thunk> = //  postpend(&passers(), mk_sync(f));
-         // [passers().as_slice(), &[mk_sync(f)]].concat().as_vec();
+      let tests: Vec<Thunk<(), usize>> =
           vec![a,b,c,d,f].into_iter().map(mk_sync).collect();
       let report = collate_results("test_utils",
                                    &mut mk_tests("a b c d f", tests));
@@ -174,7 +183,7 @@ mod tests {
    #[test]
    fn test_collate_results_async_ok() {
       let z = mk_async(zinc());
-      let tests = vec![E(a),E(b),E(c),E(d),z];
+      let tests = vec![mk_sync(a),mk_sync(b),mk_sync(c),mk_sync(d),z];
       let report = collate_results("test_utils",
                                    &mut mk_tests("a b c d z", tests));
       assert!(report.is_ok());
@@ -184,7 +193,8 @@ mod tests {
    fn fail_collate_results_async() {
       let z = mk_async(zinc());
       let zf = mk_async(thinc());
-      let tests = vec![E(a),E(b),E(c),E(d),E(f),z,zf];
+      let tests =
+         vec![mk_sync(a),mk_sync(b),mk_sync(c),mk_sync(d),mk_sync(f),z,zf];
       let report =
          collate_results("test_utils",
                          &mut mk_tests("a b c d f z zf", tests));

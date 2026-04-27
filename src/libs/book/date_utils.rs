@@ -39,7 +39,7 @@ pub mod functional_tests {
 
    use super::*;
 
-   use crate::test_utils::{mk_tests,collate_results,same,Thunk::E};
+   use crate::test_utils::{mk_tests,collate_results,same,mk_sync};
 
    fn run_parse_date() -> ErrStr<usize> {
       println!("\nparse_date functional test\n");
@@ -62,7 +62,7 @@ pub mod functional_tests {
    pub fn runoff() -> ErrStr<usize> {
       collate_results("date_utils",
          &mut mk_tests("run_parse_date run_today",
-                       vec![E(run_parse_date), E(run_today)]))
+                       vec![mk_sync(run_parse_date), mk_sync(run_today)]))
    }
 }
 

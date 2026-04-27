@@ -51,7 +51,7 @@ pub fn words(s: &str) -> Vec<String> {
 pub mod functional_tests {
 
    use super::*;
-   use crate::test_utils::{same,collate_results,mk_tests,Thunk::E};
+   use crate::test_utils::{same,collate_results,mk_tests,mk_sync};
 
    fn words_test() -> ErrStr<usize> {
       let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
@@ -66,7 +66,7 @@ words: {:?}
 
    pub fn runoff() -> ErrStr<usize> {
       collate_results("string_utils",
-         &mut mk_tests("words", vec![E(words_test)]))
+         &mut mk_tests("words", vec![mk_sync(words_test)]))
    }
 }
 
