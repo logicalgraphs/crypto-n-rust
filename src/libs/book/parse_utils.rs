@@ -25,21 +25,20 @@ pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
-   use crate::test_utils::{preamble,bind,reporter};
+   use crate::create_testing;
 
-   fn module() -> String { "parse_utils".to_string() }
-   fn run_parse_id() -> ErrStr<usize> { 
-      reporter(module())("parse_id", "5", bind(parse_id)) }
-   fn run_parse_int() -> ErrStr<usize> { 
-      reporter(module())("parse_int", "123", bind(parse_int)) }
+   create_testing!("parse_utils");
+
+   fn run_parse_id() -> ErrStr<usize> { report!("parse_id", "5", parse_id) }
+   fn run_parse_int() -> ErrStr<usize> {
+      report!("parse_int", "123", parse_int) }
    fn run_parse_str() -> ErrStr<usize> {
-      reporter(module())("parse_str", "ugga-bugga", bind(parse_str))
+      report!("parse_str", "ugga-bugga", parse_str)
    }
    fn run_parse_usd() -> ErrStr<usize> {
-      reporter(module())("parse_usd", "$314.16", bind(parse_usd))
+      report!("parse_usd", "$314.16", parse_usd)
    }
    pub fn runoff() -> ErrStr<usize> {
-      preamble(&module());
       let n1 = run_parse_id()?;
       let n2 = run_parse_int()?;
       let n3 = run_parse_str()?;

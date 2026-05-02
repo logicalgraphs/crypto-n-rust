@@ -1,7 +1,6 @@
 use std::{
    collections::HashMap,
    fmt,
-   fmt::Debug,
    pin::Pin
 };
 
@@ -89,66 +88,37 @@ pub fn preamble(module_name: &str) {
    println!("\n{module_name} functional tests\n");
 }
 
-#[macro_export] macro_rules! test_pre_f {
-   ($fn_name:ident, $module_name:expr) => {
-      pub fn $fn_name(func: &str) {
-         let module = $module_name.to_string();
-         println!("{module}::{func} functional test\n");
-      }
-   };
-}
-
 pub type Function<T, RES> = Box<dyn Fn(T) -> RES>;
 pub type Report<T, RES> =
    Box<dyn Fn(&str, T, Function<T, RES>) -> ErrStr<usize>>;
 
-#[macro_export] macro_rules! create_testing {
-   ($mod_name:expr) => {
-      macro_rules! generate_inner {
-         ($dollar:tt) => {
-            #[allow(unused_macros)] macro_rules! testing {
-               ($dollar fn_name:expr, $dollar code:expr) => {{
-                  let name = format!("\n{}::run_{}",
-                                     $mod_name, $dollar fn_name);
-                  println!("{name} functional test\n");
-                  $dollar code;
-                  println!("\n{name}:...ok");
-                  Ok(1)
-               }};
-            }
-            #[allow(unused_macros)] macro_rules! report {
-               ($dollar fn_name:expr, $dollar t:expr, $dollar f:expr) => {{
-                  let name = format!("\n{}::run_{}",
-                                     $mod_name, $dollar fn_name);
-                  let res = $dollar f($dollar t.clone());
-                  println!("{name} functional test
+#[macro_export(local_inner_macros)]
+macro_rules! create_testing {
+    ($mod_name:expr) => {
+        #[allow(unused_macros)]
+        macro_rules! testing {
+            ($fn_name:expr, $code:expr) => {{
+                let name = format!("\n{}::run_{}", $mod_name, $fn_name);
+                println!("{name} functional test\n");
+                let _ = $code;
+                println!("\n{name}:...ok");
+                Ok(1)
+            }};
+        }
 
-	input: {:?}, function: {}, result: {:?}
-
-{name}:...ok", $dollar t, $dollar fn_name, res);
-                  Ok(1)
-               }};
-            }
-         };
-      }
-      generate_inner!($);
-   };
-}
-
-pub fn reporter<T: Debug + Clone, RES: Debug>(module_name: String)
-      -> Report<T, RES> {
-   Box::new(move |test: &str, t: T, f: Function<T, RES>| {
-      println!("\n{}::run_{test} functional test
-      
-        input: {:?}, function: {test}, result: {:?}
-
-{}::{test}:...ok", module_name, t.clone(), f(t), module_name);
-      Ok(1)
-   })
-}
-
-pub fn bind<T, RES>(f: impl Fn(T) -> RES + 'static) -> Box<dyn Fn(T) -> RES> {
-   Box::new(f)
+        #[allow(unused_macros)]
+        macro_rules! report {
+            ($fn_name:expr, $t:expr, $f:expr) => {{
+                let name = format!("\n{}::run_{}", $mod_name, $fn_name);
+                let res = $f($t.clone());
+                println!("{name} functional test\n");
+                println!("\tinput: {:?}, function: {}, result: {:?}",
+                         $t, $fn_name, res);
+                println!("\n{name}:...ok");
+                Ok(1)
+            }};
+        }
+    };
 }
 
 pub fn report_test_results(module_name: &str, test_names: &[String],

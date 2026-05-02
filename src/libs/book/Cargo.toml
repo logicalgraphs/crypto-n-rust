@@ -10,6 +10,7 @@ name = "book"
 path = "lib.rs"
 
 [dependencies]
+linkme = "0.3"
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
 chrono = "0.4.38"

@@ -44,8 +44,7 @@ pub mod functional_tests {
    use super::*;
    use crate::{ create_testing, string_utils::s };
 
-   const MODULE: &'static str = "num_utils";
-   create_testing!(MODULE);
+   create_testing!("num_utils");
 
    fn run_parse_or() -> ErrStr<usize> {
       testing!("parse_or (10.0 default)", {

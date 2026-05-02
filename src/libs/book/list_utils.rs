@@ -118,18 +118,15 @@ pub fn filter_map_or<D,R>(f: impl Fn(D) -> ErrStr<R>,
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
-   use crate::{
-      test_utils::{preamble,reporter,bind},
-      utils::id
-   };
+   use crate::create_testing;
 
-   fn module() -> String { "list_utils".to_string() }
+   create_testing!("list_utils");
    fn run_mk_inf() -> ErrStr<usize> {
-      reporter(module())("mk_inf", mk_inf(&[3,1,4,1,5,9], 9), bind(id))
+      testing!("mk_inf",
+         println!("\tAn infinite list: {:?}", mk_inf(&[3,1,4,1,5,9], 9)))
    }
 
    pub fn runoff() -> ErrStr<usize> {
-      preamble(&module());
       let a = run_mk_inf()?;
       Ok(a)
    }
