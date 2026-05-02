@@ -8,3 +8,8 @@ pub fn err_or<T, E: Debug>(thunk: Result<T, E>, err_str: &str) -> ErrStr<T> {
       Err(err) => Err(format!("{err_str}. Error: {err:?}"))
    }
 }
+
+pub fn not_implemented<T>(fn_name: &str) -> ErrStr<T> {
+   Err(format!("{fn_name}() not yet implemented."))
+}
+

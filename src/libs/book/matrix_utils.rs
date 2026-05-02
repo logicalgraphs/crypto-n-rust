@@ -1,4 +1,4 @@
-use std::clone::Clone;
+use std::{ clone::Clone, fmt::Debug };
 
 pub type Matrix<T> = Vec<Vec<T>>;
 
@@ -8,15 +8,16 @@ pub fn from_vec<T>(v: Vec<T>) -> Matrix<T> {
     mat
 }
 
-pub fn from_split_line<T>(f: impl Fn(&str) -> T) -> impl Fn(Vec<&str>) -> Vec<T> {
-    move |line| line.into_iter().map(&f).collect()
+pub fn from_split_line<T>(f: impl Fn(&str) -> T) -> impl Fn(Vec<&str>)
+      -> Vec<T> {
+   move |line| line.into_iter().map(&f).collect()
 }
 
-pub fn from_lines<T>(f: impl Fn(&str) -> T, lines: &Vec<String>, separator: &str) -> Matrix<T> {
-    lines
-        .into_iter()
-        .map(|l| from_split_line(&f)(l.split(separator).collect()))
-        .collect()
+pub fn from_lines<T>(f: impl Fn(&str) -> T, lines: &Vec<String>,
+                     separator: &str) -> Matrix<T> {
+    lines.into_iter()
+         .map(|l| from_split_line(&f)(l.split(separator).collect()))
+         .collect()
 }
 
 pub fn col<T: Clone>(rows: &Matrix<T>, col: usize) -> Vec<T> {
@@ -37,26 +38,56 @@ pub fn transpose<T: Clone>(cols: &Matrix<T>) -> Matrix<T> {
     ans
 }
 
+pub fn print_matrix<T: Debug>(mat: &Matrix<T>) {
+   mat.iter().for_each(|row| println!("{row:?}"));
+}
+
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(not(tarpaulin_include))]
+mod sample_matrices {
+
+   use super::*;
+
+   pub fn skinny() -> Matrix<i32> {
+      vec![vec![1, 2], vec![2, 5], vec![5, 6]]
+   }
+}
+
+#[cfg(not(tarpaulin_include))]
+pub mod functional_tests {
+   use super::*;
+   use super::sample_matrices::skinny;
+   use crate::err_utils::ErrStr;
+
+   pub fn runoff() -> ErrStr<usize> {
+      let ski = skinny();
+      println!("Matrix:\n");
+      print_matrix(&ski);
+      let t = transpose(&ski);
+      println!("\ntransposed:\n");
+      print_matrix(&t);
+      Ok(1)
+   }
+}
+
+#[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
     use super::*;
+    use super::sample_matrices::skinny;
 
-    fn sudoku() -> Matrix<i32> {
-        vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]
-    }
+   fn sudoku() -> Matrix<i32> {
+      vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]
+   }
 
-    #[test]
-    fn test_col() {
+    #[test] fn test_col() {
         let test_matrix = sudoku();
         let b = col(&test_matrix, 1);
         assert_eq!(vec![2, 5, 8], b);
     }
-    fn skinny() -> Matrix<i32> {
-        vec![vec![1, 2], vec![2, 5], vec![5, 6]]
-    }
 
-    #[test]
-    fn test_transpose() {
+    #[test] fn test_transpose() {
         let test_matrix = skinny();
         let b = transpose(&test_matrix);
         assert_eq!(vec![vec![1, 2, 5], vec![2, 5, 6]], b);

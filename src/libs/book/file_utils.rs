@@ -114,58 +114,51 @@ pub fn parse_data<T>(f: impl Fn(String) -> ErrStr<T>, file: &str,
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
-   use crate::utils::get_env;
+   use crate::{ create_testing, utils::get_env };
+
+   create_testing!("file_utils");
 
    fn run_file_names_pivot_pools() -> ErrStr<usize> {
-      println!("\nfile_utils::run_file_names_pivot_pools functional test\n");
-      let dir = get_env("PIVOT_DATA_DIR")?;
-      let (_dirs, files) = dirs_files(&format!("{dir}/pivots/open/raw"));
-      let filenames = file_names(&files);
-      for file in filenames {
-         if file.ends_with(".tsv") && file.contains("-") {
-            let split1: Vec<&str> = file.split(".").collect();
-            let name = split1.first().unwrap();
-            let split2: Vec<&str> = name.split("-").collect();
-            let prim = split2.first().unwrap();
-            let piv = split2.last().unwrap();
-            println!("\tFor file {file}, pool is ({prim}, {piv})");
-         } else { println!("\tignoring file {file}"); }
-      }
-      println!("\nfile_utils::run file_names (pivot_pools):...ok");
-      Ok(1)
+      testing!("run_file_names (pivot pools)", {
+         let dir = get_env("PIVOT_DATA_DIR")?;
+         let (_dirs, files) = dirs_files(&format!("{dir}/pivots/open/raw"));
+         let filenames = file_names(&files);
+         for file in filenames {
+            if file.ends_with(".tsv") && file.contains("-") {
+               let split1: Vec<&str> = file.split(".").collect();
+               let name = split1.first().unwrap();
+               let split2: Vec<&str> = name.split("-").collect();
+               let prim = split2.first().unwrap();
+               let piv = split2.last().unwrap();
+               println!("\tFor file {file}, pool is ({prim}, {piv})");
+            } else { println!("\tignoring file {file}"); }
+         }
+      })
    }
 
-   fn run_subdirs() -> ErrStr<usize> {
-      println!("\nfile_utils::subdirs functional test\n");
-      let ans = subdirs(".");
-      println!("\tsubdirs of '.': {ans:?}");
-      println!("\nfile_utils::run subdirs:...ok");
-      Ok(1)
-   }
+   fn run_subdirs() -> ErrStr<usize> { report!("subdirs", ".", subdirs) }
 
    fn run_files_in_dir() -> ErrStr<usize> {
-      println!("\nfile_utils::file_in_dir functional test\n");
-      let ans = dirs_files(".");
-      let (_dirs, files) = &ans;
-      println!("\tfiles in '.': {files:?}");
-      println!("\nfile_utils::run files_in_dir:...ok");
-      Ok(1)
+      testing!("files_in_dir", {
+         let ans = dirs_files(".");
+         let (_dirs, files) = &ans;
+         println!("\tfiles in '.': {files:?}");
+      })
    }
 
    fn run_dir_file() -> ErrStr<usize> {
-      println!("\nfile_utils::dir_file functional test\n");
-      let parent = "protocol/data/pivots/open/raw";
-      let filename = "btc-eth.tsv";
-      let path = format!("{parent}/{filename}");
-      let (dir, file) = dir_file(&path)
-         .ok_or_else(|| format!("Cannot dir_file({path})"))?;
-      println!("\t(dir,file) of {parent}/{filename} is ({dir},{file})");
-      println!("\nfile_utils::run dir_file:...ok");
-      Ok(1)
+      testing!("dir_file", {
+         let parent = "protocol/data/pivots/open/raw";
+         let filename = "btc-eth.tsv";
+         let path = format!("{parent}/{filename}");
+         let (dir, file) = dir_file(&path)
+            .ok_or_else(|| format!("Cannot dir_file({path})"))?;
+         println!("\t(dir,file) of {parent}/{filename}
+	is ({dir},{file})");
+      })
    }
 
    pub fn runoff() -> ErrStr<usize> {
-      println!("\nfile_utils functional tests\n");
       let a = run_file_names_pivot_pools()?;
       let b = run_subdirs()?;
       let c = run_files_in_dir()?;
@@ -233,3 +226,4 @@ mod tests {
       Ok(())
    }
 }
+

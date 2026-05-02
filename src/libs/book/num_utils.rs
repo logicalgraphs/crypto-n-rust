@@ -42,21 +42,22 @@ pub fn minimax_f32(v: &Vec<f32>) -> (Option<f32>, Option<f32>) {
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
-   use crate::string_utils::s;
+   use crate::{ create_testing, string_utils::s };
+
+   const MODULE: &'static str = "num_utils";
+   create_testing!(MODULE);
 
    fn run_parse_or() -> ErrStr<usize> {
-      println!("\nnum_utils::parse_or (10.0 default) functional test\n");
-      let vals: &[Option<&String>] =
-         &[Some(&s("1,234.5")), Some(&s("ginger")), None];
-      fn parse_or_10(n: &Option<&String>) -> f32 { parse_or(*n, 10.0) }
-      let vals2: Vec<f32> = vals.into_iter().map(parse_or_10).collect();
-      println!("\tThe parsed numbers from {vals:?}\n\tare {vals2:?}");
-      println!("\nnum_utils::parse_or:...ok");
-      Ok(1)
+      testing!("parse_or (10.0 default)", {
+         let vals: &[Option<&String>] =
+            &[Some(&s("1,234.5")), Some(&s("ginger")), None];
+         fn parse_or_10(n: &Option<&String>) -> f32 { parse_or(*n, 10.0) }
+         let vals2: Vec<f32> = vals.into_iter().map(parse_or_10).collect();
+         println!("\tThe parsed numbers from {vals:?}\n\tare {vals2:?}");
+      })
    }
 
    pub fn runoff() -> ErrStr<usize> {
-      println!("\nnum_utils functional tests\n");
       let a = run_parse_or()?;
       Ok(a)
    }

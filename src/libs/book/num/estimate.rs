@@ -79,7 +79,6 @@ pub mod functional_tests {
    use crate::string_utils::words;
 
    pub fn runoff() -> ErrStr<usize> {
-      println!("num::estimate functional test\n");
       let nums = words("15.53 1247.9 5614723.99");
       let ests: Vec<Estimate> =
          nums.iter()

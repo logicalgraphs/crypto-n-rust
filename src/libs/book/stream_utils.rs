@@ -16,6 +16,8 @@ fn lines_from_stream<R: Read>(mut io: R) -> ErrStr<Vec<String>> {
    }
 }
 
+// ----- TESTS -------------------------------------------------------
+
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;

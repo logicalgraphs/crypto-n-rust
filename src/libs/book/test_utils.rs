@@ -5,7 +5,9 @@ use std::{
    pin::Pin
 };
 
-use futures::{Future,executor::block_on};
+use futures::Future;
+
+use tokio::runtime::Runtime;
 
 use super::{
    err_utils::ErrStr,
@@ -41,13 +43,15 @@ pub fn same<T:PartialEq + fmt::Display>(a: T, b: T) -> ErrStr<usize> {
 }
 
 pub fn run_test(test: &str, f: &mut Thunk<(), usize>) -> ErrStr<usize> {
+   fn_preamble(test);
    let res = match f {
       E(f1) => f1(()),
       F(f2) => {
+         let rt = Runtime::new().unwrap();
          // let boxed_future = Pin::into_inner(f2);
          // unfortunately, f2 is not an Unpin impl
          // block_on(boxed_future)
-         block_on(f2)
+         rt.block_on(f2)
       }
    };
    test_result(test, res)
@@ -77,13 +81,59 @@ pub fn collate_results(suite: &str, tests: &mut Tests) -> ErrStr<usize> {
    report_test_results("book", &test_names, res)
 }
 
+fn fn_preamble(fn_name: &str) {
+   println!("\n{fn_name} functional test\n");
+}
+
 pub fn preamble(module_name: &str) {
    println!("\n{module_name} functional tests\n");
+}
+
+#[macro_export] macro_rules! test_pre_f {
+   ($fn_name:ident, $module_name:expr) => {
+      pub fn $fn_name(func: &str) {
+         let module = $module_name.to_string();
+         println!("{module}::{func} functional test\n");
+      }
+   };
 }
 
 pub type Function<T, RES> = Box<dyn Fn(T) -> RES>;
 pub type Report<T, RES> =
    Box<dyn Fn(&str, T, Function<T, RES>) -> ErrStr<usize>>;
+
+#[macro_export] macro_rules! create_testing {
+   ($mod_name:expr) => {
+      macro_rules! generate_inner {
+         ($dollar:tt) => {
+            #[allow(unused_macros)] macro_rules! testing {
+               ($dollar fn_name:expr, $dollar code:expr) => {{
+                  let name = format!("\n{}::run_{}",
+                                     $mod_name, $dollar fn_name);
+                  println!("{name} functional test\n");
+                  $dollar code;
+                  println!("\n{name}:...ok");
+                  Ok(1)
+               }};
+            }
+            #[allow(unused_macros)] macro_rules! report {
+               ($dollar fn_name:expr, $dollar t:expr, $dollar f:expr) => {{
+                  let name = format!("\n{}::run_{}",
+                                     $mod_name, $dollar fn_name);
+                  let res = $dollar f($dollar t.clone());
+                  println!("{name} functional test
+
+	input: {:?}, function: {}, result: {:?}
+
+{name}:...ok", $dollar t, $dollar fn_name, res);
+                  Ok(1)
+               }};
+            }
+         };
+      }
+      generate_inner!($);
+   };
+}
 
 pub fn reporter<T: Debug + Clone, RES: Debug>(module_name: String)
       -> Report<T, RES> {
@@ -128,11 +178,12 @@ fn failures(res: &[ErrStr<usize>], tests: &[String])
    Err(format!("{} FAILED!", many))
 }
 
-#[cfg(test)]
-mod tests {
+// ----- TESTS -------------------------------------------------------
 
 // when you're testing the test-framework, you have reached test-Nirvana.
 
+#[cfg(test)]
+mod tests {
    use super::*;
 
    #[test]
