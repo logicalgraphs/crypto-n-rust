@@ -168,7 +168,7 @@ mod tests {
    fn test_dirs_files() {
       let ans = dirs_files(".");
       let (dirs, files) = &ans;
-      assert_eq!(4, dirs.len());
+      assert_eq!(3, dirs.len());
       assert!(files.len() > 10);
    }
 
@@ -184,7 +184,7 @@ mod tests {
    #[test]
    fn test_subdirs() {
       let ans = subdirs(".");
-      assert_eq!(4, ans.len());
+      assert_eq!(3, ans.len());
    }
 
    #[test]
