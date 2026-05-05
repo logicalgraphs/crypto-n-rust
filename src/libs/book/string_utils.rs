@@ -53,11 +53,12 @@ pub mod functional_tests {
 
    use super::*;
    use paste::paste;
-   use crate::create_testing;
+   use crate::{ create_testing, compose, utils::debug };
 
    create_testing!("string_utils");
    run_with!("words",
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", words);
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        compose!(debug)(words));
    run_all_functional_tests!();
 }
 

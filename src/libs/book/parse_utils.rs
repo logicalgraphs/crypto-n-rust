@@ -27,14 +27,14 @@ pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
 pub mod functional_tests {
    use super::*;
    use paste::paste;
-   use crate::create_testing;
+   use crate::{ create_testing, compose, utils::resolve };
 
    create_testing!("parse_utils");
 
-   run_with!("parse_id", "5", parse_id);
-   run_with!("parse_int", "123", parse_int);
-   run_with!("parse_str", "ugga-bugga", parse_str);
-   run_with!("parse_usd", "$314.16", parse_usd);
+   run_with!("parse_id", "5", compose!(resolve)(parse_id));
+   run_with!("parse_int", "123", compose!(resolve)(parse_int));
+   run_with!("parse_str", "ugga-bugga", compose!(resolve)(parse_str));
+   run_with!("parse_usd", "$314.16", compose!(resolve)(parse_usd));
 
    run_all_functional_tests!();
 }

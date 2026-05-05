@@ -34,7 +34,7 @@ pub fn untag<T: Clone>(t: &Tag<T>) -> (String, T) {
 }
 
 pub fn tag_maker<'a, T>(t: &'a str) -> impl Fn(T) -> Tag<T>  + use<'a, T> {
-   move |v: T| mk_tag(t, v)
+   move |v: T|  mk_tag(t, v)
 }
 
 // ----- TESTS -------------------------------------------------------
@@ -45,12 +45,17 @@ pub mod functional_tests {
    use super::*;
 
    use paste::paste;
-   use crate::{ create_testing, err_utils::ErrStr };
+   use crate::{
+      create_testing,
+      compose,
+      err_utils::ErrStr,
+      utils::{debug,composer,deref}
+   };
 
    create_testing!("types::tagged");
 
-   run_with!("tag_maker", 9, tag_maker("six"));
-   run_with!("untag", &mk_tag("foo", "quux"), untag);
+   run_with!("tag_maker", 9, composer(deref(CsvWriter::as_csv), tag_maker("six")));
+   run_with!("untag", &mk_tag("foo", "quux"), compose!(debug)(untag));
    run!("mk_tag", {
       let t = mk_tag("id", 7);
       println!("tagged 7 is {}", t.as_csv())

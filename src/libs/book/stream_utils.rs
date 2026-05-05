@@ -26,7 +26,7 @@ pub mod functional_tests {
    use std::{ io::{Write,Cursor}, process::{Command, Stdio, Child, Output} };
 
    use paste::paste;
-   use crate::{ create_testing, test_utils::now };
+   use crate::{ create_testing, utils::now };
 
    create_testing!("stream_utils");
 

@@ -139,7 +139,11 @@ pub mod functional_tests {
          }
    });
 
-   run_with!("subdirs", ".", subdirs);
+   run!("subdirs", {
+      let dirs = subdirs(".");
+      println!("subdirs is '.'\n");
+      println!("\t{}", file_names(&dirs).join("\n\t"));
+   });
 
    run!("files_in_dir", {
          let ans = dirs_files(".");

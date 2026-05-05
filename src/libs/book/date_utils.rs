@@ -38,15 +38,13 @@ pub fn today() -> NaiveDate {
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
 
-   use paste::paste;
-
    use super::*;
-
-   use crate::create_testing;
+   use paste::paste;
+   use crate::{ create_testing, compose, utils::resolve };
 
    create_testing!("date_utils");
 
-   run_with!("parse_date", "2026-01-30", parse_date);
+   run_with!("parse_date", "2026-01-30", compose!(resolve)(parse_date));
 
    run!("today", {
       let td = today();

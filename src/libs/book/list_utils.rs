@@ -120,10 +120,10 @@ pub fn filter_map_or<D,R>(f: impl Fn(D) -> ErrStr<R>,
 pub mod functional_tests {
    use super::*;
    use paste::paste;
-   use crate::{ create_testing, utils::id };
+   use crate::{ create_testing, utils::debug };
 
    create_testing!("list_utils");
-   run_with!("mk_inf", mk_inf(&[3,1,4,1,5,9], 9), id);
+   run_with!("mk_inf", mk_inf(&[3,1,4,1,5,9], 9), debug);
 
    run_all_functional_tests!();
 }
