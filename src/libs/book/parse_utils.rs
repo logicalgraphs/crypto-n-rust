@@ -22,29 +22,21 @@ pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
+   use paste::paste;
    use crate::create_testing;
 
    create_testing!("parse_utils");
 
-   fn run_parse_id() -> ErrStr<usize> { report!("parse_id", "5", parse_id) }
-   fn run_parse_int() -> ErrStr<usize> {
-      report!("parse_int", "123", parse_int) }
-   fn run_parse_str() -> ErrStr<usize> {
-      report!("parse_str", "ugga-bugga", parse_str)
-   }
-   fn run_parse_usd() -> ErrStr<usize> {
-      report!("parse_usd", "$314.16", parse_usd)
-   }
-   pub fn runoff() -> ErrStr<usize> {
-      let n1 = run_parse_id()?;
-      let n2 = run_parse_int()?;
-      let n3 = run_parse_str()?;
-      let n4 = run_parse_usd()?;
-      Ok(n1+n2+n3+n4)
-   }
+   run_with!("parse_id", "5", parse_id);
+   run_with!("parse_int", "123", parse_int);
+   run_with!("parse_str", "ugga-bugga", parse_str);
+   run_with!("parse_usd", "$314.16", parse_usd);
+
+   run_all_functional_tests!();
 }
 
 #[cfg(test)]

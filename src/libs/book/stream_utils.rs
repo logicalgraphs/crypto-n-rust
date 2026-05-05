@@ -18,14 +18,15 @@ fn lines_from_stream<R: Read>(mut io: R) -> ErrStr<Vec<String>> {
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
 
-   use std::io::{Write,Cursor};
-   use std::process::{Command, Stdio, Child, Output};
+   use std::{ io::{Write,Cursor}, process::{Command, Stdio, Child, Output} };
 
-   use crate::create_testing;
+   use paste::paste;
+   use crate::{ create_testing, test_utils::now };
 
    create_testing!("stream_utils");
 
@@ -67,15 +68,21 @@ and so cold"),
       Ok(output)
    }
 
-   async fn run_stdio_reversi() -> ErrStr<usize> {
-      testing!("reversi", cmd("reversi").await)
-   }
-   async fn run_stdio_cat() -> ErrStr<usize> {
-      testing!("cat", cmd("cat").await)
+   async fn cmd_out(c: &str) -> ErrStr<String> {
+      let outie = cmd(c).await?;
+      let reader = Cursor::new(outie.stdout);
+      let lines = lines_from_stream(reader)?;
+      let ans = lines.join("\n");
+      println!("The output stream from command '{c}':\n\n{ans}\n");
+      Ok(ans)
    }
 
-   async fn poem() -> ErrStr<Vec<String>> {
-      let outie = cmd("cat").await?;
+   run!("reversi", now(cmd_out("reversi")));
+
+   async fn poem() -> ErrStr<String> {
+      cmd_out("cat").await
+   }
+
 /*
          kid.write_all(b"1
 2
@@ -88,25 +95,16 @@ Can I have a little more?
 7,8,9,10...
 I love you!").expect("The Beatles");
 */
-      let reader = Cursor::new(outie.stdout);
-      lines_from_stream(reader)
-   }
 
-   async fn run_lines_from_stream() -> ErrStr<usize> {
-      testing!("lines_from_stream", {
+   run!("lines_from_stream",
+        " (A poem I read by William Carlos Williams)",
+      now(async {
          let p = poem().await?;
-         println!("\tA poem I read by William Carlos Williams:\n\n{p:?}\n");
          println!("\tpoem line count: {}\n", p.len());
-      })
-   }
+         Ok::<(), String>(())
+   }));
 
-   pub async fn runoff() -> ErrStr<usize> {
-      println!("Running commands against the input stream.");
-      let a = run_stdio_reversi().await?;
-      let b = run_stdio_cat().await?;
-      let c = run_lines_from_stream().await?;
-      Ok(a+b+c)
-   }
+   run_all_functional_tests!("Running commands against the input stream.");
 
    #[cfg(test)]
    mod tests {
@@ -128,7 +126,8 @@ I love you!").expect("The Beatles");
       #[tokio::test]
       async fn test_lines_from_stream() -> ErrStr<()> {
          let p = poem().await?;
-         assert_eq!(14, p.len());
+         let lines: Vec<String> = p.lines().map(s).collect();
+         assert_eq!(14, lines.len());
          Ok(())
       }
    }

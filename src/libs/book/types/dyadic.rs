@@ -38,13 +38,22 @@ pub fn unpair<T: Clone>(d: &Dyad<T>) -> ((String, String), T) {
 // ----- TESTS -------------------------------------------------------
 
 #[cfg(test)]
-mod tests {
+#[cfg(not(tarpaulin_include))]
+pub mod functional_tests {
    use super::*;
 
-   #[test]
-   fn test_mk_dyad() {
-      let _ts = mk_dyad("foo", "bar", "bax");
-      assert!(!"Test complete".is_empty());
-   }
+   use paste::paste;
+   use crate::{ create_testing, err_utils::ErrStr, types::tagged::mk_tag };
+
+   create_testing!("types::dyadic");
+
+   run!("mk_dyad", {
+      let d = mk_dyad("a²", "b²", 5);
+      println!("\tA dyad is {}", d.as_csv());
+   });
+
+   run_with!("unpair", &mk_dyad("fruit", "loops", mk_tag("six", 7)), unpair);
+
+   run_all_functional_tests!();
 }
 

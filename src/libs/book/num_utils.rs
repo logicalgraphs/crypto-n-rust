@@ -39,27 +39,25 @@ pub fn minimax_f32(v: &Vec<f32>) -> (Option<f32>, Option<f32>) {
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
    use crate::{ create_testing, string_utils::s };
+  
+   use paste::paste;
 
    create_testing!("num_utils");
 
-   fn run_parse_or() -> ErrStr<usize> {
-      testing!("parse_or (10.0 default)", {
+   run!("parse_or", " (10.0 default)", {
          let vals: &[Option<&String>] =
             &[Some(&s("1,234.5")), Some(&s("ginger")), None];
          fn parse_or_10(n: &Option<&String>) -> f32 { parse_or(*n, 10.0) }
          let vals2: Vec<f32> = vals.into_iter().map(parse_or_10).collect();
          println!("\tThe parsed numbers from {vals:?}\n\tare {vals2:?}");
-      })
-   }
+   });
 
-   pub fn runoff() -> ErrStr<usize> {
-      let a = run_parse_or()?;
-      Ok(a)
-   }
+   run_all_functional_tests!();
 }
 
 #[cfg(test)]

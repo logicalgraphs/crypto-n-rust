@@ -44,42 +44,53 @@ pub fn print_matrix<T: Debug>(mat: &Matrix<T>) {
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 mod sample_matrices {
 
    use super::*;
+
+   pub fn sudoku() -> Matrix<i32> {
+      vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]
+   }
 
    pub fn skinny() -> Matrix<i32> {
       vec![vec![1, 2], vec![2, 5], vec![5, 6]]
    }
 }
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
-   use super::*;
-   use super::sample_matrices::skinny;
-   use crate::err_utils::ErrStr;
+   use paste::paste;
 
-   pub fn runoff() -> ErrStr<usize> {
+   use super::*;
+   use super::sample_matrices::{skinny,sudoku};
+   use crate::{ create_testing, err_utils::ErrStr };
+
+   create_testing!("matrix_utils");
+
+   run!("matrix", " (from vec)", {
+      let s = sudoku();
+      print_matrix(&s);
+   });
+
+   run!("transpose", {
       let ski = skinny();
-      println!("Matrix:\n");
       print_matrix(&ski);
       let t = transpose(&ski);
       println!("\ntransposed:\n");
       print_matrix(&t);
-      Ok(1)
-   }
+   });
+
+   run_all_functional_tests!();
 }
 
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 mod tests {
     use super::*;
-    use super::sample_matrices::skinny;
-
-   fn sudoku() -> Matrix<i32> {
-      vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]
-   }
+    use super::sample_matrices::{skinny,sudoku};
 
     #[test] fn test_col() {
         let test_matrix = sudoku();

@@ -111,15 +111,19 @@ pub fn parse_data<T>(f: impl Fn(String) -> ErrStr<T>, file: &str,
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
-   use crate::{ create_testing, utils::get_env };
+   use crate::{
+      create_testing,
+      utils::get_env
+   };
+   use paste::paste;
 
    create_testing!("file_utils");
 
-   fn run_file_names_pivot_pools() -> ErrStr<usize> {
-      testing!("run_file_names (pivot pools)", {
+   run!("file_names", " (pivot pools)", {
          let dir = get_env("PIVOT_DATA_DIR")?;
          let (_dirs, files) = dirs_files(&format!("{dir}/pivots/open/raw"));
          let filenames = file_names(&files);
@@ -133,21 +137,17 @@ pub mod functional_tests {
                println!("\tFor file {file}, pool is ({prim}, {piv})");
             } else { println!("\tignoring file {file}"); }
          }
-      })
-   }
+   });
 
-   fn run_subdirs() -> ErrStr<usize> { report!("subdirs", ".", subdirs) }
+   run_with!("subdirs", ".", subdirs);
 
-   fn run_files_in_dir() -> ErrStr<usize> {
-      testing!("files_in_dir", {
+   run!("files_in_dir", {
          let ans = dirs_files(".");
          let (_dirs, files) = &ans;
          println!("\tfiles in '.': {files:?}");
-      })
-   }
+   });
 
-   fn run_dir_file() -> ErrStr<usize> {
-      testing!("dir_file", {
+   run!("dir_file", {
          let parent = "protocol/data/pivots/open/raw";
          let filename = "btc-eth.tsv";
          let path = format!("{parent}/{filename}");
@@ -155,16 +155,9 @@ pub mod functional_tests {
             .ok_or_else(|| format!("Cannot dir_file({path})"))?;
          println!("\t(dir,file) of {parent}/{filename}
 	is ({dir},{file})");
-      })
-   }
+   });
 
-   pub fn runoff() -> ErrStr<usize> {
-      let a = run_file_names_pivot_pools()?;
-      let b = run_subdirs()?;
-      let c = run_files_in_dir()?;
-      let d = run_dir_file()?;
-      Ok(a+b+c+d)
-   }
+   run_all_functional_tests!();
 }
       
 #[cfg(test)]

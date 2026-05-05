@@ -23,37 +23,28 @@ pub fn second<A, B, C>(f: impl Fn(B) -> C) -> impl Fn((A, B)) -> (A, C) {
 pub type Partition<T> = (Vec<T>, Vec<T>);
 
 // ----- TESTS -------------------------------------------------------
-   
+
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
+   use paste::paste;
    use crate::{ create_testing, err_utils::ErrStr };
 
-   create_testing!("tuple_utils");
-
-   fn run_fst() -> ErrStr<usize> { report!("fst", (1, "two"), fst) }
-   fn run_snd() -> ErrStr<usize> { report!("snd", (1, "two"), snd) }
-   fn run_swap() -> ErrStr<usize> { report!("swap", (1, "two"), swap) }
-   fn run_first() -> ErrStr<usize> {
-      let plus1 = first(|a| a + 1);
-      report!("first+1", (5, "seven"), plus1)
-   }
+   fn plus1() -> impl Fn((i32, i32)) -> (i32, i32) { first(|a| a + 1) }
    fn upper<A>() -> impl Fn((A, &'static str)) -> (A, String) {
       second(|a: &str| a.to_uppercase())
    }
 
-   fn run_second() -> ErrStr<usize> {
-      report!("second_uppercase", (6, "seven"), upper())
-   }
+   create_testing!("tuple_utils");
 
-   pub fn runoff() -> ErrStr<usize> {
-      let a = run_fst()?;
-      let b = run_snd()?;
-      let c = run_swap()?;
-      let d = run_first()?;
-      let e = run_second()?;
-      Ok(a+b+c+d+e)
-   }
+   run_with!("fst", (1, "two"), fst);
+   run_with!("snd", (1, "two"), snd);
+   run_with!("swap", (1, "two"), swap);
+   run_with!("first_plus_1", (5, 7), plus1());
+   run_with!("second_uppercase", (6, "seven"), upper());
+
+   run_all_functional_tests!();
 
    #[cfg(test)]
    mod tests {
