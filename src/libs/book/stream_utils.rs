@@ -78,8 +78,6 @@ and so cold"),
       Ok(ans)
    }
 
-   // run!("reversi", now(cmd_out("reversi"))); // Doesn't work on Windows?
-
    async fn poem() -> ErrStr<String> {
       cmd_out("cat").await
    }
