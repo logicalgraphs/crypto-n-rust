@@ -47,30 +47,22 @@ pub fn words(s: &str) -> Vec<String> {
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
 
    use super::*;
-   use crate::test_utils::{same,collate_results,mk_tests,mk_sync};
+   use paste::paste;
+   use crate::{ create_testing, compose, utils::debug };
 
-   fn words_test() -> ErrStr<usize> {
-      let lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-      let w = words(lorem);
-      println!("words() functional test
-
-phrase: {lorem}
-words: {:?}
-", w);
-      same(8, w.len())
-   }
-
-   pub fn runoff() -> ErrStr<usize> {
-      collate_results("string_utils",
-         &mut mk_tests("words", vec![mk_sync(words_test)]))
-   }
+   create_testing!("string_utils");
+   run_with!("words",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        compose!(debug)(words));
 }
 
 #[cfg(test)]
+#[cfg(not(tarpaulin_include))]
 mod tests {
 
    use super::*;

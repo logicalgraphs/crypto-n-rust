@@ -43,10 +43,10 @@ async fn handle_response(response: Response) -> ErrStr<String> {
    }
 }
 
-#[cfg(test)]
-mod tests {
-   use super::*;
+// ----- TESTS -------------------------------------------------------
 
+#[cfg(not(tarpaulin_include))]
+mod sample_url {
    fn git_lg_url() -> String {
       "https://raw.githubusercontent.com/logicalgraphs".to_string()
    }
@@ -55,26 +55,43 @@ mod tests {
       format!("{}/crypto-n-rust/{branch}/data-files/{dir}/{res}", git_lg_url())
    }
 
-   fn data_res(branch: &str, res: &str) -> String {
+   pub fn data_res(branch: &str, res: &str) -> String {
       rez("csv", branch, res)
    }
 
-   fn quotes() -> String { data_res("main", "quotes.csv") }
+   pub fn quotes() -> String { data_res("main", "quotes.csv") }
+}
 
-   #[tokio::test]
-   async fn test_read_rest_ok() {
+#[cfg(not(tarpaulin_include))]
+pub mod functional_tests {
+   use super::*;
+   use super::sample_url::quotes;
+
+   pub async fn runoff() -> ErrStr<usize> {
+      let qts = read_rest(&quotes()).await?;
+      println!("\tQuotes from the LogicalGraphs REST endpoint:\n\n{}",
+               qts.chars().take(1000).collect::<String>());
+      Ok(1)
+   }
+}
+
+#[cfg(not(tarpaulin_include))]
+#[cfg(test)]
+mod tests {
+   use super::*;
+   use super::sample_url::{quotes,data_res};
+
+   #[tokio::test] async fn test_read_rest_ok() {
       let ans = read_rest(&quotes()).await;
       assert!(ans.is_ok());
    }
 
-   #[tokio::test]
-   async fn test_read_rest_err() {
+   #[tokio::test] async fn test_read_rest_err() {
       let ans = read_rest(&data_res("main", "schmivits.csv")).await;
       assert!(ans.is_err());
    }
 
-   #[tokio::test]
-   async fn test_read_rest_lines() -> ErrStr<()> {
+   #[tokio::test] async fn test_read_rest_lines() -> ErrStr<()> {
       let ans = read_rest(&quotes()).await?;
       assert!(ans.len() > 5);
       Ok(())

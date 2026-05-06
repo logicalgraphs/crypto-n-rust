@@ -34,36 +34,24 @@ pub fn today() -> NaiveDate {
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
 
    use super::*;
+   use paste::paste;
+   use crate::{ create_testing, compose, utils::resolve };
 
-   use crate::test_utils::{mk_tests,collate_results,same,mk_sync};
+   create_testing!("date_utils");
 
-   fn run_parse_date() -> ErrStr<usize> {
-      println!("\nparse_date functional test\n");
-      let dt_str = "2026-01-30";
-      let dt = parse_date(dt_str);
-      println!("Parsing date {}; result: {:?}", dt_str, dt);
-      match dt { Ok(_) => Ok(1), Err(str) => Err(str) }
-   }
+   run_with!("parse_date", "2026-01-30", compose!(resolve)(parse_date));
 
-   fn run_today() -> ErrStr<usize> {
+   run!("today", {
       let td = today();
-      let td_str = format!("{td}");
-      println!("\ntoday functional test\n");
       println!("Today is {td}");
       println!("Yesterday is {}", yesterday());
       println!("Tomorrow is {}", tomorrow());
-      same(td, datef(&td_str))
-   }
-
-   pub fn runoff() -> ErrStr<usize> {
-      collate_results("date_utils",
-         &mut mk_tests("run_parse_date run_today",
-                       vec![mk_sync(run_parse_date), mk_sync(run_today)]))
-   }
+   });
 }
 
 #[cfg(test)]

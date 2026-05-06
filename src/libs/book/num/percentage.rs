@@ -64,3 +64,40 @@ impl Percentage {
       self.percent * magnitude
    }
 }
+
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(test)]
+#[cfg(not(tarpaulin_include))]
+pub mod functional_tests {
+   use super::*;
+
+   use paste::paste;
+
+   use crate::create_testing;
+
+   create_testing!("num::percentage");
+
+   run_with!("mk_percentage", 0.55, mk_percentage);
+
+   run!("of", " (taking the percentage of a value)", {
+      let half = mk_percentage(0.5);
+      println!("\t{half} of 8 is {}", half.of(8.0));
+   });
+}
+
+#[cfg(test)]
+mod tests {
+   use super::*;
+
+   #[test] fn test_parse_percentage_ok() {
+      let half: ErrStr<Percentage> = "50%".parse();
+      assert!(half.is_ok());
+   }
+
+   #[test] fn fail_parse_percentage() {
+      let eh: ErrStr<Percentage> = "asdf".parse();
+      assert!(eh.is_err());
+   }
+}
+

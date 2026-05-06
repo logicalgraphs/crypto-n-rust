@@ -115,24 +115,15 @@ pub fn filter_map_or<D,R>(f: impl Fn(D) -> ErrStr<R>,
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
-   use crate::{
-      test_utils::{preamble,reporter,bind},
-      utils::id
-   };
+   use paste::paste;
+   use crate::{ create_testing, utils::debug };
 
-   fn module() -> String { "list_utils".to_string() }
-   fn run_mk_inf() -> ErrStr<usize> {
-      reporter(module())("mk_inf", mk_inf(&[3,1,4,1,5,9], 9), bind(id))
-   }
-
-   pub fn runoff() -> ErrStr<usize> {
-      preamble(&module());
-      let a = run_mk_inf()?;
-      Ok(a)
-   }
+   create_testing!("list_utils");
+   run_with!("mk_inf", mk_inf(&[3,1,4,1,5,9], 9), debug);
 }
 
 #[cfg(test)]

@@ -25,24 +25,41 @@ impl<T:Clone> Value<T> for Tag<T> {
    fn value(&self) -> T { self.value.clone() }
 }
 
-pub fn mk_tag<T:Clone>(t: &str, v: &T) -> Tag<T> {
-   Tag { tag: t.to_string(), value: v.clone() }
+pub fn mk_tag<T>(t: &str, v: T) -> Tag<T> {
+   Tag { tag: t.to_string(), value: v }
 }
 
 pub fn untag<T: Clone>(t: &Tag<T>) -> (String, T) {
    (t.tag.clone(), t.value.clone())
-}  
+}
+
+pub fn tag_maker<'a, T>(t: &'a str) -> impl Fn(T) -> Tag<T>  + use<'a, T> {
+   move |v: T|  mk_tag(t, v)
+}
 
 // ----- TESTS -------------------------------------------------------
 
 #[cfg(test)]
-mod tests {
+#[cfg(not(tarpaulin_include))]
+pub mod functional_tests {
    use super::*;
 
-   #[test]
-   fn test_mk_tag() {
-      let _ts = mk_tag("foo", &1);
-      assert!(!"Test complete".is_empty());
-   }
+   use paste::paste;
+   use crate::{
+      create_testing,
+      compose,
+      err_utils::ErrStr,
+      utils::{debug,composer,deref}
+   };
+
+   create_testing!("types::tagged");
+
+   run_with!("tag_maker", 9,
+             composer(deref(CsvWriter::as_csv), tag_maker("six")));
+   run_with!("untag", &mk_tag("foo", "quux"), compose!(debug)(untag));
+   run!("mk_tag", {
+      let t = mk_tag("id", 7);
+      println!("tagged 7 is {}", t.as_csv())
+   });
 }
 

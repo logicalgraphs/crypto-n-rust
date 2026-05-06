@@ -23,62 +23,58 @@ pub fn second<A, B, C>(f: impl Fn(B) -> C) -> impl Fn((A, B)) -> (A, C) {
 pub type Partition<T> = (Vec<T>, Vec<T>);
 
 // ----- TESTS -------------------------------------------------------
-   
+
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
-   use std::fmt::Debug;
    use super::*;
-   use crate::err_utils::ErrStr;
+   use std::{fmt, fmt::Display};
+   use paste::paste;
+   use crate::{
+      create_testing,
+      compose,
+      err_utils::ErrStr,
+      utils::{debug, composer}
+   };
 
-   fn report<A: Debug + Clone, B: Debug + Clone, RES: Debug>(test: &str,
-         t: (A, B), f: impl Fn((A, B)) -> RES) -> ErrStr<usize> {
-      println!("\ntuple_utils::run_{test} functional test
-
-	tuple: {:?}, function: {test}, result: {:?}
-
-tuple_utils::{test}:...ok", t.clone(), f(t));
-      Ok(1)
+   #[derive(Debug, Clone)]
+   struct Tuple<A, B> {
+      a: A,
+      b: B
    }
-
-   fn run_fst() -> ErrStr<usize> { report("fst", (1, "two"), fst) }
-   fn run_snd() -> ErrStr<usize> { report("snd", (1, "two"), snd) }
-   fn run_swap() -> ErrStr<usize> { report("swap", (1, "two"), swap) }
-   fn run_first() -> ErrStr<usize> {
-      let plus1 = first(|a| a + 1);
-      report("first+1", (5, "seven"), plus1)
+   impl<A: Display, B: Display> Display for Tuple<A, B> {
+      fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+         write!(f, "({}, {})", self.a, self.b)
+      }
    }
+   fn mk_tupl<A, B>((a, b): (A, B)) -> Tuple<A, B> { Tuple { a, b } }
+   fn plus1() -> impl Fn((i32, i32)) -> (i32, i32) { first(|a| a + 1) }
    fn upper<A>() -> impl Fn((A, &'static str)) -> (A, String) {
       second(|a: &str| a.to_uppercase())
    }
 
-   fn run_second() -> ErrStr<usize> {
-      report("second_uppercase", (6, "seven"), upper())
-   }
+   create_testing!("tuple_utils");
 
-   pub fn runoff() -> ErrStr<usize> {
-      println!("\ntuple_utils functional tests\n");
-      let a = run_fst()?;
-      let b = run_snd()?;
-      let c = run_swap()?;
-      let d = run_first()?;
-      let e = run_second()?;
-      Ok(a+b+c+d+e)
-   }
+   run_with!("fst", (1, "two"), fst);
+   run_with!("snd", (1, "two"), snd);
+   run_with!("swap", (1, "two"), compose!(debug)(swap));
+   run_with!("first_plus_1", (5, 7), composer(mk_tupl, plus1()));
+   run_with!("second_uppercase", (6, "seven"), composer(mk_tupl, upper()));
 
-#[cfg(test)]
-mod tests {
-   use super::*;
-   use crate::string_utils::s;
+   #[cfg(test)]
+   mod tests {
+      use super::*;
+      use crate::string_utils::s;
 
-   #[test] fn test_fst() { assert_eq!(1, fst((1, "two"))); }
-   #[test] fn test_snd() { assert_eq!("two", snd((1, "two"))); }
-   #[test] fn test_swap() { assert_eq!(("two", 1), swap((1, "two"))); }
-   #[test] fn test_first_plus_1() {
-      assert_eq!((6, "seven"), first(|a| a+1)((5, "seven")));
+      #[test] fn test_fst() { assert_eq!(1, fst((1, "two"))); }
+      #[test] fn test_snd() { assert_eq!("two", snd((1, "two"))); }
+      #[test] fn test_swap() { assert_eq!(("two", 1), swap((1, "two"))); }
+      #[test] fn test_first_plus_1() {
+         assert_eq!((6, "seven"), first(|a| a+1)((5, "seven")));
+      }
+      #[test] fn test_second_uppercase() {
+         assert_eq!((6, s("SEVEN")), upper()((6, "seven")));
+      }
    }
-   #[test] fn test_second_uppercase() {
-      assert_eq!((6, s("SEVEN")), upper()((6, "seven")));
-   }
-}
 }
 

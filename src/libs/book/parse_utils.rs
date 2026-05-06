@@ -22,30 +22,19 @@ pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
-   use crate::test_utils::{preamble,bind,reporter};
+   use paste::paste;
+   use crate::{ create_testing, compose, utils::resolve };
 
-   fn module() -> String { "parse_utils".to_string() }
-   fn run_parse_id() -> ErrStr<usize> { 
-      reporter(module())("parse_id", "5", bind(parse_id)) }
-   fn run_parse_int() -> ErrStr<usize> { 
-      reporter(module())("parse_int", "123", bind(parse_int)) }
-   fn run_parse_str() -> ErrStr<usize> {
-      reporter(module())("parse_str", "ugga-bugga", bind(parse_str))
-   }
-   fn run_parse_usd() -> ErrStr<usize> {
-      reporter(module())("parse_usd", "$314.16", bind(parse_usd))
-   }
-   pub fn runoff() -> ErrStr<usize> {
-      preamble(&module());
-      let n1 = run_parse_id()?;
-      let n2 = run_parse_int()?;
-      let n3 = run_parse_str()?;
-      let n4 = run_parse_usd()?;
-      Ok(n1+n2+n3+n4)
-   }
+   create_testing!("parse_utils");
+
+   run_with!("parse_id", "5", compose!(resolve)(parse_id));
+   run_with!("parse_int", "123", compose!(resolve)(parse_int));
+   run_with!("parse_str", "ugga-bugga", compose!(resolve)(parse_str));
+   run_with!("parse_usd", "$314.16", compose!(resolve)(parse_usd));
 }
 
 #[cfg(test)]

@@ -13,7 +13,7 @@ use crate::{
    num_utils::parse_commaless
 };
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Default, Debug, Clone, PartialEq)]
 pub struct USD {
    pub amount: f32
 }
@@ -105,7 +105,11 @@ pub fn no_monay() -> USD { mk_usd(0.0) }
 #[cfg(not(tarpaulin_include))]
 pub mod functional_tests {
    use super::*;
-   use crate::err_utils::err_or;
+   use crate::{
+      err_utils::err_or,
+      list_utils::filter_map_or,
+      string_utils::{str2strf,words}
+   };
 
    pub fn runoff() -> ErrStr<usize> {
       fn to_usd(s: &str) -> ErrStr<String> {
@@ -113,13 +117,11 @@ pub mod functional_tests {
             err_or(s.parse(), &format!("Unable to parse money {s}"))?;
          Ok(format!("{usd}"))
       }
-      println!("\ncurrency::usd::fmt::Display functional test\n");
       println!("Price-quotes as of 2026-03-13:
 
-ADA	AVAX	BTC		ETH		HBAR	UNDEAD");
-      let qts: Vec<String> =
-         vec!["$0.2716","$9.88","$71,427.00","$2,119.70","$0.0969","$0.002465"]
-            .iter().filter_map(|s| to_usd(s).ok()).collect();
+USDC	AVAX	BTC		ETH		UNDEAD");
+      let dollaz = "$0.9782 $9.88 $71,427.00 $2,119.70 $0.002465";
+      let qts = filter_map_or(str2strf(to_usd), words(dollaz))?;
       println!("{}", qts.join("\t"));
       Ok(1)
    }
