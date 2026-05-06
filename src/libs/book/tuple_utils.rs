@@ -61,8 +61,6 @@ pub mod functional_tests {
    run_with!("first_plus_1", (5, 7), composer(mk_tupl, plus1()));
    run_with!("second_uppercase", (6, "seven"), composer(mk_tupl, upper()));
 
-   run_all_functional_tests!();
-
    #[cfg(test)]
    mod tests {
       use super::*;

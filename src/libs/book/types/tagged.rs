@@ -54,13 +54,12 @@ pub mod functional_tests {
 
    create_testing!("types::tagged");
 
-   run_with!("tag_maker", 9, composer(deref(CsvWriter::as_csv), tag_maker("six")));
+   run_with!("tag_maker", 9,
+             composer(deref(CsvWriter::as_csv), tag_maker("six")));
    run_with!("untag", &mk_tag("foo", "quux"), compose!(debug)(untag));
    run!("mk_tag", {
       let t = mk_tag("id", 7);
       println!("tagged 7 is {}", t.as_csv())
    });
-
-   run_all_functional_tests!();
 }
 

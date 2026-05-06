@@ -56,8 +56,6 @@ pub mod functional_tests {
          let vals2: Vec<f32> = vals.into_iter().map(parse_or_10).collect();
          println!("\tThe parsed numbers from {vals:?}\n\tare {vals2:?}");
    });
-
-   run_all_functional_tests!();
 }
 
 #[cfg(test)]

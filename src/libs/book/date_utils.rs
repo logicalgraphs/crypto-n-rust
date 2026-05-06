@@ -52,8 +52,6 @@ pub mod functional_tests {
       println!("Yesterday is {}", yesterday());
       println!("Tomorrow is {}", tomorrow());
    });
-
-   run_all_functional_tests!();
 }
 
 #[cfg(test)]

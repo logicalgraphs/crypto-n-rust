@@ -35,8 +35,6 @@ pub mod functional_tests {
    run_with!("parse_int", "123", compose!(resolve)(parse_int));
    run_with!("parse_str", "ugga-bugga", compose!(resolve)(parse_str));
    run_with!("parse_usd", "$314.16", compose!(resolve)(parse_usd));
-
-   run_all_functional_tests!();
 }
 
 #[cfg(test)]

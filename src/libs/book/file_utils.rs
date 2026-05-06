@@ -160,8 +160,6 @@ pub mod functional_tests {
          println!("\t(dir,file) of {parent}/{filename}
 	is ({dir},{file})");
    });
-
-   run_all_functional_tests!();
 }
       
 #[cfg(test)]

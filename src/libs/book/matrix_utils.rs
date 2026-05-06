@@ -82,8 +82,6 @@ pub mod functional_tests {
       println!("\ntransposed:\n");
       print_matrix(&t);
    });
-
-   run_all_functional_tests!();
 }
 
 #[cfg(not(tarpaulin_include))]
@@ -104,3 +102,4 @@ mod tests {
         assert_eq!(vec![vec![1, 2, 5], vec![2, 5, 6]], b);
     }
 }
+

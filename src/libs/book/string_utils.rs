@@ -59,7 +59,6 @@ pub mod functional_tests {
    run_with!("words",
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
         compose!(debug)(words));
-   run_all_functional_tests!();
 }
 
 #[cfg(test)]

@@ -60,7 +60,5 @@ pub mod functional_tests {
 
    run_with!("unpair", &mk_dyad("fruit", "loops", mk_tag("six", 7)),
              compose!(debug)(unpair));
-
-   run_all_functional_tests!();
 }
 

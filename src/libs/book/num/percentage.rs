@@ -84,8 +84,6 @@ pub mod functional_tests {
       let half = mk_percentage(0.5);
       println!("\t{half} of 8 is {}", half.of(8.0));
    });
-
-   run_all_functional_tests!();
 }
 
 #[cfg(test)]
