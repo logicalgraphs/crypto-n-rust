@@ -4,7 +4,7 @@ use std::{
    cmp::Ordering,
    fmt,
    iter::Sum,
-   ops::{Add,AddAssign},
+   ops::{Add,AddAssign,Sub},
    str::FromStr
 };
 
@@ -66,6 +66,13 @@ impl Ord for USD {
 impl PartialOrd for USD {
    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
       self.amount.partial_cmp(&other.amount)
+   }
+}
+
+impl Sub for USD {
+   type Output = Self;
+   fn sub(self, rhs: USD) -> Self {
+      mk_usd(self.amount - rhs.amount)
    }
 }
 
