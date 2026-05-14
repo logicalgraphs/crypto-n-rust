@@ -80,6 +80,6 @@ mod tests {
    #[test] fn test_pred_none() {
       assert_eq!(None, pred("foo" == "bar", "wut"));
    }
-   #[test] fn test_pred() { assert_eq!(Some(1), pred("foo" == "foo", 1)); }
+   #[test] fn test_pred_some() { assert_eq!(Some(1), pred("foo" == "foo", 1)); }
 }
 
