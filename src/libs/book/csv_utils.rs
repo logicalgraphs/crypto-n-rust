@@ -17,6 +17,11 @@ pub trait CsvWriter {
    fn ncols(&self) -> usize;
 }
 
+impl CsvWriter for i32 {
+   fn as_csv(&self) -> String { format!("{}", &self) }
+   fn ncols(&self) -> usize { 1 }
+}
+
 // ----- Printers -------------------------------------------------------
 
 pub fn print_csv<T: CsvWriter>(line: &T) {

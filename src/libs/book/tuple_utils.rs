@@ -13,8 +13,68 @@ pub fn first<A, B, C>(f: impl Fn(A) -> C) -> impl Fn((A, B)) -> (C, B) {
    move |(a, b)| (f(a), b)
 }
 
+pub fn second<A, B, C>(f: impl Fn(B) -> C) -> impl Fn((A, B)) -> (A, C) {
+   move |(a, b)| (a, f(b))
+}
+
 /// a Partition is a particular tuple: a pair of sets of the same type,
 /// discriminated by something
 
 pub type Partition<T> = (Vec<T>, Vec<T>);
+
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(test)]
+#[cfg(not(tarpaulin_include))]
+pub mod functional_tests {
+   use super::*;
+   use std::{fmt, fmt::Display};
+   use paste::paste;
+   use crate::{
+      create_testing,
+      compose,
+      err_utils::ErrStr,
+      utils::{debug, composer}
+   };
+
+   #[derive(Debug, Clone)]
+   struct Tuple<A, B> {
+      a: A,
+      b: B
+   }
+   impl<A: Display, B: Display> Display for Tuple<A, B> {
+      fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+         write!(f, "({}, {})", self.a, self.b)
+      }
+   }
+   fn mk_tupl<A, B>((a, b): (A, B)) -> Tuple<A, B> { Tuple { a, b } }
+   fn plus1() -> impl Fn((i32, i32)) -> (i32, i32) { first(|a| a + 1) }
+   fn upper<A>() -> impl Fn((A, &'static str)) -> (A, String) {
+      second(|a: &str| a.to_uppercase())
+   }
+
+   create_testing!("tuple_utils");
+
+   run_with!("fst", (1, "two"), fst);
+   run_with!("snd", (1, "two"), snd);
+   run_with!("swap", (1, "two"), compose!(debug)(swap));
+   run_with!("first_plus_1", (5, 7), composer(mk_tupl, plus1()));
+   run_with!("second_uppercase", (6, "seven"), composer(mk_tupl, upper()));
+
+   #[cfg(test)]
+   mod tests {
+      use super::*;
+      use crate::string_utils::s;
+
+      #[test] fn test_fst() { assert_eq!(1, fst((1, "two"))); }
+      #[test] fn test_snd() { assert_eq!("two", snd((1, "two"))); }
+      #[test] fn test_swap() { assert_eq!(("two", 1), swap((1, "two"))); }
+      #[test] fn test_first_plus_1() {
+         assert_eq!((6, "seven"), first(|a| a+1)((5, "seven")));
+      }
+      #[test] fn test_second_uppercase() {
+         assert_eq!((6, s("SEVEN")), upper()((6, "seven")));
+      }
+   }
+}
 
