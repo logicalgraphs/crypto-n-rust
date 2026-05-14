@@ -41,4 +41,3 @@ jobs:
           git commit -m "Quotes for $LE_DATE"
           git push
 
-          
