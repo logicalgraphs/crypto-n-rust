@@ -86,6 +86,10 @@ pub fn head<T: Clone>(list: &[T]) -> Option<T> {
    h
 }
 
+pub fn take<T: Clone>(n: usize, v: Vec<T>) -> Vec<T> {
+   v.into_iter().take(n).collect()
+}
+
 pub fn first_last<T: Clone>(v: &[T]) -> (Option<T>, Option<T>) {
    (v.first().cloned(), v.last().cloned())
 }
@@ -133,58 +137,43 @@ mod tests {
    fn one() -> Vec<i32> { vec![1] }
    fn one_two() -> Vec<i32> { vec![1,2] }
 
-   #[test]
-   fn test_ht_empty_list() {
+   #[test] fn test_ht_empty_list() {
       let list: Vec<usize> = Vec::new();
       let (h, t) = ht(&list);
       assert_eq!(None, h);
       assert!(t.is_empty());
    }
 
-   #[test]
-   fn test_ht_uno() {
+   #[test] fn test_ht_uno() {
       let (h,t) = ht(&one());
       assert_eq!(Some(1), h);
       assert!(t.is_empty())
    }
 
-   #[test]
-   fn test_ht_uno_dos() {
+   #[test] fn test_ht_uno_dos() {
       let (h,t) = ht(&one_two());
       assert_eq!(Some(1), h);
       assert_eq!(vec![2], t);
    }
 
-   #[test]
-   fn test_postpend() {
+   #[test] fn test_postpend() {
       let vec = one();
       let res = postpend(&vec, 2);
       assert_eq!(one_two(), res);
    }
 
-   #[test]
-   fn test_head_none() {
+   #[test] fn test_head_none() {
       let empt: Vec<i32> = Vec::new();
       assert_eq!(None, head(&empt));
    }
 
-   #[test]
-   fn test_head_some_one() {
-      assert_eq!(Some(1), head(&one()));
-   }
-
-   #[test]
-   fn test_head_some_one_too() {
-      assert_eq!(Some(1), head(&one_two()));
-   }
-
-   #[test]
-   fn test_tail_empty() {
-      assert!(tail(&one()).is_empty());
-   }
-
-   #[test]
-   fn test_tail_too() {
-      assert_eq!(vec![2], tail(&one_two()));
+   #[test] fn test_head_some_one() { assert_eq!(Some(1), head(&one())); }
+   #[test]fn test_head_some_one_too() { assert_eq!(Some(1), head(&one_two())); }
+   #[test] fn test_tail_empty() { assert!(tail(&one()).is_empty()); }
+   #[test] fn test_tail_too() { assert_eq!(vec![2], tail(&one_two())); }
+   #[test] fn test_take_5() {
+      let x = vec![1,2,3,4,5,6,7,8,9,10];
+      let y = take(5, x);
+      assert_eq!(5, y.len());
    }
 }
