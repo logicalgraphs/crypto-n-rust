@@ -11,17 +11,17 @@ path = "lib.rs"
 
 [dependencies]
 paste = "1.0"
-tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+tokio = { version = "1.52.3", features = ["macros", "rt-multi-thread"] }
 
 chrono = "0.4.38"
 
 futures = "0.3.31"
 
-reqwest = "0.12.4"
+reqwest = "0.13.3"
 serde = { version = "1.0.104", features = ["derive"] }
 serde_json = "1.0.48"
-strum = "0.17.1"
-strum_macros = "0.17.1"
+strum = "0.28.0"
+strum_macros = "0.28.0"
 ignore = "0.4.25"
 
 [lints.rust.unexpected_cfgs]
@@ -29,4 +29,3 @@ level = "warn"
 check-cfg = [
     'cfg(tarpaulin_include)'
 ]
-
