@@ -29,8 +29,8 @@ pub fn head<T: Clone>(list: &[T]) -> Option<T> {
    h
 }
 
-pub fn take<T: Clone>(n: usize, v: Vec<T>) -> Vec<T> {
-   v.into_iter().take(n).collect()
+pub fn take<T: Clone>(n: usize, v: &[T]) -> Vec<T> {
+   v.into_iter().take(n).cloned().collect()
 }
 
 pub fn first_last<T: Clone>(v: &[T]) -> (Option<T>, Option<T>) {
@@ -49,12 +49,8 @@ pub fn fst_snd<T: Clone + Debug>(list: &[T]) -> ErrStr<(T, T)> {
 }
 
 pub fn init<T: Clone>(list: &[T]) -> Vec<T> {
-   let v1: Vec<&T> = list.iter().rev().collect();
-   let mut ans: Vec<T> = Vec::new();
-   for t in tail(&v1).into_iter().rev() {
-      ans.push(t.clone());
-   }
-   ans
+   let v1: Vec<&T> = list.into_iter().rev().collect();
+   tail(&v1).into_iter().rev().cloned().collect()
 }
 
 pub fn postpend<T: Clone>(list: &[T], t: T) -> Vec<T> {
@@ -62,7 +58,7 @@ pub fn postpend<T: Clone>(list: &[T], t: T) -> Vec<T> {
 }
 
 pub fn filter_map_or<D,R>(f: impl Fn(D) -> ErrStr<R>,
-                        v: Vec<D>) -> ErrStr<Vec<R>> {
+                          v: Vec<D>) -> ErrStr<Vec<R>> {
    let mut ans: Vec<R> = Vec::new();
    for elt in v {
       let eh = f(elt)?;
@@ -145,6 +141,7 @@ pub mod functional_tests {
 #[cfg(not(tarpaulin_include))]
 mod tests {
    use super::*;
+   use crate::string_utils::s;
 
    fn none() -> Vec<i32> { Vec::new() }
    fn one() -> Vec<i32> { vec![1] }
@@ -185,8 +182,8 @@ mod tests {
    #[test] fn test_tail_empty() { assert!(tail(&one()).is_empty()); }
    #[test] fn test_tail_too() { assert_eq!(vec![2], tail(&one_two())); }
    #[test] fn test_take_5() {
-      let y = take(5, ten());
-      assert_eq!(5, y.len());
+      assert_eq!(10, ten().len());
+      assert_eq!(5, take(5, &ten()).len());
    }
 
    #[test] fn test_first_last_on_ten() {
@@ -207,5 +204,33 @@ mod tests {
    #[test] fn fail_fst_snd_on_one() {
       let ans = fst_snd(&one());
       assert!(ans.is_err());
+   }
+   #[test] fn test_init_one_two() { assert_eq!(vec![1], init(&one_two())); }
+   #[test] fn test_init_none() { assert_eq!(none(), init(&none())); }
+   #[test] fn test_init_ten() {
+      assert_eq!(vec![1,2,3,4,5,6,7,8,9], init(&ten()));
+   }
+   #[test] fn test_postpend_none() { assert_eq!(one(), postpend(&none(), 1)); }
+   #[test] fn test_postpend_three() {
+      assert_eq!(vec![1,2,3], postpend(&one_two(), 3));
+   }
+
+   fn uno() -> impl Fn(i32) -> ErrStr<String> {
+      move |x: i32|
+         match x {
+            1 => Ok(s("one")),
+            y => Err(format!("{y} is not one"))
+         }
+   }
+   #[test] fn fail_filter_map_or() { 
+      let ans = filter_map_or(uno(), ten());
+      assert!(ans.is_err());
+   }
+   #[test] fn test_filter_map_or_one() -> ErrStr<()> {
+      assert_eq!(vec![s("one")], filter_map_or(uno(), one())?);
+      Ok(())
+   }
+   #[test] fn test_filter_map_or_ok() {
+      assert!(filter_map_or(uno(), none()).is_ok());
    }
 }
