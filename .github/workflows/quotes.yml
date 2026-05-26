@@ -21,6 +21,11 @@ jobs:
         with:
           toolchain: stable
 
+      - name: Cache Rust
+        uses: Swatinem/rust-cache@v2
+        with: 
+          workspaces: crypto-n-rust/src/pivot/dApps/gecko
+
       - name: Run The Echo and Display The Date
         run: echo "LE_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
@@ -28,7 +33,9 @@ jobs:
         env:
           COIN_GECKO_API_KEY: ${{ secrets.COIN_GECKO_API_KEY }}
         run: |
-          cargo run --manifest-path src/pivot/dApps/gecko/Cargo.toml --bin gecko $LE_DATE >> data-files/csv/quotes.csv
+          cargo run --manifest-path src/pivot/dApps/gecko/Cargo.toml \
+          --bin gecko \
+          $LE_DATE >> data-files/csv/quotes.csv
         
       - name: Commit and Push changes
         env:
