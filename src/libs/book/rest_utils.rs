@@ -130,7 +130,7 @@ mod sample_url {
 #[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 mod functional_tests {
-   use std::collections::HashSet;
+   use std::{ cmp::Eq, collections::HashSet, hash::Hash };
    use super::*;
    use super::sample_url::quotes;
    use paste::paste;
@@ -159,8 +159,19 @@ mod functional_tests {
       Ok((api_key, wallet_address, chains))
    }
 
-   run!("fetch_wallet_balances", {
-      let (api_key, wallet_address, chains) = wallet_info("WALLET_ADDY")?;
+   trait Container<T> { fn contains(&self, elt: &T) -> bool; }
+   struct MyHashSet<T> {
+      set: HashSet<T>
+   }
+   impl<T: Eq + Hash> Container<T> for MyHashSet<T> {
+      fn contains(&self, t: &T) -> bool { self.set.contains(t) }
+   }
+   struct Yes90125;
+   impl<T> Container<T> for Yes90125 {
+      fn contains(&self, _t: &T) -> bool { true }
+   }
+
+   run!("fetch_wallet_balances_whitelisted", {
                let whitelist: HashSet<String> = words("
 Protocol
 0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
@@ -179,15 +190,25 @@ qiETH 0x334ad834cd4481bb02d09615e7c11a00579a7909
 UNDEAD 0x5a3534720a4f29fa0dc53ce474db88973a95f65c
 USDt 0x9702230a8ea53601f5cd2dc00fdbc13d4df4a8c7
 USDC 0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e").into_iter().collect();
+      let mines = MyHashSet { set: whitelist };
+      now(iter_chains_on(mines))
+   });
+
+   run!("fetch_wallet_balances_no_filter", {
+      let alles = Yes90125;
+      now(iter_chains_on(alles))
+   });
+
+   async fn iter_chains_on(whitelist: impl Container<String>) -> ErrStr<()> {
+      let (api_key, wallet_address, chains) = wallet_info("WALLET_ADDY")?;
       for chain in chains {
          println!("\n=== Chain: {} ===", chain.to_uppercase());
 
-         // 1. Fetch Native Balance
-         match now(fetch_wallet_balances(&chain, &wallet_address, &api_key)) {
+         match fetch_wallet_balances(&chain, &wallet_address, &api_key).await {
             Ok(toks) => {
                let tokens = &toks.result;
                if tokens.is_empty() {
-                  println!("No ERC-20 tokens found.");
+                  println!("No tokens found.");
                } else {
                   println!("Name,Symbol,Price,Amount,Total");
                   let mut total = no_monay();
@@ -209,7 +230,8 @@ USDC 0xb97ef9ef8734c71904d8002f8b6bc66dd9c48a6e").into_iter().collect();
             Err(e) => println!("Failed to fetch ERC20 balances: {}", e),
          }
       }
-   });
+      Ok(())
+   }
 }
 
 #[cfg(not(tarpaulin_include))]
