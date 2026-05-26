@@ -18,6 +18,13 @@ Both for the deserialization and serialization of JSON data/JavaScript objects
 Do you need to transpose a `Matrix`? No problem: `transpose` has got you 
 covered.
 
+### [rest_utils](rest_utils.rs)
+
+* `read_rest` your standard REST endpoint GET call.
+* `fetch_wallet_balances` reads tokens and amounts from
+  * `WALLET_ADDY` using:
+  * `MORALIS_API_KEY` from [Moralis](https://moralis.com/) ("Start for free")
+
 ### [table_utils](table_utils.rs)
 
 We present the `Table`-type, an enhancement of the `Matrix`-type in that both
@@ -47,6 +54,7 @@ let domain = row_filter(in_range(start), &table);
 
 ## Revisions
 
+* 1.03, 2026-05-26: Added rest_utils::fetch_wallet_balances
 * 1.02, 2026-01-25: Separated types to its own set of modules; added type-tests
 * 1.01, 2026-01-07: Added first test (`ht_empty_list`) to 
 [list_utils](list_utils.rs). It's all uphill, sry: sunshine and daffodils
