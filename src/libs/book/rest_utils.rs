@@ -1,4 +1,4 @@
-use reqwest::{Response,header::HeaderMap};
+use reqwest::{ Response, header::HeaderMap };
 
 use super::err_utils::{ErrStr,err_or};
 
@@ -45,6 +45,7 @@ async fn handle_response(response: Response) -> ErrStr<String> {
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 mod sample_url {
    fn git_lg_url() -> String {
@@ -62,17 +63,20 @@ mod sample_url {
    pub fn quotes() -> String { data_res("main", "quotes.csv") }
 }
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
-pub mod functional_tests {
+mod functional_tests {
    use super::*;
    use super::sample_url::quotes;
+   use paste::paste;
+   use crate::{ create_testing, utils::now };
 
-   pub async fn runoff() -> ErrStr<usize> {
-      let qts = read_rest(&quotes()).await?;
+   create_testing!("rest_utils");
+   run!("read_rest", {
+      let qts = now(read_rest(&quotes()))?;
       println!("\tQuotes from the LogicalGraphs REST endpoint:\n\n{}",
                qts.chars().take(1000).collect::<String>());
-      Ok(1)
-   }
+   });
 }
 
 #[cfg(not(tarpaulin_include))]

@@ -13,3 +13,5 @@ pub mod dyadic;
 /// a value-type is a(ny) type that carries a value
 pub mod values;
 
+/// filters and filtered types
+pub mod filters;
