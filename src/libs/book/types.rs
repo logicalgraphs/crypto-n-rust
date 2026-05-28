@@ -13,5 +13,5 @@ pub mod dyadic;
 /// a value-type is a(ny) type that carries a value
 pub mod values;
 
-/// for fetching wallet balances from the blockchains
-pub mod tokens;
+/// filters and filtered types
+pub mod filters;
