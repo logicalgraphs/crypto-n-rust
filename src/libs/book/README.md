@@ -21,9 +21,6 @@ covered.
 ### [rest_utils](rest_utils.rs)
 
 * `read_rest` your standard REST endpoint GET call.
-* `fetch_wallet_balances` reads tokens and amounts from
-  * `WALLET_ADDY` using:
-  * `MORALIS_API_KEY` from [Moralis](https://moralis.com/) ("Start for free")
 
 ### [table_utils](table_utils.rs)
 
