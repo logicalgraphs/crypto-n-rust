@@ -1,4 +1,9 @@
-use std::{ cmp::Eq, collections::HashSet, hash::Hash };
+use std::{ cmp::Eq, collections::HashSet, fmt, hash::Hash };
+
+use crate::{
+   csv_utils::{ CsvWriter, CsvHeader, enumerate_csv },
+   string_utils::s
+};
 
 /// types that are filterable: returns the value used as the filter
 pub trait Filter<T> { fn filter(&self) -> T; }
@@ -15,6 +20,8 @@ impl<T> Container<T> for Sieve {
    fn contains<F: Filter<T>>(&self, _t: &F) -> bool { true }
 }
 
+pub trait PermissionList<T> { fn set(&self) -> Vec<T>; }
+
 /// A Whitelist allows only the values so contained
 pub struct WhiteList<T:Eq + Hash> { set: HashSet<T> }
 
@@ -28,6 +35,10 @@ impl<T:Eq + Hash> Container<T> for WhiteList<T> {
    }
 }
 
+impl<T:Clone + Eq + Hash> PermissionList<T> for WhiteList<T> {
+   fn set(&self) -> Vec<T> { self.set.clone().into_iter().collect() }
+}
+
 /// A Blacklist forbids all values on its list
 pub struct BlackList<T:Eq + Hash> { set: HashSet<T> }
 
@@ -39,6 +50,27 @@ impl<T:Eq + Hash> Container<T> for BlackList<T> {
    fn contains<F: Filter<T>>(&self, t: &F) -> bool {
       !self.set.contains(&t.filter())
    }
+}
+
+impl<T:Clone + Eq + Hash> PermissionList<T> for BlackList<T> {
+   fn set(&self) -> Vec<T> { self.set.clone().into_iter().collect() }
+}
+
+impl<T:fmt::Display> CsvWriter for dyn PermissionList<T> {
+   fn ncols(&self) -> usize { 1 }
+   fn as_csv(&self) -> String {
+      struct Stringy { s: String }
+      impl CsvWriter for Stringy {
+         fn ncols(&self) -> usize { 1 }
+         fn as_csv(&self) -> String { self.s.clone() }
+      }
+      fn mk_stringy<U: fmt::Display>(s: U) { Stringy { s: format!("{s}") } }
+    
+      enumerate_csv(&self.set().into_iter().map(mk_stringy).collect())
+   }
+}
+impl<T> CsvHeader for dyn PermissionList<T> {
+   fn header(&self) -> String { s("member") }
 }
 
 // ----- TESTS -------------------------------------------------------
