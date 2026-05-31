@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # test the cron ("Min Hour Day Month DayofWeek" in UTC) at scheduled time 
-    - cron: "37 02 * * *" # this is 2:55 AM Eastern Standard Time
+    - cron: "37 02 * * *" # this is 10:37 AM Eastern Standard Time
 
 permissions:
   contents: write
