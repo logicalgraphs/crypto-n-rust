@@ -11,6 +11,7 @@ impl Ord for SafeFloat {
 }
 
 pub fn mk_safe_float(f: &f32) -> SafeFloat { SafeFloat(f.clone()) }
+pub fn as_float(s: &SafeFloat) -> f32 { s.0 }
 
 // Usage:
 // my_vector.sort_by_key(|item| SafeFloat(item.float_field));
@@ -20,6 +21,9 @@ pub fn mk_safe_float(f: &f32) -> SafeFloat { SafeFloat(f.clone()) }
 // https://www.google.com/search?q=sort_by+a+property+of+a+struct+rust&gs_lcrp=EgZjaHJvbWUyCQgAEEUYORigATIHCAEQIRigATIHCAIQIRiPAjIHCAMQIRiPAtIBCDk0OTVqMGo3qAIAsAIA&sourceid=chrome&ie=UTF-8&udm=50&fbs=ADc_l-aN0CWEZBOHjofHoaMMDiKpmAsnXCN5UBx17opt8eaTXyCfNeKGeJOJfUwi1MTUzwST1daiRLNBoQ0B6uczm6CPpE9MgkRBvAPuob4mewNkDkyJPOM4cUXCgTF3s6r8ePzSE49wWrN49hZO6o_W8OU5vZLEjpGBg_Hqzsox3WGwOApedjqloS2Uk0tumYhxMQS6X5e7CmdvlbFfLbas18Oj8ZlWFg&aep=10&ntc=1&mstk=AUtExfAZftEqqGWA8FZMPeR8ui_wZNHfqc1TrTtViNunNjUAS6l8AJq4-FNChjPYlkpZiOgroJcdoimhM8mpkqPu9TG4vdJBscK6afSs1Bpmlm6Vj2dmtUWQAPMHBlDLvl2VlUzZB8iLu1ylp2lg3ZO1t47K9oTkCMRD4KkgVhPsxclvvmNw20G_yawOXbb_QUfIj8V706iKaZ-Bkohxi2i4AN5u8wEwUgvaOPqEjQMctTKLj4vWCnqHReBEhiB4oRx2eSxGVuJj68iM1Q&aioh=3&csuir=1&mtid=sUYFap6_AanaptQPp--eoQY
 // section 2: the Zero-Dependency Way (custom wrapper)
 
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 pub mod functional_tests {
    use super::*;

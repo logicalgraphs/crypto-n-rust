@@ -10,19 +10,24 @@ use std::{
 
 use crate::{
    err_utils::ErrStr,
+   num::floats::{ SafeFloat, mk_safe_float, as_float },
    num_utils::parse_commaless
 };
 
 #[derive(Default, Debug, Clone, PartialEq)]
 pub struct USD {
-   pub amount: f32
+   amount: SafeFloat
 }
 
 // ----- implementations -----------------------------------------------------
 
+impl USD {
+   pub fn amount() -> f32 { as_float(&self.amount) }
+}
+
 impl fmt::Display for USD {
    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-      let a = self.amount;
+      let a = self.amount();
       let b = a.abs();
       let sign = if a < 0.0 { "-" } else { "" };
       let precision =
@@ -57,35 +62,35 @@ impl Eq for USD { }
 
 impl Ord for USD {
    fn cmp(&self, other: &Self) -> Ordering {
-      let a = (self.amount * 100.0) as i32;
-      let b = (other.amount * 100.0) as i32;
+      let a = (self.amount() * 100.0) as i32;
+      let b = (other.amount() * 100.0) as i32;
       a.cmp(&b)
    }
 }
 
 impl PartialOrd for USD {
    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-      self.amount.partial_cmp(&other.amount)
+      self.amount().partial_cmp(&other.amount())
    }
 }
 
 impl Sub for USD {
    type Output = Self;
    fn sub(self, rhs: USD) -> Self {
-      mk_usd(self.amount - rhs.amount)
+      mk_usd(self.amount() - rhs.amount())
    }
 }
 
 impl Add for USD {
    type Output = Self;
    fn add(self, rhs: USD) -> Self {
-      mk_usd(self.amount + rhs.amount)
+      mk_usd(self.amount() + rhs.amount())
    }
 }
 
 impl AddAssign for USD {
    fn add_assign(&mut self, other: Self) {
-      *self = mk_usd(self.amount + other.amount);
+      *self = mk_usd(self.amount() + other.amount());
    }
 }
 
@@ -95,14 +100,14 @@ impl AddAssign for USD {
 impl Sum<Self> for USD {
     fn sum<I>(iter: I) -> Self
           where I: Iterator<Item = Self> {
-       iter.fold(no_monay(), |a, b| mk_usd(a.amount + b.amount))
+       iter.fold(no_monay(), |a, b| mk_usd(a.amount() + b.amount()))
     }
 }
 
 // ----- ... and our methods -------------------------------------------------
 
 pub fn mk_usd(amount: f32) -> USD {
-   USD { amount }
+   USD { amount: mk_safe_float(amount) }
 }
 
 pub fn no_monay() -> USD { mk_usd(0.0) }
@@ -135,6 +140,7 @@ USDC	AVAX	BTC		ETH		UNDEAD");
 }
 
 #[cfg(test)]
+#[cfg(not(tarpaulin_include))]
 mod tests {
    use super::*;
 
@@ -152,14 +158,14 @@ mod tests {
    #[test]
    fn test_parse_amount() -> ErrStr<()> {
       let fiver: USD = "$5".parse()?;
-      assert_eq!(5.0, fiver.amount);
+      assert_eq!(5.0, fiver.amount());
       Ok(())
    }
 
    #[test]
    fn test_parse_negative_amount() -> ErrStr<()> {
       let negger: USD = "-$9.30".parse()?;
-      assert_eq!(-9.3, negger.amount);
+      assert_eq!(-9.3, negger.amount());
       Ok(())
    }
 
