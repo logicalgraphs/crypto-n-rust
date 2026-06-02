@@ -21,7 +21,7 @@ fn usage() {
 async fn main() -> ErrStr<()> {
    let args = get_args();
    if args.first().is_some() { usage(); }
-   let pivs = fetch_lines().await?;
+   let pivs = fetch_lines("main").await?;
    let header = parse_token_headers(&pivs);
    if let Some(line) = pivs.last() {
       let (date, nums) = parse_row(&line)?;

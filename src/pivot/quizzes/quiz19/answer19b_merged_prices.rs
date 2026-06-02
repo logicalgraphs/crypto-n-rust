@@ -6,7 +6,7 @@ use book::{
    utils::{get_args,get_env}
 };
 
-use swerve::snarf::{snarf_quotes,snarf_pivot_table};
+use swerve::snarf::{snarf_quotes,snarf_quote_table};
 
 fn usage() {
    println!("./lizard <date>
@@ -24,13 +24,13 @@ async fn main() -> ErrStr<()> {
    let args = get_args();
    if let Some(date) = args.first() {
       let today = parse_date(&date)?;
-      let (dict, _pivots, max_date) = snarf_quotes().await?;
+      let (dict, _pivots, max_date) = snarf_quotes("main").await?;
       if dict.is_empty() { panic!("Pivot table has no token ids!"); }
       let n = (today - max_date).num_days();
       let mut pivots = None;
       for (tok_id, sym) in dict {
          println!("Snarfing {sym} chart...");
-         let table = snarf_pivot_table(&pass, &tok_id, &sym, n).await?;
+         let table = snarf_quote_table(&pass, &tok_id, &sym, n).await?;
          pivots = pivots.and_then(|p| merge(&p, &table).ok()).or(Some(table));
       }
       pivots.and_then(|p| Some(print_csv(&p)));
