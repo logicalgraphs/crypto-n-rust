@@ -1,15 +1,13 @@
 use std::collections::HashMap;
 
 use book::{
+   currency::usd::USD,
    err_utils::ErrStr,
    file_utils::lines_from_file,
    list_utils::tail
 };
 
-use crate::types::{
-   interfaces::{Prices,mk_price},
-   usd::USD
-};
+use crate::types::interfaces::{Prices,mk_price};
 
 pub fn read_prices(file: &str) -> ErrStr<Prices> {
    let lines = lines_from_file(file)?;

@@ -120,7 +120,7 @@ impl<T:Debug> Debug for InfiniteList<T> {
    }
 }
 
-pub fn parse_nums(strs: Vec<String>) -> Vec<f32> {
+pub fn parse_nums(strs: &[String]) -> Vec<f32> {
    strs.into_iter().map(|n| n.parse().expect(&format!("'{n}' NaN"))).collect()
 }
 

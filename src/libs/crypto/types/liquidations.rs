@@ -1,7 +1,4 @@
-use crate::types::{
-   percentage::Percentage,
-   usd::USD
-};
+use book::{ currency::usd::USD, num::percentage::Percentage };
 
 #[derive(Debug, Clone)]
 pub struct Liquidation {
@@ -11,7 +8,7 @@ pub struct Liquidation {
 
 impl Liquidation {
    pub fn weight(&self) -> f32 {
-      self.percentage.of(self.amount.amount)
+      self.percentage.of(self.amount.amount())
    }
 }
 

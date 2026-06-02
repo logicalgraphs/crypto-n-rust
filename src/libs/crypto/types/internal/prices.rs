@@ -4,15 +4,16 @@
 use std::collections::{HashMap,HashSet};
 
 use book::{
-   types::untag,
+   currency::usd::{USD,mk_usd},
+   types::tagged::untag,
    utils::pred
 };
 
+use super::types::{Book1,Books1};
+
 use crate::types::{
-   internal::types::{Book1,Books1},
    aliases::{Aliases,alias},
-   interfaces::{Prices,Price,mk_price},
-   usd::{USD,mk_usd}
+   interfaces::{Prices,Price,mk_price}
 };
 
 // a new take on prices
@@ -75,7 +76,7 @@ fn mb_book<'a>(date: &'a str, factor: &'a USD, a: &'a Aliases)
       -> impl Fn(&Book1) -> Option<(String, Price)> + 'a {
    move | b: &Book1 | {
       pred(b.last > 0.0 && b.target_vol + b.base_vol > 0.0,
-           (alias(a, &b.base), d(&date, mk_usd(b.last * factor.amount))))
+           (alias(a, &b.base), d(&date, mk_usd(b.last * factor.amount()))))
    }
 }
 

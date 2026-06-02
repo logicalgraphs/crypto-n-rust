@@ -6,14 +6,12 @@ use std::{
 
 use book::{
    csv_utils::{CsvWriter,print_csv},
+   currency::usd::{USD,mk_usd},
+   num::percentage::Percentage,
    num_utils::parse_commaless
 };
 
-use crate::types::{
-   liquidations::{Liquidation,mk_liquidation},
-   percentage::Percentage,
-   usd::{USD,mk_usd}
-};
+use super::liquidations::{Liquidation,mk_liquidation};
 
 #[derive(Debug, Clone)]
 pub struct Asset {
@@ -79,7 +77,7 @@ pub fn parse_asset(tok: &str, amt: &str, quot: &str)
    -> Result<Asset, String> {
    let amount: f32 = parse_commaless(amt)?;
    let quot1: USD = quot.parse().expect(&format!("not quote: {quot}"));
-   Ok(mk_asset(tok.to_string(), amount, quot1.amount))
+   Ok(mk_asset(tok.to_string(), amount, quot1.amount()))
 }
 
 pub fn read_csv_asset(line: &String) -> Result<Asset, String> {

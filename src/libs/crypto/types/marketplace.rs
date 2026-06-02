@@ -10,23 +10,17 @@
 
 // we have this:
 
-use std::{
-   collections::{HashSet,HashMap},
-   fmt,
-   hash::{Hash,Hasher}
-};
+use std::{ collections::{HashSet,HashMap}, fmt, hash::{Hash,Hasher} };
 
 use book::{
    csv_utils::{CsvWriter,print_csv},
+   currency::usd::{USD, mk_usd, no_monay},
    err_utils::ErrStr,
    file_utils::lines_from_file,
    list_utils::head
 };
 
-use crate::types::{
-   assets::Asset,
-   usd::{USD, mk_usd}
-};
+use super::assets::Asset;
 
 /*
 date: 2022-10-18
@@ -92,7 +86,7 @@ pub fn mk_orderbook(buy: &str, sell: &str, ratio: f32, pric: &USD)
    -> OrderBook {
    let buy_side = buy.to_string();
    let sell_side = sell.to_string();
-   let price = mk_usd(pric.amount);
+   let price = mk_usd(pric.amount());
    OrderBook { buy_side, sell_side, ratio, price }
 }
 
@@ -201,7 +195,7 @@ fn insert_then(m: Option<&HashMap<String, USD>>, o: &OrderBook)
       None => HashMap::new(),
       Some(h) => h.clone()
    };
-   hash.insert(o.sell_side.clone(), o.price);
+   hash.insert(o.sell_side.clone(), o.price.clone());
    hash
 }
 
@@ -213,7 +207,7 @@ fn insert_then(m: Option<&HashMap<String, USD>>, o: &OrderBook)
 fn extract_price(k: &str, sells: &HashMap<String, USD>) -> USD {
    if k == "axlUSDC" {
       if let Some(ans) = sells.values().collect::<Vec<_>>().first() {
-         mk_usd(1.0 / ans.amount)
+         mk_usd(1.0 / ans.amount())
       } else { panic!("Cannot extract USK from axlUSDC order book!") }
    } else {
       extract_price1(sells)
@@ -225,15 +219,15 @@ fn extract_price1(sells: &HashMap<String, USD>) -> USD {
       let works_mostly = filter_vals(|key| key == "axlUSDC", sells);
       if works_mostly.len() == 0 {
          let mut ans = sells.clone();
-         ans.retain(|_, v| v.amount > 0.0);
+         ans.retain(|_, v| v.amount() > 0.0);
          ans
       } else {
          works_mostly
       }
    } else { sells.clone() };
-   let prices = hashes.values().collect();
+   let prices: Vec<&USD> = hashes.values().collect();
    match head(&prices) {
-      None => mk_usd(0.0),
+      None => no_monay(),
       Some(dollah) => dollah.clone()
    }
 }

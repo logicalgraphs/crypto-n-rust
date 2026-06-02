@@ -1,18 +1,15 @@
-use std::{
-   collections::{HashMap,HashSet},
-   hash::{Hash,Hasher}
-};
+use std::{ collections::{HashMap,HashSet}, hash::{Hash,Hasher} };
 
 use book::{
    csv_utils::CsvWriter,
-   num_utils::mk_estimate,
-   types::{Dyad,mk_dyad,unpair,Tag,mk_tag,untag}
+   currency::usd::{USD,mk_usd},
+   num::estimate::mk_estimate,
+   types::{ dyadic::{Dyad,mk_dyad,unpair},tagged::{Tag,mk_tag,untag} }
 };
 
-use crate::types::{
+use super::{
    books::fetch_books,
    marketplace::{OrderBook,mk_orderbook},
-   usd::{USD,mk_usd}
 };
 
 #[derive(Debug, Clone)]
@@ -40,17 +37,17 @@ pub fn url(b: &Book) -> String {
 pub type VPair = Tag<USD>;  // a token-price-pair
    
 pub fn vols(b: &Book) -> (VPair, VPair) {
-   fn makus(a: &str, b: &USD) -> Tag<USD> { mk_tag((a.to_string(), b.clone())) }
+   fn makus(a: &str, b: &USD) -> Tag<USD> { mk_tag(a, b.clone()) }
    (makus(&b.base, &b.base_vol), makus(&b.target, &b.target_vol))
 }
-   
+
 pub fn vol_24h(b: &Book) -> USD { unpair(&vol_24h_pair(b)).1 }
    
 pub fn vol_24h_pair(book: &Book) -> Dyad<USD> {
    let (b, t) = vols(book);
    let (bk, bv) = untag(&b);
    let (tg, tv) = untag(&t);
-   mk_dyad((bk, tg), mk_usd((bv.amount + tv.amount) / 2.0))
+   mk_dyad(&bk, &tg, mk_usd((bv.amount() + tv.amount()) / 2.0))
 }
 
 // -- unick
@@ -61,7 +58,7 @@ pub fn trades_token(t: &str) -> impl Fn(&Book) -> bool + '_ {
 }
 
 pub fn estimate(b: &Book) -> String {
-   format!("${}", mk_estimate(vol_24h(b).amount))
+   format!("${}", mk_estimate(vol_24h(b).amount()))
 } 
 
 pub fn book_orderbook(prices: &Prices) -> impl Fn(&Book) -> OrderBook + '_ {
@@ -98,7 +95,7 @@ pub type BookBooks = (Prices, Books);
 
 pub type Price = Tag<USD>;
 pub fn get_price(p: &Price) -> USD { untag(&p).1 }
-pub fn mk_price(d: &str, p: USD) -> Price { mk_tag((d.to_string(), p)) }
+pub fn mk_price(d: &str, p: USD) -> Price { mk_tag(d, p) }
 
 pub type Prices = HashMap<String, Price>;
 

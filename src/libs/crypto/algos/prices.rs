@@ -1,6 +1,6 @@
 use std::cmp::Ordering;
 
-use book::types::untag;
+use book::types::tagged::untag;
 
 use crate::types::{
    interfaces::{Prices,Price},

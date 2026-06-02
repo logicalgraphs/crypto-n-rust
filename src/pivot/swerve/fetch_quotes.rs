@@ -50,6 +50,6 @@ pub async fn fetch_lines(branch: &str) -> ErrStr<Quotes> {
 pub fn parse_row(row: &str) -> ErrStr<(NaiveDate, Vec<Quote>)> {
    let (date, line) = parse_date_and(row)?;
    let cols: Vec<String> = line.split(",").map(to_string).collect();
-   let nums = parse_nums(tail(&cols)).into_iter().map(mk_quote).collect();
+   let nums = parse_nums(&tail(&cols)).into_iter().map(mk_quote).collect();
    Ok((date, nums))
 }

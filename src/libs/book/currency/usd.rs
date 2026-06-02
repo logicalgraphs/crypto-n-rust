@@ -14,7 +14,7 @@ use crate::{
    num_utils::parse_commaless
 };
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Hash)]
 pub struct USD {
    amount: SafeFloat
 }

@@ -5,7 +5,7 @@ use book::{
    utils::get_args
 };
 
-use swerve::{snarf::snarf_emas,types::mk_token};
+use swerve::{snarf::{snarf_quotes,snarf_emas},types::mk_token};
 
 fn usage() -> ErrStr<()> {
    println!("\n./ema <days> <token1> <token2>");
@@ -21,7 +21,8 @@ async fn main() -> ErrStr<()> {
       let days = parse_num(&dayz)?;
       let t1 = mk_token(&token1);
       let t2 = mk_token(&token2);
-      let emas = snarf_emas(days as u64, &t1, &t2).await?;
+      let (_, quotes, date) = snarf_quotes("main").await?;
+      let emas = snarf_emas(&quotes, &date, days as u64, &t1, &t2)?;
       println!("emas = {};", emas.as_json());
       Ok(())
    } else {
