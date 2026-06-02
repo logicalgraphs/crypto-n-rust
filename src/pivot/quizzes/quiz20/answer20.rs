@@ -7,7 +7,7 @@ use book::{
 };
 
 use swerve::{
-   snarf::{snarf_quotes,snarf_pivot_table},
+   snarf::{snarf_quotes,snarf_quote_table},
    types::{mk_token}
 };
 
@@ -29,12 +29,12 @@ async fn main() -> ErrStr<()> {
    let args = get_args();
    if let [date, tok_id, sym] = args.as_slice() {
       let today = parse_date(&date)?;
-      let (_dict, pivots, _max_date) = snarf_quotes().await?;
+      let (_dict, pivots, _max_date) = snarf_quotes("main").await?;
       let rows = rows(&pivots);
       let min_date = rows.first().ok_or("QUOTES table empty???")?;
       let n = (today - *min_date).num_days() + 1;
       let token = mk_token(&sym);
-      let table = snarf_pivot_table(&pass, &tok_id, &token, n).await?;
+      let table = snarf_quote_table(&pass, &tok_id, &token, n).await?;
       print_csv(&table);
    } else {
       usage();

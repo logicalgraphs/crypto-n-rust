@@ -4,24 +4,23 @@
 use std::collections::HashSet;
 
 use book::{
+   currency::usd::USD,
    err_utils::ErrStr,
    string_utils::parse_lines,
-   stream_utils::lines_from_stream,
+   stream_utils::lines_from_stdin
 };
 
-use crate::{
-   rest_utils::fin_res,
-   types::{
-      aliases::load_aliases,
-      interfaces::{Books,Book,BookBooks,mk_book,trades_token,vol_24h},
-      internal::{
-         books::books2books,
-         prices::prices_from_books,
-         types::raw_books
-      },
-      usd::USD
+use super::{
+   aliases::load_aliases,
+   interfaces::{Books,Book,BookBooks,mk_book,trades_token,vol_24h},
+   internal::{
+      books::books2books,
+      prices::prices_from_books,
+      types::raw_books
    }
 };
+
+use crate::rest_utils::fin_res;
 
 pub async fn parse_books(date: &str, opt_aliases: Option<String>) -> BookBooks {
    let b0 = raw_books().await;
@@ -64,7 +63,7 @@ BTC	Cardano	$409.29	$867.55	$458.26	111.97%	iBTC	blue-chip
 */
 
 pub fn load_books_from_stream() -> ErrStr<Books> {
-   let lines = lines_from_stream();
+   let lines = lines_from_stdin()?;
    fn parser(line: String) -> ErrStr<Book> {
       let cols0: Vec<&str> = line.split("\t").collect();
       let cols: Vec<&str> = cols0.into_iter().take(4).collect();

@@ -4,14 +4,14 @@ use std::collections::HashSet;
 
 use book::{
    csv_utils::{CsvWriter,print_csv},
-   list_utils::tail
+   currency::usd::USD,
+   list_utils::tail,
+   num::percentage::{Percentage,mk_percentage},
 };
 
 use crate::types::{
    assets::{Asset,parse_asset,add_asset,remove_asset,print_asset_d,diff_usd},
-   liquidations::{Liquidation,gather_liquidation_info},
-   percentage::{Percentage,mk_percentage},
-   usd::USD
+   liquidations::{Liquidation,gather_liquidation_info}
 };
 
 pub type PnL = USD;
@@ -142,7 +142,7 @@ pub fn liquidations_count_and_premium(trades: &Vec<Trade>) -> (u8, Percentage) {
    let (count, weight, sum) =
       trades.iter().fold((0, 0.0, 0.0), | (c, w, s), t | {
       if let Some(liq) = &t.swap.liquidation {
-         (c + 1, w + liq.weight(), s + liq.amount.amount)
+         (c + 1, w + liq.weight(), s + liq.amount.amount())
       } else {
          (c, w, s)
       }

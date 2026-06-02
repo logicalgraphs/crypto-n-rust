@@ -5,13 +5,12 @@
 
 use std::collections::HashSet;
 
+use book::{ currency::usd::USD, err_utils::ErrStr, file_utils::lines_from_file};
+
 use crate::types::{
    assets::{Asset,print_assets,read_assets,proto},
-   trades::{Swap,swap_d},
-   usd::USD
+   trades::{Swap,swap_d}
 };
-
-use book::{err_utils::ErrStr, file_utils::lines_from_file};
 
 #[derive(Debug, Clone)]
 pub struct Portfolio {

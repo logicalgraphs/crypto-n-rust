@@ -1,14 +1,12 @@
 use std::collections::HashMap;
 
 use book::{
+   currency::usd::{USD,no_monay},
    tuple_utils::{fst,snd},
-   types::untag
+   types::tagged::untag
 };
 
-use crate::types::{
-   interfaces::{Book,Books,VPair,vols},
-   usd::{USD,no_monay}
-};
+use crate::types::interfaces::{Book,Books,VPair,vols};
 
 // ----- Volumes -------------------------------------------------------
 

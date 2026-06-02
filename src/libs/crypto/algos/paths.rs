@@ -7,12 +7,12 @@ use std::collections::{HashSet};
 use book::{
    err_utils::ErrStr,
    file_utils::lines_from_file,
-   list_utils::{head,tail,ht}
+   list_utils::{head,tail,ht},
+   num::percentage::{mk_percentage}
 };
 
 use crate::types::{
    marketplace::{OrderBook,ratio_for},
-   percentage::{mk_percentage}
 };
 
 type Path = (f32, Vec<f32>, String);

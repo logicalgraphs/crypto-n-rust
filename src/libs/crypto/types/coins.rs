@@ -4,8 +4,7 @@ use std::cmp::Ordering;
 
 use chrono::NaiveDate;
 
-use crate::types::usd::{USD,mk_usd};
-use book::csv_utils::{CsvWriter,print_csv};
+use book::{ csv_utils::{CsvWriter,print_csv}, currency::usd::{USD,mk_usd} };
 
 // ----- COIN -------------------------------------------------------
 

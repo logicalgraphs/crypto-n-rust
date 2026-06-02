@@ -7,7 +7,7 @@ use book::{
 };
 
 use swerve::{
-   snarf::{snarf_assets,snarf_pivots},
+   snarf::{snarf_assets,snarf_quotes},
    types::{build_trade_routes, mk_trade_call, print_trade_call}
 };
 
@@ -23,7 +23,7 @@ async fn main() -> ErrStr<()> {
    let args = get_args();
    if let Some(file) = args.first() {
       let pools = snarf_assets(&file)?;
-      let (_, table, max_date) = snarf_pivots().await?;
+      let (_, table, max_date) = snarf_quotes("main").await?;
       let min_swap = parse_or(args.last(), 300.0);
       println!("./dawn.\n\nRecommendations for {}; min_swap is ${}.",
                max_date, min_swap);

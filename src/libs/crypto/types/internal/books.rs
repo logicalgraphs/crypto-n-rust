@@ -1,12 +1,14 @@
 // extracts current market data from 
 // https://api.kujira.app/api/coingecko/tickers
 
+use book::currency::usd::{USD,mk_usd};
+
 use crate::types::{
    aliases::{Aliases,alias},
-   interfaces::{Books,Book,mk_book,Prices,Price,get_price},
-   internal::types::{Books1,Book1},
-   usd::{USD,mk_usd}
+   interfaces::{Books,Book,mk_book,Prices,Price,get_price}
 };
+
+use super::types::{Books1,Book1};
 
 // ----- Parsing -------------------------------------------------------
 
@@ -19,7 +21,7 @@ pub fn books2books(p: &Prices, bs: &Books1, aliases: &Aliases) -> Books {
             let tar = alias(a, &b0.target);
             p.get(&tar).and_then(|t_price| {
                fn vol(p: &Price, t: f32) -> USD {
-                  mk_usd(get_price(&p).amount * t)
+                  mk_usd(get_price(&p).amount() * t)
                }
                Some(mk_book(bas,tar, b0.pool_id.clone(),
                             vol(b_price, b0.base_vol),

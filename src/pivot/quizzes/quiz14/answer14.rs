@@ -7,8 +7,8 @@ use book::{
 };
 
 use swerve::{
-   snarf::snarf_emas,
-   types::{mk_rec,rec,mk_deltas,confidence,mk_token}
+   snarf::{snarf_emas,snarf_quotes},
+   types::{mk_rec,rec_as_string,mk_deltas,confidence,mk_token}
 };
 
 fn usage() -> ErrStr<()> {
@@ -50,11 +50,12 @@ async fn doit(csv: bool, args: &Vec<String>) -> ErrStr<()> {
       let days: u64 = err_or(dayz.parse(), &format!("{dayz} is not a number"))?;
       let t1 = mk_token(&token1);
       let t2 = mk_token(&token2);
-      let emas = snarf_emas(days, &t1, &t2).await?;
+      let (_headers, quotes, date) = snarf_quotes("main").await?;
+      let emas = snarf_emas(&quotes, &date, days, &t1, &t2)?;
       let deltas = mk_deltas(&emas);
       println!("\n{}\n", if csv { deltas.as_csv() } else { deltas.as_json() });
       let call = mk_rec(&emas);
-      println!("{}\n", rec(&call));
+      println!("{}\n", rec_as_string(&call));
       print_csv(&call);
       confidence(&deltas);
       Ok(())

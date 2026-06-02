@@ -2,14 +2,16 @@
 
 use std::collections::HashSet;
 
-use book::types::untag;
+use book::{
+   currency::usd::USD,
+   types::tagged::untag
+};
 
 use crate::types::{
    assets::Asset,
    books::{fetch_books_by_vol,parse_books_with_aliases},
    interfaces::{Books,BookBooks,tokens,Prices,ticker,book_orderbook,vol_24h},
    marketplace::{OrderBook,dual_asset,orderbook},
-   usd::USD,
    volumes::{Volumes,volumes_by_token}
 };
 
@@ -19,7 +21,7 @@ pub fn target_sell_ratio(prices: &Prices, a: &Asset,
       let buy = dual_asset(on, a);
       prices.get(&buy).and_then(|buy_quote| {
          let quot = untag(&buy_quote).1;
-         Some((buy.clone(), quot.amount / a.quote * perc))
+         Some((buy.clone(), quot.amount() / a.quote * perc))
       })
    } else { None }
 }
@@ -33,7 +35,7 @@ pub fn active_order_books(market: &mut HashSet<OrderBook>,
 
 pub fn working_set(min: f32, b: &Books) -> (Volumes, Books) {
    let mut books = b.clone();
-   books.retain(|b| vol_24h(b).amount > min);
+   books.retain(|b| vol_24h(b).amount() > min);
    let mut tok_vols = volumes_by_token(&b);
    let toks = tokens(&books);
    tok_vols.retain(|t, _| toks.contains(t));
