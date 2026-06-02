@@ -14,7 +14,7 @@ use crate::{
    num_utils::parse_commaless
 };
 
-#[derive(Default, Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct USD {
    amount: SafeFloat
 }
@@ -22,8 +22,10 @@ pub struct USD {
 // ----- implementations -----------------------------------------------------
 
 impl USD {
-   pub fn amount() -> f32 { as_float(&self.amount) }
+   pub fn amount(&self) -> f32 { as_float(&self.amount) }
 }
+
+impl Default for USD { fn default() -> Self { no_monay() } }
 
 impl fmt::Display for USD {
    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
@@ -107,7 +109,7 @@ impl Sum<Self> for USD {
 // ----- ... and our methods -------------------------------------------------
 
 pub fn mk_usd(amount: f32) -> USD {
-   USD { amount: mk_safe_float(amount) }
+   USD { amount: mk_safe_float(&amount) }
 }
 
 pub fn no_monay() -> USD { mk_usd(0.0) }

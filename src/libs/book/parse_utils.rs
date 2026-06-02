@@ -107,7 +107,7 @@ mod tests {
    #[test]
    fn test_parse_usd() -> ErrStr<()> {
       let ans = parse_usd("-$123.45")?;
-      assert_eq!(-123.45, ans.amount);
+      assert_eq!(-123.45, ans.amount());
       Ok(())
    }
 }

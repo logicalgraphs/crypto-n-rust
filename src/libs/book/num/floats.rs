@@ -1,4 +1,4 @@
-#[derive(PartialEq, PartialOrd)]
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct SafeFloat(f32);
 
 impl Eq for SafeFloat {}
