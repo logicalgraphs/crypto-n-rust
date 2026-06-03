@@ -81,19 +81,17 @@ pub fn parse_tsv<T>(skip_lines: usize, f: &ParserFn<T>, lines: &Vec<String>)
 
 // ----- Formatters -------------------------------------------------------
 
-// puts CSV side-by-side in columns with 1 skip-column between each type
+// puts CSV side-by-side in columns with optional skip-column between each type
 
 pub fn columns(csvs: &Vec<Vec<ToCsv>>, sep: usize) -> Vec<String> {
-   let separator = format!(",{}", mk_blank(sep).as_csv());
+   let separator =
+      if sep > 0 { format!(",{}", mk_blank(sep).as_csv()); else { s("") };
    let mut max = 0;
-   for r in csvs {
-      if r.len() > max { max = r.len(); }
-   }
+   for r in csvs { if r.len() > max { max = r.len(); } }
    let mut rows: Vec<String> = Vec::new();
    for i in 0..max {
-      let row: Vec<String> = csvs.into_iter()
-                                 .map(as_csv_or_blank_at(i))
-                                 .collect();
+      let row: Vec<String> =
+          csvs.into_iter().map(as_csv_or_blank_at(i)).collect();
       rows.insert(i, row.join(&separator));
    }
    rows
