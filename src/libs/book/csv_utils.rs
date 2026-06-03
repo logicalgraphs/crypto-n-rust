@@ -3,7 +3,7 @@
 use crate::{
    err_utils::ErrStr,
    list_utils::mk_cycle,
-   string_utils::{parse_lines,to_string}
+   string_utils::{parse_lines,s}
 };
 
 // ----- Types -------------------------------------------------------
@@ -57,8 +57,8 @@ type ParserFn<T> = dyn Fn(Vec<String>) -> ErrStr<T>;
 
 fn parser<T>(separator: &str, skip_lines: usize, 
              f: &ParserFn<T>, lines: &Vec<String>) -> ErrStr<Vec<T>> {
-   fn cols(s: &str) -> impl Fn(String) -> Vec<String> + '_ {
-      move |line| line.split(s).map(to_string).collect()
+   fn cols(sep: &str) -> impl Fn(String) -> Vec<String> + '_ {
+      move |line| line.split(sep).map(s).collect()
    }
    fn g<'a, T>(s: &'a str, f: &'a ParserFn<T>)
          -> impl Fn(String) -> ErrStr<T> + 'a {
@@ -85,7 +85,7 @@ pub fn parse_tsv<T>(skip_lines: usize, f: &ParserFn<T>, lines: &Vec<String>)
 
 pub fn columns(csvs: &Vec<Vec<ToCsv>>, sep: usize) -> Vec<String> {
    let separator =
-      if sep > 0 { format!(",{}", mk_blank(sep).as_csv()); else { s("") };
+      if sep > 0 { format!(",{}", mk_blank(sep).as_csv()) } else { s("") };
    let mut max = 0;
    for r in csvs { if r.len() > max { max = r.len(); } }
    let mut rows: Vec<String> = Vec::new();
@@ -118,7 +118,7 @@ pub struct Blank {      // prints a blank row
 }
 
 pub fn mk_blank(n: usize) -> Blank {
-   let eh = mk_cycle(&" ".to_string());  // odd syntax to borrow Clone-trait
+   let eh = mk_cycle(&s(" "));  // odd syntax to borrow Clone-trait
    let s: Vec<String> = eh.iter().take(n).collect();
    Blank { s, n }
 }
