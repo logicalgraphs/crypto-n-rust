@@ -17,6 +17,8 @@ pub fn second<A, B, C>(f: impl Fn(B) -> C) -> impl Fn((A, B)) -> (A, C) {
    move |(a, b)| (a, f(b))
 }
 
+pub fn duplicate<A: Clone>(x: A) -> (A, A) { (x.clone(), x) }
+
 /// a Partition is a particular tuple: a pair of sets of the same type,
 /// discriminated by something
 
