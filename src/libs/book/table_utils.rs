@@ -6,6 +6,8 @@ use std::{
    hash::Hash
 };
 
+use succ::succ;
+
 use super::{
    compose,
    csv_utils::CsvWriter,
@@ -14,7 +16,7 @@ use super::{
    matrix_utils,
    matrix_utils::Matrix,
    string_utils::{str2strf,to_string},
-   tuple_utils::{fst,snd,swap}
+   tuple_utils::{fst,snd,swap,duplicate}
 };
 
 // a Table is a matrix indexed by hashed values, so we can have, e.g.:
@@ -165,6 +167,30 @@ fn rows_in_jest<ROW: Eq + Hash, DATUM>
    }
    let rows = parse_headers(str2strf(&rowf), hdrs)?;
    Ok((rows, matrix))
+}
+
+// ----- SPARSE MATRIX -------------------------------------------------------
+
+// from a list of disparate HashMaps, ingest a table with columns with no
+// values defaulting
+
+pub fn sparse_matrix<COL: Clone + Eq + Hash, DATUM: Clone + Default>
+      (maps: &[HashMap<COL, DATUM>]) -> Table<usize, COL, DATUM> {
+   let mut headers: HashSet<COL> = HashSet::new();
+   maps.iter().for_each(|map| headers.extend(map.keys().cloned()));
+   let c0: Vec<(COL, usize)> = 
+      headers.into_iter().enumerate().map(|(x, k)| (k, x+1)).collect();
+   let c1: Vec<COL> = c0.clone().into_iter().map(fst).collect();
+   let cols_: HashMap<COL, usize> = c0.into_iter().collect();
+   let rows_: HashMap<usize, usize> =
+      (0.. maps.len()).into_iter().map(compose!(duplicate)(succ)).collect();
+   let data: Matrix<DATUM> =
+      maps.iter()
+          .map(|row| c1.iter()
+               .map(|k| row.get(k).unwrap_or(&DATUM::default()).clone())
+               .collect())
+          .collect();
+   Table { rows_, cols_, data }
 }
 
 // ----- VIEWS ----------------------------------------------------------------
@@ -324,13 +350,23 @@ pub fn default_f<'a, DATUM: Clone>(d: &'a DATUM)
 
 // ----- TESTS -------------------------------------------------------
 
+#[cfg(test)]
 #[cfg(not(tarpaulin_include))]
-pub mod functional_tests {
+mod functional_tests {
    use super::*;
+   use paste::paste;
 
-   use crate::parse_utils::{parse_id,parse_str,parse_int};
+   use crate::{
+      create_testing,
+      parse_utils::{parse_id,parse_str,parse_int},
+      string_utils::s,
+      tuple_utils::first,
+      utils::debug
+   };
 
-   fn tsv_table() -> String {
+   create_testing!("table_utils");
+
+   fn sample_tsv_table() -> String {
 "store	apples 	bananas	chips	durian	eggs	fish	guinness
 1	29	27	33	28	18	44	7
 2	14	38	15	2	46	5	12
@@ -340,70 +376,77 @@ pub mod functional_tests {
 5	5	27	2	30	42	18	14".to_string()
    }
 
+   fn sparse_data_string(rows: &[HashMap<String, f32>]) -> String {
+      rows.into_iter().map(debug).collect::<Vec<_>>().join("\n")
+   }
+   fn sample_sparse_table_data() -> Vec<HashMap<String, f32>> {
+      let avalanche: HashMap<String, f32> =
+         vec![("BTC", 0.96), ("sAVAX", 1402.5), ("ETH", 3.15), ("USDC", 9.8),
+              ("AVAX", 32.8), ("UNDEAD", 457484.1), ("USDt", 100.0)]
+              .into_iter().map(first(s)).collect();
+      let binance: HashMap<String, f32> =
+         vec![("USDt", 8943.2), ("DOGE", 52085.2), ("LTC", 79.5),
+              ("LINK", 317.0), ("ETH", 1.8), ("BNB", 0.8)]
+              .into_iter().map(first(s)).collect();
+ 
+      let cardano: HashMap<String, f32> =
+         vec![("ADA", 8185.7), ("SNEK", 508401.0), ("INDY", 1590.4),
+              ("iUSD", 996.3), ("iBTC", 0.01), ("iETH", 0.7)]
+              .into_iter().map(first(s)).collect();
+      vec![avalanche, binance, cardano]
+   }
+
    fn ingest_table() -> ErrStr<Table<usize,String,i32>> {
       let lines: Vec<String> =
-         tsv_table().split("\n").map(to_string).collect();
+         sample_tsv_table().split("\n").map(to_string).collect();
       ingest(parse_id, parse_str, parse_int, &lines, "\t")
    }
 
-   fn run_ingest() -> ErrStr<usize> { 
-      println!("\ntable_utils::ingest functional test\n");
-      let table = tsv_table();
+   run!("ingest", {
+      let table = sample_tsv_table();
       println!("\tthe input table is:\n\n{table}");
       let tab = ingest_table()?;
       println!("\n\tthe parsed table is:\n\n{}", tab.as_csv());
-      println!("\ntable_utils::ingest:...ok");
-      Ok(1)
-   }
+   });
 
-   fn run_row_store_2() -> ErrStr<usize> {
-      println!("\ntable_utils::row functional test\n");
+   run!("sparse_matrix", {
+      let data = sample_sparse_table_data();
+      println!("Sparse data input: {}\n", sparse_data_string(&data));
+      let table = sparse_matrix(&data);
+      println!("Sparse table:\n{}\n", table.as_csv());
+   });
+
+   run!("row_store_2", {
       let stores = ingest_table()?;
       println!("\tThe store table:\n{}\n", stores.as_csv());
       println!("\tThe second store data is:\n{:?}", row(&stores, &2));
-      println!("\ntable_utils::row:...ok");
-      Ok(1)
-   }
+   });
 
-   fn run_val_store_5_fish() -> ErrStr<usize> {
-      println!("\ntable_utils::val functional test\n");
+   run!("val_store_5_fish", {
       let stores = ingest_table()?;
       fn s(x: &str) -> String { x.to_string() }
       let ur_mom = val(&stores, &5, &s("fish")).unwrap();
       println!("\tThe number of fish at store 5 is: {ur_mom}");
-      println!("\ntable_utils::val:...ok");
-      Ok(1)
-   }
-
-   pub fn runoff() -> ErrStr<usize> {
-      println!("\ntable_utils functional tests\n");
-      let a = run_ingest()?;
-      let b = run_row_store_2()?;
-      let c = run_val_store_5_fish()?;
-      Ok(a+b+c)
-   }
-
+   });
 
 #[cfg(test)]
+#[cfg(not(tarpaulin_include))]
 mod tests {
    use super::*;
    use super::functional_tests::ingest_table;
 
-   #[test]
-   fn test_ingest() {
+   #[test] fn test_ingest() {
       let table = ingest_table();
       assert!(table.is_ok());
    }
 
-   #[test]
-   fn test_rows() -> ErrStr<()> {
+   #[test] fn test_rows() -> ErrStr<()> {
       let table = ingest_table()?;
       assert_eq!(rows(&table).len(), 5);
       Ok(())
    }
 
-   #[test]
-   fn test_cols() -> ErrStr<()> {
+   #[test] fn test_cols() -> ErrStr<()> {
       let table = ingest_table()?;
       assert_eq!(cols(&table).len(), 7);
       Ok(())
@@ -413,29 +456,25 @@ mod tests {
       val(&t, &r, &c.to_string())
    }
 
-   #[test]
-   fn fail_val_row_col() -> ErrStr<()> {
+   #[test] fn fail_val_row_col() -> ErrStr<()> {
       let table = ingest_table()?;
       assert!(val1(table, 7, "hamburger").is_none());
       Ok(())
    }
 
-   #[test]
-   fn fail_val_row() -> ErrStr<()> {
+   #[test] fn fail_val_row() -> ErrStr<()> {
       let table = ingest_table()?;
       assert!(val1(table, 12, "bananas").is_none());
       Ok(())
    }
 
-   #[test]
-   fn fail_val_col() -> ErrStr<()> {
+   #[test] fn fail_val_col() -> ErrStr<()> {
       let table = ingest_table()?;
       assert!(val1(table, 3, "apple pie").is_none());
       Ok(())
    }
 
-   #[test]
-   fn test_val() -> ErrStr<()> {
+   #[test] fn test_val() -> ErrStr<()> {
       let table = ingest_table()?;
       assert_eq!(val1(table, 2, "chips"), Some(15));
       Ok(())
