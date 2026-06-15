@@ -1,9 +1,14 @@
 // we make our types CSVy
 
+use std::fmt::Debug;
+use serde::Serialize;
+use serde::de::DeserializeOwned;
+
 use crate::{
-   err_utils::ErrStr,
+   err_utils::{err_or,ErrStr},
    list_utils::mk_cycle,
-   string_utils::{parse_lines,s}
+   string_utils::{parse_lines,s},
+   utils::k
 };
 
 // ----- Types -------------------------------------------------------
@@ -24,31 +29,54 @@ impl CsvWriter for i32 {
 
 // ----- Printers -------------------------------------------------------
 
-pub fn print_csv<T: CsvWriter>(line: &T) {
-   print_line(&line.as_csv());
-}
+pub fn print_csv<T: CsvWriter>(line: &T) { print_line(&line.as_csv()); }
 
-pub fn print_line(line: &String) {
-   println!("{line}");
-}
+pub fn print_line(line: &String) { println!("{line}"); }
 
 pub fn print_as_tsv(row: &String) {
    let cols: Vec<&str> = row.split(",").collect();
    print_line(&cols.join("\t"));
 }
 
-pub fn list_csv<T: CsvWriter>(v: &Vec<T>) -> String {
-   let v1: Vec<String> = v.iter().map(|e| {
-      format!("{}", e.as_csv())
-   }).collect();
-   v1.join("\n")
+pub fn list_csv<T: CsvWriter>(v: &[T]) -> String {
+   v.iter().map(|e| format!("{}", e.as_csv())).collect::<Vec<_>>().join("\n")
 }
 
 pub fn enumerate_csv<T: CsvWriter>(v: &Vec<T>) -> String {
-   let v1: Vec<String> = v.iter().enumerate().map(|(x,e)| {
-      format!("{},{}", x + 1, e.as_csv())
-   }).collect();
-   v1.join("\n")
+   v.iter()
+    .enumerate()
+    .map(|(x,e)| format!("{},{}", x + 1, e.as_csv()))
+    .collect::<Vec<_>>()
+    .join("\n")
+}
+
+// ----- Serializer -------------------------------------------------------
+
+fn as_str<T:Debug + Serialize>(sep: u8, v: &[T]) -> ErrStr<String> {
+   let mut output = Vec::new();
+   let mut wtr = csv::WriterBuilder::new().delimiter(sep)
+                                          .from_writer(&mut output);
+   for new_row in v {
+      err_or(wtr.serialize(&new_row),
+             &format!("Could not serialize row:\n{new_row:?}"))?;
+   }
+   let _ = err_or(wtr.flush(), "Unable to flush output to stdout");
+
+   // Drop the writer to release its mutable borrow and guarantee all
+   // bytes flush down to output_buffer
+   std::mem::drop(wtr);
+
+   // Convert the raw bytes buffer into a valid UTF-8 String
+   err_or(String::from_utf8(output),
+          &format!("Could not convert table to string"))
+}
+
+pub fn as_tsv<T:Debug + Serialize>(v: &[T]) -> ErrStr<String> {
+   as_str(b'\t', v)
+}
+
+pub fn as_csv<T:Debug + Serialize>(v: &[T]) -> ErrStr<String> {
+   as_str(b',', v)
 }
 
 // ----- Parsers -------------------------------------------------------
@@ -79,19 +107,27 @@ pub fn parse_tsv<T>(skip_lines: usize, f: &ParserFn<T>, lines: &Vec<String>)
    parser("\t", skip_lines, f, lines)
 }
 
+pub fn items<T:DeserializeOwned>(s: &str) -> ErrStr<Vec<T>> {
+   let mut r = csv::ReaderBuilder::new()
+                  .delimiter(b',').from_reader(s.as_bytes());
+   let mut ans = Vec::new();
+   for item in r.deserialize() { ans.push(err_or(item, "Cannot parse")?); }
+   Ok(ans)
+}
+
 // ----- Formatters -------------------------------------------------------
 
 // puts CSV side-by-side in columns with optional skip-column between each type
 
-pub fn columns(csvs: &Vec<Vec<ToCsv>>, sep: usize) -> Vec<String> {
+pub fn columns(csvs: &[Vec<ToCsv>], sep: usize) -> Vec<String> {
    let separator =
       if sep > 0 { format!(",{}", mk_blank(sep).as_csv()) } else { s("") };
-   let mut max = 0;
-   for r in csvs { if r.len() > max { max = r.len(); } }
+   let mut max_cols = 0;
+   for r in csvs { let n = r.len(); if n > max_cols { max_cols = n; } }
    let mut rows: Vec<String> = Vec::new();
-   for i in 0..max {
+   for i in 0..max_cols {
       let row: Vec<String> =
-          csvs.into_iter().map(as_csv_or_blank_at(i)).collect();
+          csvs.iter().map(as_csv_or_blank_at(i)).collect();
       rows.insert(i, row.join(&separator));
    }
    rows
@@ -99,12 +135,14 @@ pub fn columns(csvs: &Vec<Vec<ToCsv>>, sep: usize) -> Vec<String> {
 
 // ... and helper functions for columns
 
+// The point of ToCsv is to allow columns of disparate types of CsvWriter-types
+
 pub struct ToCsv {  // we flatten our structure, T, into its CSV-representation
    row: String,
    ncols: usize
 }
 
-pub fn mk_csvs<T: CsvWriter>(rows: &Vec<T>) -> Vec<ToCsv> {
+pub fn mk_csvs<T: CsvWriter>(rows: &[T]) -> Vec<ToCsv> {
    rows.iter().map(mk_csv).collect()
 }
 
@@ -129,6 +167,11 @@ impl CsvWriter for Blank {
    }
    fn ncols(&self) -> usize { self.n }
 }
+impl CsvHeader for Blank {
+   fn header(&self) -> String {
+      self.s.iter().map(k("|")).collect::<Vec<_>>().join(",")
+   }
+}
 
 fn as_csv_or_blank_at(i: usize) -> impl Fn(&Vec<ToCsv>) -> String {
    move | vec | {
@@ -141,5 +184,169 @@ fn as_csv_or_blank_at(i: usize) -> impl Fn(&Vec<ToCsv>) -> String {
             panic!("Column is empty!")
          }
       }
+   }
+}
+
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(test)]
+#[cfg(not(tarpaulin_include))]
+mod test_data {
+   use super::*;
+   use serde::Deserialize;
+   use serde_with::{serde_as, DisplayFromStr};
+   use crate::{
+      currency::usd::USD,
+      parse_utils::{parse_id,parse_usd},
+      string_utils::s
+   };
+
+   #[serde_as]
+   #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+   pub struct Grocery {
+      item: String,
+      quantity: usize,
+      #[serde_as(as = "DisplayFromStr")]
+      price: USD
+   }
+   #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+   pub struct Store { id: usize, location: String }
+
+   fn hdr_s() -> String { s("id,location") }
+   impl CsvHeader for Store { fn header(&self) -> String { hdr_s() } }
+   impl CsvWriter for Store {
+      fn ncols(&self) -> usize { 2 }
+      fn as_csv(&self) -> String { format!("{},{}", self.id, self.location) }
+   }
+
+   fn hdr_g() -> String { s("item,quantity,price") }
+   impl CsvHeader for Grocery { fn header(&self) -> String { hdr_g() } }
+   impl CsvWriter for Grocery {
+      fn ncols(&self) -> usize { 3 }
+      fn as_csv(&self) -> String {
+         format!("{},{},{}", self.item, self.quantity, self.price)
+      }
+   }
+
+   pub fn parse_grocery(line: Vec<String>) -> ErrStr<Grocery> {
+      if let [it,amt,quot] = line.as_slice() {
+         Ok(Grocery { item: s(it),
+                      quantity: parse_id(&amt)?,
+                      price: parse_usd(&quot)? })
+      } else {
+         Err(format!("Cannot parse Grocery from line: {line:?}"))
+      }
+   }
+
+   pub fn inventory() -> String { format!("{}
+apples,15,$4.95
+oranges,7,$2.23
+bananas,8,$9.97
+crisps,23,$8.86
+beer,97,$23.55
+", hdr_g())
+   }
+
+   pub fn stores() -> String { format!("{}
+1,Annandale
+2,Springfield
+3,Alexandria
+4,Arlington
+", hdr_s())
+   }
+
+   pub fn lines(r: &str) -> Vec<String> { r.split("\n").map(s).collect() }
+}
+
+#[cfg(test)]
+#[cfg(not(tarpaulin_include))]
+mod functional_tests {
+   use super::*;
+   use super::test_data::{
+      Grocery,
+      Store,
+      inventory,
+      lines,
+      parse_grocery,
+      stores
+   };
+   use paste::paste;
+   use crate::{create_testing,list_utils::init};
+
+   create_testing!("csv_utils");
+
+   run!("as_csv", " (Serialize)", {
+      let groceries = items::<Grocery>(&inventory())?;
+      println!("The groceries are:\n\n{}", as_csv(&groceries)?);
+   });
+
+   run!("as_tsv", " (Serialize)", {
+      let groceries = items::<Grocery>(&inventory())?;
+      println!("The groceries are:\n\n{}", as_tsv(&groceries)?);
+   });
+
+   run!("parse_csv", {
+      let items = parse_csv(1, &parse_grocery, &init(&lines(&inventory())))?;
+      let lines: Vec<String> = items.iter().map(CsvWriter::as_csv).collect();
+      println!("Parse items from CSV:\n\n{}", lines.join("\n"));
+   });
+
+   run!("columns", {
+      let groc = items::<Grocery>(&inventory())?;
+      let stor = items::<Store>(&stores())?;
+      let col1 = mk_csvs(&groc);
+      let col2 = mk_csvs(&stor);
+      let cols = columns(&[col1, col2], 1);
+      println!("CSV tables in columns:\n\n{}", cols.join("\n"));
+   });
+
+   run!("print_csv", {
+      let groceries = items::<Grocery>(&inventory())?;
+      let ringo = groceries.first().unwrap();
+      print_csv(ringo);
+   });
+
+   run!("print_as_tsv", {
+      let stores = items::<Store>(&stores())?;
+      let ann = stores.first().unwrap();
+      print_as_tsv(&ann.as_csv());
+   });
+
+   run!("list_csv", {
+      let stores = items::<Store>(&stores())?;
+      println!("Stores:\n\n{}", list_csv(&stores));
+   });
+
+   run!("enumerate_csv", {
+      let groceries = items::<Grocery>(&inventory())?;
+      println!("Inventory:\n\n{}", enumerate_csv(&groceries));
+   });
+}
+
+#[cfg(test)]
+#[cfg(not(tarpaulin_include))]
+mod tests {
+   use super::*;
+   use super::test_data::{Grocery,inventory,lines,parse_grocery};
+   use crate::list_utils::init;
+
+   #[test] fn fail_parse_csv_nl_at_end() {
+      let parsed_lines = parse_csv(1, &parse_grocery, &lines(&inventory()));
+      assert!(parsed_lines.is_err());
+   }
+
+   #[test] fn parse_csv_ok() {
+      let parsed_lines =
+         parse_csv(1, &parse_grocery, &init(&lines(&inventory())));
+      assert!(parsed_lines.is_ok());
+   }
+
+   #[test] fn parse_csv_and_items_idempotent() -> ErrStr<()> {
+      let parsed_lines =
+         parse_csv(1, &parse_grocery, &init(&lines(&inventory())))?;
+      let groceries = items::<Grocery>(&inventory())?;
+      assert_eq!(groceries.len(), parsed_lines.len(), "length unequal");
+      assert_eq!(groceries, parsed_lines);
+      Ok(())
    }
 }
