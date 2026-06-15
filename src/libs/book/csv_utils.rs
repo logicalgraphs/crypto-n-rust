@@ -2,6 +2,7 @@
 
 use std::fmt::Debug;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 
 use crate::{
    err_utils::{err_or,ErrStr},
@@ -106,6 +107,14 @@ pub fn parse_tsv<T>(skip_lines: usize, f: &ParserFn<T>, lines: &Vec<String>)
    parser("\t", skip_lines, f, lines)
 }
 
+pub fn items<T:DeserializeOwned>(s: &str) -> ErrStr<Vec<T>> {
+   let mut r = csv::ReaderBuilder::new()
+                  .delimiter(b',').from_reader(s.as_bytes());
+   let mut ans = Vec::new();
+   for item in r.deserialize() { ans.push(err_or(item, "Cannot parse")?); }
+   Ok(ans)
+}
+
 // ----- Formatters -------------------------------------------------------
 
 // puts CSV side-by-side in columns with optional skip-column between each type
@@ -184,7 +193,7 @@ fn as_csv_or_blank_at(i: usize) -> impl Fn(&Vec<ToCsv>) -> String {
 #[cfg(not(tarpaulin_include))]
 mod test_data {
    use super::*;
-   use serde::{Deserialize,de::DeserializeOwned};
+   use serde::Deserialize;
    use serde_with::{serde_as, DisplayFromStr};
    use crate::{
       currency::usd::USD,
@@ -208,13 +217,6 @@ mod test_data {
    impl CsvWriter for Store {
       fn ncols(&self) -> usize { 2 }
       fn as_csv(&self) -> String { format!("{},{}", self.id, self.location) }
-   }
-   pub fn parse_store(line: Vec<String>) -> ErrStr<Store> {
-      if let [i,loc] = line.as_slice() {
-         Ok(Store { id: parse_id(i)?, location: s(loc) })
-      } else {
-         Err(format!("Cannot parse store from line: {line:?}"))
-      }
    }
 
    fn hdr_g() -> String { s("item,quantity,price") }
@@ -253,15 +255,6 @@ beer,97,$23.55
 ", hdr_s())
    }
 
-   // deserialization is in another library and not tested here
-   pub fn items<T:DeserializeOwned>(s: &str) -> ErrStr<Vec<T>> {
-      let mut r = csv::ReaderBuilder::new()
-                     .delimiter(b',').from_reader(s.as_bytes());
-      let mut ans = Vec::new();
-      for item in r.deserialize() { ans.push(err_or(item, "Cannot parse")?); }
-      Ok(ans)
-   }
-
    pub fn lines(r: &str) -> Vec<String> { r.split("\n").map(s).collect() }
 }
 
@@ -273,7 +266,6 @@ mod functional_tests {
       Grocery,
       Store,
       inventory,
-      items,
       lines,
       parse_grocery,
       stores
@@ -307,13 +299,35 @@ mod functional_tests {
       let cols = columns(&[col1, col2], 1);
       println!("CSV tables in columns:\n\n{}", cols.join("\n"));
    });
+
+   run!("print_csv", {
+      let groceries = items::<Grocery>(&inventory())?;
+      let ringo = groceries.first().unwrap();
+      print_csv(ringo);
+   });
+
+   run!("print_as_tsv", {
+      let stores = items::<Store>(&stores())?;
+      let ann = stores.first().unwrap();
+      print_as_tsv(&ann.as_csv());
+   });
+
+   run!("list_csv", {
+      let stores = items::<Store>(&stores())?;
+      println!("Stores:\n\n{}", list_csv(&stores));
+   });
+
+   run!("enumerate_csv", {
+      let groceries = items::<Grocery>(&inventory())?;
+      println!("Inventory:\n\n{}", enumerate_csv(&groceries));
+   });
 }
 
 #[cfg(test)]
 #[cfg(not(tarpaulin_include))]
 mod tests {
    use super::*;
-   use super::test_data::{Grocery,inventory,items,lines,parse_grocery};
+   use super::test_data::{Grocery,inventory,lines,parse_grocery};
    use crate::list_utils::init;
 
    #[test] fn fail_parse_csv_nl_at_end() {
@@ -327,7 +341,7 @@ mod tests {
       assert!(parsed_lines.is_ok());
    }
 
-   #[test] fn parse_csv_and_deserialize_idempotent() -> ErrStr<()> {
+   #[test] fn parse_csv_and_items_idempotent() -> ErrStr<()> {
       let parsed_lines =
          parse_csv(1, &parse_grocery, &init(&lines(&inventory())))?;
       let groceries = items::<Grocery>(&inventory())?;
