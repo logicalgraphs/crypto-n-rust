@@ -26,6 +26,7 @@ pub fn get_env(variable: &str) -> ErrStr<String> {
 // ----- Category theory ------------------------------------------------
 
 pub fn id<T: Clone>(t: T) -> T { t }
+pub fn k<T:Clone,A>(t: T) -> impl Fn(A) -> T { move |_: A| t.clone() }
 
 pub fn pred<T>(head: bool, consequence: T) -> Option<T> {
    if head { Some(consequence) } else { None }
