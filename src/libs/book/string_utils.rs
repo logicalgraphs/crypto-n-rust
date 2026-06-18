@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use crate::{
    compose,
    err_utils::ErrStr
@@ -24,6 +26,18 @@ pub fn quot(s: &str) -> String {
 pub fn plural(n: usize, noun: &str) -> String {
    let s = if n == 1 { "" } else { "s" };
    format!("{n} {noun}{s}")
+}
+
+//----- Article --------------------------------------------------------------
+// added by bparis to pivoteur protocol, moved here by dma
+
+pub fn article(word: &str) -> ErrStr<String> {
+   let vowels: HashSet<char> = "AEIOU".chars().collect();
+   Ok(format!("a{} {word}",
+           if vowels.contains(&word.chars()
+                                   .next()
+                                   .ok_or("empty string for article")?
+                                   .to_ascii_uppercase()) { "n" } else { "" }))
 }
 
 pub fn to_string(s: &str) -> String { s.to_string() }
@@ -119,6 +133,18 @@ mod tests {
    #[test] fn test_plural() {
       let kumquats = plural(2, "kumquat");
       assert_eq!("2 kumquats", &kumquats);
+   }
+
+   #[test] fn test_article_an_for_vowel() -> ErrStr<()> {
+      let msg = article("AVAX-on-BTC pivot")?;
+      assert_eq!("an AVAX-on-BTC pivot", &msg);
+      Ok(())
+   }
+
+   #[test] fn test_article_a_for_consonant() -> ErrStr<()> {
+      let msg = article("BTC-on-ETH pivot")?;
+      assert_eq!("a BTC-on-ETH pivot", &msg);
+      Ok(())
    }
 }
 
