@@ -15,7 +15,7 @@ use super::{
    list_utils::{ht,tail,filter_map_or},
    matrix_utils,
    matrix_utils::Matrix,
-   string_utils::{str2strf,to_string},
+   string_utils::{str2strf,s},
    tuple_utils::{fst,snd,swap,duplicate}
 };
 
@@ -126,12 +126,12 @@ pub fn ingest<ROW: Eq + Hash,COL: Eq + Hash,DATUM>
    let (header, body) = ht(lines);
    if let Some(hdr) = header {
       let cols_str: Vec<String> =
-         tail(&hdr.split(separator).map(to_string).collect::<Vec<String>>());
+         tail(&hdr.split(separator).map(s).collect::<Vec<String>>());
       let (rows_, data) = rows_in_jest(rowf, df, body, separator)?;
       let cols_ = parse_headers(str2strf(&colf), cols_str)?;
       Ok(Table { rows_, cols_, data })
    } else {
-      Err("No table to ingest!".to_string())
+      Err(s("No table to ingest!"))
    }
 }
 
@@ -150,7 +150,7 @@ fn rows_in_jest<ROW: Eq + Hash, DATUM>
     lines: Vec<String>, separator: &str)
       -> ErrStr<(HashMap<ROW, usize>, Matrix<DATUM>)> {
    fn split_line(separator: &str) -> impl Fn(String) -> Vec<String> + '_ {
-      move |s| s.split(separator).map(to_string).collect()
+      move |r| r.split(separator).map(s).collect()
    }
    let rows: Vec<Vec<String>> =
       lines.into_iter()
@@ -213,6 +213,21 @@ pub fn col<ROW, COL: Eq + Hash, DATUM: Clone>(table: &Table<ROW, COL, DATUM>,
 pub fn row<ROW: Eq + Hash, COL, DATUM: Clone>(table: &Table<ROW, COL, DATUM>,
                                               rix: &ROW) -> Option<Vec<DATUM>> {
    r_ix(table, rix).and_then(|r| Some(table.data[r].clone()))
+}
+
+pub fn hashed_row<ROW: Eq+Hash+Clone, COL: Eq+Hash+Clone, DATUM: Clone>
+      (table: &Table<ROW, COL, DATUM>, rix: &ROW)
+      -> Option<HashMap<COL, DATUM>> {
+   row(table, rix).and_then(|r| {
+      let paired: HashMap<COL, DATUM> =
+        cols(table).into_iter().zip(r.into_iter()).collect();
+      Some(paired)
+   })
+}
+
+pub fn hashed_rows<ROW: Eq+Hash+Clone, COL: Eq+Hash+Clone, DATUM: Clone>
+      (table: &Table<ROW, COL, DATUM>) -> Vec<HashMap<COL, DATUM>> {
+   rows(table).iter().filter_map(|rix| hashed_row(table, rix)).collect()
 }
 
 pub fn val<ROW: Eq + Hash, COL: Eq + Hash, DATUM: Clone>
@@ -359,7 +374,7 @@ mod functional_tests {
    use crate::{
       create_testing,
       parse_utils::{parse_id,parse_str,parse_int},
-      string_utils::s,
+      string_utils::words,
       tuple_utils::first,
       utils::debug
    };
@@ -367,13 +382,34 @@ mod functional_tests {
    create_testing!("table_utils");
 
    fn sample_tsv_table() -> String {
-"store	apples 	bananas	chips	durian	eggs	fish	guinness
+s("store	apples 	bananas	chips	durian	eggs	fish	guinness
 1	29	27	33	28	18	44	7
 2	14	38	15	2	46	5	12
 3	15	5	28	44	13	39	17
 
 4	38	48	16	22	47	8	37
-5	5	27	2	30	42	18	14".to_string()
+5	5	27	2	30	42	18	14")
+   }
+
+   fn small_table_1() -> String {
+s("store	chips	eggs	fish	guinness
+3	22	11	27	9
+4	16	47	8	37
+5	2	42	18	14")
+   }
+
+   fn small_table_2() -> String {
+s("store	chips	eggs	fish	guinness
+1	44	18	44	7
+2	15	46	5	12
+3	28	13	39	17")
+   }
+
+   fn small_table_3() -> String {
+s("store	apples	bananas	durian
+1	29	27	18
+2	14	38	2
+4	38	48	22")
    }
 
    fn sparse_data_string(rows: &[HashMap<String, f32>]) -> String {
@@ -396,10 +432,13 @@ mod functional_tests {
       vec![avalanche, binance, cardano]
    }
 
-   fn ingest_table() -> ErrStr<Table<usize,String,i32>> {
-      let lines: Vec<String> =
-         sample_tsv_table().split("\n").map(to_string).collect();
+   fn ingest_a_table(table: &str) -> ErrStr<Table<usize,String,i32>> {
+      let lines: Vec<String> = table.split("\n").map(s).collect();
       ingest(parse_id, parse_str, parse_int, &lines, "\t")
+   }
+
+   fn ingest_table() -> ErrStr<Table<usize,String,i32>> {
+      ingest_a_table(&sample_tsv_table())
    }
 
    run!("ingest", {
@@ -416,6 +455,19 @@ mod functional_tests {
       println!("Sparse table:\n{}\n", table.as_csv());
    });
 
+   run!("sparse_stores", {
+      let a = ingest_a_table(&small_table_2())?;
+      println!("Table a:\n\n{}", a.as_csv());
+      let b = ingest_a_table(&small_table_3())?;
+      println!("Table b:\n\n{}", b.as_csv());
+      let mut a1 = hashed_rows(&a);
+      let mut b1 = hashed_rows(&b);
+      a1.append(&mut b1);
+      let sparse = sparse_matrix(&a1);
+      println!("Combined (sparse) table:\n\n{}", sparse.as_csv());
+   });
+
+
    run!("row_store_2", {
       let stores = ingest_table()?;
       println!("\tThe store table:\n{}\n", stores.as_csv());
@@ -424,9 +476,22 @@ mod functional_tests {
 
    run!("val_store_5_fish", {
       let stores = ingest_table()?;
-      fn s(x: &str) -> String { x.to_string() }
       let ur_mom = val(&stores, &5, &s("fish")).unwrap();
       println!("\tThe number of fish at store 5 is: {ur_mom}");
+   });
+
+   run!("enum_headers", {
+      let hdrs = enum_headers(words("ix item price amt"));
+      println!("Headers of table: {hdrs:?}");
+   });
+
+   run!("merge", {
+      let a = ingest_a_table(&small_table_1())?;
+      let b = ingest_a_table(&small_table_2())?;
+      println!("Table to merge (1):\n\n{}", a.as_csv());
+      println!("Table to merge (2):\n\n{}", b.as_csv());
+      let c = merge(&a, &b)?;
+      println!("Merged table:\n\n{}", c.as_csv());
    });
 
 #[cfg(test)]
@@ -453,7 +518,7 @@ mod tests {
    }
 
    fn val1(t: Table<usize, String, i32>, r: usize, c: &str) -> Option<i32> {
-      val(&t, &r, &c.to_string())
+      val(&t, &r, &s(&c))
    }
 
    #[test] fn fail_val_row_col() -> ErrStr<()> {
@@ -477,6 +542,13 @@ mod tests {
    #[test] fn test_val() -> ErrStr<()> {
       let table = ingest_table()?;
       assert_eq!(val1(table, 2, "chips"), Some(15));
+      Ok(())
+   }
+
+   #[test] fn test_row_filter() -> ErrStr<()> {
+      let table = ingest_table()?;
+      let filtered_table = row_filter(|x| *x > 3, &table);
+      assert_eq!(2, filtered_table.data.len());
       Ok(())
    }
 }

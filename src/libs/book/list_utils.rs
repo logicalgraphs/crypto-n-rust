@@ -3,9 +3,11 @@ use std::{
    fmt::{Debug,Formatter, Result as Fresult},  // y'all can thank the Dylan
                                                // programming language for
                                                // item-renaming.
-   slice::Iter
+   slice::Iter,
+   str::FromStr
 };
-use super::err_utils::ErrStr;
+
+use super::err_utils::{ErrStr,err_or};
 
 // ----- list functions --------------------------------------------------
 
@@ -120,8 +122,10 @@ impl<T:Debug> Debug for InfiniteList<T> {
    }
 }
 
-pub fn parse_nums(strs: &[String]) -> Vec<f32> {
-   strs.into_iter().map(|n| n.parse().expect(&format!("'{n}' NaN"))).collect()
+pub fn parse_nums<T: FromStr>(strs: &[String]) -> ErrStr<Vec<T>>
+      where <T as FromStr>::Err: Debug {
+   filter_map_or(|n: String| err_or(n.parse(), &format!("'{n}' NaN")),
+                 strs.to_vec())
 }
 
 // ----- TESTS -------------------------------------------------------
@@ -141,7 +145,7 @@ pub mod functional_tests {
 #[cfg(not(tarpaulin_include))]
 mod tests {
    use super::*;
-   use crate::string_utils::s;
+   use crate::string_utils::{s,words};
 
    fn none() -> Vec<i32> { Vec::new() }
    fn one() -> Vec<i32> { vec![1] }
@@ -232,5 +236,21 @@ mod tests {
    }
    #[test] fn test_filter_map_or_ok() {
       assert!(filter_map_or(uno(), none()).is_ok());
+   }
+
+   #[test] fn test_parse_nums_ok() {
+      let nums: ErrStr<Vec<usize>> = parse_nums(&words("1 2 3 4"));
+      assert!(nums.is_ok());
+   }
+
+   #[test] fn fail_parse_nums() {
+      let nums: ErrStr<Vec<f32>> = parse_nums(&words("1 5 7 ur mom"));
+      assert!(nums.is_err());
+   }
+
+   #[test] fn test_parse_nums_pi_e_zero() -> ErrStr<()> {
+      let nums: Vec<f32> = parse_nums(&words("3.14159 2.71828 0"))?;
+      assert_eq!(vec![3.14159, 2.71828, 0.0], nums);
+      Ok(())
    }
 }

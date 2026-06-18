@@ -1,6 +1,6 @@
 // some standard APY-calculation functions
 
-use book::{ list_utils::parse_nums, utils::get_args };
+use book::{ err_utils::ErrStr, list_utils::parse_nums, utils::get_args };
 
 pub fn compute_real_r(supply: f32, borrow: f32, net_r: f32, spew: bool) -> f32 {
    let principal = supply - borrow;
@@ -29,10 +29,10 @@ fn spewage(supp: f32, borr: f32, rate: f32, princ: f32,
    println!("\t... and the real rate is ln(EOYP/P)\n");
 }
 
-pub fn fetch_spew_n_nums() -> (bool, Vec<f32>) {
+pub fn fetch_spew_n_nums() -> ErrStr<(bool, Vec<f32>)> {
    let args = get_args();
    let spew: bool = args.len() > 0 && args[0] == "--spew";
    let f = if spew { 1 } else { 0 };
-   let nums = parse_nums(&args[f ..]);
-   (spew, nums)
+   let nums = parse_nums(&args[f ..])?;
+   Ok((spew, nums))
 }

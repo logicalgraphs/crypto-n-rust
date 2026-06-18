@@ -1,4 +1,10 @@
-use std::{ clone::Clone, fmt::Debug };
+use std::{ clone::Clone, fmt::Debug, str::FromStr };
+
+use crate::{
+   err_utils::ErrStr,
+   list_utils::{filter_map_or,parse_nums},
+   string_utils::s
+};
 
 pub type Matrix<T> = Vec<Vec<T>>;
 
@@ -8,16 +14,12 @@ pub fn from_vec<T>(v: Vec<T>) -> Matrix<T> {
     mat
 }
 
-pub fn from_split_line<T>(f: impl Fn(&str) -> T) -> impl Fn(Vec<&str>)
-      -> Vec<T> {
-   move |line| line.into_iter().map(&f).collect()
-}
-
-pub fn from_lines<T>(f: impl Fn(&str) -> T, lines: &Vec<String>,
-                     separator: &str) -> Matrix<T> {
-    lines.into_iter()
-         .map(|l| from_split_line(&f)(l.split(separator).collect()))
-         .collect()
+pub fn from_lines<T: FromStr>(lines: &[&str], separator: &str)
+      -> ErrStr<Matrix<T>> where <T as FromStr>::Err: Debug {
+   filter_map_or(|line: &str| {
+      let eaches: Vec<String> = line.split(separator).map(s).collect();
+      parse_nums::<T>(&eaches)
+   }, lines.to_vec())
 }
 
 pub fn col<T: Clone>(rows: &Matrix<T>, col: usize) -> Vec<T> {
@@ -66,7 +68,7 @@ pub mod functional_tests {
 
    use super::*;
    use super::sample_matrices::{skinny,sudoku};
-   use crate::{ create_testing, err_utils::ErrStr };
+   use crate::{ create_testing, compose, utils::debug };
 
    create_testing!("matrix_utils");
 
@@ -81,6 +83,13 @@ pub mod functional_tests {
       let t = transpose(&ski);
       println!("\ntransposed:\n");
       print_matrix(&t);
+   });
+
+   run_with!("from_vec", vec![1,4,3], compose!(debug)(from_vec));
+   run!("from_lines", {
+      let src = vec!["1 2 3 4", "6 4 3 7", "9 2 6 7"];
+      let mat = from_lines::<usize>(&src, " ")?;
+      print_matrix(&mat);
    });
 }
 
