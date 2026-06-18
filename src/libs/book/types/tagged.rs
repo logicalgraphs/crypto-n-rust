@@ -1,4 +1,5 @@
-use crate::csv_utils::{CsvWriter,CsvHeader};
+use std::fmt;
+use crate::{ csv_utils::{CsvWriter,CsvHeader}, json_utils::AsJSON };
 
 use super::values::Value;
 
@@ -19,6 +20,12 @@ impl<T:CsvWriter> CsvWriter for Tag<T> {
 
 impl<T:CsvHeader> CsvHeader for Tag<T> {
    fn header(&self) -> String { format!("tag,{}", self.value.header()) }
+}
+
+impl<T: fmt::Debug> AsJSON for Tag<T> {
+   fn as_json(&self) -> String {
+      format!("{{ {:?}: {:?} }}", self.tag, self.value)
+   }
 }
 
 impl<T:Clone> Value<T> for Tag<T> {

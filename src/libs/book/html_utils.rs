@@ -15,6 +15,7 @@ pub enum HTML {
    TABLE(Vec<TR>),
    H((usize,String)),
    OL(Vec<LI>),
+   UL(Vec<LI>),
    A((String, String)),
    P(String),
    CODE(String),
@@ -56,8 +57,8 @@ pub fn mk_table(matrix: &Matrix<String>, footer: Option<TR>) -> HTML {
       }).unwrap())
    }
    fn td(s: &str) -> COL { TD((align_num(s), p(s))) }
-   fn tr(v: &[String]) -> TR {
-      TR { attribs: vec![], row: v.iter().map(td).collect() }
+   fn tr(v: &Vec<String>) -> TR {
+      TR { attribs: vec![], row: v.iter().map(|s| td(s)).collect() }
    }
    let mut ans = Vec::new();
    ans.push(TR { attribs: attrib("bgcolor", "cyan"), row: head });
@@ -90,7 +91,7 @@ pub fn colspan(cols: usize, content: HTML) -> COL {
 
 // ----- MODES -------------------------------------------------------
 
-#[derive(PartialEq, EnumIter)]
+#[derive(Clone, Debug, PartialEq, EnumIter)]
 pub enum Mode { HTML, TEXT, CSV }
 
 pub fn mk_mode(m: &str) -> Mode {
@@ -114,8 +115,8 @@ impl AsHTML for LI {
 impl AsHTML for COL {
    fn as_html(&self) -> String {
       match &self {
-         COL::TH(html) => elt("th", &html.as_html()),
-         COL::TD((attrs, html)) => eattrs("td", &attrs, &html.as_html())
+         TH(html) => elt("th", &html.as_html()),
+         TD((attrs, html)) => eattrs("td", &attrs, &html.as_html())
       }
    }
 }
@@ -138,6 +139,7 @@ impl AsHTML for HTML {
          H((n, title)) =>
             format!("{}\n{}", elt(&format!("h{n}"), title), nbsp().as_html()),
          OL(lis) => elt("ol", &list_h(&lis)),
+         UL(lis) => elt("ul", &list_h(&lis)),
          A((url, content)) => eattrs("a", &attrib("href", url), &content),
          P(content) => elt("p", content),
          CODE(code) => elt("code", code),
@@ -157,15 +159,13 @@ pub trait AsText {
    fn as_text(&self) -> String;
 }
 
-impl AsText for LI {
-   fn as_text(&self) -> String { self.line.to_string() }
-}
+impl AsText for LI { fn as_text(&self) -> String { s(&self.line) } }
 
 impl AsText for COL {
    fn as_text(&self) -> String {
       match &self {
-         TH(html) => elt("th", &html.as_text()),
-         TD((_, html)) => elt("td", &html.as_text())
+         TH(html) => html.as_text(),
+         TD((_, html)) => html.as_text()
       }
    }
 }
@@ -173,7 +173,7 @@ impl AsText for COL {
 impl AsText for TR {
    fn as_text(&self) -> String {
       let r: Vec<String> = self.row.iter().map(AsText::as_text).collect();
-      r.join("\t")
+      r.join("\n")
    }
 }
 
@@ -184,10 +184,11 @@ impl AsText for HTML {
          TABLE(rows) => { list_t(rows, false) },
          H((_, title)) => div(&title),
          OL(lis) => list_t(&lis, true),
+         UL(lis) => list_t(&lis, false),
          A((url, content)) => format!("{content} ({url})"),
          P(content) => div(&content),
-         CODE(code) => code.to_string(),
-         NBSP => "".to_string()
+         CODE(code) => s(code),
+         NBSP => s(" ")
       }
    }
 }
@@ -205,12 +206,53 @@ fn list_t<T: AsText>(v: &Vec<T>, numerate: bool) -> String {
 
 // ----- CSV mode -------------------------------------------------------
 
+// for AsCSV we're just going to render TD and TH contents
+
 pub trait AsCSV {
    fn as_csv(&self) -> String;
 }
 
+impl AsCSV for LI { fn as_csv(&self) -> String { s("") } }
+
+impl AsCSV for COL {
+   fn as_csv(&self) -> String {
+      match &self {
+         TH(html) => html.as_csv(),
+         TD((_, html)) => html.as_csv()
+      }
+   }
+}
+
+impl AsCSV for TR {
+   fn as_csv(&self) -> String {
+      let r: Vec<String> = self.row.iter().map(AsCSV::as_csv).collect();
+      r.join("\n")
+   }
+}
+
 impl AsCSV for HTML {
-   fn as_csv(&self) -> String { "".to_string() } // eheh: not much here, eh?
+   fn as_csv(&self) -> String {
+      match &self {
+         BODY(elts) => { list_c(elts, false) },
+         TABLE(rows) => { list_c(rows, false) },
+         H((_, title)) => div(&title),
+         OL(lis) => list_c(&lis, true),
+         UL(lis) => list_c(&lis, false),
+         A((url, content)) => format!("{content} ({url})"),
+         P(content) => div(&content),
+         CODE(code) => s(code),
+         NBSP => s(" ")
+      }
+   }
+}
+ 
+fn list_c<T: AsCSV>(v: &Vec<T>, numerate: bool) -> String {
+   let v1: Vec<String> = v.iter().enumerate().map(|(x,e)| {
+      let i = format!("{},", x + 1);
+      let idx = if numerate { &i } else { "" };
+      format!("{}{}", idx, e.as_csv())
+   }).collect();
+   v1.join("\n")
 }
 
 // ----- Run-off functions --------------------------------------------------
@@ -223,8 +265,8 @@ pub fn roff(mode: &Mode, content: &HTML) -> String {
    }
 }
 
-pub fn proff(elt: &HTML, mode: &Mode) {
-   println!("{}", roff(mode, elt));
+pub fn proff(mode: Mode) -> impl Fn(HTML) {
+   move |elt: HTML| println!("{}", roff(&mode, &elt))
 }
 
 // ----- HTML-constructors --------------------------------------------------
@@ -232,10 +274,11 @@ pub fn proff(elt: &HTML, mode: &Mode) {
 pub fn body(content: &[HTML]) -> HTML { BODY(content.to_vec()) }
 pub fn h(n: usize, titl: &str) -> HTML { H((n, s(titl))) }
 
-pub fn ol(list: &[String]) -> HTML {
-   let lis: Vec<LI> = list.iter().map(mk_li).collect();
-   OL(lis)
+fn list_elts(list: &[String]) -> Vec<LI> {
+   list.iter().map(|s| mk_li(s)).collect::<Vec<_>>()
 }
+pub fn ol(list: &[String]) -> HTML { OL(list_elts(list)) }
+pub fn ul(list: &[String]) -> HTML { UL(list_elts(list)) }
 
 pub fn a(url: &str, content: &str) -> HTML { A((s(url), s(content))) }
 pub fn p(content: &str) -> HTML { P(s(content)) }
@@ -277,7 +320,7 @@ fn attr(a: &Attrib) -> String {
 mod functional_tests {
    use super::*; 
    use paste::paste;
-   use crate::{create_testing, string_utils::{lines, words}};
+   use crate::{create_testing, err_utils::ErrStr, string_utils::{lines, words}};
 
    create_testing!("html_utils");
 
@@ -291,16 +334,20 @@ on a webpage."),
 the official"),
                a("https://www.w3schools.com", "W3Schools website"),
                h(2, "Common Web Development Languages"),
-            /* ol(lines("HTML (HyperText Markup Language)
+               ul(&lines("HTML (HyperText Markup Language)
 CSS (Cascading Style Sheets)
-JavaScript")),  */
+JavaScript")),
                h(2, "Steps to Launch a Website"),
-               ol(lines("Write the code using an editor.
+               ol(&lines("Write the code using an editor.
 Test the document in a web browser.
 Upload the files to a hosting server.")),
                h(2, "Project team roles"),
-               mk_table(vec![words("Name Role"),
-                 vec!["Alice Cooper", "Frontend developer"],
-                 vec!["Bob Plant", "UI/UX designer"]], None)])
+               mk_table(&vec![words("Name Role"),
+                 vec![s("Alice Cooper"), s("Frontend developer")],
+                 vec![s("Bob Plant"), s("UI/UX designer")]], None)])
    }
+
+   run!("as_html", proff(Mode::HTML)(dom()));
+   run!("as_text", proff(Mode::TEXT)(dom()));
+   run!("as_csv", proff(Mode::CSV)(dom()));
 }

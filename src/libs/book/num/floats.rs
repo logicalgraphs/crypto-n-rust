@@ -35,6 +35,7 @@ pub fn as_float(s: &SafeFloat) -> f32 { s.0 }
 #[cfg(not(tarpaulin_include))]
 #[cfg(test)]
 pub mod functional_tests {
+   use std::collections::HashSet;
    use super::*;
    use crate::{
       create_testing,
@@ -58,6 +59,12 @@ pub mod functional_tests {
    create_testing!("num::floats");
 
    run_with!("safefloat", " sort_by_key", nums(), composer(debug, sorter()));
+   run!("hashed_float", {
+      let floats: HashSet<SafeFloat> =
+         nums().iter().map(mk_safe_float).collect();
+      println!("Hashed floats: {floats:?}");
+   });
+   run_with!("as_float", &mk_safe_float(&12.5), as_float);
 
    mod tests {
       use super::*;
