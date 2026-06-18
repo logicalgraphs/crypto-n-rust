@@ -6,7 +6,7 @@ use crate::{
    list_utils::ht,
    matrix_utils::Matrix,
    num_utils::parse_commaless,
-   string_utils::quot
+   string_utils::{quot,s}
 };
 
 #[derive(Debug,Clone)]
@@ -20,13 +20,12 @@ pub enum HTML {
    CODE(String),
    NBSP
 }
+use HTML::*;
 
 #[derive(Debug,Clone)]
 pub struct LI { line: String }
 
-pub fn mk_li(l: &String) -> LI {
-   LI { line: l.to_string() }
-}
+pub fn mk_li(l: &str) -> LI { LI { line: s(l) } }
 
 // ----- TABLES ------------------------------------------------------
 
@@ -35,30 +34,29 @@ type Attrib = (String, String);
 #[derive(Debug,Clone)]
 pub struct TR { attribs: Vec<Attrib>, row: Vec<COL> }
 
-pub fn mk_tr(attribs: Vec<Attrib>, row: Vec<COL>) -> TR {
-   TR { attribs, row }
-}
+pub fn mk_tr(attribs: Vec<Attrib>, row: Vec<COL>) -> TR { TR { attribs, row } }
 
 #[derive(Debug,Clone)]
 pub enum COL {
    TD((Vec<Attrib>, HTML)),
    TH(HTML)     // TH((Vec<Attrib>, HTML)),
 }
+use COL::*;
 
 pub fn mk_table(matrix: &Matrix<String>, footer: Option<TR>) -> HTML {
    let (some_header, rows) = ht(matrix);
    let header = some_header.unwrap();
    let ncols = header.len();
-   fn th(s: &String) -> COL { COL::TH(p(s)) }
+   fn th(s: &String) -> COL { TH(p(s)) }
    let head = header.iter().map(th).collect();
-   fn align_num(s: &String) -> Vec<Attrib> {
+   fn align_num(s: &str) -> Vec<Attrib> {
       attrib("align", s.strip_prefix("$").or(Some(s)).and_then(|s1| {
          let n: Result<f32, _> = parse_commaless(s1);
          Some(match n { Ok(_) => "right", _ => "left" })
       }).unwrap())
    }
-   fn td(s: &String) -> COL { COL::TD((align_num(s), p(s))) }
-   fn tr(v: &Vec<String>) -> TR {
+   fn td(s: &str) -> COL { TD((align_num(s), p(s))) }
+   fn tr(v: &[String]) -> TR {
       TR { attribs: vec![], row: v.iter().map(td).collect() }
    }
    let mut ans = Vec::new();
@@ -69,7 +67,7 @@ pub fn mk_table(matrix: &Matrix<String>, footer: Option<TR>) -> HTML {
       let mut rows = vec![blank_row(ncols), foot];
       ans.append(&mut rows);
    }
-   HTML::TABLE(ans)
+   TABLE(ans)
 }
 
 pub fn no_attribs() -> Vec<Attrib> { Vec::new() }
@@ -84,10 +82,10 @@ pub fn blank_cols(n: usize) -> Vec<COL> {
    cols
 }
 
-fn blank_col() -> COL { COL::TD((no_attribs(), nbsp())) }
+fn blank_col() -> COL { TD((no_attribs(), nbsp())) }
 
 pub fn colspan(cols: usize, content: HTML) -> COL {
-   COL::TD ((attrib("colspan", &format!("{cols}")), content))
+   TD ((attrib("colspan", &format!("{cols}")), content))
 }
 
 // ----- MODES -------------------------------------------------------
@@ -131,19 +129,19 @@ impl AsHTML for TR {
 impl AsHTML for HTML {
    fn as_html(&self) -> String {
       match &self {
-         HTML::BODY(elts) => list_h(&elts),
-         HTML::TABLE(rows) =>
+         BODY(elts) => list_h(&elts),
+         TABLE(rows) =>
             eattrs("table",
                    &attribs(&[("border", "1"),("width","75%"),
                               ("align", "center")]),
                    &list_h(&rows)),
-         HTML::H((n, title)) =>
+         H((n, title)) =>
             format!("{}\n{}", elt(&format!("h{n}"), title), nbsp().as_html()),
-         HTML::OL(lis) => elt("ol", &list_h(&lis)),
-         HTML::A((url, content)) => eattrs("a", &attrib("href", url), &content),
-         HTML::P(content) => elt("p", content),
-         HTML::CODE(code) => elt("code", code),
-         HTML::NBSP => elt("p", "&nbsp;")
+         OL(lis) => elt("ol", &list_h(&lis)),
+         A((url, content)) => eattrs("a", &attrib("href", url), &content),
+         P(content) => elt("p", content),
+         CODE(code) => elt("code", code),
+         NBSP => elt("p", "&nbsp;")
       }
    }
 }
@@ -166,8 +164,8 @@ impl AsText for LI {
 impl AsText for COL {
    fn as_text(&self) -> String {
       match &self {
-         COL::TH(html) => elt("th", &html.as_text()),
-         COL::TD((_, html)) => elt("td", &html.as_text())
+         TH(html) => elt("th", &html.as_text()),
+         TD((_, html)) => elt("td", &html.as_text())
       }
    }
 }
@@ -182,14 +180,14 @@ impl AsText for TR {
 impl AsText for HTML {
    fn as_text(&self) -> String {
       match &self {
-         HTML::BODY(elts) => { list_t(elts, false) },
-         HTML::TABLE(rows) => { list_t(rows, false) },
-         HTML::H((_, title)) => div(&title),
-         HTML::OL(lis) => list_t(&lis, true),
-         HTML::A((url, content)) => format!("{content} ({url})"),
-         HTML::P(content) => div(&content),
-         HTML::CODE(code) => code.to_string(),
-         HTML::NBSP => "".to_string()
+         BODY(elts) => { list_t(elts, false) },
+         TABLE(rows) => { list_t(rows, false) },
+         H((_, title)) => div(&title),
+         OL(lis) => list_t(&lis, true),
+         A((url, content)) => format!("{content} ({url})"),
+         P(content) => div(&content),
+         CODE(code) => code.to_string(),
+         NBSP => "".to_string()
       }
    }
 }
@@ -212,7 +210,7 @@ pub trait AsCSV {
 }
 
 impl AsCSV for HTML {
-   fn as_csv(&self) -> String { "".to_string() }
+   fn as_csv(&self) -> String { "".to_string() } // eheh: not much here, eh?
 }
 
 // ----- Run-off functions --------------------------------------------------
@@ -231,38 +229,23 @@ pub fn proff(elt: &HTML, mode: &Mode) {
 
 // ----- HTML-constructors --------------------------------------------------
 
-pub fn body(content: &Vec<HTML>) -> HTML {
-   HTML::BODY(content.to_vec())
-}
+pub fn body(content: &[HTML]) -> HTML { BODY(content.to_vec()) }
+pub fn h(n: usize, titl: &str) -> HTML { H((n, s(titl))) }
 
-pub fn h(n: usize, titl: &str) -> HTML {
-   HTML::H((n, titl.to_string()))
-}
-
-pub fn ol(list: &Vec<String>) -> HTML {
+pub fn ol(list: &[String]) -> HTML {
    let lis: Vec<LI> = list.iter().map(mk_li).collect();
-   HTML::OL(lis)
+   OL(lis)
 }
 
-pub fn a(url: &str, content: &str) -> HTML {
-   HTML::A((url.to_string(), content.to_string()))
-}
-
-pub fn p(content: &str) -> HTML {
-   HTML::P(content.to_string())
-}
-
-pub fn nbsp() -> HTML {
-   HTML::NBSP
-}
+pub fn a(url: &str, content: &str) -> HTML { A((s(url), s(content))) }
+pub fn p(content: &str) -> HTML { P(s(content)) }
+pub fn nbsp() -> HTML { NBSP }
 
 pub fn attrib(name: &str, value: &str) -> Vec<Attrib> {
    vec![mk_attrib(&(name, value))]
 }
 
-pub fn mk_attrib(attr: &(&str, &str)) -> Attrib {
-   (attr.0.to_string(), attr.1.to_string())
-}
+pub fn mk_attrib(attr: &(&str, &str)) -> Attrib { (s(attr.0), s(attr.1)) }
 
 pub fn attribs(attrs: &[(&str, &str)]) -> Vec<Attrib> {
    attrs.iter().map(mk_attrib).collect()
@@ -285,4 +268,39 @@ fn attrs(attribs: &Vec<Attrib>) -> String {
 
 fn attr(a: &Attrib) -> String {
    format!("{}={}", a.0, &quot(&a.1))
+}
+
+// ----- TESTS -------------------------------------------------------
+
+#[cfg(test)]
+#[cfg(not(tarpaulin_include))]
+mod functional_tests {
+   use super::*; 
+   use paste::paste;
+   use crate::{create_testing, string_utils::{lines, words}};
+
+   create_testing!("html_utils");
+
+   fn dom() -> HTML {
+      body(
+         &vec![h(1, "Welcome to My Sample HTML Webpage"),
+               p("This is a standard paragraph element used to display text. 
+It provides a simple way to organize sentences and build core readable content 
+on a webpage."),
+               p("You can find more educational coding resources by visiting 
+the official"),
+               a("https://www.w3schools.com", "W3Schools website"),
+               h(2, "Common Web Development Languages"),
+            /* ol(lines("HTML (HyperText Markup Language)
+CSS (Cascading Style Sheets)
+JavaScript")),  */
+               h(2, "Steps to Launch a Website"),
+               ol(lines("Write the code using an editor.
+Test the document in a web browser.
+Upload the files to a hosting server.")),
+               h(2, "Project team roles"),
+               mk_table(vec![words("Name Role"),
+                 vec!["Alice Cooper", "Frontend developer"],
+                 vec!["Bob Plant", "UI/UX designer"]], None)])
+   }
 }
