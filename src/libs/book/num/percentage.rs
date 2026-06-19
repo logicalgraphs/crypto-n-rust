@@ -1,17 +1,11 @@
 // types, regardless underlying data sources
 
-use std::{
-   cmp::Ordering,
-   fmt,
-   str::FromStr
-};
+use std::{ cmp::Ordering, fmt, str::FromStr };
 
-use crate::err_utils::ErrStr;
+use crate::{ err_utils::ErrStr, types::values::Value };
 
 #[derive(Debug, Clone, Default)]
-pub struct Percentage {
-   pub percent: f32
-}
+pub struct Percentage { percent: f32 }
 
 // ----- implementations -----------------------------------------------------
 
@@ -53,6 +47,10 @@ impl PartialOrd for Percentage {
    }
 }
 
+impl Value<f32> for Percentage { 
+   fn value(&self) -> f32 { self.percent }
+}
+
 // ----- ... and our methods -------------------------------------------------
 
 pub fn mk_percentage(percent: f32) -> Percentage {
@@ -83,6 +81,12 @@ pub mod functional_tests {
    run!("of", " (taking the percentage of a value)", {
       let half = mk_percentage(0.5);
       println!("\t{half} of 8 is {}", half.of(8.0));
+   });
+   run!("parse_and_display", {
+      let datum = "43.6%";
+      let perc: Percentage = datum.parse()?;
+      println!("Input string: '{datum}'; percentage: {perc}; value: {}",
+               perc.value());
    });
 }
 
