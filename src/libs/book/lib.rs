@@ -19,21 +19,22 @@ pub mod table_utils;
 pub mod tuple_utils;
 pub mod types;
 
-use futures::Future;
-
-use tokio::runtime::Runtime;
-
-pub fn now<T, F: Future<Output = T>>(f2: F) -> T {
-   let rt = Runtime::new().unwrap();
-   rt.block_on(f2)
+#[macro_export] macro_rules! cond {
+   (if true { $($t:tt)* } else { $($f:tt)* }) => { $($t)* };
+   (if false { $($t:tt)* } else { $($f:tt)* }) => { $($f)* };
 }
 
-#[macro_export(local_inner_macros)] macro_rules! create_testing {
-   ($mod_name:expr) => { create_testing!(@impl $mod_name, "".to_string()); };
-   ($mod_name:expr, $descr:expr) => {
-      create_testing!(@impl $mod_name, ::std::format!("{}", $descr));
+#[macro_export] macro_rules! create_testing {
+   ($mod_name:expr) => {
+      create_testing!(@impl $mod_name, "".to_string(), false);
    };
-   (@impl $mod_name:expr, $description:expr) => {
+   ($mod_name:expr, $descr:expr) => {
+      create_testing!(@impl $mod_name, ::std::format!("{}", $descr), false);
+   };
+   ($mod_name:expr, $descr:expr, $is_app:tt) => {
+      create_testing!(@impl $mod_name, ::std::format!("{}", $descr), $is_app);
+   };
+   (@impl $mod_name:expr, $description:expr, $is_app:tt) => {
       #[test] fn runoff() {
          let d = if $description.is_empty() {
             "".to_string()
@@ -83,6 +84,8 @@ pub fn now<T, F: Future<Output = T>>(f2: F) -> T {
             }
          };
       }
+      $crate::cond! { if $is_app { run_helper!("usage", "", usage());
+      } else { } }
    };
 }
 
