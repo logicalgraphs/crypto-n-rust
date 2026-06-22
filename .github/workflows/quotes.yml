@@ -1,5 +1,5 @@
 name: quotes
-
+ 
 on:
   workflow_dispatch:
   schedule:
@@ -16,26 +16,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Cache a_quotes binary
+        id: a-quotes-cache
+        uses: actions/cache@v3
         with:
-          toolchain: stable
+          path: src/pivot/dApps/gecko/target/debug/a_quotes
+          key: a-quotes-binary-${{ hashFiles('src/pivot/dApps/gecko/**/*.rs', 'src/pivot/dApps/gecko/Cargo.toml') }}
 
-      - name: Cache Rust
-        uses: Swatinem/rust-cache@v2
-        with: 
-          workspaces: crypto-n-rust/src/pivot/dApps/gecko
+      - name: Install Rust toolchain
+        if: steps.a-quotes-cache.outputs.cache-hit != 'true'
+        uses: dtolnay/rust-toolchain@stable
 
+      - name: Build a_quotes
+        if: steps.a-quotes-cache.outputs.cache-hit != 'true'
+        run: cargo build --manifest-path src/pivot/dApps/gecko/Cargo.toml --bin a_quotes
+
+      - name: Add a_quotes to PATH
+        run: echo "$GITHUB_WORKSPACE/src/pivot/dApps/gecko/target/debug" >> $GITHUB_PATH
+ 
       - name: Run The Echo and Display The Date
         run: echo "LE_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
 
       - name: Cargo run and Log Output
         env:
           COIN_GECKO_API_KEY: ${{ secrets.COIN_GECKO_API_KEY }}
-        run: |
-          cargo run --manifest-path src/pivot/dApps/gecko/Cargo.toml \
-          --bin gecko \
-          $LE_DATE >> data-files/csv/quotes.csv
+        run: a_quotes $LE_DATE >> data-files/csv/quotes.csv
         
       - name: Commit and Push changes
         env:
