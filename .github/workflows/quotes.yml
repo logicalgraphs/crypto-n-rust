@@ -16,22 +16,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Cache a_quotes binary
-        id: a-quotes-cache
+      - name: Cache gecko binary
+        id: gecko-cache
         uses: actions/cache@v3
         with:
-          path: src/pivot/dApps/gecko/target/debug/a_quotes
-          key: a-quotes-binary-${{ hashFiles('src/pivot/dApps/gecko/**/*.rs', 'src/pivot/dApps/gecko/Cargo.toml') }}
+          path: src/pivot/dApps/gecko/target/debug/gecko
+          key: gecko-binary-${{ hashFiles('src/pivot/dApps/gecko/**/*.rs', 'src/pivot/dApps/gecko/Cargo.toml') }}
 
       - name: Install Rust toolchain
-        if: steps.a-quotes-cache.outputs.cache-hit != 'true'
+        if: steps.gecko-cache.outputs.cache-hit != 'true'
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Build a_quotes
-        if: steps.a-quotes-cache.outputs.cache-hit != 'true'
-        run: cargo build --manifest-path src/pivot/dApps/gecko/Cargo.toml --bin a_quotes
+      - name: Build gecko
+        if: steps.gecko-cache.outputs.cache-hit != 'true'
+        run: cargo build --manifest-path src/pivot/dApps/gecko/Cargo.toml --bin gecko
 
-      - name: Add a_quotes to PATH
+      - name: Add gecko to PATH
         run: echo "$GITHUB_WORKSPACE/src/pivot/dApps/gecko/target/debug" >> $GITHUB_PATH
  
       - name: Run The Echo and Display The Date
@@ -40,7 +40,7 @@ jobs:
       - name: Cargo run and Log Output
         env:
           COIN_GECKO_API_KEY: ${{ secrets.COIN_GECKO_API_KEY }}
-        run: a_quotes $LE_DATE >> data-files/csv/quotes.csv
+        run: gecko $LE_DATE >> data-files/csv/quotes.csv
         
       - name: Commit and Push changes
         env:
