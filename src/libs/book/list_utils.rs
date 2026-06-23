@@ -3,9 +3,12 @@ use std::{
    fmt::{Debug,Formatter, Result as Fresult},  // y'all can thank the Dylan
                                                // programming language for
                                                // item-renaming.
+   future::Future,
    slice::Iter,
    str::FromStr
 };
+
+use futures::future::try_join_all;
 
 use super::err_utils::{ErrStr,err_or};
 
@@ -68,6 +71,22 @@ pub fn filter_map_or<D,R>(f: impl Fn(D) -> ErrStr<R>,
    }
    Ok(ans) 
 }
+
+pub async fn async_filter_map<F, Fut, D, T>(f: F, v: Vec<D>) -> ErrStr<Vec<T>>
+      where F: Fn(D) -> Fut, Fut: Future<Output = ErrStr<T>> {
+   let futures = v.into_iter().map(f);
+   try_join_all(futures).await
+}
+
+/*
+   let mut ans = Vec::new();
+   for elt in v {
+      let res = f(elt).await?;
+      ans.push(res);
+   }
+   Ok(ans)
+}
+*/
 
 // ----- infinite lists --------------------------------------------------
 
@@ -236,6 +255,47 @@ mod tests {
    }
    #[test] fn test_filter_map_or_ok() {
       assert!(filter_map_or(uno(), none()).is_ok());
+   }
+
+   async fn dos(x: usize) -> ErrStr<String> {
+      match x {
+         2 => Ok(s("two")),
+         y => Err(format!("{y} is not dos"))
+      }
+   }
+
+   #[tokio::test] async fn test_concurrent_type_transformation() {
+      let inputs = vec![10, 20];
+      async fn format_fn(x: i32) -> ErrStr<String> {
+         Ok(format!("ID-{}", x))
+      }
+
+      let results = async_filter_map(format_fn, inputs).await;
+
+      assert_eq!(results, Ok(vec![s("ID-10"), s("ID-20")]));
+   }
+
+   #[tokio::test] async fn fail_async_filter_map() {
+      let inputs: Vec<usize> = (1 .. 5).collect();
+      let results = async_filter_map(dos, inputs).await;
+      assert!(results.is_err());
+   }
+
+   #[tokio::test] async fn async_filter_map_ok() -> ErrStr<()> {
+      let inputs = vec![2,2,2,2,2];
+      let results = async_filter_map(dos, inputs).await?;
+      assert_eq!(5, results.len());
+      Ok(())
+   }
+
+   #[tokio::test] async fn test_empty_vector_input() -> ErrStr<()> {
+      let inputs: Vec<i32> = vec![];
+      let dummy_fn = |x: i32| async move { Ok(x) };
+
+      let results = async_filter_map(dummy_fn, inputs).await?;
+
+      assert!(results.is_empty());
+      Ok(())
    }
 
    #[test] fn test_parse_nums_ok() {
