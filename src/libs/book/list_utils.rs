@@ -78,16 +78,6 @@ pub async fn async_filter_map<F, Fut, D, T>(f: F, v: Vec<D>) -> ErrStr<Vec<T>>
    try_join_all(futures).await
 }
 
-/*
-   let mut ans = Vec::new();
-   for elt in v {
-      let res = f(elt).await?;
-      ans.push(res);
-   }
-   Ok(ans)
-}
-*/
-
 // ----- infinite lists --------------------------------------------------
 
 #[derive(Clone)]
