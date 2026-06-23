@@ -19,6 +19,31 @@ pub mod table_utils;
 pub mod tuple_utils;
 pub mod types;
 
+// -- Iterative Development ---------------------------------------------------
+
+#[macro_export] macro_rules! not_implemented {
+    ($reason:literal) => {
+        panic!("Not Implemented: {}", $reason)
+    };
+    ($reason:literal, $($arg:expr),* $(,)?) => {{
+        // The $(let _ = $arg;)* block acts as a value-sink for any number 
+        // of expressions of any type before panicking.
+        $(let _ = $arg;)*
+        panic!("Not Implemented: {}", $reason)
+    }};
+}
+
+// -- Category Theory ---------------------------------------------------------
+
+// from Kirill A. Khalitov on Stack Overflow
+// https://stackoverflow.com/questions/45786955/how-to-compose-functions-in-rust
+
+#[macro_export] macro_rules! compose {
+   ($f: expr) => { move |g: fn(_) -> _| move |x: _| $f(g(x)) };
+}
+
+// -- Testing Framework -------------------------------------------------------
+
 #[macro_export] macro_rules! cond {
    (if true { $($t:tt)* } else { $($f:tt)* }) => { $($t)* };
    (if false { $($t:tt)* } else { $($f:tt)* }) => { $($f)* };
@@ -88,11 +113,3 @@ pub mod types;
       } else { } }
    };
 }
-
-// from Kirill A. Khalitov on Stack Overflow
-// https://stackoverflow.com/questions/45786955/how-to-compose-functions-in-rust
-
-#[macro_export] macro_rules! compose {
-   ($f: expr) => { move |g: fn(_) -> _| move |x: _| $f(g(x)) };
-}
-
