@@ -1,9 +1,8 @@
 use std::iter::zip;
 
-use book::{
-   err_utils::ErrStr,
-   utils::get_args
-};
+use clap::Parser;
+
+use book::err_utils::ErrStr;
 
 use swerve::{
    fetch_quotes::{fetch_lines,parse_token_headers,parse_row},
@@ -11,16 +10,17 @@ use swerve::{
    types::{Price,Quote,TokenId,Token}
 };
 
-fn usage() {
-   println!("\n./stat");
-   println!("\tSnarfs quotes.csv and reports the latest numbers.\n");
-   println!("...allow 5 minutes after quotes.csv updated for raw to catch up.");
+/// Snarfs quotes.csv and reports the latest numbers.
+///
+/// ...allow 5 minutes after quotes.csv updated for raw to catch up.
+#[derive(Debug, Parser)]
+#[command(name = "status")]
+#[command(version = "1.01")]
+struct Args {
 }
 
 #[tokio::main]
 async fn main() -> ErrStr<()> {
-   let args = get_args();
-   if args.first().is_some() { usage(); }
    let pivs = fetch_lines("main").await?;
    let header = parse_token_headers(&pivs);
    if let Some(line) = pivs.last() {

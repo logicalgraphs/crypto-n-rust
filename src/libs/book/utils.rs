@@ -1,20 +1,10 @@
-use std::{ env::{args,var}, fmt::{Debug,Display} };
+use std::{ env::var, fmt::{Debug,Display} };
 
 use futures::Future;
 
 use tokio::runtime::Runtime;
 
-use crate::{
-   err_utils::{ErrStr,err_or},
-   list_utils::tail
-};
-
-// ----- command line arguments fetch functions -------------------------
-
-pub fn get_args() -> Vec<String> {
-   let argus: Vec<String> = args().collect();
-   tail(&argus)
-}
+use crate::err_utils::{ErrStr,err_or};
 
 // ----- env vars -------------------------------------------------------
 

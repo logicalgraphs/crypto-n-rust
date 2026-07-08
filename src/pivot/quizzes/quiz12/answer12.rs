@@ -1,31 +1,32 @@
-use book::{
-   err_utils::ErrStr,
-   json_utils::AsJSON,
-   num_utils::parse_num,
-   utils::get_args
-};
+use clap::Parser;
+
+use book::{ err_utils::ErrStr, json_utils::AsJSON };
 
 use swerve::{snarf::{snarf_quotes,snarf_emas},types::mk_token};
 
-fn usage() -> ErrStr<()> {
-   println!("\n./ema <days> <token1> <token2>");
-   println!("\tSnarfs quotes.csv and ratios <token1>/<token2> for <days>");
-   println!("\tIt also computes the EMA20s for that token-pair.");
-   Err("Need to EMA20 over <days> <token1> <token2>".to_string())
+/// Snarfs quotes.csv and ratios <token1>/<token2> for <days>
+///
+/// It also computes the EMA20s for that token-pair.
+#[derive(Debug, Parser)]
+#[command(name = "ema")]
+struct Args {
+   /// The duration to compute the EMA
+   days: u64,
+
+   /// Denominator token, e.g.: BTC
+   denom: String,
+
+   /// Numerator token, e.g.: ETH
+   numer: String
 }
 
 #[tokio::main]
 async fn main() -> ErrStr<()> {
-   let args = get_args();
-   if let [dayz, token1, token2] = args.as_slice() {
-      let days = parse_num(&dayz)?;
-      let t1 = mk_token(&token1);
-      let t2 = mk_token(&token2);
-      let (_, quotes, date) = snarf_quotes("main").await?;
-      let emas = snarf_emas(&quotes, &date, days as u64, &t1, &t2)?;
-      println!("emas = {};", emas.as_json());
-      Ok(())
-   } else {
-      usage()
-   }
+   let args = Args::parse();
+   let t1 = mk_token(&args.denom);
+   let t2 = mk_token(&args.numer);
+   let (_, quotes, date) = snarf_quotes("main").await?;
+   let emas = snarf_emas(&quotes, &date, args.days, &t1, &t2)?;
+   println!("emas = {};", emas.as_json());
+   Ok(())
 }

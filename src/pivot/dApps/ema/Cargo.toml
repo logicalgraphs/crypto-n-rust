@@ -8,6 +8,8 @@ name = "ema"
 path = "../../quizzes/quiz12/answer12.rs"
 
 [dependencies]
+clap = { version = "4.5", features = ["derive"] }
+
 book = { path = "../../../libs/book" }
 swerve = { path = "../../swerve" }
 

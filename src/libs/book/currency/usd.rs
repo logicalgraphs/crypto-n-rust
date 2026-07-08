@@ -10,7 +10,7 @@ use std::{
 
 use crate::{
    err_utils::ErrStr,
-   num::floats::{ SafeFloat, mk_safe_float, as_float },
+   num::floats::safe_floats::{ SafeFloat, mk_safe_float, as_float },
    num_utils::parse_commaless
 };
 

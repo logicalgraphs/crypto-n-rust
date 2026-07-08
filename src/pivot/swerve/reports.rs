@@ -2,6 +2,7 @@ use chrono::NaiveDate;
 
 use book::{
    csv_utils::CsvWriter,
+   err_utils::ErrStr,
    string_utils::plural
 };
 
@@ -13,14 +14,15 @@ fn headers(row: &Vec<Price>) {
    println!(",{}", syms.join(","));
 }
 
-pub fn one_row(date: &NaiveDate, row: &Vec<Price>) {
+pub fn one_row(date: &NaiveDate, row: &Vec<Price>) -> ErrStr<()> {
    let vals: Vec<String> = row.iter().map(|price| price.1.as_csv()).collect();
    println!("{date},{}\n", vals.join(","));
+   Ok(())
 }
 
-fn one_row_with_headers(date: &NaiveDate, row: &Vec<Price>) {
+fn one_row_with_headers(date: &NaiveDate, row: &Vec<Price>) -> ErrStr<()> {
    headers(row);
-   one_row(date, row);
+   one_row(date, row)
 }
 
 pub fn portfolio_prices(date: &NaiveDate, row: &Vec<Price>) {
@@ -37,11 +39,13 @@ pub fn report_diffs((kind, diffs): &Diffs) -> String {
             plural(n, "token"), kind.as_csv(), diffs.join(", "))
 }
 
-pub fn report(date: &NaiveDate, row: &Vec<Price>, errs: &Option<Diffs>) {
+pub fn report(date: &NaiveDate, row: &Vec<Price>, errs: &Option<Diffs>)
+      -> ErrStr<()> {
    portfolio_prices(date, row);
    println!("\n... and as one line:\n");
-   one_row_with_headers(date, row);
+   one_row_with_headers(date, row)?;
    if let Some(diffs) = errs {
       report_diffs(&diffs);
    }
+   Ok(())
 }
