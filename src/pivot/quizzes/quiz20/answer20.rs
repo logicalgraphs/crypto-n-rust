@@ -1,9 +1,11 @@
+use chrono::NaiveDate;
+use clap::Parser;
+
 use book::{
    csv_utils::print_csv,
-   date_utils::parse_date,
    err_utils::ErrStr,
    table_utils::rows,
-   utils::{get_args,get_env}
+   utils::get_env
 };
 
 use swerve::{
@@ -11,33 +13,37 @@ use swerve::{
    types::{mk_token}
 };
 
-fn usage() {
-   println!("./tok <date> <API-id> <symbol>
-\tFetches chart for $QUOTES for entire date-range of $QUOTES.
-\tYou can find <API-id> from https://www.coingecko.com/
-\t<symbol> is the token, e.g.: BTC or ETH or whatevs.
-\t<date> is today.
-");
-}
-
 // This answer snarfs the JSON then reifies that as a PivotTable... for a
 // requested token-id
+
+/// Fetches chart for $QUOTES for entire date-range of $QUOTES.
+///
+/// You can find <API-id> from https://www.coingecko.com/
+#[derive(Debug, Parser)]
+#[command(name = "tok")]
+#[command(version = "1.01")]
+struct Args {
+   /// token-symbol to fetch quotes, e.g.: BTC
+   symbol: String,
+
+   /// CoinGecko API token id, e.g.: bitcoin
+   token_id: String,
+
+   /// Date to which the prices are fetched (starting from $QUOTES-date),
+   /// e.g.: $LE_DATE
+   date: NaiveDate
+}
 
 #[tokio::main]
 async fn main() -> ErrStr<()> {
    let pass = get_env("COIN_GECKO_API_KEY")?;
-   let args = get_args();
-   if let [date, tok_id, sym] = args.as_slice() {
-      let today = parse_date(&date)?;
-      let (_dict, pivots, _max_date) = snarf_quotes("main").await?;
-      let rows = rows(&pivots);
-      let min_date = rows.first().ok_or("QUOTES table empty???")?;
-      let n = (today - *min_date).num_days() + 1;
-      let token = mk_token(&sym);
-      let table = snarf_quote_table(&pass, &tok_id, &token, n).await?;
-      print_csv(&table);
-   } else {
-      usage();
-   }
+   let args = Args::parse();
+   let (_dict, pivots, _max_date) = snarf_quotes("main").await?;
+   let rows = rows(&pivots);
+   let min_date = rows.first().ok_or("QUOTES table empty???")?;
+   let n = (args.date - *min_date).num_days() + 1;
+   let token = mk_token(&args.symbol);
+   let table = snarf_quote_table(&pass, &args.token_id, &token, n).await?;
+   print_csv(&table);
    Ok(())
 }

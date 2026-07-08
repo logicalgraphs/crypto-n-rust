@@ -8,6 +8,8 @@ name = "tok"
 path = "../../quizzes/quiz20/answer20.rs"
 
 [dependencies]
+clap = { version = "4.5", features = ["derive"] }
+
 book = { path = "../../../libs/book" }
 swerve = { path = "../../swerve" }
 

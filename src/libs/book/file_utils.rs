@@ -170,7 +170,8 @@ mod tests {
    fn test_dirs_files() {
       let ans = dirs_files(".");
       let (dirs, files) = &ans;
-      assert_eq!(3, dirs.len());
+      let n = 4;
+      assert_eq!(n, dirs.len(), "expected {n} directories for {dirs:?}");
       assert!(files.len() > 10);
    }
 

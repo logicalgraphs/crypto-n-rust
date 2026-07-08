@@ -1,34 +1,30 @@
-use book::{
-   date_utils::parse_date,
-   err_utils::ErrStr,
-   utils::get_args
-};
+use chrono::NaiveDate;
+use clap::Parser;
 
-use swerve::{
-   reports::{one_row,report_diffs},
-   snarf::snarf
-};
+use book::err_utils::ErrStr;
 
-fn usage() -> ErrStr<()> {
-   println!("\n./gecko <date> [branch=main]");
-   println!("\tQueries coingecko REST endpoint for token-prices");
-   Err("Enter date of data to query coingecko REST endpoint.".to_string())
+use swerve::{ reports::{ one_row, report_diffs }, snarf::snarf };
+
+/// Queries coingecko REST endpoint for token-prices
+#[derive(Debug, Parser)]
+#[command(name = "gecko")]
+#[command(version = "1.01")]
+struct Args {
+   /// date to query quotes, e.g.: $LE_DATE
+   date: NaiveDate,
+
+   /// repository branch to run quotes
+   #[arg(short, long, default_value = "main")]
+   branch: String
 }
 
 #[tokio::main]
 async fn main() -> ErrStr<()> {
-   let args = get_args();
-   if let Some(dt) = args.first() {
-      let branch = if args.len() == 2 { &args.last().unwrap() } else { "main" };
-      let dat = parse_date(&dt)?;
-      let (prices, errs) = snarf(branch).await?;
-      if let Some(diffs) = errs { 
-         Err(report_diffs(&diffs))
-      } else {
-         one_row(&dat, &prices);
-         Ok(())
-      }
+   let args = Args::parse();
+   let (prices, errs) = snarf(&args.branch).await?;
+   if let Some(diffs) = errs { 
+      Err(report_diffs(&diffs))
    } else {
-      usage()
+      one_row(&args.date, &prices)
    }
 }

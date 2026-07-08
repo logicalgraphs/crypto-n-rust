@@ -1,4 +1,5 @@
 pub mod utils;
+pub mod cli_utils;
 pub mod csv_utils;
 pub mod currency;
 pub mod date_utils;
@@ -18,6 +19,19 @@ pub mod string_utils;
 pub mod table_utils;
 pub mod tuple_utils;
 pub mod types;
+
+// -- Get the arguments from the shell and add a banner, too! -----------------
+#[macro_export] macro_rules! parse_args_add_banner {
+    ($struct_type:ty) => {{
+        let cmd = <$struct_type as ::clap::CommandFactory>::command();
+        // Get the base command and pipe it through the add_banner function
+        let thunk = add_banner(cmd);
+
+        // Map matches back to your structured Args struct
+        <$struct_type as ::clap::FromArgMatches>::from_arg_matches(&thunk)
+            .unwrap_or_else(|e| e.exit())
+    }};
+}
 
 // -- Iterative Development ---------------------------------------------------
 
@@ -51,15 +65,12 @@ pub mod types;
 
 #[macro_export] macro_rules! create_testing {
    ($mod_name:expr) => {
-      create_testing!(@impl $mod_name, "".to_string(), false);
+      create_testing!(@impl $mod_name, "".to_string());
    };
    ($mod_name:expr, $descr:expr) => {
-      create_testing!(@impl $mod_name, ::std::format!("{}", $descr), false);
+      create_testing!(@impl $mod_name, ::std::format!("{}", $descr));
    };
-   ($mod_name:expr, $descr:expr, $is_app:tt) => {
-      create_testing!(@impl $mod_name, ::std::format!("{}", $descr), $is_app);
-   };
-   (@impl $mod_name:expr, $description:expr, $is_app:tt) => {
+   (@impl $mod_name:expr, $description:expr) => {
       #[test] fn runoff() {
          let d = if $description.is_empty() {
             "".to_string()
@@ -109,7 +120,5 @@ pub mod types;
             }
          };
       }
-      $crate::cond! { if $is_app { run_helper!("usage", "", usage());
-      } else { } }
    };
 }
