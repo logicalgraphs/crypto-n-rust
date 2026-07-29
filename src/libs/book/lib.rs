@@ -21,14 +21,32 @@ pub mod tuple_utils;
 pub mod types;
 
 // -- Get the arguments from the shell and add a banner, too! -----------------
-#[macro_export] macro_rules! parse_args_add_banner {
-    ($struct_type:ty) => {{
-        let cmd = <$struct_type as ::clap::CommandFactory>::command();
-        // Get the base command and pipe it through the add_banner function
-        let thunk = add_banner(cmd);
+#[macro_export]
+macro_rules! parse_args_add_banner {
+    ($struct_type:ty) => {
+        $crate::__parse_args_impl!($struct_type, false)
+    };
+}
 
-        // Map matches back to your structured Args struct
-        <$struct_type as ::clap::FromArgMatches>::from_arg_matches(&thunk)
+#[macro_export]
+macro_rules! parse_args_print_banner {
+    ($struct_type:ty) => {
+        $crate::__parse_args_impl!($struct_type, true)
+    };
+}
+
+// Hidden helper macro that handles the shared clap parsing logic
+#[doc(hidden)]
+#[macro_export]
+macro_rules! __parse_args_impl {
+   ($struct_type:ty, $print:expr) => {{
+      let cmd = <$struct_type as ::clap::CommandFactory>::command();
+      let custom_banner = generate_banner(&cmd);
+      if $print { println!("{}", custom_banner); }
+      let thunk = cmd.about(custom_banner.clone())
+                     .long_about(custom_banner)
+                     .get_matches();
+      <$struct_type as ::clap::FromArgMatches>::from_arg_matches(&thunk)
             .unwrap_or_else(|e| e.exit())
     }};
 }
