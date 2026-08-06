@@ -42,12 +42,14 @@ macro_rules! __parse_args_impl {
    ($struct_type:ty, $print:expr) => {{
       let cmd = <$struct_type as ::clap::CommandFactory>::command();
       let custom_banner = generate_banner(&cmd);
-      if $print { println!("{}", custom_banner); }
       let thunk = cmd.about(custom_banner.clone())
-                     .long_about(custom_banner)
+                     .long_about(custom_banner.clone())
                      .get_matches();
-      <$struct_type as ::clap::FromArgMatches>::from_arg_matches(&thunk)
-            .unwrap_or_else(|e| e.exit())
+      let args =
+         <$struct_type as ::clap::FromArgMatches>::from_arg_matches(&thunk)
+                     .unwrap_or_else(|e| e.exit());
+      if $print { println!("{}", custom_banner); }
+      args
     }};
 }
 
