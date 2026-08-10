@@ -52,10 +52,12 @@ pub fn enumerate_csv<T: CsvWriter>(v: &Vec<T>) -> String {
 
 // ----- Serializer -------------------------------------------------------
 
-fn as_str<T:Debug + Serialize>(sep: u8, v: &[T]) -> ErrStr<String> {
+fn as_str<T:Debug + Serialize>(sep: u8, v: &[T], hdr: bool) -> ErrStr<String> {
    let mut output = Vec::new();
-   let mut wtr = csv::WriterBuilder::new().delimiter(sep)
-                                          .from_writer(&mut output);
+   let mut wtr = csv::WriterBuilder::new()
+                     .delimiter(sep)
+                     .has_headers(hdr)
+                     .from_writer(&mut output);
    for new_row in v {
       err_or(wtr.serialize(&new_row),
              &format!("Could not serialize row:\n{new_row:?}"))?;
@@ -71,12 +73,12 @@ fn as_str<T:Debug + Serialize>(sep: u8, v: &[T]) -> ErrStr<String> {
           &format!("Could not convert table to string"))
 }
 
-pub fn as_tsv<T:Debug + Serialize>(v: &[T]) -> ErrStr<String> {
-   as_str(b'\t', v)
+pub fn as_tsv<T:Debug + Serialize>(v: &[T], header: bool) -> ErrStr<String> {
+   as_str(b'\t', v, header)
 }
 
-pub fn as_csv<T:Debug + Serialize>(v: &[T]) -> ErrStr<String> {
-   as_str(b',', v)
+pub fn as_csv<T:Debug + Serialize>(v: &[T], header: bool) -> ErrStr<String> {
+   as_str(b',', v, header)
 }
 
 // ----- Parsers -------------------------------------------------------
@@ -277,12 +279,12 @@ mod functional_tests {
 
    run!("as_csv", " (Serialize)", {
       let groceries = items::<Grocery>(&inventory())?;
-      println!("The groceries are:\n\n{}", as_csv(&groceries)?);
+      println!("The groceries are:\n\n{}", as_csv(&groceries, true)?);
    });
 
    run!("as_tsv", " (Serialize)", {
       let groceries = items::<Grocery>(&inventory())?;
-      println!("The groceries are:\n\n{}", as_tsv(&groceries)?);
+      println!("The groceries are:\n\n{}", as_tsv(&groceries, true)?);
    });
 
    run!("parse_csv", {
