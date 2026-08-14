@@ -22,6 +22,10 @@ pub fn plural(n: usize, noun: &str) -> String {
    format!("{n} {noun}{s}")
 }
 
+pub fn is_are(n: usize, noun: &str) -> String {
+   format!("{} {}", if n == 1 { "is" } else { "are" }, plural(n, noun))
+}
+
 // ----- Article --------------------------------------------------------------
 // added by bparis to pivoteur protocol, moved here by dma
 
