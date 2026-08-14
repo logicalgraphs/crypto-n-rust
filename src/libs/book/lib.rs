@@ -20,7 +20,91 @@ pub mod table_utils;
 pub mod tuple_utils;
 pub mod types;
 
+// -- Debug logging -----------------------------------------------------------
+
+#[macro_export]
+macro_rules! debug {
+    ($fn_name:expr, $enabled:expr) => {
+        // We define a local helper macro in the current scope that avoids 
+        // nested repetition syntax.
+        // It maps a flat token slice straight down into println!
+        #[allow(unused_macros)]
+        macro_rules! log {
+            ($fmt:expr) => {
+                if $enabled {
+                    println!(
+                       concat!("\x1b[32m[{}::", $fn_name, ":{}]\x1b[0m ", $fmt),
+                       module_path!(), line!()
+                    );
+                }
+            };
+            ($fmt:expr, $arg1:expr) => {
+                if $enabled {
+                    println!(
+                       concat!("\x1b[32m[{}::", $fn_name, ":{}]\x1b[0m ", $fmt),
+                       module_path!(), line!(),
+                       $arg1
+                    );
+                }
+            };
+            ($fmt:expr, $arg1:expr, $arg2:expr) => {
+                if $enabled {
+                    println!(
+                       concat!("\x1b[32m[{}::", $fn_name, ":{}]\x1b[0m ", $fmt),
+                       module_path!(), line!(),
+                       $arg1,
+                       $arg2
+                    );
+                }
+            };
+            ($fmt:expr, $arg1:expr, $arg2:expr, $arg3:expr) => {
+                if $enabled {
+                    println!(
+                       concat!("\x1b[32m[{}::", $fn_name, ":{}]\x1b[0m ", $fmt),
+                       module_path!(), line!(),
+                       $arg1,
+                       $arg2,
+                       $arg3
+                    );
+                }
+            };
+        }
+    };
+}
+
+/*
+
+This 'elegant' version gets the following compile error on expansion:
+
+error: attempted to repeat an expression containing no syntax variables 
+matched as repeating at this depth
+
+And appears to be due to nesting macros
+
+#[macro_export]
+macro_rules! debug {
+    ($fn_name:expr, $enabled:expr) => {
+        // We create a tiny local closure named `log` 
+        let log = |args: std::fmt::Arguments| {
+            if $enabled {
+                eprintln!("[{}::{}] {}",
+                          module_path!(), $fn_name, args);
+            }
+        };
+        // A helper macro that cleanly wraps everything via format_args!
+        // This does not trigger the depth repetition error
+        #[allow(unused_macros)]
+        macro_rules! log {
+            ($fmt:expr $(, $arg:expr)*) => {
+                log(format_args!($fmt $(, $arg)*))
+            };
+        }
+    };
+}
+*/
+
 // -- Get the arguments from the shell and add a banner, too! -----------------
+
 #[macro_export]
 macro_rules! parse_args_add_banner {
     ($struct_type:ty) => {
