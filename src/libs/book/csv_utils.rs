@@ -109,11 +109,15 @@ pub fn parse_tsv<T>(skip_lines: usize, f: &ParserFn<T>, lines: &Vec<String>)
    parser("\t", skip_lines, f, lines)
 }
 
-pub fn items<T:DeserializeOwned>(s: &str) -> ErrStr<Vec<T>> {
+pub fn parse_items<T:DeserializeOwned>(s: &str) -> ErrStr<Vec<T>> {
    let mut r = csv::ReaderBuilder::new()
                   .delimiter(b',').from_reader(s.as_bytes());
    let mut ans = Vec::new();
-   for item in r.deserialize() { ans.push(err_or(item, "Cannot parse")?); }
+   let mut row = 0;
+   for item in r.deserialize() {
+      row += 1;
+      ans.push(err_or(item, &format!("Cannot parse row {row}"))?);
+   }
    Ok(ans)
 }
 
@@ -278,12 +282,12 @@ mod functional_tests {
    create_testing!("csv_utils");
 
    run!("as_csv", " (Serialize)", {
-      let groceries = items::<Grocery>(&inventory())?;
+      let groceries = parse_items::<Grocery>(&inventory())?;
       println!("The groceries are:\n\n{}", as_csv(&groceries, true)?);
    });
 
    run!("as_tsv", " (Serialize)", {
-      let groceries = items::<Grocery>(&inventory())?;
+      let groceries = parse_items::<Grocery>(&inventory())?;
       println!("The groceries are:\n\n{}", as_tsv(&groceries, true)?);
    });
 
@@ -294,8 +298,8 @@ mod functional_tests {
    });
 
    run!("columns", {
-      let groc = items::<Grocery>(&inventory())?;
-      let stor = items::<Store>(&stores())?;
+      let groc = parse_items::<Grocery>(&inventory())?;
+      let stor = parse_items::<Store>(&stores())?;
       let col1 = mk_csvs(&groc);
       let col2 = mk_csvs(&stor);
       let cols = columns(&[col1, col2], 1);
@@ -303,24 +307,24 @@ mod functional_tests {
    });
 
    run!("print_csv", {
-      let groceries = items::<Grocery>(&inventory())?;
+      let groceries = parse_items::<Grocery>(&inventory())?;
       let ringo = groceries.first().unwrap();
       print_csv(ringo);
    });
 
    run!("print_as_tsv", {
-      let stores = items::<Store>(&stores())?;
+      let stores = parse_items::<Store>(&stores())?;
       let ann = stores.first().unwrap();
       print_as_tsv(&ann.as_csv());
    });
 
    run!("list_csv", {
-      let stores = items::<Store>(&stores())?;
+      let stores = parse_items::<Store>(&stores())?;
       println!("Stores:\n\n{}", list_csv(&stores));
    });
 
    run!("enumerate_csv", {
-      let groceries = items::<Grocery>(&inventory())?;
+      let groceries = parse_items::<Grocery>(&inventory())?;
       println!("Inventory:\n\n{}", enumerate_csv(&groceries));
    });
 }
@@ -346,7 +350,7 @@ mod tests {
    #[test] fn parse_csv_and_items_idempotent() -> ErrStr<()> {
       let parsed_lines =
          parse_csv(1, &parse_grocery, &init(&lines(&inventory())))?;
-      let groceries = items::<Grocery>(&inventory())?;
+      let groceries = parse_items::<Grocery>(&inventory())?;
       assert_eq!(groceries.len(), parsed_lines.len(), "length unequal");
       assert_eq!(groceries, parsed_lines);
       Ok(())
