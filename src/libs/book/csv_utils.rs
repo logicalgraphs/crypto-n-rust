@@ -109,10 +109,10 @@ pub fn parse_tsv<T>(skip_lines: usize, f: &ParserFn<T>, lines: &Vec<String>)
    parser("\t", skip_lines, f, lines)
 }
 
-pub fn parse_items_delim<T:DeserializeOwned>(s: &str, delim: byte)
+pub fn parse_items_delim<T:DeserializeOwned>(s: &str, delim: u8)
       -> ErrStr<Vec<T>> {
    let mut r = csv::ReaderBuilder::new()
-                  .delimiter(b',').from_reader(s.as_bytes());
+                  .delimiter(delim).from_reader(s.as_bytes());
    let mut ans = Vec::new();
    let mut row = 0;
    for item in r.deserialize() {
