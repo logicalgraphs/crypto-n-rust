@@ -28,21 +28,26 @@ macro_rules! debug {
         // We define a local helper macro in the current scope that avoids 
         // nested repetition syntax.
         // It maps a flat token slice straight down into println!
+        fn the_time() -> String {
+           use chrono::Local;
+           let ima = Local::now();
+           format!("{}", ima.format("%Y-%m-%d %H:%M:%S"))
+        }
         #[allow(unused_macros)]
         macro_rules! log {
             ($fmt:expr) => {
                 if $enabled {
                     println!(
-                       concat!("\x1b[32m[{}::", $fn_name, ":{}]\x1b[0m ", $fmt),
-                       module_path!(), line!()
+                       concat!("\x1b[32m[{} {}::", $fn_name, ":{}]\x1b[0m ", $fmt),
+                       the_time(), module_path!(), line!()
                     );
                 }
             };
             ($fmt:expr, $arg1:expr) => {
                 if $enabled {
                     println!(
-                       concat!("\x1b[32m[{}::", $fn_name, ":{}]\x1b[0m ", $fmt),
-                       module_path!(), line!(),
+                       concat!("\x1b[32m[{} {}::", $fn_name, ":{}]\x1b[0m ", $fmt),
+                       the_time(), module_path!(), line!(),
                        $arg1
                     );
                 }
@@ -50,8 +55,8 @@ macro_rules! debug {
             ($fmt:expr, $arg1:expr, $arg2:expr) => {
                 if $enabled {
                     println!(
-                       concat!("\x1b[32m[{}::", $fn_name, ":{}]\x1b[0m ", $fmt),
-                       module_path!(), line!(),
+                       concat!("\x1b[32m[{} {}::", $fn_name, ":{}]\x1b[0m ", $fmt),
+                       the_time(), module_path!(), line!(),
                        $arg1,
                        $arg2
                     );
@@ -60,8 +65,8 @@ macro_rules! debug {
             ($fmt:expr, $arg1:expr, $arg2:expr, $arg3:expr) => {
                 if $enabled {
                     println!(
-                       concat!("\x1b[32m[{}::", $fn_name, ":{}]\x1b[0m ", $fmt),
-                       module_path!(), line!(),
+                       concat!("\x1b[32m[{} {}::", $fn_name, ":{}]\x1b[0m ", $fmt),
+                       the_time(), module_path!(), line!(),
                        $arg1,
                        $arg2,
                        $arg3
