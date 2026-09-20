@@ -1,4 +1,5 @@
 pub mod utils;
+pub mod async_utils;
 pub mod cli_utils;
 pub mod csv_utils;
 pub mod currency;
