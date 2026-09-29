@@ -38,16 +38,30 @@ pub fn print_as_tsv(row: &String) {
    print_line(&cols.join("\t"));
 }
 
-pub fn list_csv<T: CsvWriter>(v: &[T]) -> String {
-   v.iter().map(|e| format!("{}", e.as_csv())).collect::<Vec<_>>().join("\n")
+fn with_header<T: CsvHeader>(prefix: &str, p: Option<&T>, print_header: bool)
+      -> String {
+   print_header.then(|| p.map(|q| format!("{prefix}{}\n", q.header())))
+               .flatten()
+               .unwrap_or_default()
 }
 
-pub fn enumerate_csv<T: CsvWriter>(v: &Vec<T>) -> String {
-   v.iter()
-    .enumerate()
-    .map(|(x,e)| format!("{},{}", x + 1, e.as_csv()))
-    .collect::<Vec<_>>()
-    .join("\n")
+pub fn list_csv<T: CsvWriter + CsvHeader>(v: &[T], print_header: bool)
+      -> String {
+   let csv_rows: Vec<_> = v.iter().map(|e| format!("{}", e.as_csv())).collect();
+   format!("{}{}",
+           with_header("", v.first(), print_header),
+           csv_rows.join("\n"))
+}
+
+pub fn enumerate_csv<T: CsvWriter +  CsvHeader>(v: &[T], print_header: bool)
+      -> String {
+   let enum_rows: Vec<_> = v.iter()
+                            .enumerate()
+                            .map(|(x,e)| format!("{},{}", x + 1, e.as_csv()))
+                            .collect();
+   format!("{}{}",
+           with_header("ix", v.first(), print_header),
+           enum_rows.join("\n"))
 }
 
 // ----- Serializer -------------------------------------------------------
@@ -324,12 +338,12 @@ mod functional_tests {
 
    run!("list_csv", {
       let stores = parse_items::<Store>(&stores())?;
-      println!("Stores:\n\n{}", list_csv(&stores));
+      println!("Stores:\n\n{}", list_csv(&stores, true));
    });
 
    run!("enumerate_csv", {
       let groceries = parse_items::<Grocery>(&inventory())?;
-      println!("Inventory:\n\n{}", enumerate_csv(&groceries));
+      println!("Inventory:\n\n{}", enumerate_csv(&groceries, true));
    });
 }
 
