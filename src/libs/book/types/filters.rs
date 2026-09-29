@@ -31,12 +31,15 @@ impl CsvWriter for Stringy {
    fn ncols(&self) -> usize { 1 }
    fn as_csv(&self) -> String { self.s.clone() }
 }
+impl CsvHeader for Stringy {
+   fn header(&self) -> String { String::default() }
+}
 fn mk_stringy<U: fmt::Display>(s: U) -> Stringy {
    Stringy { s: format!("{s}") }
 }
 
 fn default_as_csv<T: fmt::Display, P: PermissionList<T>>(p: &P) -> String {
-   enumerate_csv(&p.set().into_iter().map(mk_stringy).collect())
+   enumerate_csv(&p.set().into_iter().map(mk_stringy).collect::<Vec<_>>(), 0==1)
 }
 fn default_header() -> String { s("member") }
 

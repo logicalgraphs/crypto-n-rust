@@ -8,12 +8,12 @@ use bimap::BiMap;
 use chrono::{Days,NaiveDate};
 
 use book::{
-   csv_utils::{CsvWriter,list_csv},
+   csv_utils::{ CsvHeader, CsvWriter, list_csv },
    err_utils::ErrStr,
    json_utils::{AsJSON,json_list,to_object},
    list_utils::ht,
    num_utils::{minimax_f32,parse_num},
-   string_utils::quot,
+   string_utils::{ quot, s },
    table_utils::{Table,row_filter,col,rows,val},
    types::{stamped::{stamp,Stamped},tagged::{Tag,untag},values::Value}
 };
@@ -301,6 +301,9 @@ impl CsvWriter for Delta {
       format!("{},{:?}", self.d.date(), self.d.value())
    }
 }
+impl CsvHeader for Delta {
+   fn header(&self) -> String { s("date,delta") }
+}
 
 fn mk_delta(ema: &EMA) -> Delta {
    let delta = ema.ema - ema.ratio.r.value();
@@ -322,9 +325,7 @@ impl AsJSON for Deltas {
 
 impl CsvWriter for Deltas {
    fn ncols(&self) -> usize { 2 }
-   fn as_csv(&self) -> String {
-      format!("date,delta\n{}", list_csv(&self.deltas))
-   }
+   fn as_csv(&self) -> String { list_csv(&self.deltas, true) }
 }
 
 pub fn confidence(ds: &Deltas) -> Option<Confidence> {
