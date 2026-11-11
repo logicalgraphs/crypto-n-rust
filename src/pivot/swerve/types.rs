@@ -9,6 +9,7 @@ use chrono::{Days,NaiveDate};
 
 use book::{
    csv_utils::{ CsvHeader, CsvWriter, list_csv },
+   currency::usd::{ USD, mk_usd },
    err_utils::ErrStr,
    json_utils::{AsJSON,json_list,to_object},
    list_utils::ht,
@@ -25,6 +26,13 @@ use serde::Deserialize;
 #[derive(Deserialize, Debug, Clone)]
 pub struct Quote { usd: f32 }
 pub fn mk_quote(usd: f32) -> Quote { Quote { usd } }
+
+impl Quote {
+   pub fn as_usd(&self) -> USD { mk_usd(self.usd) }
+}
+impl Value<f32> for Quote {
+   fn value(&self) -> f32 { self.usd }
+}
 
 impl CsvWriter for Quote {
    fn as_csv(&self) -> String { format!("{}", self.usd) }
