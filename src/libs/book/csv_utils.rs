@@ -40,7 +40,7 @@ pub fn print_as_tsv(row: &String) {
 
 fn with_header<T: CsvHeader>(prefix: &str, p: Option<&T>, print_header: bool)
       -> String {
-   print_header.then(|| p.map(|q| format!("{prefix}{}\n", q.header())))
+   print_header.then(|| p.map(|q| format!("{prefix},{}\n", q.header())))
                .flatten()
                .unwrap_or_default()
 }
