@@ -5,9 +5,9 @@ use serde::Serialize;
 use serde::de::DeserializeOwned;
 
 use crate::{
-   err_utils::{err_or,ErrStr},
+   err_utils::{ err_or, ErrStr },
    list_utils::mk_cycle,
-   string_utils::{parse_lines,s},
+   string_utils::{ aught, parse_lines, s },
    utils::k
 };
 
@@ -40,7 +40,8 @@ pub fn print_as_tsv(row: &String) {
 
 fn with_header<T: CsvHeader>(prefix: &str, p: Option<&T>, print_header: bool)
       -> String {
-   print_header.then(|| p.map(|q| format!("{prefix},{}\n", q.header())))
+   print_header.then(||
+                  p.map(|q| format!("{}{}\n", aught(prefix, ","), q.header())))
                .flatten()
                .unwrap_or_default()
 }
@@ -351,7 +352,7 @@ mod functional_tests {
 #[cfg(not(tarpaulin_include))]
 mod tests {
    use super::*;
-   use super::test_data::{Grocery,inventory,lines,parse_grocery};
+   use super::test_data::{Grocery,inventory,Store,stores,lines,parse_grocery};
    use crate::list_utils::init;
 
    #[test] fn fail_parse_csv_nl_at_end() {
@@ -359,18 +360,33 @@ mod tests {
       assert!(parsed_lines.is_err());
    }
 
-   #[test] fn parse_csv_ok() {
+   #[test] fn test_parse_csv_ok() {
       let parsed_lines =
          parse_csv(1, &parse_grocery, &init(&lines(&inventory())));
       assert!(parsed_lines.is_ok());
    }
 
-   #[test] fn parse_csv_and_items_idempotent() -> ErrStr<()> {
+   #[test] fn test_parse_csv_and_items_idempotent() -> ErrStr<()> {
       let parsed_lines =
          parse_csv(1, &parse_grocery, &init(&lines(&inventory())))?;
       let groceries = parse_items::<Grocery>(&inventory())?;
       assert_eq!(groceries.len(), parsed_lines.len(), "length unequal");
       assert_eq!(groceries, parsed_lines);
+      Ok(())
+   }
+
+   #[test] fn test_enumerate_csv_prefix_no_mash() -> ErrStr<()> {
+      let groceries = parse_items::<Grocery>(&inventory())?;
+      let ans = enumerate_csv(&groceries, true);
+      assert!(!ans.starts_with("ix,,"));
+      assert!(ans.starts_with("ix,"));
+      Ok(())
+   }
+
+   #[test] fn test_list_csv_no_comma_prefix() -> ErrStr<()> {
+      let stores = parse_items::<Store>(&stores())?;
+      let ans = list_csv(&stores, true);
+      assert!(!ans.starts_with(","));
       Ok(())
    }
 }
