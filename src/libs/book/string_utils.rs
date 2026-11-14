@@ -223,7 +223,9 @@ mod tests {
      let rest = "foo,bar,baz";
      let aught_null = format!("{}{rest}", aught("", ","));
      assert_eq!(rest, &aught_null);
+     assert!(!aught_null.starts_with(","));
      let aughten = format!("{}{rest}", aught(prefix, ","));
      assert_eq!(rest.len() + 3, aughten.len());
+     assert!(aughten.starts_with("ix,"));
   }
 }
