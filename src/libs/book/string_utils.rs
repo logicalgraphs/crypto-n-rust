@@ -26,6 +26,10 @@ pub fn is_are(n: usize, noun: &str) -> String {
    format!("{} {}", if n == 1 { "is" } else { "are" }, plural(n, noun))
 }
 
+pub fn aught(word: &str, then: &str) -> String {
+   if word.is_empty() { String::new() } else { format!("{word}{then}") }
+}
+
 // ----- Article --------------------------------------------------------------
 // added by bparis to pivoteur protocol, moved here by dma
 
@@ -208,5 +212,20 @@ mod tests {
       assert!(hello.contains("ELL"));
       assert!(!hello.contains("ell"));
    }
-}
 
+  #[test] fn test_aught_empty_naught() {
+      let naught = aught("", ",");
+      assert!(naught.is_empty());
+  }
+
+  #[test] fn test_aught_longer_than_ix() {
+     let prefix = "ix";
+     let rest = "foo,bar,baz";
+     let aught_null = format!("{}{rest}", aught("", ","));
+     assert_eq!(rest, &aught_null);
+     assert!(!aught_null.starts_with(","));
+     let aughten = format!("{}{rest}", aught(prefix, ","));
+     assert_eq!(rest.len() + 3, aughten.len());
+     assert!(aughten.starts_with("ix,"));
+  }
+}
