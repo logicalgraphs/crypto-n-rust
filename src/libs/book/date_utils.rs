@@ -1,7 +1,7 @@
 // normalizes date-usage: parsing, printing, et al
 
 use std::{ fmt, ops::Deref, str::FromStr };
-use chrono::{ NaiveDate, NaiveDateTime, Local, ParseError, SubsecRound };
+use chrono::{ NaiveDate, NaiveDateTime, Local, SubsecRound };
 
 use super::{ err_utils::{ ErrStr, err_or }, string_utils::s };
 
@@ -34,11 +34,19 @@ impl From<NaiveDateTime> for Dttm {
 }
 
 impl FromStr for Dttm {
-    type Err = ParseError;
+    type Err = String;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let dt = NaiveDateTime::parse_from_str(s.trim(), &tm_fmt())?;
-        Ok(Self(dt.trunc_subsecs(0)))
+        match NaiveDateTime::parse_from_str(s.trim(), &tm_fmt()) {
+           Ok(dttm) => Ok(Dttm(dttm.trunc_subsecs(0))),
+           Err(_) => {
+              let ans = parse_date(s)?;
+              let dttm =
+                 ans.and_hms_opt(0, 0, 1).ok_or(
+                        format!("Unable to convert date {s} to Dttm"))?;
+              Ok(Dttm(dttm))
+           }
+        }
     }
 }
 
@@ -52,9 +60,8 @@ pub fn parse_date(d: &str) -> ErrStr<NaiveDate> {
    err_or(NaiveDate::parse_from_str(d, &dt_fmt()), &err("date", d))
 }
 
-pub fn parse_dttm(dttm: &str) -> ErrStr<NaiveDateTime> {
-   err_or(NaiveDateTime::parse_from_str(dttm, &tm_fmt()),
-          &err("datetime", dttm))
+pub fn parse_dttm(dttm: &str) -> ErrStr<Dttm> {
+   err_or(dttm.parse(),  &err("datetime", dttm))
 }
 
 pub fn parse_date_and<'a>(line: &'a str) -> ErrStr<(NaiveDate, &'a str)> {
@@ -138,18 +145,35 @@ mod tests {
       assert_eq!(tmrrw, tomorrow());
    }
 
-    #[test] fn test_now_returns_current_local_time() {
-        let before = now();
-        let actual = now();
-        let after = now();
+   #[test] fn test_now_returns_current_local_time() {
+      let before = now();
+       let actual = now();
+       let after = now();
+       assert!(actual >= before && actual <= after,
+               "Expected {} to be between {} and {}", actual, before, after);
+   }
 
-        assert!(
-            actual >= before && actual <= after,
-            "Expected {} to be between {} and {}",
-            actual,
-            before,
-            after
-        );
-    }
+   #[test] fn test_parse_dttm_ok() {
+      let x = parse_dttm("2026-11-26 13:47:22");
+      assert!(x.is_ok());
+   }
+
+   #[test] fn test_parse_dttm_with_only_date_ok() {
+      let x = parse_dttm("2026-11-26");
+      assert!(x.is_ok());
+   }
+
+   #[test] fn test_parse_dttm_with_only_date_gt_date() -> ErrStr<()> {
+      let dt = "2026-11-26";
+      let x = parse_dttm(dt)?;
+      let y = parse_date(dt)?;
+      let z = Dttm(y.into());
+      assert!(x > z);
+      Ok(())
+   }
+
+   #[test] fn fail_parse_dttm_bad_string() {
+      let dttm = parse_dttm("adf");
+      assert!(dttm.is_err());
+   }
 }
-
